@@ -1,9 +1,12 @@
 import React from 'react';
 
-import { MainMenu } from './Menu';
+import { MainMenu } from './components/Menu';
+import { RouterOutlet } from './components/RouterOutlet';
 
 function App() {
-  return <MainMenu />;
+  return <MainMenu>
+    <RouterOutlet/>
+  </MainMenu>;
 }
 
 export default App;
