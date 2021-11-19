@@ -1,9 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
-import './index.scss';
-import reportWebVitals from './reportWebVitals';
 import './tailwind.css';
+import './index.scss';
 
 ReactDOM.render(
   <React.StrictMode>
@@ -12,4 +11,4 @@ ReactDOM.render(
   document.getElementById('root')
 );
 
-reportWebVitals(console.log);
+//reportWebVitals(console.log);

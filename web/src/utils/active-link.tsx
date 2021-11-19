@@ -1,12 +1,25 @@
-import React, { PropsWithChildren } from 'react';
-import { Link, LinkProps, useRoute } from 'wouter';
+import React from 'react';
+import { Link, useRoute } from 'wouter';
 
 
-export const ActiveLink = (props: PropsWithChildren<LinkProps>) => {
-  const [isActive] = useRoute(props.href!);
+export const ActiveLink: React.FC<{ href: string, withSubroutes?: boolean }> = ({href, children, withSubroutes}) => {
+  const [isSubRoute] = useRoute(`${href}/:id`);
+  const [isRoute] = useRoute(href);
+
+  const isActive = withSubroutes ? isSubRoute || isRoute : isRoute;
   return (
-    <Link {...props}>
-      <a className={isActive ? 'bg-blue-100 block' : 'block'}>{props.children}</a>
+    <Link href={href}>
+      <a href={href}
+         className={`w-full cursor-pointer reverse-brown-gradiant transition-colors duration-300 ${isActive ? 'text-primary' : ''}`}>{children}</a>
     </Link>
   );
+};
+
+
+export const ALink: React.FC<{ href: string }> = ({href, children}) => {
+  return <Link href={href}>
+    <a href={href}>
+      {children}
+    </a>
+  </Link>;
 };
