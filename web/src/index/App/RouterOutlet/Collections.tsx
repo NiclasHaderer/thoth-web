@@ -1,5 +1,5 @@
 import React from 'react';
-import { Collection } from './Collection';
+import { Collection } from './Collections/Collection';
 
 export const Collections: React.VFC = () => {
   return <>
