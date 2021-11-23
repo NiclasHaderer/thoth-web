@@ -1,7 +1,7 @@
 import { sanitize } from 'dompurify';
 import React from 'react';
-import { ALink } from '../utils/active-link';
-import { Author } from './Author';
+import { ALink } from './active-link';
+import { Author } from '../RouterOutlet/shared/Author';
 
 export const HTML = `
 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris. <b>Lorem ipsum dolor sit amet, consectetur adipiscing elit</b>. Fusce nec tellus sed augue semper porta. Mauris massa. Vestibulum lacinia arcu eget nulla. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. <b>Lorem ipsum dolor sit amet, consectetur adipiscing elit</b>. Curabitur sodales ligula in libero. </p>

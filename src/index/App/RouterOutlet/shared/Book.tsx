@@ -1,5 +1,5 @@
 import React from 'react';
-import { ALink } from '../utils/active-link';
+import { ALink } from '../../shared/active-link';
 
 interface BookProps {
   id: string;

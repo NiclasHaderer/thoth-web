@@ -1,18 +1,15 @@
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import BookIcon from '@mui/icons-material/Book';
-import CollectionsBookmarkRoundedIcon from '@mui/icons-material/CollectionsBookmarkRounded';
-import PersonSharpIcon from '@mui/icons-material/PersonSharp';
 import React from 'react';
+import { MdAccountCircle, MdBook, MdCollectionsBookmark, MdPerson } from 'react-icons/md';
 import { Link } from 'wouter';
-import { ActiveLink } from '../utils/active-link';
-import { Search } from './Search';
+import { Search } from './Menu/Search';
+import { ActiveLink } from './shared/active-link';
 
 export const MainMenu: React.FC = (props) => {
   return (<>
       <div className="elevate flex items-center h-20 m-3 rounded-xl">
         <MenuIcon/>
         <Search/>
-        <AccountCircleIcon className="cursor-pointer mr-3" fontSize="large"/>
+        <MdAccountCircle className="cursor-pointer mr-3" fontSize="large"/>
       </div>
       <div className="w-screen flex relative" style={{height: 'calc(100vh - 5rem - 1.5rem)'}}>
         <aside className="overflow-hidden inline-block elevate rounded-xl m-10 min-w-80 max-w-80">
@@ -41,19 +38,19 @@ const MenuItems: React.VFC = () => {
     <ul>
       <li className="flex px-3 hover:light-active transition-colors duration-300">
         <ActiveLink href="/books" withSubroutes={true}>
-          <BookIcon className="ml-3"/>
+          <MdBook className="ml-3"/>
           <span className="inline-block m-3">Books</span>
         </ActiveLink>
       </li>
       <li className="flex px-3 hover:light-active transition-colors duration-300">
         <ActiveLink href="/collections" withSubroutes={true}>
-          <CollectionsBookmarkRoundedIcon className="ml-3"/>
+          <MdCollectionsBookmark className="ml-3"/>
           <span className="inline-block m-3">Collections</span>
         </ActiveLink>
       </li>
       <li className="flex px-3 hover:light-active transition-colors duration-300">
         <ActiveLink href="/authors" withSubroutes={true}>
-          <PersonSharpIcon className="ml-3"/>
+          <MdPerson className="ml-3"/>
           <span className="inline-block m-3">Authors</span>
         </ActiveLink>
       </li>

@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { MainMenu } from './components/Menu';
-import { RouterOutlet } from './components/RouterOutlet';
+import { MainMenu } from './App/Menu';
+import { RouterOutlet } from './App/RouterOutlet';
 
 function App() {
   return <MainMenu>

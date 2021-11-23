@@ -1,8 +1,8 @@
 import { sanitize } from 'dompurify';
 import React from 'react';
-import { ALink } from '../utils/active-link';
-import { Book } from './Book';
-import { HTML } from './BookDetails';
+import { ALink } from '../shared/active-link';
+import { Book } from './shared/Book';
+import { HTML } from '../shared/BookDetails';
 
 export const CollectionDetails: React.VFC = () => (
   <>

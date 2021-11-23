@@ -1,7 +1,7 @@
 import { sanitize } from 'dompurify';
 import React from 'react';
-import { Book } from './Book';
-import { HTML } from './BookDetails';
+import { Book } from './shared/Book';
+import { HTML } from '../shared/BookDetails';
 
 export const AuthorDetails: React.VFC = () => (
   <>

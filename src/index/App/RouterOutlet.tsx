@@ -1,11 +1,11 @@
 import React from 'react';
 import { Redirect, Route, Switch } from 'wouter';
-import { AuthorDetails } from './AuthorDetails';
-import { Authors } from './Authors';
-import { BookDetails } from './BookDetails';
-import { Books } from './Books';
-import { CollectionDetails } from './CollectionDetails';
-import { Collections } from './Collections';
+import { AuthorDetails } from './RouterOutlet/AuthorDetails';
+import { Authors } from './RouterOutlet/Authors';
+import { BookDetails } from './shared/BookDetails';
+import { Books } from './RouterOutlet/Books';
+import { CollectionDetails } from './RouterOutlet/CollectionDetails';
+import { Collections } from './RouterOutlet/Collections';
 
 
 export const RouterOutlet: React.VFC = () => (

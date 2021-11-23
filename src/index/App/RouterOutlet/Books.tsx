@@ -1,5 +1,5 @@
 import React from 'react';
-import { Book } from './Book';
+import { Book } from './shared/Book';
 
 export const Books: React.VFC = () => {
   return <>

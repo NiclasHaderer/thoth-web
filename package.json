@@ -7,14 +7,12 @@
     "build": "craco build",
     "test": "craco test",
     "eject": "react-scripts eject",
-    "analyze": "source-map-explorer 'build/static/js/*.js'"
+    "analyze": "craco build && source-map-explorer 'build/static/js/*.js'"
   },
   "dependencies": {
     "@craco/craco": "^6.4.0",
     "@emotion/react": "^11.6.0",
     "@emotion/styled": "^11.6.0",
-    "@mui/icons-material": "^5.1.1",
-    "@mui/material": "^5.1.1",
     "@tailwindcss/typography": "^0.4.1",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
@@ -27,6 +25,7 @@
     "npm": "^8.1.4",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-icons": "^4.3.1",
     "react-scripts": "4.0.3",
     "sass": "^1.43.4",
     "source-map-explorer": "^2.5.2",
@@ -56,6 +55,7 @@
   "devDependencies": {
     "@types/dompurify": "^2.3.1",
     "autoprefixer": "^9",
+    "destiny": "^0.7.1",
     "postcss": "^7",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat"
   }

@@ -1,4 +1,4 @@
-import SearchIcon from '@mui/icons-material/Search';
+import { MdSearch } from "react-icons/md";
 import React from 'react';
 
 export const Search: React.VFC = () => (
@@ -6,7 +6,7 @@ export const Search: React.VFC = () => (
     <div className="relative elevate rounded-3xl ">
         <span className="absolute inset-y-0 left-0 flex items-center pl-2">
           <button type="submit" className="p-1">
-            <SearchIcon className="w-6 h-6"/>
+            <MdSearch className="w-6 h-6"/>
           </button>
         </span>
       <input

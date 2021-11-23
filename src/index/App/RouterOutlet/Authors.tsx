@@ -1,5 +1,5 @@
 import React from 'react';
-import { Author } from './Author';
+import { Author } from './shared/Author';
 
 export const Authors: React.VFC = () => {
   return <>
