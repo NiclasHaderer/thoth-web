@@ -10,10 +10,8 @@ export const SeriesDetails: React.VFC = () => {
   const getSeriesWithBooks = userState(s => s.getSeriesWithBooks);
   const series = userState(s => s.series[id?.id!]);
 
-  // TODO infinite fetch
-  useEffect(() => getSeriesWithBooks(id?.id!), [id, getSeriesWithBooks]);
+  useEffect(() => getSeriesWithBooks(id?.id!), [id?.id, getSeriesWithBooks]);
   if (!series) return <></>;
-
 
   return (
     <>
