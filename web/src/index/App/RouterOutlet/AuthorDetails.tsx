@@ -2,6 +2,7 @@ import { sanitize } from 'dompurify';
 import React, { useEffect } from 'react';
 import { MdImageNotSupported } from 'react-icons/all';
 import { useRoute } from 'wouter';
+import { environment } from '../../../env';
 import { userState } from '../../state/state';
 import { Book } from './shared/Book';
 
@@ -15,12 +16,12 @@ export const AuthorDetails: React.VFC = () => {
 
   return (
     <>
-      <div className="flex flex-col pb-6 items-center">
+      <div className="flex flex-col pb-6 items-center flex-grow">
         {author.image ?
-          <img className="min-w-80 max-w-80 rounded-full" src={author.image} alt="Cover"/> :
+          <img className="min-w-80 max-w-80 rounded-full" src={`${environment.apiURL}/image/${author.image}`}
+               alt="Cover"/> :
           <MdImageNotSupported
             className="min-w-80 h-80 max-w-80 rounded-full"/>
-
         }
         <h2 className="text-2xl py-3">{author.name}</h2>
       </div>

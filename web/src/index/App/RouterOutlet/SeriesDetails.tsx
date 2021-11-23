@@ -1,5 +1,6 @@
 import { sanitize } from 'dompurify';
 import React, { useEffect } from 'react';
+import { MdImageNotSupported } from 'react-icons/all';
 import { useRoute } from 'wouter';
 import { userState } from '../../state/state';
 import { ALink } from '../shared/active-link';
@@ -16,25 +17,25 @@ export const SeriesDetails: React.VFC = () => {
   return (
     <>
       <div className="flex pb-6">
-        <img className="min-w-80 max-w-80 rounded-md" src="https://m.media-amazon.com/images/I/517WcD5gWeL.jpg"
-             alt="Cover"/>
+        <MdImageNotSupported
+          className="min-w-80 max-w-80 h-80 rounded-md"/>
         <div className="flex-grow pl-10 ">
           <h2 className="text-2xl pb-3">{series.title}</h2>
           <h3 className="text-xl pb-3">Year: ___</h3>
           <div>
             <div className="flex pb-3">
               <h3 className="uppercase text-unimportant pr-3 min-w-40">Author</h3>
-              <ALink href={'/authors/asdf'}>
+              <ALink href={`/authors/${series.author}`}>
                 <h3 className="text-xl hover:underline">{series.author}</h3>
               </ALink>
             </div>
             <div className="flex pb-3">
               <h3 className="uppercase text-unimportant pr-3 min-w-40">Narrators</h3>
-              <ALink href={'/authors/asdf'}>
+              <ALink href={`/authors/___`}>
                 <h3 className="text-xl hover:underline">___</h3>
               </ALink>
               <span className="px-1">,</span>
-              <ALink href={'/authors/asdf'}>
+              <ALink href={'/authors/___'}>
                 <h3 className="text-xl hover:underline">___</h3>
               </ALink>
             </div>

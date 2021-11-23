@@ -2,15 +2,15 @@ import React, { useEffect } from 'react';
 import { userState } from '../../state/state';
 import { Series } from './Series/Series';
 
-export const SeriesCollection: React.VFC = () => {
+export const SeriesList: React.VFC = () => {
 
   const series = userState(s => Object.values(s.series));
   const getSeries = userState(s => s.getSeries);
   useEffect(getSeries, [getSeries]);
 
 
-  return <>
+  return <div className="flex flex-wrap">
     {series.map((series, k) =>
       <Series {...series} key={k}/>)}
-  </>;
+  </div>;
 };

@@ -10,7 +10,8 @@ module.exports = {
                 primary: '#a13c2a',
                 unimportant: '#FFFFFF72',
                 background: '#29323e',
-                font: '#eee'
+                font: '#eee',
+                'light-active': 'rgba(255, 255, 255, .1)'
             },
             borderWidth: {
                 '1.5': '1.5px',
@@ -123,7 +124,9 @@ module.exports = {
 
     },
     variants: {
-        extend: {},
+        extend: {
+            backgroundColor: ['odd'],
+        },
     },
     plugins: [
         require('@tailwindcss/typography'),
