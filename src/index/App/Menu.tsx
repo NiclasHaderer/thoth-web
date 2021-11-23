@@ -15,7 +15,7 @@ export const MainMenu: React.FC = (props) => {
         <aside className="overflow-hidden inline-block elevate rounded-xl m-10 min-w-80 max-w-80">
           <MenuItems/>
         </aside>
-        <main className="inline mt-10 overflow-y-auto mr-10">
+        <main className="inline mt-10 overflow-y-auto mr-10 flex-grow flex flex-wrap">
           {props.children}
         </main>
       </div>
@@ -42,10 +42,10 @@ const MenuItems: React.VFC = () => {
           <span className="inline-block m-3">Books</span>
         </li>
       </ActiveLink>
-      <ActiveLink href="/collections" withSubroutes={true}>
+      <ActiveLink href="/series" withSubroutes={true}>
         <li className="flex w-full px-3 items-center hover:light-active transition-colors duration-300">
           <MdCollectionsBookmark className="ml-3"/>
-          <span className="inline-block m-3">Collections</span>
+          <span className="inline-block m-3">Series</span>
         </li>
       </ActiveLink>
       <ActiveLink href="/authors" withSubroutes={true}>

@@ -37,7 +37,7 @@ export const BookDetails = () => (
           </div>
           <div className="flex pb-3">
             <h3 className="uppercase text-unimportant pr-3 min-w-40">Series</h3>
-            <ALink href={`/collections/asdf`}>
+            <ALink href={`/series/asdf`}>
               <h3 className="text-xl hover:underline">Harry Potter</h3>
             </ALink>
           </div>

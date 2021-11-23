@@ -4,8 +4,8 @@ import { AuthorDetails } from './RouterOutlet/AuthorDetails';
 import { Authors } from './RouterOutlet/Authors';
 import { BookDetails } from './shared/BookDetails';
 import { Books } from './RouterOutlet/Books';
-import { CollectionDetails } from './RouterOutlet/CollectionDetails';
-import { Collections } from './RouterOutlet/Collections';
+import { SeriesDetails } from './RouterOutlet/SeriesDetails';
+import { SeriesCollection } from './RouterOutlet/SeriesCollection';
 
 
 export const RouterOutlet: React.VFC = () => (
@@ -14,8 +14,8 @@ export const RouterOutlet: React.VFC = () => (
     <Route path="/books/:id" component={BookDetails}/>
     <Route path="/authors" component={Authors}/>
     <Route path="/authors/:id" component={AuthorDetails}/>
-    <Route path="/collections" component={Collections}/>
-    <Route path="/collections/:id" component={CollectionDetails}/>
+    <Route path="/series" component={SeriesCollection}/>
+    <Route path="/series/:id" component={SeriesDetails}/>
     <Route path="">
       <Redirect to="/books"/>
     </Route>

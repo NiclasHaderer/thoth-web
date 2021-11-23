@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { userState } from '../../state/state';
 import { Author } from './shared/Author';
 
 export const Authors: React.VFC = () => {
+  const getAuthors = userState(s => s.getAuthors);
+  useEffect(getAuthors, [getAuthors]);
+  const authors = userState(s => Object.values(s.authors));
   return <>
-    {new Array(60).fill(null).map((v, k) =>
-      <Author id="iii" image="https://m.media-amazon.com/images/I/517WcD5gWeL.jpg" key={k}
-              name={'J.K. Rowling'}/>)}
+    {authors.map((author, k) =>
+      <Author {...author} key={k}/>)}
   </>;
 };

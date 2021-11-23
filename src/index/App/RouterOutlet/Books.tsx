@@ -1,11 +1,15 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { userState } from '../../state/state';
 import { Book } from './shared/Book';
 
 export const Books: React.VFC = () => {
+  const getBooks = userState(s => s.getBooks);
+  useEffect(getBooks, [getBooks]);
+
+  const books = userState(s => Object.values(s.books));
+
   return <>
-    {new Array(60).fill(null).map((v, k) =>
-      <Book id="iii" image="https://m.media-amazon.com/images/I/517WcD5gWeL.jpg" key={k}
-            author={{name: 'J.K. Rowling', id: 'asdf'}}
-            title="Harry Potter and the Chamber of Secretsand the Chamber of Secrets"/>)}
+    {books.map((book, k) =>
+      <Book  {...book} key={k}/>)}
   </>;
 };
