@@ -17,7 +17,7 @@ export const ActiveLink: React.FC<{ href: string, withSubroutes?: boolean }> = (
 
 export const ALink: React.FC<{ href: string }> = ({href, children}) => {
   return <Link href={href}>
-    <a href={href}>
+    <a className="contents" href={href}>
       {children}
     </a>
   </Link>;

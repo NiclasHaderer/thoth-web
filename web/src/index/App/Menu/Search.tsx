@@ -59,7 +59,7 @@ export const SearchResults: React.VFC = () => (
            alt="AuthorImage"/>
       <h4 className="pl-3">J.K. Rowling</h4>
     </div>
-    <h2 className="text-unimportant uppercase py-3">Collections</h2>
+    <h2 className="text-unimportant uppercase py-3">Series</h2>
     <div className="flex items-center pb-3">
       <img className="rounded-s w-8 h-8" src="https://m.media-amazon.com/images/I/517WcD5gWeL.jpg"
            alt="AuthorImage"/>
