@@ -9,8 +9,8 @@ export const AuthorDetails: React.VFC = () => {
   const [, id] = useRoute('/authors/:id');
   const getAuthorDetails = userState(s => s.getAuthorWithBooks);
   const author = userState(s => s.authors[id?.id!]);
-// TODO infinite fetch
-  useEffect(() => getAuthorDetails(id?.id!), [id, getAuthorDetails]);
+
+  useEffect(() => getAuthorDetails(id?.id!), [id?.id, getAuthorDetails]);
   if (!author) return <></>;
 
   return (
