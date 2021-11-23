@@ -23,7 +23,7 @@ export const Book: React.VFC<BookProps> = ({image, title, author, id}) => {
       <div className="p-2 relative">
 
         <ALink href={`/books/${id}`}>
-        <span className="cursor-pointer two-lines hover:underline">{title}</span>
+        <span className="cursor-pointer line-clamp-2 hover:underline">{title}</span>
         </ALink>
         <ALink href={`/authors/${author.id}`}>
         <span className="text-unimportant  hover:underline cursor-pointer">{author.name}</span>

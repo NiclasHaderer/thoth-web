@@ -36,24 +36,24 @@ const MenuIcon: React.VFC = () => {
 const MenuItems: React.VFC = () => {
   return (
     <ul>
-      <li className="flex px-3 hover:light-active transition-colors duration-300">
-        <ActiveLink href="/books" withSubroutes={true}>
+      <ActiveLink href="/books" withSubroutes={true}>
+        <li className="flex w-full px-3 items-center hover:light-active transition-colors duration-300">
           <MdBook className="ml-3"/>
           <span className="inline-block m-3">Books</span>
-        </ActiveLink>
-      </li>
-      <li className="flex px-3 hover:light-active transition-colors duration-300">
-        <ActiveLink href="/collections" withSubroutes={true}>
+        </li>
+      </ActiveLink>
+      <ActiveLink href="/collections" withSubroutes={true}>
+        <li className="flex w-full px-3 items-center hover:light-active transition-colors duration-300">
           <MdCollectionsBookmark className="ml-3"/>
           <span className="inline-block m-3">Collections</span>
-        </ActiveLink>
-      </li>
-      <li className="flex px-3 hover:light-active transition-colors duration-300">
-        <ActiveLink href="/authors" withSubroutes={true}>
+        </li>
+      </ActiveLink>
+      <ActiveLink href="/authors" withSubroutes={true}>
+        <li className="flex w-full px-3 items-center hover:light-active transition-colors duration-300">
           <MdPerson className="ml-3"/>
           <span className="inline-block m-3">Authors</span>
-        </ActiveLink>
-      </li>
+        </li>
+      </ActiveLink>
     </ul>
   );
 };

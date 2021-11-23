@@ -21,7 +21,7 @@ export const Collection: React.VFC<CollectionProps> = ({id, name, amount, image}
 
       <div className="p-2 relative">
         <ALink href={`/collections/${id}`}>
-        <span className="cursor-pointer two-lines hover:underline">{name}</span>
+        <span className="cursor-pointer line-clamp-2 hover:underline">{name}</span>
         </ALink>
         <span className="text-unimportant">{amount} Audiobooks</span>
       </div>

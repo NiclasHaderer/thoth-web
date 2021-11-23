@@ -9,8 +9,7 @@ export const ActiveLink: React.FC<{ href: string, withSubroutes?: boolean }> = (
   const isActive = withSubroutes ? isSubRoute || isRoute : isRoute;
   return (
     <Link href={href}>
-      <a href={href}
-         className={`w-full cursor-pointer reverse-brown-gradiant transition-colors duration-300 ${isActive ? 'text-primary' : ''}`}>{children}</a>
+      <a href={href} className={`cursor-pointer ${isActive ? 'text-primary' : ''}`}>{children}</a>
     </Link>
   );
 };

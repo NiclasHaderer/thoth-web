@@ -4,16 +4,6 @@ html {
   line-height: 1.71428571;
 }
 
-// TODO replace with https://blog.tailwindcss.com/multi-line-truncation-with-tailwindcss-line-clamp
-.two-lines {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  -webkit-box-orient: vertical;
-}
-
 .elevate {
   background: rgba(0, 0, 0, .15);
 }

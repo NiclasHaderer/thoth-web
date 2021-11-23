@@ -1,5 +1,5 @@
-import { MdSearch } from "react-icons/md";
 import React from 'react';
+import { MdSearch } from 'react-icons/md';
 
 export const Search: React.VFC = () => (
   <div className="px-3 flex-grow shadow-none relative">
@@ -25,13 +25,13 @@ export const Search: React.VFC = () => (
                   "
       />
     </div>
-    <div className="z-10 absolute mx-3 bottom-0 left-0 right-0 transform translate-y-full bg-background">
-      <div className="elevate">
-        <div className="elevate p-3 rounded-md">
-          <SearchResults/>
-        </div>
-      </div>
-    </div>
+    {/*<div className="z-10 absolute mx-3 bottom-0 left-0 right-0 transform translate-y-full bg-background">*/}
+    {/*  <div className="elevate">*/}
+    {/*    <div className="elevate p-3 rounded-md">*/}
+    {/*      <SearchResults/>*/}
+    {/*    </div>*/}
+    {/*  </div>*/}
+    {/*</div>*/}
   </div>
 );
 
