@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+/* TODO move to tailwind */
 @layer utilities {
 
     @variants hover, focus {

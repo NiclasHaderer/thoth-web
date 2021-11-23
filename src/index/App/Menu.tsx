@@ -15,7 +15,7 @@ export const MainMenu: React.FC = (props) => {
         <aside className="overflow-hidden inline-block elevate rounded-xl m-10 min-w-80 max-w-80">
           <MenuItems/>
         </aside>
-        <main className="inline mt-10 overflow-y-auto mr-10 flex-grow flex flex-wrap">
+        <main className="inline mt-10 overflow-y-auto mr-10 flex-grow">
           {props.children}
         </main>
       </div>
