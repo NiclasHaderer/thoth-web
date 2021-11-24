@@ -1,25 +1,27 @@
 import { sanitize } from 'dompurify';
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { MdImageNotSupported } from 'react-icons/all';
 import { useRoute } from 'wouter';
-import { environment } from '../../../env';
-import { userState } from '../../state/state';
-import { Book } from './shared/Book';
+import { environment } from '../../env';
+import { getItemById } from '../../helpers';
+import { useAudiobookState } from '../../State/AudiobookState';
+import { Book } from '../Books/Book';
 
 export const AuthorDetails: React.VFC = () => {
   const [, id] = useRoute('/authors/:id');
-  const getAuthorDetails = userState(s => s.getAuthorWithBooks);
-  const author = userState(s => s.authors[id?.id!]);
+  const author = useAudiobookState(useCallback(({authors}) => getItemById(authors, id?.id), [id?.id]));
+  const fetchAuthorDetails = useAudiobookState(s => s.fetchAuthorWithBooks);
 
-  useEffect(() => getAuthorDetails(id?.id!), [id?.id, getAuthorDetails]);
+  useEffect(() => fetchAuthorDetails(id?.id!), [id?.id, fetchAuthorDetails]);
   if (!author) return <></>;
 
   return (
     <>
       <div className="flex flex-col pb-6 items-center flex-grow">
         {author.image ?
-          <img className="min-w-80 max-w-80 rounded-full" src={`${environment.apiURL}/image/${author.image}`}
-               alt="Cover"/> :
+          <img loading="lazy" className="min-w-80 max-w-80 rounded-full"
+               src={`${environment.apiURL}/image/${author.image}`}
+               alt="Artist"/> :
           <MdImageNotSupported
             className="min-w-80 h-80 max-w-80 rounded-full"/>
         }

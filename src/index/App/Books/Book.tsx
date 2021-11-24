@@ -1,7 +1,7 @@
 import React from 'react';
 import { MdImageNotSupported } from 'react-icons/all';
-import { environment } from '../../../../env';
-import { ALink } from '../../shared/active-link';
+import { environment } from '../../env';
+import { ALink } from '../Common/active-link';
 
 interface BookProps {
   id: string;
@@ -15,9 +15,9 @@ export const Book: React.VFC<BookProps> = ({cover, title, author, id}) => {
     <span
       className="mx-6 mb-6 inline-block w-52 ">
   <ALink href={`/books/${id}`}>
-     {cover ? <img
-         className="w-52 h-52 rounded-md border-1.5 cursor-pointer hover:border-primary border-transparent transition-colors"
-         src={`${environment.apiURL}/image/${cover}`} alt="asd"/> :
+     {cover ? <img loading="lazy"
+                   className="w-52 h-52 rounded-md border-1.5 cursor-pointer hover:border-primary border-transparent transition-colors"
+                   src={`${environment.apiURL}/image/${cover}`} alt="Book"/> :
        <MdImageNotSupported
          className="w-52 h-52 rounded-md border-1.5 cursor-pointer hover:border-primary border-transparent transition-colors"/>
      }

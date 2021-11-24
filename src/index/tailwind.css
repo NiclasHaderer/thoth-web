@@ -2,17 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
-/* TODO move to tailwind */
-@layer utilities {
+::-webkit-scrollbar {
+    @apply w-2 h-2;
+}
 
-    @variants hover, focus {
-        .active {
-            background: rgba(255, 255, 255, .3);
-        }
+::-webkit-scrollbar-track {
+    @apply rounded-full bg-elevate;
+}
 
-        .light-active {
-            background: rgba(255, 255, 255, .1);
-        }
-
-    }
+::-webkit-scrollbar-thumb {
+    @apply rounded-full
+    transition transition-colors bg-light-active hover:bg-active;
 }

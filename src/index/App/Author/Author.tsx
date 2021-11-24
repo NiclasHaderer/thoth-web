@@ -1,6 +1,6 @@
 import React from 'react';
 import { MdImageNotSupported } from 'react-icons/all';
-import { ALink } from '../../shared/active-link';
+import { ALink } from '../Common/active-link';
 
 interface AuthorProps {
   image: string | null;
@@ -15,9 +15,9 @@ export const Author: React.VFC<AuthorProps> = ({image, name, id}) => {
       className="mx-6 mb-6 inline-block w-52 min-w-52">
   <ALink href={`/authors/${id}`}>
     {image ?
-      <img
-        className="w-52 h-52 rounded-full border-1.5 cursor-pointer hover:border-primary border-transparent transition-colors"
-        src={image || ''} alt="Author image"/> :
+      <img loading="lazy"
+           className="w-52 h-52 rounded-full border-1.5 cursor-pointer hover:border-primary border-transparent transition-colors"
+           src={image || ''} alt="Author"/> :
       <MdImageNotSupported
         className="w-52 h-52 rounded-full border-1.5 cursor-pointer hover:border-primary border-transparent transition-colors"/>
 

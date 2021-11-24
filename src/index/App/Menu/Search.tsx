@@ -3,7 +3,7 @@ import { MdSearch } from 'react-icons/md';
 
 export const Search: React.VFC = () => (
   <div className="px-3 flex-grow shadow-none relative">
-    <div className="relative elevate rounded-3xl ">
+    <div className="relative bg-elevate rounded-3xl ">
         <span className="absolute inset-y-0 left-0 flex items-center pl-2">
           <button type="submit" className="p-1">
             <MdSearch className="w-6 h-6"/>
@@ -39,35 +39,35 @@ export const SearchResults: React.VFC = () => (
   <>
     <h2 className="text-unimportant uppercase py-3">Authors</h2>
     <div className="flex items-center pb-3">
-      <img className="rounded-full w-8 h-8" src="https://m.media-amazon.com/images/I/517WcD5gWeL.jpg"
-           alt="AuthorImage"/>
+      <img loading="lazy" className="rounded-full w-8 h-8" src="https://m.media-amazon.com/images/I/517WcD5gWeL.jpg"
+           alt="Author"/>
       <h4 className="pl-3">J.K. Rowling</h4>
     </div>
     <div className="flex items-center pb-3">
-      <img className="rounded-full w-8 h-8" src="https://m.media-amazon.com/images/I/517WcD5gWeL.jpg"
-           alt="AuthorImage"/>
+      <img loading="lazy" className="rounded-full w-8 h-8" src="https://m.media-amazon.com/images/I/517WcD5gWeL.jpg"
+           alt="Author"/>
       <h4 className="pl-3">J.K. Rowling</h4>
     </div>
     <h2 className="text-unimportant uppercase py-3">Books</h2>
     <div className="flex items-center pb-3">
-      <img className="rounded-s w-8 h-8" src="https://m.media-amazon.com/images/I/517WcD5gWeL.jpg"
-           alt="AuthorImage"/>
+      <img loading="lazy" className="rounded-s w-8 h-8" src="https://m.media-amazon.com/images/I/517WcD5gWeL.jpg"
+           alt="Book"/>
       <h4 className="pl-3">J.K. Rowling</h4>
     </div>
     <div className="flex items-center pb-3">
-      <img className="rounded-s w-8 h-8" src="https://m.media-amazon.com/images/I/517WcD5gWeL.jpg"
-           alt="AuthorImage"/>
+      <img loading="lazy" className="rounded-s w-8 h-8" src="https://m.media-amazon.com/images/I/517WcD5gWeL.jpg"
+           alt="Book"/>
       <h4 className="pl-3">J.K. Rowling</h4>
     </div>
     <h2 className="text-unimportant uppercase py-3">Series</h2>
     <div className="flex items-center pb-3">
-      <img className="rounded-s w-8 h-8" src="https://m.media-amazon.com/images/I/517WcD5gWeL.jpg"
-           alt="AuthorImage"/>
+      <img loading="lazy" className="rounded-s w-8 h-8" src="https://m.media-amazon.com/images/I/517WcD5gWeL.jpg"
+           alt="Series"/>
       <h4 className="pl-3">J.K. Rowling</h4>
     </div>
     <div className="flex items-center pb-3">
-      <img className="rounded-s w-8 h-8" src="https://m.media-amazon.com/images/I/517WcD5gWeL.jpg"
-           alt="AuthorImage"/>
+      <img loading="lazy" className="rounded-s w-8 h-8" src="https://m.media-amazon.com/images/I/517WcD5gWeL.jpg"
+           alt="Series"/>
       <h4 className="pl-3">J.K. Rowling</h4>
     </div>
 

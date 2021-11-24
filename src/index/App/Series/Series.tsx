@@ -1,6 +1,6 @@
 import React from 'react';
 import { MdImageNotSupported } from 'react-icons/all';
-import { ALink } from '../../shared/active-link';
+import { ALink } from '../Common/active-link';
 
 
 interface CollectionProps {
@@ -15,9 +15,9 @@ export const Series: React.VFC<CollectionProps> = ({id, title, amount, cover}) =
     <span
       className="mx-6 mb-6 inline-block w-52 ">
     <ALink href={`/series/${id}`}>
-       {cover ? <img
-           className="w-52 h-52 rounded-md border-1.5 cursor-pointer hover:border-primary border-transparent transition-colors"
-           src={cover} alt="asd"/> :
+       {cover ? <img loading="lazy"
+                     className="w-52 h-52 rounded-md border-1.5 cursor-pointer hover:border-primary border-transparent transition-colors"
+                     src={cover} alt="Series"/> :
          <MdImageNotSupported
            className="w-52 h-52 rounded-md border-1.5 cursor-pointer hover:border-primary border-transparent transition-colors"/>
        }
