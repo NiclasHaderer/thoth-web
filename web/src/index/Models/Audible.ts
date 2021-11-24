@@ -1,22 +1,22 @@
-export interface  AudibleSearchAuthor {
+export interface AudibleSearchAuthor {
   asin: string;
   link: string;
   name: string | null;
 }
 
-export interface  AudibleAuthor extends AudibleSearchAuthor {
+export interface AudibleAuthor extends AudibleSearchAuthor {
   biography: string | null;
   image: string | null;
 }
 
-export interface  AudibleSearchSeries {
+export interface AudibleSearchSeries {
   asin: string;
   index: number;
   link: string;
   name: string;
 }
 
-export interface  AudibleBook {
+export interface AudibleBook {
   asin: string;
   author: AudibleSearchAuthor | null;
   description: string | null;
@@ -26,7 +26,7 @@ export interface  AudibleBook {
   title: string | null;
 }
 
-export interface  AudibleSearchResult {
+export interface AudibleSearchResult {
   asin: string;
   author: AudibleSearchAuthor | null;
   image: string | null;
@@ -37,20 +37,20 @@ export interface  AudibleSearchResult {
   title: string | null;
 }
 
-export interface  AudibleSearchAuthorImpl extends AudibleSearchAuthor {
+export interface AudibleSearchAuthorImpl extends AudibleSearchAuthor {
   asin: string;
   link: string;
   name: string | null;
 }
 
-export interface  AudibleSearchSeriesImpl extends AudibleSearchSeries {
+export interface AudibleSearchSeriesImpl extends AudibleSearchSeries {
   asin: string;
   index: number;
   link: string;
   name: string;
 }
 
-export interface  AudibleSearchResultImpl extends AudibleSearchResult {
+export interface AudibleSearchResultImpl extends AudibleSearchResult {
   asin: string;
   author: AudibleSearchAuthorImpl | null;
   image: string | null;
@@ -61,7 +61,7 @@ export interface  AudibleSearchResultImpl extends AudibleSearchResult {
   title: string | null;
 }
 
-export interface  AudibleSeries {
+export interface AudibleSeries {
   amount: number | null;
   asin: string;
   books: AudibleSearchResult[];

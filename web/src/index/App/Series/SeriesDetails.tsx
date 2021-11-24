@@ -1,15 +1,16 @@
 import { sanitize } from 'dompurify';
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { MdImageNotSupported } from 'react-icons/all';
 import { useRoute } from 'wouter';
-import { userState } from '../../state/state';
-import { ALink } from '../shared/active-link';
-import { Book } from './shared/Book';
+import { getItemById } from '../../helpers';
+import { useAudiobookState } from '../../State/AudiobookState';
+import { Book } from '../Books/Book';
+import { ALink } from '../Common/active-link';
 
 export const SeriesDetails: React.VFC = () => {
   const [, id] = useRoute('/series/:id');
-  const getSeriesWithBooks = userState(s => s.getSeriesWithBooks);
-  const series = userState(s => s.series[id?.id!]);
+  const getSeriesWithBooks = useAudiobookState(s => s.fetchSeriesWithBooks);
+  const series = useAudiobookState(useCallback(({series}) => getItemById(series, id?.id), [id?.id]));
 
   useEffect(() => getSeriesWithBooks(id?.id!), [id?.id, getSeriesWithBooks]);
   if (!series) return <></>;

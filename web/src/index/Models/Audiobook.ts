@@ -1,4 +1,4 @@
-export interface  AuthorModel {
+export interface AuthorModel {
   asin: string | null;
   biography: string | null;
   id: string;
@@ -6,7 +6,7 @@ export interface  AuthorModel {
   name: string;
 }
 
-export interface  BookModel {
+export interface BookModel {
   asin: string | null;
   author: string;
   cover: string | null;
@@ -19,7 +19,7 @@ export interface  BookModel {
   title: string;
 }
 
-export interface  AuthorModelWithBooks {
+export interface AuthorModelWithBooks {
   asin: string | null;
   biography: string | null;
   books: BookModel[];
@@ -28,7 +28,7 @@ export interface  AuthorModelWithBooks {
   name: string;
 }
 
-export interface  TrackModel {
+export interface TrackModel {
   accessTime: number;
   author: string;
   book: string;
@@ -41,7 +41,7 @@ export interface  TrackModel {
   trackNr: number | null;
 }
 
-export interface  BookModelWithTracks {
+export interface BookModelWithTracks {
   asin: string | null;
   author: string;
   cover: string | null;
@@ -55,7 +55,7 @@ export interface  BookModelWithTracks {
   tracks: TrackModel[];
 }
 
-export interface  SeriesModel {
+export interface SeriesModel {
   asin: string | null;
   author: string;
   description: string | null;
@@ -63,13 +63,13 @@ export interface  SeriesModel {
   title: string;
 }
 
-export interface  SearchModel {
+export interface SearchModel {
   authors: AuthorModel[];
   books: BookModel[];
   series: SeriesModel[];
 }
 
-export interface  SeriesModelWithBooks {
+export interface SeriesModelWithBooks {
   asin: string | null;
   author: string;
   books: BookModel[];
