@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { MouseEventHandler } from 'react';
 import { Link, useRoute } from 'wouter';
 
 
@@ -15,9 +15,9 @@ export const ActiveLink: React.FC<{ href: string, withSubroutes?: boolean }> = (
 };
 
 
-export const ALink: React.FC<{ href: string }> = ({href, children}) => {
-  return <Link href={href}>
-    <a className="contents" href={href}>
+export const ALink: React.FC<{ href: string, onClick?: MouseEventHandler<HTMLAnchorElement>, className?: string  }> = ({href, children, onClick, className}) => {
+  return <Link href={href} onClick={onClick}>
+    <a href={href} className={className}>
       {children}
     </a>
   </Link>;

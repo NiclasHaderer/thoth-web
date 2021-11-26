@@ -6,17 +6,28 @@ export interface AuthorModel {
   name: string;
 }
 
+export interface NamedId {
+  id: string;
+  name: string;
+}
+
+export interface TitledId {
+  id: string;
+  title: string;
+}
+
 export interface BookModel {
   asin: string | null;
-  author: string;
+  author: NamedId;
   cover: string | null;
   description: string | null;
   id: string;
   language: string | null;
-  narrator: string | null;
-  series: string | null;
+  narrator: NamedId | null;
+  series: TitledId | null;
   seriesIndex: number | null;
   title: string;
+  year: number | null;
 }
 
 export interface AuthorModelWithBooks {
@@ -30,12 +41,13 @@ export interface AuthorModelWithBooks {
 
 export interface TrackModel {
   accessTime: number;
-  author: string;
-  book: string;
+  author: NamedId;
+  cover: string;
+  book: TitledId;
   duration: number;
   id: string;
-  narrator: string | null;
-  series: string | null;
+  narrator: NamedId | null;
+  series: TitledId | null;
   seriesIndex: number | null;
   title: string;
   trackNr: number | null;
@@ -43,24 +55,31 @@ export interface TrackModel {
 
 export interface BookModelWithTracks {
   asin: string | null;
-  author: string;
+  author: NamedId;
   cover: string | null;
   description: string | null;
   id: string;
   language: string | null;
-  narrator: string | null;
-  series: string | null;
+  narrator: NamedId | null;
+  series: TitledId | null;
   seriesIndex: number | null;
   title: string;
   tracks: TrackModel[];
+  year: number | null;
 }
 
 export interface SeriesModel {
+  amount: number;
   asin: string | null;
-  author: string;
+  author: NamedId;
   description: string | null;
   id: string;
   title: string;
+}
+
+export interface YearRange {
+  start: number;
+  end: number;
 }
 
 export interface SearchModel {
@@ -70,10 +89,13 @@ export interface SearchModel {
 }
 
 export interface SeriesModelWithBooks {
+  amount: number;
   asin: string | null;
-  author: string;
+  author: NamedId;
   books: BookModel[];
   description: string | null;
   id: string;
+  narrators: NamedId[];
+  yearRange: YearRange | null;
   title: string;
 }

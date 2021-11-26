@@ -1,11 +1,12 @@
 import { sanitize } from 'dompurify';
 import React, { useCallback, useEffect } from 'react';
-import { MdImageNotSupported } from 'react-icons/all';
+import { MdPerson } from 'react-icons/all';
 import { useRoute } from 'wouter';
 import { environment } from '../../env';
 import { getItemById } from '../../helpers';
 import { useAudiobookState } from '../../State/AudiobookState';
 import { Book } from '../Books/Book';
+import { ResponsiveImage } from '../Common/ResponsiveImage';
 
 export const AuthorDetails: React.VFC = () => {
   const [, id] = useRoute('/authors/:id');
@@ -19,11 +20,10 @@ export const AuthorDetails: React.VFC = () => {
     <>
       <div className="flex flex-col pb-6 items-center flex-grow">
         {author.image ?
-          <img loading="lazy" className="min-w-80 max-w-80 rounded-full"
-               src={`${environment.apiURL}/image/${author.image}`}
-               alt="Artist"/> :
-          <MdImageNotSupported
-            className="min-w-80 h-80 max-w-80 rounded-full"/>
+          <ResponsiveImage className="w-40 h-40 md:w-80 md:h-80 rounded-full"
+                           src={`${environment.apiURL}/image/${author.image}`}/>
+          :
+          <MdPerson className="w-40 h-40 md:w-80 md:h-80 rounded-full"/>
         }
         <h2 className="text-2xl py-3">{author.name}</h2>
       </div>

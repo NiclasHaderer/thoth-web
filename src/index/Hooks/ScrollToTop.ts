@@ -1,7 +1,7 @@
-import { useEffect } from 'react';
+import { useOnMount } from './OnMount';
 
 export const useScrollToTop = (selector: string) => {
-  useEffect(() => {
+  useOnMount(() => {
     const element = document.querySelector(selector);
     element && element.scrollTo(0, 0);
   });

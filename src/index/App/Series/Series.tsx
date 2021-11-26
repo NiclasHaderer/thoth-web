@@ -1,6 +1,6 @@
 import React from 'react';
 import { MdImageNotSupported } from 'react-icons/all';
-import { ALink } from '../Common/active-link';
+import { ALink } from '../Common/ActiveLink';
 
 
 interface CollectionProps {
@@ -23,7 +23,7 @@ export const Series: React.VFC<CollectionProps> = ({id, title, amount, cover}) =
        }
     </ALink>
 
-      <div className="p-2 relative">
+      <div className="p-2 relative text-center">
         <ALink href={`/series/${id}`}>
         <span className="cursor-pointer line-clamp-2 hover:underline">{title}</span>
         </ALink>
