@@ -5,6 +5,7 @@ export const useIntersectionObserver = (target: HTMLElement | null, scrollElemen
   const callback = ([entry]: IntersectionObserverEntry[], _: IntersectionObserver) => {
     setVisible(entry.intersectionRatio > 0);
   };
+
   useEffect(() => {
       if (!target) return;
       const observer = new IntersectionObserver(callback, {root: scrollElement, threshold: [0, .01]});

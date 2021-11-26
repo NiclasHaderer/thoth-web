@@ -1,34 +1,34 @@
 import React from 'react';
-import { MdImageNotSupported } from 'react-icons/all';
-import { ALink } from '../Common/active-link';
+import { MdPerson } from 'react-icons/all';
+import { ALink } from '../Common/ActiveLink';
 
 interface AuthorProps {
   image: string | null;
   name: string;
   id: string;
+  className?: string;
 }
 
 
-export const Author: React.VFC<AuthorProps> = ({image, name, id}) => {
+export const Author: React.VFC<AuthorProps> = ({image, name, id, className}) => {
   return (
-    <span
-      className="mx-6 mb-6 inline-block w-52 min-w-52">
-  <ALink href={`/authors/${id}`}>
-    {image ?
-      <img loading="lazy"
-           className="w-52 h-52 rounded-full border-1.5 cursor-pointer hover:border-primary border-transparent transition-colors"
-           src={image || ''} alt="Author"/> :
-      <MdImageNotSupported
-        className="w-52 h-52 rounded-full border-1.5 cursor-pointer hover:border-primary border-transparent transition-colors"/>
+    <div className={`mx-6 mb-6 inline-block w-52 min-w-52 ${className}`}>
+      <ALink href={`/authors/${id}`}>
+        {image ?
+          <img loading="lazy"
+               className="w-52 h-52 rounded-full border-1.5 cursor-pointer hover:border-primary border-transparent transition-colors"
+               src={image || ''} alt="Author"/> :
+          <MdPerson
+            className="w-52 h-52 rounded-full border-1.5 cursor-pointer hover:border-primary border-transparent transition-colors"/>
 
-    }
+        }
 
-  </ALink>
+      </ALink>
 
       <div className="p-2 relative text-center">
         <ALink href={`/authors/${id}`}>
-        <span className="hover:underline cursor-pointer">{name}</span>
+          <span className="hover:underline cursor-pointer">{name}</span>
         </ALink>
       </div>
-    </span>);
+    </div>);
 };

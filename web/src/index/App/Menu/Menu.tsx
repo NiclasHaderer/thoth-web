@@ -1,12 +1,15 @@
 import React from 'react';
 import { MdAccountCircle, MdBook, MdCollectionsBookmark, MdPerson } from 'react-icons/md';
 import { Link } from 'wouter';
-import { useBreakpoint } from '../Hooks/Breakpoint';
-import { ActiveLink } from './Common/active-link';
-import { Search } from './Menu/Search';
+import { useBreakpoint } from '../../Hooks/Breakpoint';
+import { usePlaybackState } from '../../State/Playback';
+import { ActiveLink } from '../Common/ActiveLink';
+import { Playback } from '../Playback';
+import { Search } from './Search';
 
 export const MainMenu: React.FC = ({children}) => {
   const breakPoint = useBreakpoint();
+  const isPlaying = usePlaybackState(state => state.isPlaying);
 
   return (<div className="flex h-full flex-col h-screen">
       <div className="bg-elevate flex items-center h-20 m-3 rounded-xl">
@@ -19,17 +22,18 @@ export const MainMenu: React.FC = ({children}) => {
           <SmallMenu children={children}/> : <LargeMenu children={children}/>
         }
       </div>
+      {isPlaying ? <Playback/> : null}
     </div>
   );
 };
 
 
 const LargeMenu: React.FC = ({children}) => (
-  <div className="w-screen flex relative" style={{height: 'calc(100vh - 5rem - 1.5rem)'}}>
-    <aside className="overflow-hidden inline-block bg-elevate rounded-xl m-10 min-w-80 max-w-80">
+  <div className="h-full w-screen flex relative">
+    <aside className="overflow-hidden inline-block bg-elevate rounded-xl my-10 ml-10 min-w-80 max-w-80">
       <MenuItems/>
     </aside>
-    <main className="my-10 inline overflow-x-hidden overflow-y-auto mr-10 flex-grow">
+    <main className="mt-10 px-10 pb-10 inline overflow-x-hidden overflow-y-auto flex-grow">
       {children}
     </main>
   </div>
@@ -41,7 +45,7 @@ const SmallMenu: React.FC = ({children}) => (
     <aside className="block m-3 bg-elevate rounded-xl">
       <MenuItems/>
     </aside>
-    <main className="block pt-3 overflow-y-auto">
+    <main className="block overflow-y-auto p-3">
       {children}
     </main>
   </div>

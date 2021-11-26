@@ -1,30 +1,39 @@
 import React from 'react';
-import { MdImageNotSupported } from 'react-icons/all';
+import { MdImageNotSupported, MdPlayCircle } from 'react-icons/md';
 import { environment } from '../../env';
-import { ALink } from '../Common/active-link';
+import { NamedId } from '../../Models/Audiobook';
+import { ALink } from '../Common/ActiveLink';
+import { ResponsiveImage } from '../Common/ResponsiveImage';
 import { toReadableTime } from './helpers';
 
 interface TrackProps {
   cover: string | null;
   title: string;
-  author: string;
+  author: NamedId;
   duration: number;
+  index: number;
   trackNr: number | null;
+  startPlayback: (index: number) => void;
 }
 
-export const Track: React.VFC<TrackProps> = ({cover, title, duration, trackNr, author}) => (
-  <div className="flex odd:bg-light-active p-2 mr-3 rounded-md">
-    {cover ?
-      <img loading="lazy" className="w-16 h-16 rounded-md" alt="Track" src={`${environment.apiURL}/image/${cover}`}/> :
-      <MdImageNotSupported className="w-16 h-16 rounded-md"/>
-    }
+export const Track: React.VFC<TrackProps> = ({cover, title, duration, trackNr, index, author, startPlayback}) => (
+  <div className="flex even:bg-light-active p-2 mr-3 rounded-md">
+    <div className="relative group cursor-pointer" onClick={() => startPlayback(index)}>
+      {cover ?
+        <ResponsiveImage className="w-16 h-16 rounded-md" src={`${environment.apiURL}/image/${cover}`}/>
+        :
+        <MdImageNotSupported className="w-16 h-16 rounded-md"/>
+      }
+      <MdPlayCircle
+        className="h-6 w-6 absolute left-1/2 top-1/2 transform -translate-y-1/2 -translate-x-1/2 transition transition-opacity opacity-0 group-hover:opacity-100"/>
+    </div>
     <div className="pl-6 flex flex-grow items-center justify-between">
       <div className="flex items-center">
         {trackNr}
         <div className="pl-6 flex flex-col">
           <span>{title}</span>
-          <ALink href={`/authors${author}`}>
-            <span className="cursor-pointer hover:underline">{author}</span>
+          <ALink href={`/authors/${author.id}`}>
+            <span className="cursor-pointer hover:underline">{author.name}</span>
           </ALink>
         </div>
       </div>

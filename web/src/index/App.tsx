@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { MainMenu } from './App/Menu';
+import { MainMenu } from './App/Menu/Menu';
 import { RouterOutlet } from './App/RouterOutlet';
 
 function App() {

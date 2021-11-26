@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import { useInfinityScroll } from '../../Hooks/InfinityScroll';
 import { useScrollToTop } from '../../Hooks/ScrollToTop';
 import { useAudiobookState } from '../../State/AudiobookState';
+import { ResponsiveGrid } from '../Common/ResponsiveGrid';
 import { Series } from './Series';
 
 export const SeriesList: React.VFC = () => {
@@ -12,9 +13,11 @@ export const SeriesList: React.VFC = () => {
   useInfinityScroll(loading.current, getSeries);
 
 
-  return <div className="flex flex-wrap">
+  return (
+    <ResponsiveGrid>
     {series.map((series, k) =>
       <Series {...series} key={k}/>)}
     <div className="min-w-full text-center" ref={loading}>Loading ...</div>
-  </div>;
+  </ResponsiveGrid>
+  );
 };
