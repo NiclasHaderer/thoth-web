@@ -1,9 +1,8 @@
 import React from 'react';
 import { MdAccountCircle, MdBook, MdCollectionsBookmark, MdPerson } from 'react-icons/md';
-import { Link } from 'wouter';
 import { useBreakpoint } from '../../Hooks/Breakpoint';
 import { usePlaybackState } from '../../State/Playback';
-import { ActiveLink } from '../Common/ActiveLink';
+import { ActiveLink, ALink } from '../Common/ActiveLink';
 import { Playback } from '../Playback';
 import { Search } from './Search';
 
@@ -54,13 +53,13 @@ const SmallMenu: React.FC = ({children}) => (
 
 const MenuIcon: React.VFC = () => {
   return (
-    <Link href="/">
+    <ALink href="/" className="flex">
       <div className="inline-flex items-center cursor-pointer">
         <img loading="lazy" className="h-20 p-3" src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Thoth.svg"
              alt="Logo"/>
         <h1 className="font-extrabold font-serif text-3xl">THOTH</h1>
       </div>
-    </Link>
+    </ALink>
   );
 };
 const MenuItems: React.VFC = () => {
