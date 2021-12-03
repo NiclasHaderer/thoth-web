@@ -11,7 +11,7 @@ export interface AudibleAuthor extends AudibleSearchAuthor {
 
 export interface AudibleSearchSeries {
   asin: string;
-  index: number;
+  index: number | null;
   link: string;
   name: string;
 }
@@ -32,6 +32,7 @@ export interface AudibleSearchResult {
   image: string | null;
   language: string | null;
   link: string | null;
+  narrator: AudibleSearchAuthor | null;
   releaseDate: Date | null;
   series: AudibleSearchSeries | null;
   title: string | null;
@@ -45,7 +46,7 @@ export interface AudibleSearchAuthorImpl extends AudibleSearchAuthor {
 
 export interface AudibleSearchSeriesImpl extends AudibleSearchSeries {
   asin: string;
-  index: number;
+  index: number | null;
   link: string;
   name: string;
 }
@@ -56,6 +57,7 @@ export interface AudibleSearchResultImpl extends AudibleSearchResult {
   image: string | null;
   language: string | null;
   link: string | null;
+  narrator: AudibleSearchAuthorImpl | null;
   releaseDate: Date | null;
   series: AudibleSearchSeriesImpl | null;
   title: string | null;

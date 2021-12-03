@@ -15,7 +15,7 @@ interface BookProps {
 export const Book: React.VFC<BookProps> = ({cover, title, author, id}) => {
   return (
     <div className="mx-6 mb-6 inline-block w-52">
-      <ALink href={`/books/${id}`}>
+      <ALink href={`/books/${id}`} label={title}>
         {cover ?
             <ResponsiveImage
               className="w-52 h-52 rounded-xl border-1.5 cursor-pointer hover:border-primary border-transparent transition-colors"

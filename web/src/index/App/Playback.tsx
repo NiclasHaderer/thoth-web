@@ -29,7 +29,7 @@ export const Playback: React.VFC = () => {
                    percentage={percentage} onChange={setPercentage}/>
 
       <div className="flex items-center">
-        <ALink href={`/books/${track.book.id}`} className="mr-3">
+        <ALink href={`/books/${track.book.id}`} className="mr-3" label={track.title}>
           {track.cover ?
             <ResponsiveImage className="w-10 h-10 md:w-20 md:h-20 rounded-md"
                              src={`${environment.apiURL}/image/${track.cover}`}/>

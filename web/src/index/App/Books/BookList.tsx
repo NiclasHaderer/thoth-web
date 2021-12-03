@@ -1,7 +1,8 @@
 import React, { useRef } from 'react';
 import { useInfinityScroll } from '../../Hooks/InfinityScroll';
 import { useScrollToTop } from '../../Hooks/ScrollToTop';
-import { useAudiobookState } from '../../State/AudiobookState';
+import { selectBooks } from '../../State/Audiobook.Selectors';
+import { useAudiobookState } from '../../State/Audiobook.State';
 import { ResponsiveGrid } from '../Common/ResponsiveGrid';
 import { Book } from './Book';
 
@@ -10,7 +11,7 @@ export const BookList: React.VFC = () => {
   const loading = useRef<HTMLDivElement>(null);
   useScrollToTop('main');
   useInfinityScroll(loading.current, getBooks);
-  const books = useAudiobookState(s => s.books);
+  const books = useAudiobookState(selectBooks);
 
   return (
     <ResponsiveGrid>

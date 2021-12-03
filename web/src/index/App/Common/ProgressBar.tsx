@@ -1,4 +1,4 @@
-import React, { MouseEventHandler } from 'react';
+import React, { MouseEventHandler, useEffect, useState } from 'react';
 
 export const ProgressBar: React.VFC<{
   className?: string,
@@ -6,14 +6,19 @@ export const ProgressBar: React.VFC<{
   onChange?: (percentage: number) => void | undefined
 }> = ({percentage, onChange, className}) => {
 
+  const [width, setWidth] = useState(percentage);
+  useEffect(() => setWidth(percentage), [percentage]);
+
   const change: MouseEventHandler<HTMLElement> = (e) => {
-    onChange && onChange(e.pageX / window.innerWidth)
+    const w = e.pageX / window.innerWidth;
+    onChange && onChange(w);
+    setWidth(w);
   };
 
   return (
     <div className={`bg-gray-800 cursor-pointer h-1.5 ${className}`} onClick={change}>
       <div className={'absolute left-0 top-0 bottom-0 bg-primary transition-all duration-500'}
-           style={{width: `${percentage ? percentage * 100 : 0}%`}}/>
+           style={{width: `${width ? width * 100 : 0}%`}}/>
     </div>
   );
 };

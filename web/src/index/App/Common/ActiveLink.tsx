@@ -15,9 +15,9 @@ export const ActiveLink: React.FC<{ href: string, withSubroutes?: boolean }> = (
 };
 
 
-export const ALink: React.FC<{ href: string, onClick?: MouseEventHandler<HTMLAnchorElement>, className?: string  }> = ({href, children, onClick, className}) => {
+export const ALink: React.FC<{ href: string, onClick?: MouseEventHandler<HTMLAnchorElement>, className?: string, label?: string  }> = ({href, children, onClick, className, label}) => {
   return <Link href={href} onClick={onClick}>
-    <a href={href} className={className}>
+    <a href={href} className={className} aria-label={label}>
       {children}
     </a>
   </Link>;

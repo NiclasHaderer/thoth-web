@@ -53,7 +53,7 @@ const SmallMenu: React.FC = ({children}) => (
 
 const MenuIcon: React.VFC = () => {
   return (
-    <ALink href="/" className="flex">
+    <ALink href="/" className="flex" label={"HOME"}>
       <div className="inline-flex items-center cursor-pointer">
         <img loading="lazy" className="h-20 p-3" src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Thoth.svg"
              alt="Logo"/>
