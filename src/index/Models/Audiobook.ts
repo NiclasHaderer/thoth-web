@@ -23,7 +23,7 @@ export interface BookModel {
   description: string | null;
   id: string;
   language: string | null;
-  narrator: NamedId | null;
+  narrator: string | null;
   series: TitledId | null;
   seriesIndex: number | null;
   title: string;
@@ -42,11 +42,11 @@ export interface AuthorModelWithBooks {
 export interface TrackModel {
   accessTime: number;
   author: NamedId;
-  cover: string;
   book: TitledId;
+  cover: string | null;
   duration: number;
   id: string;
-  narrator: NamedId | null;
+  narrator: string | null;
   series: TitledId | null;
   seriesIndex: number | null;
   title: string;
@@ -60,7 +60,7 @@ export interface BookModelWithTracks {
   description: string | null;
   id: string;
   language: string | null;
-  narrator: NamedId | null;
+  narrator: string | null;
   series: TitledId | null;
   seriesIndex: number | null;
   title: string;
@@ -77,15 +77,15 @@ export interface SeriesModel {
   title: string;
 }
 
-export interface YearRange {
-  start: number;
-  end: number;
-}
-
 export interface SearchModel {
   authors: AuthorModel[];
   books: BookModel[];
   series: SeriesModel[];
+}
+
+export interface YearRange {
+  end: number;
+  start: number;
 }
 
 export interface SeriesModelWithBooks {
@@ -95,7 +95,7 @@ export interface SeriesModelWithBooks {
   books: BookModel[];
   description: string | null;
   id: string;
-  narrators: NamedId[];
-  yearRange: YearRange | null;
+  narrators: string[];
   title: string;
+  yearRange: YearRange | null;
 }

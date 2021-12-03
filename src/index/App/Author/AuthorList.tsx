@@ -1,7 +1,8 @@
 import React, { useRef } from 'react';
 import { useInfinityScroll } from '../../Hooks/InfinityScroll';
 import { useScrollToTop } from '../../Hooks/ScrollToTop';
-import { useAudiobookState } from '../../State/AudiobookState';
+import { selectAuthors } from '../../State/Audiobook.Selectors';
+import { useAudiobookState } from '../../State/Audiobook.State';
 import { ResponsiveGrid } from '../Common/ResponsiveGrid';
 import { Author } from './Author';
 
@@ -11,7 +12,7 @@ export const AuthorList: React.VFC = () => {
   useScrollToTop('main');
   useInfinityScroll(loading.current, getAuthors);
 
-  const authors = useAudiobookState(s => s.authors);
+  const authors = useAudiobookState(selectAuthors);
   return (
     <ResponsiveGrid>
       {authors.map((author, k) =>

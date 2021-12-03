@@ -2,15 +2,18 @@ import { sanitize } from 'dompurify';
 import React, { useCallback, useEffect } from 'react';
 import { MdImageNotSupported } from 'react-icons/all';
 import { useRoute } from 'wouter';
-import { getItemById } from '../../helpers';
-import { useAudiobookState } from '../../State/AudiobookState';
+import { selectSeries } from '../../State/Audiobook.Selectors';
+import { useAudiobookState } from '../../State/Audiobook.State';
+import { isSeriesWithBooks } from '../../State/Audiobook.Typeguards';
 import { Book } from '../Books/Book';
 import { ALink } from '../Common/ActiveLink';
+import { ResponsiveGrid } from '../Common/ResponsiveGrid';
 
 export const SeriesDetails: React.VFC = () => {
   const [, id] = useRoute('/series/:id');
   const getSeriesWithBooks = useAudiobookState(s => s.fetchSeriesWithBooks);
-  const series = useAudiobookState(useCallback(({series}) => getItemById(series, id?.id), [id?.id]));
+  //eslint-disable-next-line react-hooks/exhaustive-deps
+  const series = useAudiobookState(useCallback(selectSeries(id?.id), [id?.id]));
 
   useEffect(() => getSeriesWithBooks(id?.id!), [id?.id, getSeriesWithBooks]);
   if (!series) return <></>;
@@ -24,7 +27,7 @@ export const SeriesDetails: React.VFC = () => {
         </div>
         <div className="flex-grow pl-10 pl-4 md:pl-10">
           <h2 className="text-2xl pb-3">{series.title}</h2>
-          {'yearRange' in series && series.yearRange ?
+          {isSeriesWithBooks(series) && series.yearRange ?
             <h3 className="text-xl pb-3">{series.yearRange.start} - {series.yearRange.end}</h3>
             : ''}
           <div>
@@ -34,16 +37,18 @@ export const SeriesDetails: React.VFC = () => {
                 <h3 className="text-xl hover:underline">{series.author.name}</h3>
               </ALink>
             </div>
-            {'narrators' in series ?
-              series.narrators.map((narrator, i) => (
-                <div className="flex pb-3" key={i}>
-                  <h3 className="uppercase text-unimportant pr-3 min-w-40">Narrators</h3>
-
-                  <ALink href={`/authors/${narrator.id}`}>
-                    <h3 className="text-xl hover:underline">{narrator.name}</h3>
-                  </ALink>
+            {isSeriesWithBooks(series) ?
+              <div className="flex pb-3">
+                <h3 className="uppercase text-unimportant pr-3 min-w-40">Narrators</h3>
+                <div className="flex flex-wrap">
+                  {series.narrators.map((narrator, i) => (
+                    <h3 className="text-xl pr-2" key={i}>
+                      {narrator} {series.narrators.length === i + 1 ? null : ','}
+                    </h3>
+                  ))
+                  }
                 </div>
-              ))
+              </div>
               : ''}
 
             <div className="flex pb-3">
@@ -56,12 +61,17 @@ export const SeriesDetails: React.VFC = () => {
       <div className="prose w-full max-w-full text-current pb-6"
            dangerouslySetInnerHTML={{__html: sanitize(series.description || '')}}/>
 
-      <h2 className="p-2 pb-6 text-xl">
-        {'books' in series ? series.books.length : ''} Books
-      </h2>
+      {isSeriesWithBooks(series) ?
+        <>
+          <h2 className="p-2 pb-6 text-xl">
+            {series.books.length} Books
+          </h2>
+          <ResponsiveGrid>
+            {series.books.map((book, k) => <Book {...book} key={k}/>)}
+          </ResponsiveGrid>
+        </>
+        : null}
 
-      {('books' in series ? series.books : []).map((book, k) =>
-        <Book {...book} key={k}/>)}
     </>
   );
 };

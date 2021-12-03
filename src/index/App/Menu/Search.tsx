@@ -1,10 +1,20 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { MdImageNotSupported, MdPerson, MdSearch } from 'react-icons/md';
+import { getClient } from '../../Client/Client';
+import { withBaseUrl } from '../../Client/WithBaseUrl';
+import { withCaching } from '../../Client/WithCaching';
 import { environment } from '../../env';
 import { useOnMount } from '../../Hooks/OnMount';
 import { SearchModel } from '../../Models/Audiobook';
 import { ALink } from '../Common/ActiveLink';
 import { ResponsiveImage } from '../Common/ResponsiveImage';
+
+const CLIENT = withCaching(
+  withBaseUrl(
+    getClient(),
+    environment.apiURL
+  ), {useGlobalCache: false}
+);
 
 export const Search: React.VFC = () => {
   const [input, setInput] = useState('');
@@ -47,7 +57,7 @@ export const Search: React.VFC = () => {
     setResultVisible(true);
     clearTimeout(timeout.current);
     timeout.current = setTimeout(async () => {
-      const result = await fetch(`${environment.apiURL}/search?q=${input}`).then(r => r.json()) as SearchModel;
+      const result = await CLIENT.get<SearchModel>(`/search?q=${input}`);
       setSearchResult(result);
     }, 100) as unknown as number;
 
@@ -58,7 +68,7 @@ export const Search: React.VFC = () => {
     <div className="px-3 flex-grow shadow-none relative">
       <div className="relative bg-elevate rounded-3xl ">
         <span className="absolute inset-y-0 left-0 flex items-center pl-2">
-          <button type="submit" className="p-1">
+          <button type="submit" className="p-1" aria-label="search">
             <MdSearch className="w-6 h-6"/>
           </button>
         </span>
@@ -116,8 +126,9 @@ const AuthorSearchResult: React.VFC<{ authors: SearchModel['authors'], onClose: 
     {authors.length === 0 ?
       <div>No authors found</div> :
       authors.map((author, i) => (
-        <ALink href={`/authors/${author.id}`} onClick={onClose} key={i}>
-          <div className="flex items-center p-2 hover:bg-light-active rounded-md transition-colors transition focus:bg-light-active">
+        <ALink href={`/authors/${author.id}`} onClick={onClose} key={i} label={author.name}>
+          <div
+            className="flex items-center p-2 hover:bg-light-active rounded-md transition-colors transition focus:bg-light-active">
             {author.image ?
               <img className="rounded-full w-8 h-8" src={`${environment.apiURL}/image/${author.image}`} alt="Author"/>
               :
@@ -137,8 +148,9 @@ const BookSearchResult: React.VFC<{ books: SearchModel['books'], onClose: () => 
     {books.length === 0 ?
       <div>No authors found</div> :
       books.map((book, i) => (
-        <ALink href={`/books/${book.id}`} onClick={onClose} key={i}>
-          <div className="flex items-center p-2 hover:bg-light-active rounded-md transition-colors transition focus:bg-light-active">
+        <ALink href={`/books/${book.id}`} onClick={onClose} key={i} label={book.title}>
+          <div
+            className="flex items-center p-2 hover:bg-light-active rounded-md transition-colors transition focus:bg-light-active">
             {book.cover ?
               <ResponsiveImage className="w-8 h-8 rounded-md" src={`${environment.apiURL}/image/${book.cover}`}/> :
               <MdImageNotSupported className="rounded-full w-8 h-8"/>
@@ -157,8 +169,9 @@ const SeriesSearchResult: React.VFC<{ series: SearchModel['series'], onClose: ()
     {series.length === 0 ?
       <div>No authors found</div> :
       series.map((series, i) => (
-        <ALink href={`/series/${series.id}`} onClick={onClose} key={i}>
-          <div className="flex items-center p-2 hover:bg-light-active rounded-md transition-colors transition focus:bg-light-active">
+        <ALink href={`/series/${series.id}`} onClick={onClose} key={i} label={series.title}>
+          <div
+            className="flex items-center p-2 hover:bg-light-active rounded-md transition-colors transition focus:bg-light-active">
             <MdImageNotSupported className="w-8 h-8 rounded-md"/>
             <h4 className="pl-3">{series.title}</h4>
           </div>

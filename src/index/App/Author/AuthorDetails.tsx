@@ -3,14 +3,16 @@ import React, { useCallback, useEffect } from 'react';
 import { MdPerson } from 'react-icons/all';
 import { useRoute } from 'wouter';
 import { environment } from '../../env';
-import { getItemById } from '../../helpers';
-import { useAudiobookState } from '../../State/AudiobookState';
+import { selectAuthor } from '../../State/Audiobook.Selectors';
+import { useAudiobookState } from '../../State/Audiobook.State';
+import { isAuthorWithBooks } from '../../State/Audiobook.Typeguards';
 import { Book } from '../Books/Book';
 import { ResponsiveImage } from '../Common/ResponsiveImage';
 
 export const AuthorDetails: React.VFC = () => {
   const [, id] = useRoute('/authors/:id');
-  const author = useAudiobookState(useCallback(({authors}) => getItemById(authors, id?.id), [id?.id]));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const author = useAudiobookState(useCallback(selectAuthor(id?.id), [id?.id]));
   const fetchAuthorDetails = useAudiobookState(s => s.fetchAuthorWithBooks);
 
   useEffect(() => fetchAuthorDetails(id?.id!), [id?.id, fetchAuthorDetails]);
@@ -32,7 +34,7 @@ export const AuthorDetails: React.VFC = () => {
       />
 
       <div className="flex flex-wrap">
-        {('books' in author ? author.books : []).map((book, k) => <Book {...book} key={k}/>)}
+        {(isAuthorWithBooks(author) ? author.books : []).map((book, k) => <Book {...book} key={k}/>)}
       </div>
     </>
   );

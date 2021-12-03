@@ -4,9 +4,10 @@ import { MdEdit, MdImageNotSupported, MdPlayCircle } from 'react-icons/md';
 
 import { useRoute } from 'wouter';
 import { environment } from '../../env';
-import { getItemById } from '../../helpers';
 import { BookModelWithTracks } from '../../Models/Audiobook';
-import { useAudiobookState } from '../../State/AudiobookState';
+import { selectBook } from '../../State/Audiobook.Selectors';
+import { useAudiobookState } from '../../State/Audiobook.State';
+import { isBookWithTracks } from '../../State/Audiobook.Typeguards';
 import { usePlaybackState } from '../../State/Playback';
 import { ALink } from '../Common/ActiveLink';
 import { ColoredButton } from '../Common/ColoredButton';
@@ -18,7 +19,8 @@ export const BookDetails = () => {
   const getBookWithTracks = useAudiobookState(s => s.fetchBookWithTracks);
   const play = usePlaybackState(state => state.start);
 
-  const book = useAudiobookState(useCallback(({books}) => getItemById(books, id?.id), [id?.id]));
+  //eslint-disable-next-line react-hooks/exhaustive-deps
+  const book = useAudiobookState(useCallback(selectBook(id?.id), [id?.id]));
 
   useEffect(() => getBookWithTracks(id?.id!), [id?.id, getBookWithTracks]);
   if (!book) return <></>;
@@ -47,7 +49,10 @@ export const BookDetails = () => {
         <div className="flex-grow pl-10 pl-4 md:pl-10 flex-col flex justify-between">
           <div>
             <h2 className="text-2xl pb-3">{book.title}</h2>
-            <h3 className="text-xl pb-3">{book.year}</h3>
+            {book.year ? <div className="flex pb-3">
+              <h3 className="uppercase text-unimportant pr-3 min-w-40">Year</h3>
+              <h3 className="text-xl hover:underline">{book.year}</h3>
+            </div> : null}
             <div className="flex pb-3">
               <h3 className="uppercase text-unimportant pr-3 min-w-40">Author</h3>
               <ALink href={`/authors/${book.author.id}`}>
@@ -57,9 +62,7 @@ export const BookDetails = () => {
             {book.narrator ?
               <div className="flex pb-3">
                 <h3 className="uppercase text-unimportant pr-3 min-w-40">Narrator</h3>
-                <ALink href={`/authors/${book.narrator.id}`}>
-                  <h3 className="text-xl hover:underline">{book.narrator.name}</h3>
-                </ALink>
+                <h3 className="text-xl">{book.narrator}</h3>
               </div>
               : ''}
             {book.series ?
@@ -96,11 +99,10 @@ export const BookDetails = () => {
       <div className="prose w-full max-w-full text-current pb-6"
            dangerouslySetInnerHTML={{__html: sanitize(book.description || '')}}/>
       <div>
-        <h3 className="p-2 text-xl pb-6">{'tracks' in book ? book.tracks.length : ''} Tracks</h3>
-
+        <h3 className="p-2 text-xl pb-6">{isBookWithTracks(book) ? book.tracks.length : ''} Tracks</h3>
         {
-          ('tracks' in book ? book.tracks : []).map((track, k) => <Track startPlayback={startPlayback} {...track}
-                                                                         key={k} index={k}/>)
+          (isBookWithTracks(book) ? book.tracks : []).map((track, k) => <Track startPlayback={startPlayback} {...track}
+                                                                               key={k} index={k}/>)
         }
       </div>
     </>
