@@ -1,8 +1,14 @@
 module.exports = {
-    purge: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
-    darkMode: false, // or 'media' or 'class'
+    purge: {
+        content: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
+        safelist: []
+    },
+    darkMode: false,
     theme: {
         extend: {
+            outline: {
+                none: ['none !important'],
+            },
             zIndex: {
                 '-1': '-1',
             },
@@ -92,9 +98,6 @@ module.exports = {
                 '80': ' 20rem',
                 '96': ' 24rem',
             }
-        },
-        boxShadow: {
-            none: 'none!important',
         },
         typography: (theme) => ({
             default: {

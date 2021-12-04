@@ -1,6 +1,6 @@
 import { sanitize } from 'dompurify';
 import React, { useCallback, useEffect } from 'react';
-import { MdEdit, MdImageNotSupported, MdPlayCircle } from 'react-icons/md';
+import { MdImageNotSupported, MdPlayCircle } from 'react-icons/md';
 
 import { useRoute } from 'wouter';
 import { environment } from '../../env';
@@ -13,6 +13,7 @@ import { ALink } from '../Common/ActiveLink';
 import { ColoredButton } from '../Common/ColoredButton';
 import { ResponsiveImage } from '../Common/ResponsiveImage';
 import { Track } from '../Track/Track';
+import { BookedEdit } from './BookedEdit';
 
 export const BookDetails = () => {
   const [, id] = useRoute('/books/:id');
@@ -90,9 +91,7 @@ export const BookDetails = () => {
             <ColoredButton className="mr-3" onClick={() => startPlayback(0)}>
               <MdPlayCircle className="mr-2"/> Play
             </ColoredButton>
-            <ColoredButton className="bg-elevate">
-              <MdEdit className="mr-2"/> Edit
-            </ColoredButton>
+            <BookedEdit/>
           </div>
         </div>
       </div>
