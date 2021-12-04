@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+
 ::-webkit-scrollbar {
     @apply w-2 h-2;
 }
@@ -13,4 +14,9 @@
 ::-webkit-scrollbar-thumb {
     @apply rounded-full
     transition transition-colors bg-light-active hover:bg-active;
+}
+
+input{
+    @apply border-0 shadow-none bg-transparent focus:bg-light-active transition-all;
+    outline: none !important;
 }

@@ -66,7 +66,7 @@ export const Search: React.VFC = () => {
 
   return (
     <div className="px-3 flex-grow shadow-none relative">
-      <div className="relative bg-elevate rounded-3xl ">
+      <div className="relative bg-elevate rounded-3xl overflow-hidden">
         <span className="absolute inset-y-0 left-0 flex items-center pl-2">
           <button type="submit" className="p-1" aria-label="search">
             <MdSearch className="w-6 h-6"/>
@@ -87,7 +87,7 @@ export const Search: React.VFC = () => {
               setResultVisible(true);
             }
           }}
-          className="mt-0 block pl-10 px-0.5 py-2 w-full border-0 shadow-none bg-transparent outline-none"
+          className="mt-0 block pl-10 px-0.5 py-2 w-full"
         />
       </div>
       {
