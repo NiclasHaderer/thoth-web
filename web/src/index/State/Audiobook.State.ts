@@ -1,10 +1,5 @@
 import create from 'zustand';
-import { getClient } from '../Client/Client';
-import { withBaseUrl } from '../Client/WithBaseUrl';
-import { withCaching } from '../Client/WithCaching';
-import { withErrorHandler } from '../Client/WithErrorHandler';
-import { withPersistence } from '../Client/WithPersistence';
-import { withRenew } from '../Client/WithRenew';
+import { getClient, withBaseUrl, withCaching, withErrorHandler, withPersistence, withRenew } from '../Client';
 import { environment } from '../env';
 import { replaceRangeInList, toIdRecord } from '../helpers';
 import {

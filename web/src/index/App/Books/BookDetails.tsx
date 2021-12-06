@@ -52,42 +52,42 @@ export const BookDetails = () => {
             <h2 className="text-2xl pb-3">{book.title}</h2>
             {book.year ? <div className="flex pb-3">
               <h3 className="uppercase text-unimportant pr-3 min-w-40">Year</h3>
-              <h3 className="text-xl hover:underline">{book.year}</h3>
+              <h3 className="hover:underline">{book.year}</h3>
             </div> : null}
             <div className="flex pb-3">
               <h3 className="uppercase text-unimportant pr-3 min-w-40">Author</h3>
               <ALink href={`/authors/${book.author.id}`}>
-                <h3 className="text-xl hover:underline">{book.author.name}</h3>
+                <h3 className="hover:underline">{book.author.name}</h3>
               </ALink>
             </div>
             {book.narrator ?
               <div className="flex pb-3">
                 <h3 className="uppercase text-unimportant pr-3 min-w-40">Narrator</h3>
-                <h3 className="text-xl">{book.narrator}</h3>
+                <h3>{book.narrator}</h3>
               </div>
               : ''}
             {book.series ?
               <div className="flex pb-3">
                 <h3 className="uppercase text-unimportant pr-3 min-w-40">Series</h3>
                 <ALink href={`/series/${book.series.id}`}>
-                  <h3 className="text-xl hover:underline">{book.series.title}</h3>
+                  <h3 className="hover:underline">{book.series.title}</h3>
                 </ALink>
               </div>
               : ''}
             {book.seriesIndex ?
               <div className="flex pb-3">
                 <h3 className="uppercase text-unimportant pr-3 min-w-40">Series Index</h3>
-                <h3 className="text-xl hover:underline">{book.seriesIndex}</h3>
+                <h3 className="hover:underline">{book.seriesIndex}</h3>
               </div>
               : ''}
             {book.language ?
               <div className="flex pb-3">
                 <h3 className="uppercase text-unimportant pr-3 min-w-40">Language</h3>
-                <h3 className="text-xl">{book.language}</h3>
+                <h3>{book.language}</h3>
               </div>
               : ''}
           </div>
-          <div>
+          <div className="mt-2">
             <ColoredButton className="mr-3" onClick={() => startPlayback(0)}>
               <MdPlayCircle className="mr-2"/> Play
             </ColoredButton>

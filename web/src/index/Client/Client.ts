@@ -1,5 +1,14 @@
-export type TClient = ReturnType<typeof getClient>;
 export type HTTP_METHOD = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+
+export type TClient = {
+  request<T>(method: HTTP_METHOD, url: string, body?: any): Promise<T>
+  get<T>(url: string): Promise<T>
+  post<T, B = any>(url: string, body: B): Promise<T>
+  patch<T, B = any>(url: string, body: Partial<B>): Promise<T>
+  put<T, B = any>(url: string, body: B): Promise<T>
+  delete<T, B = any>(url: string, body: B): Promise<T>
+}
+
 
 export const getClient = () => {
   return {

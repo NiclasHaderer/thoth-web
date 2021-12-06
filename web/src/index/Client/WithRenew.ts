@@ -1,4 +1,4 @@
-import { CacheHolder, TCachingClient } from './WithCaching';
+import { TCachingClient, TInternalCachingClient } from './WithCaching';
 
 export type TRenewClient = {
     renewCache(force: boolean): void,
@@ -8,7 +8,7 @@ export type TRenewClient = {
 
 
 export const withRenew = <C extends TCachingClient>(cachingClient: C): C & TRenewClient => {
-  const _cacheClient = cachingClient as unknown as TCachingClient & { getCache(): CacheHolder, getExpiry(): number; };
+  const _cacheClient = cachingClient as unknown as TInternalCachingClient;
   const cache = _cacheClient.getCache();
   const expiry = _cacheClient.getExpiry();
 

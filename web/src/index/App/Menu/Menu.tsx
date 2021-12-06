@@ -17,7 +17,7 @@ export const MainMenu: React.FC = ({children}) => {
         <MdAccountCircle className="cursor-pointer mr-3 h-8 w-8"/>
       </div>
       <div className="flex-grow overflow-hidden">
-        {breakPoint.matchDown('lg') ?
+        {breakPoint.matchDown('md') ?
           <SmallMenu children={children}/> : <LargeMenu children={children}/>
         }
       </div>
@@ -32,7 +32,7 @@ const LargeMenu: React.FC = ({children}) => (
     <aside className="overflow-hidden inline-block bg-elevate rounded-xl my-10 ml-10 min-w-80 max-w-80">
       <MenuItems/>
     </aside>
-    <main className="mt-10 px-10 pb-10 inline overflow-x-hidden overflow-y-auto flex-grow">
+    <main tabIndex={-1} className="mt-10 px-10 pb-10 inline overflow-x-hidden overflow-y-auto flex-grow">
       {children}
     </main>
   </div>
@@ -42,9 +42,11 @@ const LargeMenu: React.FC = ({children}) => (
 const SmallMenu: React.FC = ({children}) => (
   <div className="flex flex-col h-full">
     <aside className="block m-3 bg-elevate rounded-xl">
-      <MenuItems/>
+      <div className="rounded-xl overflow-hidden">
+        <MenuItems/>
+      </div>
     </aside>
-    <main className="block overflow-y-auto p-3">
+    <main tabIndex={-1} className="block overflow-y-auto p-3">
       {children}
     </main>
   </div>
@@ -53,7 +55,7 @@ const SmallMenu: React.FC = ({children}) => (
 
 const MenuIcon: React.VFC = () => {
   return (
-    <ALink href="/" className="flex" label={"HOME"}>
+    <ALink href="/" className="flex" label={'HOME'}>
       <div className="inline-flex items-center cursor-pointer">
         <img loading="lazy" className="h-20 p-3" src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Thoth.svg"
              alt="Logo"/>
