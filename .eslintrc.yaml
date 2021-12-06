@@ -1,0 +1,25 @@
+root: true
+extends:
+  - react-app
+  - react-app/jest
+  - plugin:import/errors
+
+rules:
+  import/no-internal-modules:
+    - error
+    - forbid:
+        - "**/client/*"
+
+settings:
+  import/ignore:
+    - node_modules
+    - "*.coffee$"
+
+  import/resolver:
+    node:
+      extensions:
+        - .js
+        - .jsx
+        - .ts
+        - .tsx
+

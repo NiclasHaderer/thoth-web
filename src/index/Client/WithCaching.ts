@@ -4,11 +4,13 @@ export type TCachingClient = {
   expire(): void;
   get<T>(url: string, forceNew?: boolean): Promise<T>;
 };
-
+export type TInternalCachingClient = TCachingClient & {
+  getCache(): CacheHolder;
+  getExpiry(): number;
+};
 type Cache = Record<string, CacheEntry<any>>;
-export type CacheHolder = { entry: Cache };
-
-export type CacheEntry<T> = {
+type CacheHolder = { entry: Cache };
+type CacheEntry<T> = {
   entryDate: number,
   entry: T
 }
@@ -34,12 +36,15 @@ const saveEntryInCache = (cache: Cache, key: string, value: any) => {
   };
 };
 
-const globalCache: CacheHolder = {entry: {}};
+const GLOBAL_CACHE: CacheHolder = {entry: {}};
 
-export const withCaching = <C extends TClient>(client: C, {expiresSeconds = 1800, useGlobalCache = true} = {}): C & TCachingClient => {
+export const withCaching = <C extends TClient>(client: C, {
+  expiresSeconds = 1800,
+  useGlobalCache = true
+} = {}): C & TCachingClient => {
   const expiresMs = expiresSeconds * 1000;
 
-  const cache: CacheHolder = useGlobalCache ? globalCache : {entry: {}};
+  const cache: CacheHolder = useGlobalCache ? GLOBAL_CACHE : {entry: {}};
 
   return {
     ...client,
@@ -61,6 +66,6 @@ export const withCaching = <C extends TClient>(client: C, {expiresSeconds = 1800
     getExpiry(): number {
       return expiresMs;
     }
-  };
+  } as C & TInternalCachingClient;
 
 };

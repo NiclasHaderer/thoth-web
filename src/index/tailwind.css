@@ -16,7 +16,7 @@
     transition transition-colors bg-light-active hover:bg-active;
 }
 
-input{
+input {
     @apply border-0 shadow-none bg-transparent focus:bg-light-active transition-all;
     outline: none !important;
 }

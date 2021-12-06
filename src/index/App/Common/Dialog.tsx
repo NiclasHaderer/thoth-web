@@ -38,15 +38,13 @@ export const Dialog: React.FC<DialogProps> = ({isOpen, closeModal, title, childr
               leaveTo="opacity-0 scale-95"
             >
               <div
-                className="inline-block w-full max-w-md overflow-hidden text-left align-middle transition-all transform shadow-2xl bg-background rounded-2xl">
+                className="inline-block w-full sm:max-w-full md:max-w-2xl overflow-hidden text-left align-middle transition-all transform shadow-2xl bg-background rounded-2xl">
                 <div className="bg-light-active p-6">
-                  <HDialog.Title as="h3" className="text-lg font-medium leading-6">
+                  <HDialog.Title as="h3" className="text-xl font-medium leading-6">
                     {title}
                   </HDialog.Title>
                   <div className="mt-2">
-                    <div className="text-sm">
-                      {children}
-                    </div>
+                    {children}
                   </div>
 
                   <div className="mt-4">

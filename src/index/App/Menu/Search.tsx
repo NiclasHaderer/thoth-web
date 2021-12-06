@@ -1,8 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { MdImageNotSupported, MdPerson, MdSearch } from 'react-icons/md';
-import { getClient } from '../../Client/Client';
-import { withBaseUrl } from '../../Client/WithBaseUrl';
-import { withCaching } from '../../Client/WithCaching';
+import { getClient, withBaseUrl, withCaching } from '../../Client';
 import { environment } from '../../env';
 import { useOnMount } from '../../Hooks/OnMount';
 import { SearchModel } from '../../Models/Audiobook';
