@@ -4,7 +4,7 @@ import { MdImageNotSupported, MdPlayCircle } from 'react-icons/md';
 
 import { useRoute } from 'wouter';
 import { environment } from '../../env';
-import { BookModelWithTracks } from '../../Models/Audiobook';
+import { BookModelWithTracks } from '../../API/Audiobook';
 import { selectBook } from '../../State/Audiobook.Selectors';
 import { useAudiobookState } from '../../State/Audiobook.State';
 import { isBookWithTracks } from '../../State/Audiobook.Typeguards';
@@ -52,12 +52,13 @@ export const BookDetails = () => {
             <h2 className="text-2xl pb-3">{book.title}</h2>
             {book.year ? <div className="flex pb-3">
               <h3 className="uppercase text-unimportant pr-3 min-w-40">Year</h3>
-              <h3 className="hover:underline">{book.year}</h3>
+              <h3>{book.year}</h3>
             </div> : null}
             <div className="flex pb-3">
               <h3 className="uppercase text-unimportant pr-3 min-w-40">Author</h3>
               <ALink href={`/authors/${book.author.id}`}>
-                <h3 className="hover:underline">{book.author.name}</h3>
+                <h3
+                  className="group-focus:underline group-focus:underline group-focus:underline  hover:underline focus:underline">{book.author.name}</h3>
               </ALink>
             </div>
             {book.narrator ?
@@ -70,14 +71,14 @@ export const BookDetails = () => {
               <div className="flex pb-3">
                 <h3 className="uppercase text-unimportant pr-3 min-w-40">Series</h3>
                 <ALink href={`/series/${book.series.id}`}>
-                  <h3 className="hover:underline">{book.series.title}</h3>
+                  <h3 className="group-focus:underline hover:underline">{book.series.title}</h3>
                 </ALink>
               </div>
               : ''}
             {book.seriesIndex ?
               <div className="flex pb-3">
                 <h3 className="uppercase text-unimportant pr-3 min-w-40">Series Index</h3>
-                <h3 className="hover:underline">{book.seriesIndex}</h3>
+                <h3>{book.seriesIndex}</h3>
               </div>
               : ''}
             {book.language ?
@@ -91,7 +92,7 @@ export const BookDetails = () => {
             <ColoredButton className="mr-3" onClick={() => startPlayback(0)}>
               <MdPlayCircle className="mr-2"/> Play
             </ColoredButton>
-            <BookedEdit/>
+            <BookedEdit book={book}/>
           </div>
         </div>
       </div>

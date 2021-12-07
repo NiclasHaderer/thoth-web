@@ -1,3 +1,4 @@
+import { FieldMetaProps, useField } from 'formik';
 import React, { HTMLInputTypeAttribute, ReactNode } from 'react';
 
 interface InputProps extends React.HTMLAttributes<HTMLInputElement> {
@@ -5,17 +6,20 @@ interface InputProps extends React.HTMLAttributes<HTMLInputElement> {
   icon?: ReactNode | undefined;
   iconPosition?: 'left' | 'right' | undefined;
   labelClassName?: string | undefined;
+  name?: string | undefined;
   type?: HTMLInputTypeAttribute | undefined;
+  meta?: FieldMetaProps<any> | undefined;
 }
 
 export const Input: React.VFC<InputProps> = (
   {
     iconPosition = 'left',
     icon,
-    placeholder,
     label,
+    placeholder = label,
     labelClassName,
     className,
+    meta,
     ...props
   }) => (
   <label className="flex items-center">
@@ -29,6 +33,16 @@ export const Input: React.VFC<InputProps> = (
       </div> : null}
       <input placeholder={placeholder} {...props}
              className={`p-2 w-full bg-elevate rounded-md box-border ${iconPosition === 'left' && icon ? 'pl-8' : 'pr-8'} ${className ? className : ''}`}/>
+      {meta?.touched && meta.error ? (
+        <div className="error">{meta.error}</div>
+      ) : null}
     </div>
   </label>
 );
+
+export const FormikInput: React.VFC<InputProps & { name: string }> = ({name, ...props}) => {
+  const [field, meta] = useField(name);
+  return (
+    <Input {...props} {...field} meta={meta}/>
+  );
+};

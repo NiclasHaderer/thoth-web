@@ -1,4 +1,4 @@
-import React, { MouseEventHandler } from 'react';
+import React, { AnchorHTMLAttributes } from 'react';
 import { Link, useRoute } from 'wouter';
 
 
@@ -9,15 +9,19 @@ export const ActiveLink: React.FC<{ href: string, withSubroutes?: boolean }> = (
   const isActive = withSubroutes ? isSubRoute || isRoute : isRoute;
   return (
     <Link href={href}>
-      <a href={href} className={`cursor-pointer ${isActive ? 'text-primary' : ''}`}>{children}</a>
+      <a href={href} className={`cursor-pointer group ${isActive ? 'text-primary' : ''}`}>{children}</a>
     </Link>
   );
 };
 
+interface ALinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
+  href: string;
+}
 
-export const ALink: React.FC<{ href: string, onClick?: MouseEventHandler<HTMLAnchorElement>, className?: string, label?: string  }> = ({href, children, onClick, className, label}) => {
-  return <Link href={href} onClick={onClick}>
-    <a href={href} className={className} aria-label={label}>
+
+export const ALink: React.FC<ALinkProps> = ({href, children, className, ...props}) => {
+  return <Link href={href}>
+    <a href={href} className={`group ${className || ''}`} {...props}>
       {children}
     </a>
   </Link>;

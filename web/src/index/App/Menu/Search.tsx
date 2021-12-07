@@ -3,7 +3,7 @@ import { MdImageNotSupported, MdPerson, MdSearch } from 'react-icons/md';
 import { getClient, withBaseUrl, withCaching } from '../../Client';
 import { environment } from '../../env';
 import { useOnMount } from '../../Hooks/OnMount';
-import { SearchModel } from '../../Models/Audiobook';
+import { SearchModel } from '../../API/Audiobook';
 import { ALink } from '../Common/ActiveLink';
 import { ResponsiveImage } from '../Common/ResponsiveImage';
 
@@ -66,7 +66,7 @@ export const Search: React.VFC = () => {
     <div className="px-3 flex-grow shadow-none relative">
       <div className="relative bg-elevate rounded-3xl overflow-hidden">
         <span className="absolute inset-y-0 left-0 flex items-center pl-2">
-          <button type="submit" className="p-1" aria-label="search">
+          <button type="submit" className="p-1" aria-label="search" tabIndex={-1}>
             <MdSearch className="w-6 h-6"/>
           </button>
         </span>
@@ -124,7 +124,7 @@ const AuthorSearchResult: React.VFC<{ authors: SearchModel['authors'], onClose: 
     {authors.length === 0 ?
       <div>No authors found</div> :
       authors.map((author, i) => (
-        <ALink href={`/authors/${author.id}`} onClick={onClose} key={i} label={author.name}>
+        <ALink href={`/authors/${author.id}`} onClick={onClose} key={i} aria-label={author.name}>
           <div
             className="flex items-center p-2 hover:bg-light-active rounded-md transition-colors transition focus:bg-light-active">
             {author.image ?
@@ -146,7 +146,7 @@ const BookSearchResult: React.VFC<{ books: SearchModel['books'], onClose: () => 
     {books.length === 0 ?
       <div>No authors found</div> :
       books.map((book, i) => (
-        <ALink href={`/books/${book.id}`} onClick={onClose} key={i} label={book.title}>
+        <ALink href={`/books/${book.id}`} onClick={onClose} key={i} aria-label={book.title}>
           <div
             className="flex items-center p-2 hover:bg-light-active rounded-md transition-colors transition focus:bg-light-active">
             {book.cover ?
@@ -167,7 +167,7 @@ const SeriesSearchResult: React.VFC<{ series: SearchModel['series'], onClose: ()
     {series.length === 0 ?
       <div>No authors found</div> :
       series.map((series, i) => (
-        <ALink href={`/series/${series.id}`} onClick={onClose} key={i} label={series.title}>
+        <ALink href={`/series/${series.id}`} onClick={onClose} key={i} aria-label={series.title}>
           <div
             className="flex items-center p-2 hover:bg-light-active rounded-md transition-colors transition focus:bg-light-active">
             <MdImageNotSupported className="w-8 h-8 rounded-md"/>

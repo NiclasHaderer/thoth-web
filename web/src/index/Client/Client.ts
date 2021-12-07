@@ -11,12 +11,29 @@ export type TClient = {
 
 
 export const getClient = () => {
+
+  const executeRequest = (method: HTTP_METHOD, url: string, body: any) => {
+    const isJson = typeof body === 'object';
+    return fetch(url, {
+      method,
+      body: isJson ? JSON.stringify(body) : body,
+      headers: {
+        ...(isJson ? {'Content-Type': 'application/json'} : {})
+      }
+    });
+  };
+
+
   return {
-    request: <T>(method: HTTP_METHOD, url: string, body: any = null): Promise<T> => {
-      return fetch(url, {
-        method,
-        body: body ? JSON.stringify(body) : undefined,
-      }).then(r => r.json());
+    request: <T>(method: HTTP_METHOD, url: string, body: any = undefined): Promise<T> => {
+      return new Promise<T>(async (resolve, reject) => {
+        const response = await executeRequest(method, url, body);
+        if (response.status >= 400) {
+          reject(response);
+        }
+        resolve(response.json());
+      });
+
     },
     get<T>(url: string): Promise<T> {
       return this.request('GET', url);

@@ -3,8 +3,9 @@ import { HTTP_METHOD, TClient } from './Client';
 export const withBaseUrl = <C extends TClient>(client: C, baseURL: string): C => {
   return {
     ...client,
-    request<T>(method: HTTP_METHOD, url: string, body: any = null): Promise<T> {
-      return client.request<T>(method, `${baseURL}/${url}`, body)
+    request<T>(method: HTTP_METHOD, url: string, body: any = undefined): Promise<T> {
+      const replaceUrl = new URL(url, baseURL).toString();
+      return client.request<T>(method, replaceUrl, body);
     }
   };
 };

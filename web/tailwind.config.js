@@ -89,7 +89,9 @@ module.exports = {
                 '1.5': '1.5px',
             },
             minWidth: SIZE,
-            maxWidth: SIZE
+            maxWidth: SIZE,
+            minHeight: SIZE,
+            maxHeight: SIZE,
         },
         typography: (theme) => ({
             default: {
@@ -123,6 +125,7 @@ module.exports = {
     variants: {
         extend: {
             backgroundColor: ['odd', 'even', 'group-focus'],
+            textDecoration: ['group-focus'],
         },
     },
     plugins: [

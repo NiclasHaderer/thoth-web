@@ -34,10 +34,10 @@ export const SeriesDetails: React.VFC = () => {
             <div className="flex pb-3">
               <h3 className="uppercase text-unimportant pr-3 min-w-40">Author</h3>
               <ALink href={`/authors/${series.author.id}`}>
-                <h3 className="text-xl hover:underline">{series.author.name}</h3>
+                <h3 className="text-xl group-focus:underline  hover:underline">{series.author.name}</h3>
               </ALink>
             </div>
-            {isSeriesWithBooks(series) ?
+            {isSeriesWithBooks(series) && series.narrators.length > 0 ?
               <div className="flex pb-3">
                 <h3 className="uppercase text-unimportant pr-3 min-w-40">Narrators</h3>
                 <div className="flex flex-wrap">

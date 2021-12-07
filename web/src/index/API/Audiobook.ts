@@ -83,6 +83,31 @@ export interface SearchModel {
   series: SeriesModel[];
 }
 
+export interface PatchAuthor {
+  asin: string | null;
+  biography: string | null;
+  image: string | null;
+  name: string | null;
+}
+
+export interface PatchSeries {
+  asin: string | null;
+  description: string | null;
+  title: string | null;
+}
+
+export interface PatchBook {
+  asin: string | null;
+  author: string | null;
+  cover: string | null;
+  description: string | null;
+  language: string | null;
+  narrator: string | null;
+  series: string | null;
+  seriesIndex: number | null;
+  title: string | null;
+}
+
 export interface YearRange {
   end: number;
   start: number;
