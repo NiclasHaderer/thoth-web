@@ -1,5 +1,5 @@
 import create from 'zustand';
-import { TrackModel } from '../Models/Audiobook';
+import { TrackModel } from '../API/Audiobook';
 
 interface PlaybackState {
   isPlaying: boolean;

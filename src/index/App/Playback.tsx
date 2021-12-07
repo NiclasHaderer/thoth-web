@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { MdImageNotSupported, MdPauseCircle, MdPlayCircle, MdSkipNext, MdSkipPrevious, MdStop } from 'react-icons/md';
 import { environment } from '../env';
 import { useAudio, useDuration, useOnEnded, usePercentage, usePlayState, usePosition } from '../Hooks/Playback';
@@ -15,9 +15,14 @@ export const Playback: React.VFC = () => {
   const [audio] = useAudio(track?.id ? `${environment.apiURL}/audio/${track!.id}` : undefined);
   const [position] = usePosition(audio);
   const duration = useDuration(audio);
+  const initialFocus = useRef<HTMLButtonElement>(null);
   const [percentage, setPercentage] = usePercentage(audio);
   const [playing, setPlaying] = usePlayState(audio);
   useOnEnded(audio, playback.next);
+
+  useEffect(() => {
+    initialFocus.current && initialFocus.current.focus();
+  }, [initialFocus]);
 
   if (!track) return <></>;
 
@@ -29,7 +34,7 @@ export const Playback: React.VFC = () => {
                    percentage={percentage} onChange={setPercentage}/>
 
       <div className="flex items-center">
-        <ALink href={`/books/${track.book.id}`} className="mr-3" label={track.title}>
+        <ALink href={`/books/${track.book.id}`} className="mr-3" aria-label={track.title} tabIndex={-1}>
           {track.cover ?
             <ResponsiveImage className="w-10 h-10 md:w-20 md:h-20 rounded-md"
                              src={`${environment.apiURL}/image/${track.cover}`}/>
@@ -41,8 +46,10 @@ export const Playback: React.VFC = () => {
         <div className="flex flex-col justify-around">
           {track.trackNr ? track.trackNr + '. ' : null} {track.title}
           <div>
-            <ALink className="hover:underline pr-2" href={`/authors/${track.author.id}`}>{track.author.name}</ALink>-
-            <ALink className="hover:underline pl-2" href={`/books/${track.book.id}`}>{track.book.title}</ALink>
+            <ALink className="focus:underline hover:underline pr-2"
+                   href={`/authors/${track.author.id}`}>{track.author.name}</ALink>-
+            <ALink className="focus:underline hover:underline pl-2"
+                   href={`/books/${track.book.id}`}>{track.book.title}</ALink>
           </div>
         </div>
       </div>
@@ -54,17 +61,27 @@ export const Playback: React.VFC = () => {
 
       <audio/>
       <div className="flex items-center">
-        <MdSkipPrevious className={`w-8 h-8 m-2 cursor-pointer ${playback.history.length === 0 ? 'text-elevate' : ''}`}
-                        onClick={playback.previous}/>
-        <span onClick={() => setPlaying(!playing)}>
-         {playing ?
-           <MdPauseCircle className="w-8 h-8 m-2 cursor-pointer"/>
-           :
-           <MdPlayCircle className="w-8 h-8 m-2 cursor-pointer"/>}
-        </span>
-        <MdSkipNext className={`w-8 h-8 m-2 cursor-pointer ${playback.queue.length === 0 ? 'text-elevate' : ''}`}
-                    onClick={playback.next}/>
-        <MdStop className="w-8 h-8 m-2 cursor-pointer" onClick={playback.stop}/>
+        <button onClick={playback.previous} disabled={playback.history.length === 0}
+                className={`w-10 h-10 p-1 focus:bg-light-active rounded-full ${playback.history.length === 0 ? 'text-elevate' : ''}`}>
+          <MdSkipPrevious className="w-full h-full"/>
+        </button>
+        <button className="w-10 h-10 p-1 focus:bg-light-active rounded-full"
+                onClick={() => setPlaying(!playing)} ref={initialFocus}
+        >
+          {playing ?
+            <MdPauseCircle className="w-full h-full"/>
+            :
+            <MdPlayCircle className="w-full h-full"/>}
+        </button>
+        <button onClick={playback.next} disabled={playback.queue.length === 0}
+                className={`w-10 h-10 p-1 focus:bg-light-active rounded-full ${playback.queue.length === 0 ? 'text-elevate' : ''}`}>
+          <MdSkipNext className="w-full h-full"
+          />
+        </button>
+        <button onClick={playback.stop}
+                className="w-10 h-10 p-1 focus:bg-light-active rounded-full">
+          <MdStop className="w-full h-full"/>
+        </button>
       </div>
     </div>
   );

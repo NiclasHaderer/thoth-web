@@ -5,7 +5,7 @@ import {
   BookModelWithTracks,
   SeriesModel,
   SeriesModelWithBooks
-} from '../Models/Audiobook';
+} from '../API/Audiobook';
 
 export const isAuthorWithBooks = (author: AuthorModel | AuthorModelWithBooks): author is AuthorModelWithBooks => 'books' in author;
 export const isBookWithTracks = (book: BookModel | BookModelWithTracks): book is BookModelWithTracks => 'tracks' in book;

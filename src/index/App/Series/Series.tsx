@@ -14,7 +14,7 @@ export const Series: React.VFC<CollectionProps> = ({id, title, amount, cover}) =
   return (
     <span
       className="mx-6 mb-6 inline-block w-52 ">
-    <ALink href={`/series/${id}`} label={title}>
+    <ALink href={`/series/${id}`} aria-label={title} tabIndex={-1}>
        {cover ? <img loading="lazy"
                      className="w-52 h-52 rounded-md border-1.5 cursor-pointer hover:border-primary border-transparent transition-colors"
                      src={cover} alt="Series"/> :
@@ -25,7 +25,7 @@ export const Series: React.VFC<CollectionProps> = ({id, title, amount, cover}) =
 
       <div className="p-2 relative text-center">
         <ALink href={`/series/${id}`}>
-        <span className="cursor-pointer line-clamp-2 hover:underline">{title}</span>
+        <span className="cursor-pointer line-clamp-2 group-focus:underline  hover:underline">{title}</span>
         </ALink>
         <span className="text-unimportant">{amount} Audiobooks</span>
       </div>
