@@ -5,7 +5,6 @@ import { useAudio, useDuration, useOnEnded, usePercentage, usePlayState, usePosi
 import { usePlaybackState } from '../State/Playback';
 import { ALink } from './Common/ActiveLink';
 import { ProgressBar } from './Common/ProgressBar';
-import { ResponsiveImage } from './Common/ResponsiveImage';
 import { toReadableTime } from './Track/helpers';
 
 export const Playback: React.VFC = () => {
@@ -36,8 +35,8 @@ export const Playback: React.VFC = () => {
       <div className="flex items-center">
         <ALink href={`/books/${track.book.id}`} className="mr-3" aria-label={track.title} tabIndex={-1}>
           {track.cover ?
-            <ResponsiveImage className="w-10 h-10 md:w-20 md:h-20 rounded-md"
-                             src={`${environment.apiURL}/image/${track.cover}`}/>
+            <img className="w-10 h-10 md:w-20 md:h-20 rounded-md" alt={track.title} loading="lazy"
+                 src={`${environment.apiURL}/image/${track.cover}`}/>
             :
             <MdImageNotSupported className="w-40 h-40 md:w-80 md:h-80 rounded-md"/>
           }

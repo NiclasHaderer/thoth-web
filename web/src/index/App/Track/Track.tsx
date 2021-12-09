@@ -1,9 +1,8 @@
 import React from 'react';
 import { MdImageNotSupported, MdPlayCircle } from 'react-icons/md';
-import { environment } from '../../env';
 import { NamedId } from '../../API/Audiobook';
+import { environment } from '../../env';
 import { ALink } from '../Common/ActiveLink';
-import { ResponsiveImage } from '../Common/ResponsiveImage';
 import { toReadableTime } from './helpers';
 
 interface TrackProps {
@@ -21,7 +20,8 @@ export const Track: React.VFC<TrackProps> = ({cover, title, duration, trackNr, i
     <div className="relative group cursor-pointer" onClick={() => startPlayback(index)}
          onKeyUp={e => e.key === 'Enter' && startPlayback(index)}>
       {cover ?
-        <ResponsiveImage className="w-16 h-16 rounded-md" src={`${environment.apiURL}/image/${cover}`}/>
+        <img className="w-16 h-16 object-contain rounded-md" src={`${environment.apiURL}/image/${cover}`} alt={title}
+             loading="lazy"/>
         :
         <MdImageNotSupported className="w-16 h-16 rounded-md"/>
       }

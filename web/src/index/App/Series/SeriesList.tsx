@@ -18,7 +18,7 @@ export const SeriesList: React.VFC = () => {
     <ResponsiveGrid>
       {series.map((series, k) =>
         <Series {...series} key={k}/>)}
-      <div className="min-w-full text-center" ref={loading}>Loading ...</div>
+      <div className="min-w-full text-center opacity-0" ref={loading}>Loading ...</div>
     </ResponsiveGrid>
   );
 };

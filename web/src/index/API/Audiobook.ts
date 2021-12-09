@@ -93,19 +93,20 @@ export interface PatchAuthor {
 export interface PatchSeries {
   asin: string | null;
   description: string | null;
-  title: string | null;
+  title: string;
 }
 
 export interface PatchBook {
   asin: string | null;
-  author: string | null;
+  author: string;
   cover: string | null;
   description: string | null;
   language: string | null;
   narrator: string | null;
   series: string | null;
   seriesIndex: number | null;
-  title: string | null;
+  title: string;
+  year: number | null;
 }
 
 export interface YearRange {
@@ -123,4 +124,12 @@ export interface SeriesModelWithBooks {
   narrators: string[];
   title: string;
   yearRange: YearRange | null;
+}
+
+type EntityChangeType = "Created" | "Updated" | "Removed";
+
+export interface ChangeEvent {
+  data: string | null;
+  ids: string;
+  type: EntityChangeType;
 }

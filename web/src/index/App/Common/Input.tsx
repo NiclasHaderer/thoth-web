@@ -1,5 +1,5 @@
 import { FieldMetaProps, useField } from 'formik';
-import React, { HTMLInputTypeAttribute, ReactNode } from 'react';
+import React, { HTMLInputTypeAttribute, MutableRefObject, ReactNode } from 'react';
 
 interface InputProps extends React.HTMLAttributes<HTMLInputElement> {
   label?: string | undefined;
@@ -9,6 +9,7 @@ interface InputProps extends React.HTMLAttributes<HTMLInputElement> {
   name?: string | undefined;
   type?: HTMLInputTypeAttribute | undefined;
   meta?: FieldMetaProps<any> | undefined;
+  inputRef?: MutableRefObject<any> | undefined;
 }
 
 export const Input: React.VFC<InputProps> = (
@@ -20,6 +21,7 @@ export const Input: React.VFC<InputProps> = (
     labelClassName,
     className,
     meta,
+    inputRef,
     ...props
   }) => (
   <label className="flex items-center">
@@ -28,10 +30,10 @@ export const Input: React.VFC<InputProps> = (
     </div> : null}
     <div className="relative my-2 flex-grow">
       {icon ? <div
-        className={`absolute top-1/2 transform -translate-y-full m-2 ${iconPosition === 'left' && icon ? 'left-0' : 'right-0'}`}>
+        className={`absolute top-1/2 transform -translate-y-1/2 p-2 ${iconPosition === 'left' && icon ? 'left-0' : 'right-0'}`}>
         {icon}
       </div> : null}
-      <input placeholder={placeholder} {...props}
+      <input placeholder={placeholder} {...props} ref={inputRef}
              className={`p-2 w-full bg-elevate rounded-md box-border ${iconPosition === 'left' && icon ? 'pl-8' : 'pr-8'} ${className ? className : ''}`}/>
       {meta?.touched && meta.error ? (
         <div className="error">{meta.error}</div>

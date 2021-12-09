@@ -17,7 +17,7 @@ export const AuthorList: React.VFC = () => {
     <ResponsiveGrid>
       {authors.map((author, k) =>
         <Author {...author} key={k}/>)}
-      <div className="min-w-full text-center" ref={loading}>Loading ...</div>
+      <div className="min-w-full text-center opacity-0" ref={loading}>Loading ...</div>
     </ResponsiveGrid>
   );
 };

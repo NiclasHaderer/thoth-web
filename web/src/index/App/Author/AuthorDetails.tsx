@@ -7,7 +7,7 @@ import { selectAuthor } from '../../State/Audiobook.Selectors';
 import { useAudiobookState } from '../../State/Audiobook.State';
 import { isAuthorWithBooks } from '../../State/Audiobook.Typeguards';
 import { Book } from '../Books/Book';
-import { ResponsiveImage } from '../Common/ResponsiveImage';
+import { ResponsiveGrid } from '../Common/ResponsiveGrid';
 
 export const AuthorDetails: React.VFC = () => {
   const [, id] = useRoute('/authors/:id');
@@ -22,10 +22,11 @@ export const AuthorDetails: React.VFC = () => {
     <>
       <div className="flex flex-col pb-6 items-center flex-grow">
         {author.image ?
-          <ResponsiveImage className="w-40 h-40 md:w-80 md:h-80 rounded-full"
-                           src={`${environment.apiURL}/image/${author.image}`}/>
+          <img className="w-40 h-40 md:w-80 md:h-80 rounded-full object-contain border-2 border-light-active"
+               alt={author.name}
+               src={`${environment.apiURL}/image/${author.image}`} loading="lazy"/>
           :
-          <MdPerson className="w-40 h-40 md:w-80 md:h-80 rounded-full"/>
+          <MdPerson className="w-40 h-40 md:w-80 md:h-80 rounded-full border-2 border-light-active"/>
         }
         <h2 className="text-2xl py-3">{author.name}</h2>
       </div>
@@ -33,9 +34,9 @@ export const AuthorDetails: React.VFC = () => {
            dangerouslySetInnerHTML={{__html: sanitize(author.biography || '')}}
       />
 
-      <div className="flex flex-wrap">
+      <ResponsiveGrid>
         {(isAuthorWithBooks(author) ? author.books : []).map((book, k) => <Book {...book} key={k}/>)}
-      </div>
+      </ResponsiveGrid>
     </>
   );
 };

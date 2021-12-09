@@ -5,3 +5,4 @@ export { withCaching } from './WithCaching';
 export { withErrorHandler } from './WithErrorHandler';
 export { withPersistence } from './WithPersistence';
 export { withRenew } from './WithRenew';
+export { getWebsocket } from './Websocket';
