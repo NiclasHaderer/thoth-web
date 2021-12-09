@@ -3,15 +3,14 @@ import React, { useCallback, useEffect } from 'react';
 import { MdImageNotSupported, MdPlayCircle } from 'react-icons/md';
 
 import { useRoute } from 'wouter';
-import { environment } from '../../env';
 import { BookModelWithTracks } from '../../API/Audiobook';
+import { environment } from '../../env';
 import { selectBook } from '../../State/Audiobook.Selectors';
 import { useAudiobookState } from '../../State/Audiobook.State';
 import { isBookWithTracks } from '../../State/Audiobook.Typeguards';
 import { usePlaybackState } from '../../State/Playback';
 import { ALink } from '../Common/ActiveLink';
 import { ColoredButton } from '../Common/ColoredButton';
-import { ResponsiveImage } from '../Common/ResponsiveImage';
 import { Track } from '../Track/Track';
 import { BookedEdit } from './BookedEdit';
 
@@ -41,10 +40,11 @@ export const BookDetails = () => {
       <div className="flex pb-6">
         <div className="flex flex-col justify-around">
           {book.cover ?
-            <ResponsiveImage className="w-40 h-40 md:w-80 md:h-80 rounded-md"
-                             src={`${environment.apiURL}/image/${book.cover}`}/>
+            <img className="w-40 h-40 md:w-80 object-contain md:h-80 rounded-md border-2 border-light-active"
+                 alt={book.title}
+                 src={`${environment.apiURL}/image/${book.cover}`}/>
             :
-            <MdImageNotSupported className="w-40 h-40 md:w-80 md:h-80 rounded-md"/>
+            <MdImageNotSupported className="w-40 h-40 md:w-80 md:h-80 rounded-md border-2 border-light-active"/>
           }
         </div>
         <div className="flex-grow pl-10 pl-4 md:pl-10 flex-col flex justify-between">

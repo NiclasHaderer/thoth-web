@@ -1,14 +1,19 @@
 import { Dialog as HDialog, Transition } from '@headlessui/react';
-import React, { Fragment, ReactNode } from 'react';
+import { Form, Formik, FormikHelpers } from 'formik';
+import React, { Fragment, ReactElement } from 'react';
 
-interface DialogProps {
+interface DialogProps<T> {
   isOpen: boolean;
   closeModal: () => void;
   title: string;
-  buttons?: ReactNode | undefined;
+  buttons?: ReactElement | undefined;
+  values?: T;
+  onSubmit?: (values: T, formikHelpers: FormikHelpers<T>) => void | Promise<any>;
+  children?: ReactElement | undefined;
 }
 
-export const Dialog: React.FC<DialogProps> = ({isOpen, closeModal, title, children, buttons}) => {
+
+export function Dialog<T>({isOpen, values, closeModal, title, children, onSubmit, buttons}: DialogProps<T>) {
   return (
     <>
       <Transition appear show={isOpen} as={Fragment}>
@@ -43,13 +48,13 @@ export const Dialog: React.FC<DialogProps> = ({isOpen, closeModal, title, childr
                   <HDialog.Title as="h3" className="text-xl font-medium leading-6">
                     {title}
                   </HDialog.Title>
-                  <div className="mt-2">
-                    {children}
-                  </div>
+                  <Formik initialValues={values || {}}
+                          onSubmit={(values, formikHelpers) => onSubmit && onSubmit(values as T, formikHelpers as FormikHelpers<T>)}>
+                    <Form>
+                      <InputContent children={children} buttons={buttons}/>
+                    </Form>
+                  </Formik>
 
-                  <div className="mt-4">
-                    {buttons}
-                  </div>
                 </div>
               </div>
 
@@ -59,4 +64,16 @@ export const Dialog: React.FC<DialogProps> = ({isOpen, closeModal, title, childr
       </Transition>
     </>
   );
-};
+}
+
+const InputContent: React.FC<{ buttons?: ReactElement | undefined }> = ({children, buttons}) => (
+  <>
+    <div className="mt-2">
+      {children}
+    </div>
+
+    <div className="flex flex-row-reverse flex justify-between mt-4">
+      {buttons}
+    </div>
+  </>
+);

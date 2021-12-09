@@ -1,4 +1,4 @@
-import { getClient, withBaseUrl, withCaching, withErrorHandler, withPersistence, withRenew } from '../Client';
+import { getClient, withBaseUrl, withCaching, withErrorHandler } from '../Client';
 import { environment } from '../env';
 import {
   AuthorModel,
@@ -11,19 +11,18 @@ import {
 } from './Audiobook';
 
 
-const CLIENT = withErrorHandler(
-  withPersistence(
-    withRenew(
-      withCaching(
-        withBaseUrl(
-          getClient(),
-          environment.apiURL
-        )
-      )
+const CLIENT = (() => {
+  let client = withErrorHandler(
+    withBaseUrl(
+      getClient(),
+      environment.apiURL
     )
-  ),
-  console.warn
-);
+  );
+  if (environment.production) {
+    client = withCaching(client);
+  }
+  return client;
+})();
 
 export const AudiobookClient = {
   fetchAuthors: (offset: number, limit = 30) =>
@@ -38,6 +37,7 @@ export const AudiobookClient = {
     CLIENT.get<AuthorModelWithBooks>(`/audiobooks/authors/${authorID}`),
   fetchSeriesWithBooks: (seriesID: string) =>
     CLIENT.get<SeriesModelWithBooks>(`/audiobooks/series/${seriesID}`),
-  patchBook: ({id, ...book}: Partial<PatchBook> & { id: string }) =>
-    CLIENT.patch<BookModel>(`/audiobooks/books/${id}`, book)
+  updateBook: ({id, ...book}: Partial<PatchBook> & { id: string }) =>
+    CLIENT.put<BookModel>(`/audiobooks/books/${id}`, book),
+  rescan: () => CLIENT.post<null>(`/audiobooks/rescan`, {})
 };

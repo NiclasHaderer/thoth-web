@@ -1,12 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './index/App';
+import { SnackbarProvider } from './index/App/Common/Snackbar';
 import './index/index.scss';
 import './index/tailwind.css';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App/>
+    <SnackbarProvider>
+      <App/>
+    </SnackbarProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );

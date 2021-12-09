@@ -48,14 +48,16 @@ export const withCaching = <C extends TClient>(client: C, {
 
   return {
     ...client,
-    async get<T>(url: string, forceNew = false): Promise<T> {
+    async get<T>(url: string, forceNew = false): Promise<T | undefined> {
       if (!forceNew) {
         const cacheEntry = getEntryFromCache<T>(cache.entry, url, expiresMs);
         if (cacheEntry.hasEntry) return Promise.resolve(cacheEntry.value);
       }
-      const response = await client.get<T>(url);
-      saveEntryInCache(cache.entry, url, response);
-      return response;
+
+      return client.get<T>(url).then(res => {
+        saveEntryInCache(cache.entry, url, res);
+        return res;
+      });
     },
     expire(): void {
       cache.entry = {};

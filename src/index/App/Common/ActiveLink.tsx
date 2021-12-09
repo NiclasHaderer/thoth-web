@@ -19,8 +19,8 @@ interface ALinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
 }
 
 
-export const ALink: React.FC<ALinkProps> = ({href, children, className, ...props}) => {
-  return <Link href={href}>
+export const ALink: React.FC<ALinkProps> = ({href, children, onClick, className, ...props}) => {
+  return <Link href={href} onClick={onClick}>
     <a href={href} className={`group ${className || ''}`} {...props}>
       {children}
     </a>

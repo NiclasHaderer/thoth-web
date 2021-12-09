@@ -13,9 +13,10 @@ export const withPersistence = <C extends TCachingClient>(client: C, {
   return {
     ...client,
     async get<T>(url: string, forceNew = false): Promise<T> {
-      const response = await _cacheClient.get<T>(url, forceNew);
-      storage.setItem(cacheName, JSON.stringify(cache.entry));
-      return response;
+      return _cacheClient.get<T>(url, forceNew).then((response) => {
+        storage.setItem(cacheName, JSON.stringify(cache.entry));
+        return response;
+      });
     },
     expire(): void {
       _cacheClient.expire();

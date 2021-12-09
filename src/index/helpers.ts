@@ -13,5 +13,5 @@ export const getItemById = <T extends { id: string }>(itemList: T[], id: string 
 
 export const replaceRangeInList = <T>([...originalList]: T[], startIndex: number, replaceList: T[]): T[] => {
   originalList.splice(startIndex, 0, ...replaceList);
-  return originalList;
+  return [...new Set(originalList)];
 };

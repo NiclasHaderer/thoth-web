@@ -16,10 +16,10 @@ export const Series: React.VFC<CollectionProps> = ({id, title, amount, cover}) =
       className="mx-6 mb-6 inline-block w-52 ">
     <ALink href={`/series/${id}`} aria-label={title} tabIndex={-1}>
        {cover ? <img loading="lazy"
-                     className="w-52 h-52 rounded-md border-1.5 cursor-pointer hover:border-primary border-transparent transition-colors"
+                     className="w-52 h-52 border-light-active rounded-md border-2 cursor-pointer hover:border-primary border-transparent transition-colors"
                      src={cover} alt="Series"/> :
          <MdImageNotSupported
-           className="w-52 h-52 rounded-md border-1.5 cursor-pointer hover:border-primary border-transparent transition-colors"/>
+           className="w-52 h-52 rounded-md border-light-active border-2 cursor-pointer hover:border-primary border-transparent transition-colors"/>
        }
     </ALink>
 

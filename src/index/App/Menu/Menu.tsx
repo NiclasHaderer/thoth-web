@@ -1,5 +1,6 @@
 import React from 'react';
-import { MdAccountCircle, MdBook, MdCollectionsBookmark, MdPerson } from 'react-icons/md';
+import { MdBook, MdCollectionsBookmark, MdPerson, MdRefresh } from 'react-icons/md';
+import { AudiobookClient } from '../../API/AudiobookClient';
 import { useBreakpoint } from '../../Hooks/Breakpoint';
 import { usePlaybackState } from '../../State/Playback';
 import { ActiveLink, ALink } from '../Common/ActiveLink';
@@ -14,7 +15,8 @@ export const MainMenu: React.FC = ({children}) => {
       <div className="bg-elevate flex items-center m-3 rounded-xl min-h-20 h-20">
         <MenuIcon/>
         <Search/>
-        <MdAccountCircle className="cursor-pointer mr-3 h-8 w-8"/>
+        <MdRefresh className="cursor-pointer mr-3 h-8 w-8" style={{transform: 'scale(-1, 1)'}}
+                   onClick={() => AudiobookClient.rescan()}/>
       </div>
       <div className="flex-grow overflow-hidden">
         {breakPoint.matchDown('md') ?
@@ -57,7 +59,7 @@ const MenuIcon: React.VFC = () => {
   return (
     <ALink href="/" className="flex" aria-label={'HOME'}>
       <div className="group-focus:bg-light-active pr-2 inline-flex items-center cursor-pointer">
-        <img className="h-20 p-3" src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Thoth.svg"
+        <img className="h-20 p-3" src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Thoth.svg" loading="lazy"
              alt="Logo"/>
         <h1 className="font-extrabold font-serif text-3xl">THOTH</h1>
       </div>
@@ -68,19 +70,22 @@ const MenuItems: React.VFC = () => {
   return (
     <ul>
       <ActiveLink href="/books" withSubroutes={true}>
-        <li className="flex w-full px-3 items-center group-focus:bg-light-active hover:bg-light-active transition-colors duration-300">
+        <li
+          className="flex w-full px-3 items-center group-focus:bg-light-active hover:bg-light-active transition-colors duration-300">
           <MdBook className="ml-3"/>
           <span className="inline-block m-3">Books</span>
         </li>
       </ActiveLink>
       <ActiveLink href="/series" withSubroutes={true}>
-        <li className="flex w-full px-3 items-center group-focus:bg-light-active hover:bg-light-active transition-colors duration-300">
+        <li
+          className="flex w-full px-3 items-center group-focus:bg-light-active hover:bg-light-active transition-colors duration-300">
           <MdCollectionsBookmark className="ml-3"/>
           <span className="inline-block m-3">Series</span>
         </li>
       </ActiveLink>
       <ActiveLink href="/authors" withSubroutes={true}>
-        <li className="flex w-full px-3 items-center group-focus:bg-light-active hover:bg-light-active transition-colors duration-300">
+        <li
+          className="flex w-full px-3 items-center group-focus:bg-light-active hover:bg-light-active transition-colors duration-300">
           <MdPerson className="ml-3"/>
           <span className="inline-block m-3">Authors</span>
         </li>

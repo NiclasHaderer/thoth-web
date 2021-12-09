@@ -9,6 +9,7 @@ import {
   SeriesModelWithBooks
 } from '../API/Audiobook';
 import { AudiobookClient } from '../API/AudiobookClient';
+import { getWebsocket } from '../Client';
 import { replaceRangeInList, toIdRecord } from '../helpers';
 
 export interface AudiobookState {
@@ -24,8 +25,15 @@ export interface AudiobookState {
   fetchBookWithTracks: (id: string) => void;
   fetchSeries: (offset: number) => void;
   fetchSeriesWithBooks: (id: string) => void;
-  patchBook: (book: Partial<PatchBook> & { id: string }) => void;
+  updateBook: (book: Partial<PatchBook> & { id: string }) => void;
 }
+
+getWebsocket('ws://localhost:8080/ws/books', (m) => {
+  const fetch = useAudiobookState.getState().fetchBooks;
+  //unstable_batchedUpdates(() => {
+  //  fetch(0);
+  //});
+});
 
 export const useAudiobookState = create<AudiobookState>((set) => ({
   authorSorting: [],
@@ -36,6 +44,7 @@ export const useAudiobookState = create<AudiobookState>((set) => ({
   series: {},
   fetchAuthors: async (offset: number, limit: number = 30) => {
     const authors = await AudiobookClient.fetchAuthors(offset, limit);
+    if (!authors) return;
     set(state => ({
       authors: {
         ...state.authors,
@@ -46,6 +55,8 @@ export const useAudiobookState = create<AudiobookState>((set) => ({
   },
   fetchSeries: async (offset: number, limit: number = 30) => {
     const series = await AudiobookClient.fetchSeries(offset, limit);
+    if (!series) return;
+
     set(state => ({
       series: {
         ...state.series,
@@ -56,6 +67,7 @@ export const useAudiobookState = create<AudiobookState>((set) => ({
   },
   fetchBooks: async (offset: number, limit: number = 30) => {
     const books = await AudiobookClient.fetchBooks(offset, limit);
+    if (!books) return;
     set(state => ({
       books: {
         ...state.books,
@@ -66,6 +78,7 @@ export const useAudiobookState = create<AudiobookState>((set) => ({
   },
   fetchBookWithTracks: async (bookID: string) => {
     const book = await AudiobookClient.fetchBookWithTracks(bookID);
+    if (!book) return;
     set((state) => ({
       books: {
         ...state.books,
@@ -75,6 +88,7 @@ export const useAudiobookState = create<AudiobookState>((set) => ({
   },
   fetchAuthorWithBooks: async (authorID: string) => {
     const author = await AudiobookClient.fetchAuthorWithBooks(authorID);
+    if (!author) return;
     set((state) => ({
       authors: {
         ...state.authors,
@@ -84,6 +98,7 @@ export const useAudiobookState = create<AudiobookState>((set) => ({
   },
   fetchSeriesWithBooks: async (seriesID: string) => {
     const series = await AudiobookClient.fetchSeriesWithBooks(seriesID);
+    if (!series) return;
     set((state) => ({
       series: {
         ...state.series,
@@ -91,8 +106,9 @@ export const useAudiobookState = create<AudiobookState>((set) => ({
       }
     }));
   },
-  patchBook: async (book: Partial<PatchBook> & { id: string }) => {
-    const returnBook = await AudiobookClient.patchBook(book);
+  updateBook: async (book: Partial<PatchBook> & { id: string }) => {
+    const returnBook = await AudiobookClient.updateBook(book);
+    if (!returnBook) return;
     set((state) => ({
       books: {
         ...state.books,

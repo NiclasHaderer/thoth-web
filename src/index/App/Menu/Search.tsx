@@ -1,18 +1,24 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { MdImageNotSupported, MdPerson, MdSearch } from 'react-icons/md';
-import { getClient, withBaseUrl, withCaching } from '../../Client';
+import { SearchModel } from '../../API/Audiobook';
+import { getClient, withBaseUrl, withCaching, withErrorHandler } from '../../Client';
 import { environment } from '../../env';
 import { useOnMount } from '../../Hooks/OnMount';
-import { SearchModel } from '../../API/Audiobook';
 import { ALink } from '../Common/ActiveLink';
-import { ResponsiveImage } from '../Common/ResponsiveImage';
+import { Input } from '../Common/Input';
 
-const CLIENT = withCaching(
-  withBaseUrl(
-    getClient(),
-    environment.apiURL
-  ), {useGlobalCache: false}
-);
+const CLIENT = (() => {
+  let client = withErrorHandler(
+    withBaseUrl(
+      getClient(),
+      environment.apiURL
+    )
+  );
+  if (environment.production) {
+    client = withCaching(client, {useGlobalCache: false});
+  }
+  return client;
+})();
 
 export const Search: React.VFC = () => {
   const [input, setInput] = useState('');
@@ -56,7 +62,7 @@ export const Search: React.VFC = () => {
     clearTimeout(timeout.current);
     timeout.current = setTimeout(async () => {
       const result = await CLIENT.get<SearchModel>(`/search?q=${input}`);
-      setSearchResult(result);
+      result && setSearchResult(result);
     }, 100) as unknown as number;
 
     return () => clearTimeout(timeout.current);
@@ -64,39 +70,26 @@ export const Search: React.VFC = () => {
 
   return (
     <div className="px-3 flex-grow shadow-none relative">
-      <div className="relative bg-elevate rounded-3xl overflow-hidden">
-        <span className="absolute inset-y-0 left-0 flex items-center pl-2">
-          <button type="submit" className="p-1" aria-label="search" tabIndex={-1}>
-            <MdSearch className="w-6 h-6"/>
-          </button>
-        </span>
-        <input
-          type="search"
-          placeholder="Search ..."
-          ref={inputElement}
-          onKeyUp={event => setInput((event.target as HTMLInputElement).value)}
-          onFocus={(event) => {
-            if ((event.target as HTMLInputElement).value.trim() !== '') {
-              setResultVisible(true);
-            }
-          }}
-          onClick={(event) => {
-            if ((event.target as HTMLInputElement).value.trim() !== '') {
-              setResultVisible(true);
-            }
-          }}
-          className="mt-0 block pl-10 px-0.5 py-2 w-full"
-        />
-      </div>
+
+      <Input className="bg-elevate rounded-3xl pl-10"
+             icon={<MdSearch className="w-6 h-6 mx-1"/>}
+             placeholder="Search ..." inputRef={inputElement}
+             onKeyUp={event => setInput((event.target as HTMLInputElement).value)}
+             onFocus={(event) => {
+               if ((event.target as HTMLInputElement).value.trim() !== '') {
+                 setResultVisible(true);
+               }
+             }}
+             onClick={(event) => {
+               if ((event.target as HTMLInputElement).value.trim() !== '') {
+                 setResultVisible(true);
+               }
+             }}/>
       {
         searchResult && resultVisible ?
           <div ref={searchOverlay}
-               className="z-10 absolute rounded-md mx-3 bottom-0 left-0 right-0 transform translate-y-full bg-background">
-            <div className="elevate">
-              <div className="elevate p-3 rounded-md">
-                <SearchResults search={searchResult} onClose={() => setResultVisible(false)}/>
-              </div>
-            </div>
+               className="p-3 rounded-md z-10 absolute overflow-hidden shadow-2xl rounded-md mx-3 bottom-0 left-0 right-0 transform translate-y-full bg-background">
+            <SearchResults search={searchResult} onClose={() => setResultVisible(false)}/>
           </div>
           : ''
       }
@@ -116,19 +109,21 @@ const SearchResults: React.VFC<{ search: SearchModel, onClose: () => void }> = (
 );
 
 
-const AuthorSearchResult: React.VFC<{ authors: SearchModel['authors'], onClose: () => void }> = ({
-                                                                                                   authors,
-                                                                                                   onClose
-                                                                                                 }) => (
+const AuthorSearchResult: React.VFC<{ authors: SearchModel['authors'], onClose: () => void }> = (
+  {
+    authors,
+    onClose
+  }) => (
   <>
     {authors.length === 0 ?
       <div>No authors found</div> :
       authors.map((author, i) => (
-        <ALink href={`/authors/${author.id}`} onClick={onClose} key={i} aria-label={author.name}>
-          <div
-            className="flex items-center p-2 hover:bg-light-active rounded-md transition-colors transition focus:bg-light-active">
+        <ALink href={`/authors/${author.id}`} onClick={onClose} key={i} aria-label={author.name}
+               className="block focus:bg-light-active hover:bg-light-active rounded-md transition-colors transition">
+          <div className="flex items-center p-2">
             {author.image ?
-              <img className="rounded-full w-8 h-8" src={`${environment.apiURL}/image/${author.image}`} alt="Author"/>
+              <img className="rounded-full w-8 h-8" src={`${environment.apiURL}/image/${author.image}`} alt="Author"
+                   loading="lazy"/>
               :
               <MdPerson className="rounded-full w-8 h-8"/>
             }
@@ -146,11 +141,13 @@ const BookSearchResult: React.VFC<{ books: SearchModel['books'], onClose: () => 
     {books.length === 0 ?
       <div>No authors found</div> :
       books.map((book, i) => (
-        <ALink href={`/books/${book.id}`} onClick={onClose} key={i} aria-label={book.title}>
-          <div
-            className="flex items-center p-2 hover:bg-light-active rounded-md transition-colors transition focus:bg-light-active">
+        <ALink href={`/books/${book.id}`} onClick={onClose} key={i} aria-label={book.title}
+               className="block focus:bg-light-active hover:bg-light-active rounded-md transition-colors transition">
+
+          <div className="flex items-center p-2">
             {book.cover ?
-              <ResponsiveImage className="w-8 h-8 rounded-md" src={`${environment.apiURL}/image/${book.cover}`}/> :
+              <img className="w-8 h-8 rounded-md object-cover" src={`${environment.apiURL}/image/${book.cover}`}
+                   alt={book.title} loading="lazy"/> :
               <MdImageNotSupported className="rounded-full w-8 h-8"/>
             }
             <h4 className="pl-3">{book.title}</h4>
@@ -167,9 +164,9 @@ const SeriesSearchResult: React.VFC<{ series: SearchModel['series'], onClose: ()
     {series.length === 0 ?
       <div>No authors found</div> :
       series.map((series, i) => (
-        <ALink href={`/series/${series.id}`} onClick={onClose} key={i} aria-label={series.title}>
-          <div
-            className="flex items-center p-2 hover:bg-light-active rounded-md transition-colors transition focus:bg-light-active">
+        <ALink href={`/series/${series.id}`} onClick={onClose} key={i} aria-label={series.title}
+               className="block focus:bg-light-active hover:bg-light-active rounded-md transition-colors transition">
+          <div className="flex items-center p-2">
             <MdImageNotSupported className="w-8 h-8 rounded-md"/>
             <h4 className="pl-3">{series.title}</h4>
           </div>
