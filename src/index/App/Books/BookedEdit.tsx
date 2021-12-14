@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { MdPerson } from 'react-icons/all';
 import { MdCollectionsBookmark, MdEdit, MdEvent, MdFormatListNumbered, MdLanguage, MdSearch } from 'react-icons/md';
 import { BookModel } from '../../API/Audiobook';
+import { AudiobookSelectors } from '../../State/Audiobook.Selectors';
 import { useAudiobookState } from '../../State/Audiobook.State';
 import { ColoredButton } from '../Common/ColoredButton';
 import { Dialog } from '../Common/Dialog';
@@ -10,7 +11,7 @@ import { FormikInput } from '../Common/Input';
 export const BookedEdit: React.VFC<{ book: Partial<BookModel> & { id: string } }> = ({book}) => {
 
   let [isOpen, setIsOpen] = useState(false);
-  const updateBook = useAudiobookState(state => state.updateBook);
+  const updateBook = useAudiobookState(AudiobookSelectors.updateBook);
 
   const closeModal = () => setIsOpen(false);
   const openModal = () => setIsOpen(true);

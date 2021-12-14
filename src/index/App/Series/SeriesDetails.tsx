@@ -2,7 +2,7 @@ import { sanitize } from 'dompurify';
 import React, { useCallback, useEffect } from 'react';
 import { MdImageNotSupported } from 'react-icons/all';
 import { useRoute } from 'wouter';
-import { selectSeries } from '../../State/Audiobook.Selectors';
+import { AudiobookSelectors } from '../../State/Audiobook.Selectors';
 import { useAudiobookState } from '../../State/Audiobook.State';
 import { isSeriesWithBooks } from '../../State/Audiobook.Typeguards';
 import { Book } from '../Books/Book';
@@ -11,9 +11,9 @@ import { ResponsiveGrid } from '../Common/ResponsiveGrid';
 
 export const SeriesDetails: React.VFC = () => {
   const [, id] = useRoute('/series/:id');
-  const getSeriesWithBooks = useAudiobookState(s => s.fetchSeriesWithBooks);
+  const getSeriesWithBooks = useAudiobookState(AudiobookSelectors.fetchSeriesDetails);
   //eslint-disable-next-line react-hooks/exhaustive-deps
-  const series = useAudiobookState(useCallback(selectSeries(id?.id), [id?.id]));
+  const series = useAudiobookState(useCallback(AudiobookSelectors.selectSeries(id?.id), [id?.id]));
 
   useEffect(() => getSeriesWithBooks(id?.id!), [id?.id, getSeriesWithBooks]);
   if (!series) return <></>;

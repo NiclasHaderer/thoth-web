@@ -5,7 +5,7 @@ import { MdImageNotSupported, MdPlayCircle } from 'react-icons/md';
 import { useRoute } from 'wouter';
 import { BookModelWithTracks } from '../../API/Audiobook';
 import { environment } from '../../env';
-import { selectBook } from '../../State/Audiobook.Selectors';
+import { AudiobookSelectors } from '../../State/Audiobook.Selectors';
 import { useAudiobookState } from '../../State/Audiobook.State';
 import { isBookWithTracks } from '../../State/Audiobook.Typeguards';
 import { usePlaybackState } from '../../State/Playback';
@@ -16,11 +16,11 @@ import { BookedEdit } from './BookedEdit';
 
 export const BookDetails = () => {
   const [, id] = useRoute('/books/:id');
-  const getBookWithTracks = useAudiobookState(s => s.fetchBookWithTracks);
+  const getBookWithTracks = useAudiobookState(s => s.fetchBooksDetails);
   const play = usePlaybackState(state => state.start);
 
   //eslint-disable-next-line react-hooks/exhaustive-deps
-  const book = useAudiobookState(useCallback(selectBook(id?.id), [id?.id]));
+  const book = useAudiobookState(useCallback(AudiobookSelectors.selectBook(id?.id), [id?.id]));
 
   useEffect(() => getBookWithTracks(id?.id!), [id?.id, getBookWithTracks]);
   if (!book) return <></>;
@@ -28,9 +28,9 @@ export const BookDetails = () => {
   const startPlayback = (position: number) => {
     const tracks = (book as BookModelWithTracks).tracks;
 
-    const start = tracks[position];
-    const queue = tracks.slice(position + 1, tracks.length);
-    const history = tracks.slice(0, position);
+    const start = {...tracks[position], author: book.author};
+    const queue = tracks.slice(position + 1, tracks.length).map(q => ({...q, author: book.author}));
+    const history = tracks.slice(0, position).map(q => ({...q, author: book.author}));
 
     play(start, queue, history);
   };
@@ -101,8 +101,9 @@ export const BookDetails = () => {
       <div>
         <h3 className="p-2 text-xl pb-6">{isBookWithTracks(book) ? book.tracks.length : ''} Tracks</h3>
         {
-          (isBookWithTracks(book) ? book.tracks : []).map((track, k) => <Track startPlayback={startPlayback} {...track}
-                                                                               key={k} index={k}/>)
+          (isBookWithTracks(book) ? book.tracks : []).map((track, k) => (
+            <Track author={book.author} startPlayback={startPlayback} {...track} key={k} index={k}/>
+          ))
         }
       </div>
     </>

@@ -3,7 +3,7 @@ import React, { useCallback, useEffect } from 'react';
 import { MdPerson } from 'react-icons/all';
 import { useRoute } from 'wouter';
 import { environment } from '../../env';
-import { selectAuthor } from '../../State/Audiobook.Selectors';
+import { AudiobookSelectors } from '../../State/Audiobook.Selectors';
 import { useAudiobookState } from '../../State/Audiobook.State';
 import { isAuthorWithBooks } from '../../State/Audiobook.Typeguards';
 import { Book } from '../Books/Book';
@@ -12,10 +12,10 @@ import { ResponsiveGrid } from '../Common/ResponsiveGrid';
 export const AuthorDetails: React.VFC = () => {
   const [, id] = useRoute('/authors/:id');
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const author = useAudiobookState(useCallback(selectAuthor(id?.id), [id?.id]));
-  const fetchAuthorDetails = useAudiobookState(s => s.fetchAuthorWithBooks);
+  const author = useAudiobookState(useCallback(AudiobookSelectors.selectAuthor(id?.id), [id?.id]));
+  const getAuthorDetails = useAudiobookState(AudiobookSelectors.fetchAuthorDetails);
 
-  useEffect(() => fetchAuthorDetails(id?.id!), [id?.id, fetchAuthorDetails]);
+  useEffect(() => getAuthorDetails(id?.id!), [id?.id, getAuthorDetails]);
   if (!author) return <></>;
 
   return (
