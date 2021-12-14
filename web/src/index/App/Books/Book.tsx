@@ -1,5 +1,5 @@
 import React from 'react';
-import { MdImageNotSupported } from 'react-icons/all';
+import { MdImageNotSupported } from 'react-icons/md';
 import { NamedId } from '../../API/Audiobook';
 import { environment } from '../../env';
 import { ALink } from '../Common/ActiveLink';

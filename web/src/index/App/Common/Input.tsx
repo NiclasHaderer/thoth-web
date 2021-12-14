@@ -30,7 +30,7 @@ export const Input: React.VFC<InputProps> = (
     </div> : null}
     <div className="relative my-2 flex-grow">
       {icon ? <div
-        className={`absolute top-1/2 transform -translate-y-1/2 p-2 ${iconPosition === 'left' && icon ? 'left-0' : 'right-0'}`}>
+        className={`absolute top-1/2 -translate-y-1/2 p-2 ${iconPosition === 'left' && icon ? 'left-0' : 'right-0'}`}>
         {icon}
       </div> : null}
       <input placeholder={placeholder} {...props} ref={inputRef}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { MdPerson } from 'react-icons/all';
+import { MdPerson } from 'react-icons/md';
 import { environment } from '../../env';
 import { ALink } from '../Common/ActiveLink';
 

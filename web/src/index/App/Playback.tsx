@@ -29,7 +29,7 @@ export const Playback: React.VFC = () => {
   return (
     <div className="p-3 flex bg-elevate justify-between relative">
 
-      <ProgressBar className="absolute top-0 left-0 right-0 w-full transform -translate-y-1/2"
+      <ProgressBar className="absolute top-0 left-0 right-0 w-full -translate-y-1/2"
                    percentage={percentage} onChange={setPercentage}/>
 
       <div className="flex items-center">

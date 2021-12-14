@@ -63,11 +63,7 @@ const SIZE = {
 };
 
 module.exports = {
-    purge: {
-        content: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
-        safelist: []
-    },
-    darkMode: false,
+    content: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
     theme: {
         extend: {
             screens: {
@@ -125,12 +121,6 @@ module.exports = {
             },
         }),
 
-    },
-    variants: {
-        extend: {
-            backgroundColor: ['odd', 'even', 'group-focus'],
-            textDecoration: ['group-focus'],
-        },
     },
     plugins: [
         require('@tailwindcss/typography'),

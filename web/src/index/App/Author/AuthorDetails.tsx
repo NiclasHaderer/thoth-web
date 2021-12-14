@@ -1,6 +1,6 @@
 import { sanitize } from 'dompurify';
 import React, { useCallback, useEffect } from 'react';
-import { MdPerson } from 'react-icons/all';
+import { MdPerson } from 'react-icons/md';
 import { useRoute } from 'wouter';
 import { environment } from '../../env';
 import { AudiobookSelectors } from '../../State/Audiobook.Selectors';

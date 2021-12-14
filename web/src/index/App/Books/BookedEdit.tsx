@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MdPerson } from 'react-icons/all';
+import { MdPerson } from 'react-icons/md';
 import { MdCollectionsBookmark, MdEdit, MdEvent, MdFormatListNumbered, MdLanguage, MdSearch } from 'react-icons/md';
 import { BookModel } from '../../API/Audiobook';
 import { AudiobookSelectors } from '../../State/Audiobook.Selectors';
