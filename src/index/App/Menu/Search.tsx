@@ -88,7 +88,7 @@ export const Search: React.VFC = () => {
       {
         searchResult && resultVisible ?
           <div ref={searchOverlay}
-               className="p-3 rounded-md z-10 absolute overflow-hidden shadow-2xl rounded-md mx-3 bottom-0 left-0 right-0 transform translate-y-full bg-background">
+               className="p-3 rounded-md z-10 absolute overflow-hidden shadow-2xl rounded-md mx-3 bottom-0 left-0 right-0 translate-y-full bg-background">
             <SearchResults search={searchResult} onClose={() => setResultVisible(false)}/>
           </div>
           : ''

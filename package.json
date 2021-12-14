@@ -3,14 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "craco start",
-    "build": "craco build",
-    "test": "craco test",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "analyze": "craco build && source-map-explorer 'build/static/js/*.js'"
+    "analyze": "react-scripts build && source-map-explorer 'build/static/js/*.js'"
   },
   "dependencies": {
-    "@craco/craco": "^6.4.0",
     "@headlessui/react": "^1.4.2",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
@@ -21,7 +20,7 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-icons": "^4.3.1",
-    "react-scripts": "4.0.3",
+    "react-scripts": "5.0.0-next.60",
     "sass": "^1.43.4",
     "typescript": "^4.1.2",
     "web-vitals": "^1.0.1",
@@ -49,10 +48,10 @@
     "@types/node": "^12.0.0",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
-    "autoprefixer": "^9",
+    "autoprefixer": "^10.4.0",
     "eslint-plugin-import": "^2.25.3",
-    "postcss": "^7",
+    "postcss": "^8.4.5",
     "source-map-explorer": "^2.5.2",
-    "tailwindcss": "npm:@tailwindcss/postcss7-compat"
+    "tailwindcss": "^3.0.2"
   }
 }
