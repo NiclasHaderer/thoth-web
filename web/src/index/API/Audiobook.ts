@@ -37,18 +37,15 @@ export interface AuthorModelWithBooks {
   id: string;
   image: string | null;
   name: string;
+  position: number;
 }
 
 export interface TrackModel {
   accessTime: number;
-  author: NamedId;
   book: TitledId;
   cover: string | null;
   duration: number;
   id: string;
-  narrator: string | null;
-  series: TitledId | null;
-  seriesIndex: number | null;
   title: string;
   trackNr: number | null;
 }
@@ -61,6 +58,7 @@ export interface BookModelWithTracks {
   id: string;
   language: string | null;
   narrator: string | null;
+  position: number;
   series: TitledId | null;
   seriesIndex: number | null;
   title: string;
@@ -122,14 +120,14 @@ export interface SeriesModelWithBooks {
   description: string | null;
   id: string;
   narrators: string[];
+  position: number;
   title: string;
   yearRange: YearRange | null;
 }
 
-type EntityChangeType = "Created" | "Updated" | "Removed";
+type EntityChangeType = 'Created' | 'Updated' | 'Removed';
 
 export interface ChangeEvent {
-  data: string | null;
-  ids: string;
+  id: string;
   type: EntityChangeType;
 }

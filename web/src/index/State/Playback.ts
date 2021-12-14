@@ -1,13 +1,15 @@
 import create from 'zustand';
-import { TrackModel } from '../API/Audiobook';
+import { NamedId, TrackModel } from '../API/Audiobook';
+
+export type PlaybackTrack = TrackModel & { author: NamedId };
 
 interface PlaybackState {
   isPlaying: boolean;
-  history: TrackModel[];
-  queue: TrackModel[];
-  current: TrackModel | null;
+  history: PlaybackTrack[];
+  queue: PlaybackTrack[];
+  current: PlaybackTrack | null;
 
-  start(track: TrackModel, queue?: TrackModel[], history?: TrackModel[]): void;
+  start(track: PlaybackTrack, queue?: PlaybackTrack[], history?: PlaybackTrack[]): void;
 
   stop(): void;
 
@@ -21,7 +23,7 @@ export const usePlaybackState = create<PlaybackState>((set, get) => ({
   history: [],
   queue: [],
   current: null,
-  start(track: TrackModel, queue: TrackModel[] = [], history: TrackModel[] = []): void {
+  start(track: PlaybackTrack, queue: PlaybackTrack[] = [], history: PlaybackTrack[] = []): void {
     set({
       isPlaying: true,
       history,
