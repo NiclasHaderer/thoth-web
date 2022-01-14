@@ -20,8 +20,11 @@ export const replaceRangeInList = <T extends string, R extends T | { id: T }>([.
 };
 
 
-export const insertAtPosition = <T>(list: T[], item: T, position: number): T[] => {
-  if (position > list.length) return list;
+export const insertAtPosition = <T>([...list]: T[], item: T, position: number): T[] => {
+  if (position > list.length) {
+    list.push(item);
+    return list;
+  }
   list = list.filter(i => i !== item);
   list.splice(position, 0, item);
   return list;
