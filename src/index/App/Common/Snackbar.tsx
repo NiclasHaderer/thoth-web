@@ -7,7 +7,7 @@ export const Snackbar = React.createContext({
 
 
 export const SnackbarProvider: React.FC = ({children}) => {
-  const [elements, setElements] = useState([] as ReactElement[]);
+  const [elements, setElements] = useState<ReactElement[]>([]);
 
   return (
     <Snackbar.Provider value={{elements: elements, setElements: setElements}}>

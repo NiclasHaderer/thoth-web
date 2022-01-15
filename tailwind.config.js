@@ -83,7 +83,7 @@ module.exports = {
                 font: '#eee',
                 'light-active': 'rgba(255, 255, 255, .1)',
                 active: 'rgba(255, 255, 255, .2)',
-                elevate: 'rgba(0, 0, 0, .15)'
+                elevate: 'rgba(0, 0, 0, .15)',
             },
             borderWidth: {
                 '1.5': '1.5px',
