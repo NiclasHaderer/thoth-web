@@ -71,7 +71,7 @@ export const Search: React.VFC = () => {
   return (
     <div className="px-3 flex-grow shadow-none relative">
 
-      <Input className="bg-elevate rounded-3xl pl-10"
+      <Input className="bg-elevate rounded-3xl pl-11"
              icon={<MdSearch className="w-6 h-6 mx-1"/>}
              placeholder="Search ..." inputRef={inputElement}
              onKeyUp={event => setInput((event.target as HTMLInputElement).value)}
