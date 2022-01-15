@@ -7,7 +7,7 @@ import { ALink } from './Common/ActiveLink';
 import { ProgressBar } from './Common/ProgressBar';
 import { toReadableTime } from './Track/helpers';
 
-export const Playback: React.VFC = () => {
+export const Playback: React.VFC<{className?:string}> = ({className}) => {
   const playback = usePlaybackState();
   const track = playback.current;
 
@@ -27,7 +27,7 @@ export const Playback: React.VFC = () => {
 
 
   return (
-    <div className="p-3 flex bg-elevate justify-between relative">
+    <div className={`p-3 flex bg-elevate justify-between relative ${className}`}>
 
       <ProgressBar className="absolute top-0 left-0 right-0 w-full -translate-y-1/2"
                    percentage={percentage} onChange={setPercentage}/>
@@ -38,7 +38,7 @@ export const Playback: React.VFC = () => {
             <img className="w-10 h-10 md:w-20 md:h-20 rounded-md" alt={track.title} loading="lazy"
                  src={`${environment.apiURL}/image/${track.cover}`}/>
             :
-            <MdImageNotSupported className="w-40 h-40 md:w-80 md:h-80 rounded-md"/>
+            <MdImageNotSupported className="w-10 h-10 md:w-20 md:h-20 rounded-md"/>
           }
         </ALink>
 
