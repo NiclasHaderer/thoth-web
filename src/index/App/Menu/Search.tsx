@@ -1,9 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { KeyboardEvent, useEffect, useRef, useState } from 'react';
 import { MdImageNotSupported, MdPerson, MdSearch } from 'react-icons/md';
+
 import { SearchModel } from '../../API/Audiobook';
 import { getClient, withBaseUrl, withCaching, withErrorHandler } from '../../Client';
 import { environment } from '../../env';
-import { useOnMount } from '../../Hooks/OnMount';
+import { useFocusTrap, useTabModifier } from '../../Hooks/FocusTrap';
+import { useGlobalEvent } from '../../Hooks/GlobalEvent';
 import { ALink } from '../Common/ActiveLink';
 import { Input } from '../Common/Input';
 
@@ -24,33 +26,33 @@ export const Search: React.VFC = () => {
   const [input, setInput] = useState('');
   const [searchResult, setSearchResult] = useState<SearchModel | null>(null);
   const [resultVisible, setResultVisible] = useState(false);
-  const searchOverlay = useRef<HTMLDivElement>(null);
-  const inputElement = useRef<HTMLInputElement>(null);
-
+  const [searchOverlay, setSearchOverlay] = useState<HTMLDivElement | null>(null);
+  const inputElement = useRef<HTMLInputElement | null>(null);
+  useFocusTrap(searchOverlay, () => !resultVisible);
+  const {focusPrevious, focusNext} = useTabModifier();
   const timeout = useRef<number>();
 
-  useOnMount(() => {
-    const close = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setResultVisible(false);
-      }
-    };
-    document.addEventListener('keyup', close);
-    return () => document.removeEventListener('keyup', close);
+
+  useGlobalEvent('keyup', () => {
+    setResultVisible(false);
+  }, event => event.key === 'Escape');
+
+  useGlobalEvent('click', (event: MouseEvent) => {
+    if (
+      !searchOverlay?.contains(event.target as HTMLElement) &&
+      inputElement.current !== event.target
+    ) {
+      setResultVisible(false);
+    }
   });
 
-  useOnMount(() => {
-    const close = (event: MouseEvent) => {
-      if (
-        !searchOverlay.current?.contains(event.target as HTMLElement) &&
-        inputElement.current !== event.target
-      ) {
-        setResultVisible(false);
-      }
-    };
-    document.addEventListener('click', close);
-    return () => document.removeEventListener('click', close);
-  });
+  const modifyFocus = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === 'ArrowUp') {
+      focusPrevious();
+    } else if (event.key === 'ArrowDown') {
+      focusNext();
+    }
+  };
 
   useEffect(() => {
     if (input === '') {
@@ -68,8 +70,9 @@ export const Search: React.VFC = () => {
     return () => clearTimeout(timeout.current);
   }, [input]);
 
+
   return (
-    <div className="px-3 flex-grow shadow-none relative">
+    <div className="px-3 flex-grow shadow-none relative" onKeyDown={modifyFocus} ref={setSearchOverlay}>
 
       <Input className="bg-elevate rounded-3xl pl-11"
              icon={<MdSearch className="w-6 h-6 mx-1"/>}
@@ -87,8 +90,8 @@ export const Search: React.VFC = () => {
              }}/>
       {
         searchResult && resultVisible ?
-          <div ref={searchOverlay}
-               className="p-3 rounded-md z-10 absolute overflow-hidden shadow-2xl rounded-md mx-3 bottom-0 left-0 right-0 translate-y-full bg-background">
+          <div
+            className="p-3 rounded-md z-10 absolute overflow-hidden shadow-2xl mx-3 bottom-0 left-0 right-0 translate-y-full bg-background">
             <SearchResults search={searchResult} onClose={() => setResultVisible(false)}/>
           </div>
           : ''
@@ -119,7 +122,7 @@ const AuthorSearchResult: React.VFC<{ authors: SearchModel['authors'], onClose: 
       <div>No authors found</div> :
       authors.map((author, i) => (
         <ALink href={`/authors/${author.id}`} onClick={onClose} key={i} aria-label={author.name}
-               className="block focus:bg-light-active hover:bg-light-active rounded-md transition-colors transition">
+               className="block focus:bg-light-active hover:bg-light-active rounded-md transition-colors">
           <div className="flex items-center p-2">
             {author.image ?
               <img className="rounded-full w-8 h-8" src={`${environment.apiURL}/image/${author.image}`} alt="Author"
@@ -142,7 +145,7 @@ const BookSearchResult: React.VFC<{ books: SearchModel['books'], onClose: () => 
       <div>No authors found</div> :
       books.map((book, i) => (
         <ALink href={`/books/${book.id}`} onClick={onClose} key={i} aria-label={book.title}
-               className="block focus:bg-light-active hover:bg-light-active rounded-md transition-colors transition">
+               className="block focus:bg-light-active hover:bg-light-active rounded-md transition-colors">
 
           <div className="flex items-center p-2">
             {book.cover ?
@@ -165,7 +168,7 @@ const SeriesSearchResult: React.VFC<{ series: SearchModel['series'], onClose: ()
       <div>No authors found</div> :
       series.map((series, i) => (
         <ALink href={`/series/${series.id}`} onClick={onClose} key={i} aria-label={series.title}
-               className="block focus:bg-light-active hover:bg-light-active rounded-md transition-colors transition">
+               className="block focus:bg-light-active hover:bg-light-active rounded-md transition-colors">
           <div className="flex items-center p-2">
             <MdImageNotSupported className="w-8 h-8 rounded-md"/>
             <h4 className="pl-3">{series.title}</h4>
