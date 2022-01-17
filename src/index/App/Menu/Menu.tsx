@@ -1,62 +1,9 @@
 import React from 'react';
 import { MdBook, MdCollectionsBookmark, MdPerson, MdRefresh } from 'react-icons/md';
 import { AudiobookClient } from '../../API/AudiobookClient';
-import { useBreakpoint } from '../../Hooks/Breakpoint';
-import { usePlaybackState } from '../../State/Playback';
 import { ActiveLink, ALink } from '../Common/ActiveLink';
 import { Ripple } from '../Common/Ripple';
-import { Playback } from '../Playback';
 import { Search } from './Search';
-
-export const MainMenu: React.FC = ({children}) => {
-  const breakPoint = useBreakpoint();
-  const isPlaying = usePlaybackState(state => state.isPlaying);
-
-  return (<div className="flex h-full flex-col h-screen">
-      <div className="bg-elevate flex items-center m-3 rounded-xl min-h-20 h-20">
-        <MenuImage/>
-        <Search/>
-        <MdRefresh className="cursor-pointer mr-3 h-8 w-8" style={{transform: 'scale(-1, 1)'}}
-                   onClick={() => AudiobookClient.rescan()}/>
-      </div>
-      <div className="flex-grow overflow-hidden">
-        {breakPoint.matchDown('md') ?
-          <SmallMenu children={children} isPlaying={isPlaying}/> :
-          <LargeMenu children={children} isPlaying={isPlaying}/>
-        }
-      </div>
-    </div>
-  );
-};
-
-
-const LargeMenu: React.FC<{ isPlaying: boolean }> = ({children, isPlaying}) => (
-  <>
-    <div className="h-full w-screen flex relative">
-      <aside className="overflow-hidden inline-block bg-elevate rounded-xl my-10 ml-10 min-w-80 max-w-80">
-        <MenuItems/>
-      </aside>
-      <main tabIndex={-1} className="mt-10 px-10 pb-10 inline overflow-x-hidden overflow-y-auto flex-grow">
-        {children}
-      </main>
-    </div>
-    {isPlaying ? <Playback/> : null}
-  </>
-);
-
-
-const SmallMenu: React.FC<{ isPlaying: boolean }> = ({children, isPlaying}) => (
-  <>
-    <main tabIndex={-1} className="block overflow-y-auto p-3">
-      {children}
-    </main>
-    <aside className="block absolute bottom-0 left-0 right-0 bg-background">
-      {isPlaying ? <Playback className="bg-light-active"/> : null}
-      <BottomToolbar className="bg-elevate"/>
-    </aside>
-  </>
-);
-
 
 const MenuImage: React.VFC = () => {
   return (
@@ -69,6 +16,31 @@ const MenuImage: React.VFC = () => {
     </ALink>
   );
 };
+
+export const SearchBar: React.VFC = () => (
+  <div className="bg-elevate flex items-center m-3 rounded-xl min-h-20 h-20">
+    <MenuImage/>
+    <Search/>
+    <MdRefresh className="cursor-pointer mr-3 h-8 w-8" style={{transform: 'scale(-1, 1)'}}
+               onClick={() => AudiobookClient.rescan()}/>
+  </div>
+);
+
+export const LargeMenu: React.FC = () => (
+  <>
+    <aside className="overflow-hidden inline-block bg-elevate rounded-xl my-10 ml-10 min-w-80 max-w-80">
+      <MenuItems/>
+    </aside>
+  </>
+);
+
+
+export const SmallMenu: React.VFC = () => (
+  <aside className="bg-background">
+    <BottomToolbar className="bg-elevate"/>
+  </aside>
+);
+
 
 const MenuItems: React.VFC = () => (
   <ul>

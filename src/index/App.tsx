@@ -1,12 +1,16 @@
 import React from 'react';
+import { BottomBar, MainWindow, TopBar } from './MainLayout';
 
-import { MainMenu } from './App/Menu/Menu';
-import { RouterOutlet } from './App/RouterOutlet';
 
 function App() {
-  return <MainMenu>
-    <RouterOutlet/>
-  </MainMenu>;
+  return (
+    <div className="h-screen flex flex-col">
+      <TopBar/>
+      <MainWindow/>
+      <BottomBar/>
+    </div>
+  );
+
 }
 
 export default App;
