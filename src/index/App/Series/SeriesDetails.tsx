@@ -2,6 +2,7 @@ import { sanitize } from 'dompurify';
 import React, { useCallback, useEffect } from 'react';
 import { MdImageNotSupported } from 'react-icons/md';
 import { useRoute } from 'wouter';
+
 import { AudiobookSelectors } from '../../State/Audiobook.Selectors';
 import { useAudiobookState } from '../../State/Audiobook.State';
 import { isSeriesWithBooks } from '../../State/Audiobook.Typeguards';
@@ -25,7 +26,7 @@ export const SeriesDetails: React.VFC = () => {
           <MdImageNotSupported
             className="w-40 h-40 md:w-80 md:h-80 rounded-md"/>
         </div>
-        <div className="flex-grow pl-10 pl-4 md:pl-10">
+        <div className="flex-grow pl-4 md:pl-10">
           <h2 className="text-2xl pb-3">{series.title}</h2>
           {isSeriesWithBooks(series) && series.yearRange ?
             <h3 className="text-xl pb-3">{series.yearRange.start} - {series.yearRange.end}</h3>

@@ -1,8 +1,8 @@
 import { sanitize } from 'dompurify';
 import React, { useCallback, useEffect } from 'react';
 import { MdImageNotSupported, MdPlayCircle } from 'react-icons/md';
-
 import { useRoute } from 'wouter';
+
 import { BookModelWithTracks } from '../../API/Audiobook';
 import { environment } from '../../env';
 import { AudiobookSelectors } from '../../State/Audiobook.Selectors';
@@ -47,7 +47,7 @@ export const BookDetails = () => {
             <MdImageNotSupported className="w-40 h-40 md:w-80 md:h-80 rounded-md border-2 border-light-active"/>
           }
         </div>
-        <div className="flex-grow pl-10 pl-4 md:pl-10 flex-col flex justify-between">
+        <div className="flex-grow pl-4 md:pl-10 flex-col flex justify-between">
           <div>
             <h2 className="text-2xl pb-3">{book.title}</h2>
             {book.year ? <div className="flex pb-3">
@@ -58,7 +58,7 @@ export const BookDetails = () => {
               <h3 className="uppercase text-unimportant pr-3 min-w-40">Author</h3>
               <ALink href={`/authors/${book.author.id}`}>
                 <h3
-                  className="group-focus:underline group-focus:underline group-focus:underline  hover:underline focus:underline">{book.author.name}</h3>
+                  className="group-focus:underline  hover:underline focus:underline">{book.author.name}</h3>
               </ALink>
             </div>
             {book.narrator ?
