@@ -1,4 +1,4 @@
-import { Dialog as HDialog, Transition } from '@headlessui/react';
+import { Dialog as HDialog, Transition as HTransition } from '@headlessui/react';
 import { Form, Formik, FormikHelpers } from 'formik';
 import React, { Fragment, ReactElement } from 'react';
 
@@ -16,10 +16,10 @@ interface DialogProps<T> {
 export function Dialog<T>({isOpen, values, closeModal, title, children, onSubmit, buttons}: DialogProps<T>) {
   return (
     <>
-      <Transition appear show={isOpen} as={Fragment}>
+      <HTransition appear show={isOpen} as={Fragment}>
         <HDialog as="div" className="fixed inset-0 z-10 overflow-y-auto" onClose={closeModal}>
           <div className="min-h-screen px-4 text-center">
-            <Transition.Child
+            <HTransition.Child
               as={Fragment}
               enter="ease-out duration-300"
               enterFrom="opacity-0"
@@ -29,11 +29,11 @@ export function Dialog<T>({isOpen, values, closeModal, title, children, onSubmit
               leaveTo="opacity-0"
             >
               <HDialog.Overlay className="fixed inset-0 bg-elevate"/>
-            </Transition.Child>
+            </HTransition.Child>
 
             {/* This element is to trick the browser into centering the modal contents. */}
             <span className="inline-block h-screen align-middle" aria-hidden="true">&#8203;</span>
-            <Transition.Child
+            <HTransition.Child
               as={Fragment}
               enter="ease-out duration-300"
               enterFrom="opacity-0 scale-95"
@@ -58,10 +58,10 @@ export function Dialog<T>({isOpen, values, closeModal, title, children, onSubmit
                 </div>
               </div>
 
-            </Transition.Child>
+            </HTransition.Child>
           </div>
         </HDialog>
-      </Transition>
+      </HTransition>
     </>
   );
 }
@@ -72,7 +72,7 @@ const InputContent: React.FC<{ buttons?: ReactElement | undefined }> = ({childre
       {children}
     </div>
 
-    <div className="flex flex-row-reverse flex justify-between mt-4">
+    <div className="flex flex-row-reverse justify-between mt-4">
       {buttons}
     </div>
   </>
