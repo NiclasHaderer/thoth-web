@@ -1,5 +1,6 @@
 import React from 'react';
 import { MdImageNotSupported } from 'react-icons/md';
+
 import { NamedId } from '../../API/Audiobook';
 import { environment } from '../../env';
 import { ALink } from '../Common/ActiveLink';
@@ -17,11 +18,11 @@ export const Book: React.VFC<BookProps> = ({cover, title, author, id}) => {
       <ALink href={`/books/${id}`} aria-label={title} tabIndex={-1}>
         {cover ?
           <img
-            className="w-52 border-light-active object-cover h-52 rounded-md border-2 cursor-pointer hover:border-primary border-transparent transition-colors"
+            className="w-52 object-cover h-52 rounded-md border-2 cursor-pointer hover:border-primary border-transparent transition-colors"
             src={`${environment.apiURL}/image/${cover}`} alt={title} loading="lazy"/>
           :
           <MdImageNotSupported
-            className="w-52 border-light-active h-52 rounded-md border-2 cursor-pointer hover:border-primary border-transparent transition-colors"/>
+            className="w-52 h-52 rounded-md border-2 cursor-pointer hover:border-primary border-transparent transition-colors"/>
         }
 
       </ALink>

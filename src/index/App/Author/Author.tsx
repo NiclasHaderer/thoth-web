@@ -1,5 +1,6 @@
 import React from 'react';
 import { MdPerson } from 'react-icons/md';
+
 import { environment } from '../../env';
 import { ALink } from '../Common/ActiveLink';
 
@@ -20,7 +21,7 @@ export const Author: React.VFC<AuthorProps> = ({image, name, id, className}) => 
                className="w-52 h-52 object-cover  rounded-full border-2 cursor-pointer hover:border-primary border-light-active transition-colors"
                src={`${environment.apiURL}/image/${image}`} alt="Author"/> :
           <MdPerson
-            className="w-52 h-52 rounded-full border-2 cursor-pointer hover:border-primary border-light-active border-transparent transition-colors"/>
+            className="w-52 h-52 rounded-full border-2 cursor-pointer hover:border-primary border-transparent transition-colors"/>
         }
       </ALink>
 
