@@ -1,4 +1,5 @@
 import React, { MouseEvent, useRef, useState } from 'react';
+import { useOnUnMount } from '../../Hooks/OnMount';
 import './Ripple.scss';
 
 type RippleProps = React.HTMLAttributes<HTMLInputElement> & {
@@ -20,16 +21,15 @@ interface SpanPosition {
   height: string;
 }
 
-const RippleSpan: React.VFC<{ spans: SpanPosition[], duration: string, className: string }> = ({
-                                                                                                 spans,
-                                                                                                 className,
-                                                                                                 duration
-                                                                                               }) => (<>
+const RippleSpan: React.VFC<{ spans: SpanPosition[], duration: string, className: string }> = (
   {
-    spans.map((key, index) => <span key={index} style={{...key, animationDuration: duration}}
-                                    className={`ripple-span ${className}`}/>)
-  }
-</>);
+    spans,
+    className,
+    duration
+  }) => (<>{
+  spans.map((key, index) =>
+    <span key={index} style={{...key, animationDuration: duration}} className={`ripple-span ${className}`}/>)
+}</>);
 
 
 export const Ripple: React.FC<RippleProps> = (
@@ -45,10 +45,11 @@ export const Ripple: React.FC<RippleProps> = (
   const [state, setState] = useState<SpanPosition[]>([]);
   const timeout = useRef(0);
 
+  useOnUnMount(() => clearTimeout(timeout.current));
 
   const removeRippleSpans = () => {
     clearTimeout(timeout.current);
-    timeout.current = setTimeout(() => setState([]), duration) as unknown as number;
+    timeout.current = setTimeout(() => setState([]), duration!) as unknown as number;
   };
 
   const getCursorCenterStyles = (e: MouseEvent<HTMLDivElement>) => {
@@ -86,7 +87,7 @@ export const Ripple: React.FC<RippleProps> = (
          onMouseUp={removeRippleSpans}>
       {children}
       <div className="ripple-container">
-        <RippleSpan spans={state} duration={`${duration}ms`} className={rippleClasses}/>
+        <RippleSpan spans={state} duration={`${duration}ms`} className={rippleClasses!}/>
       </div>
     </div>
   );
