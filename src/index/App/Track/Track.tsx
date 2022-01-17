@@ -26,8 +26,8 @@ export const Track: React.VFC<TrackProps> = ({cover, title, duration, trackNr, i
         <MdImageNotSupported className="w-16 h-16 rounded-md"/>
       }
       <button
-        className="h-6 w-6 absolute left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2 transition transition-opacity opacity-0 group-hover:opacity-100 focus:opacity-100">
-        <MdPlayCircle className="w-full h-full"/>
+        className="rounded-md h-full w-full absolute flex items-center justify-center left-0 top-0 duration-300 transition-all opacity-0 group-hover:bg-background group-hover:bg-opacity-40 bg-opacity-0 group-hover:opacity-100 focus:opacity-100">
+        <MdPlayCircle className="w-6 h-6"/>
       </button>
     </div>
     <div className="pl-6 flex flex-grow items-center justify-between">
