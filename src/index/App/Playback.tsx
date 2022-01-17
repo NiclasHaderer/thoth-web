@@ -5,16 +5,17 @@ import { useAudio, useDuration, useOnEnded, usePercentage, usePlayState, usePosi
 import { usePlaybackState } from '../State/Playback';
 import { ALink } from './Common/ActiveLink';
 import { ProgressBar } from './Common/ProgressBar';
+import { Ripple } from './Common/Ripple';
 import { toReadableTime } from './Track/helpers';
 
-export const Playback: React.VFC<{className?:string}> = ({className}) => {
+export const Playback: React.VFC<{ className?: string }> = ({className}) => {
   const playback = usePlaybackState();
   const track = playback.current;
 
   const [audio] = useAudio(track?.id ? `${environment.apiURL}/audio/${track!.id}` : undefined);
   const [position] = usePosition(audio);
   const duration = useDuration(audio);
-  const initialFocus = useRef<HTMLButtonElement>(null);
+  const initialFocus = useRef<HTMLButtonElement | null>(null);
   const [percentage, setPercentage] = usePercentage(audio);
   const [playing, setPlaying] = usePlayState(audio);
   useOnEnded(audio, playback.next);
@@ -60,27 +61,34 @@ export const Playback: React.VFC<{className?:string}> = ({className}) => {
 
       <audio/>
       <div className="flex items-center">
-        <button onClick={playback.previous} disabled={playback.history.length === 0}
-                className={`w-10 h-10 p-1 focus:bg-light-active rounded-full ${playback.history.length === 0 ? 'text-elevate' : ''}`}>
-          <MdSkipPrevious className="w-full h-full"/>
-        </button>
-        <button className="w-10 h-10 p-1 focus:bg-light-active rounded-full"
-                onClick={() => setPlaying(!playing)} ref={initialFocus}
-        >
-          {playing ?
-            <MdPauseCircle className="w-full h-full"/>
-            :
-            <MdPlayCircle className="w-full h-full"/>}
-        </button>
-        <button onClick={playback.next} disabled={playback.queue.length === 0}
-                className={`w-10 h-10 p-1 focus:bg-light-active rounded-full ${playback.queue.length === 0 ? 'text-elevate' : ''}`}>
-          <MdSkipNext className="w-full h-full"
-          />
-        </button>
-        <button onClick={playback.stop}
-                className="w-10 h-10 p-1 focus:bg-light-active rounded-full">
-          <MdStop className="w-full h-full"/>
-        </button>
+        <Ripple>
+          <button onClick={playback.previous} disabled={playback.history.length === 0}
+                  className={`w-10 h-10 p-1 focus:bg-light-active rounded-full ${playback.history.length === 0 ? 'text-elevate' : ''}`}>
+            <MdSkipPrevious className="w-full h-full"/>
+          </button>
+        </Ripple>
+        <Ripple>
+          <button className="w-10 h-10 p-1 focus:bg-light-active rounded-full"
+                  onClick={() => setPlaying(!playing)} ref={initialFocus}
+          >
+            {playing ?
+              <MdPauseCircle className="w-full h-full"/>
+              :
+              <MdPlayCircle className="w-full h-full"/>}
+          </button>
+        </Ripple>
+        <Ripple>
+          <button onClick={playback.next} disabled={playback.queue.length === 0}
+                  className={`w-10 h-10 p-1 focus:bg-light-active rounded-full ${playback.queue.length === 0 ? 'text-elevate' : ''}`}>
+            <MdSkipNext className="w-full h-full"
+            />
+          </button>
+        </Ripple>
+        <Ripple>
+          <button onClick={playback.stop} className="w-10 h-10 p-1 focus:bg-light-active rounded-full">
+            <MdStop className="w-full h-full"/>
+          </button>
+        </Ripple>
       </div>
     </div>
   );
