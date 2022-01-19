@@ -1,4 +1,4 @@
-import { sanitize } from "dompurify"
+import { sanitize } from 'dompurify';
 
 export const HtmlViewer: React.VFC<{
   content: string | null | undefined
@@ -8,7 +8,7 @@ export const HtmlViewer: React.VFC<{
   if (!content) return null
   return (
     <>
-      <h2 className="text-2xl">{title}:</h2>
+      <h2 className="text-xl">{title}</h2>
       <div
         className={`prose prose-invert ${className ?? ""}`}
         dangerouslySetInnerHTML={{ __html: sanitize(content ?? "") }}
