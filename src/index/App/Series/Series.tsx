@@ -1,34 +1,37 @@
-import React from 'react';
-import { MdImageNotSupported } from 'react-icons/md';
-import { ALink } from '../Common/ActiveLink';
+import React from "react"
+import { MdImageNotSupported } from "react-icons/md"
 
+import { ALink } from "../Common/ActiveLink"
 
 interface CollectionProps {
-  id: string;
-  amount?: number;
-  title: string;
-  cover?: string;
+  id: string
+  amount?: number
+  title: string
+  cover?: string
 }
 
-export const Series: React.VFC<CollectionProps> = ({id, title, amount, cover}) => {
+export const Series: React.VFC<CollectionProps> = ({ id, title, amount, cover }) => {
   return (
-    <span
-      className="mx-6 mb-6 inline-block w-52 ">
-    <ALink href={`/series/${id}`} aria-label={title} tabIndex={-1}>
-       {cover ? <img loading="lazy"
-                     className="w-52 h-52 border-light-active rounded-md border-2 cursor-pointer hover:border-primary border-transparent transition-colors"
-                     src={cover} alt="Series"/> :
-         <MdImageNotSupported
-           className="w-52 h-52 rounded-md border-light-active border-2 cursor-pointer hover:border-primary border-transparent transition-colors"/>
-       }
-    </ALink>
+    <span className="mx-6 mb-6 inline-block w-52 ">
+      <ALink href={`/series/${id}`} aria-label={title} tabIndex={-1}>
+        {cover ? (
+          <img
+            loading="lazy"
+            className="w-52 h-52 rounded-md border-2 cursor-pointer hover:border-primary border-transparent transition-colors"
+            src={cover}
+            alt="Series"
+          />
+        ) : (
+          <MdImageNotSupported className="w-52 h-52 rounded-md border-2 cursor-pointer hover:border-primary border-transparent transition-colors" />
+        )}
+      </ALink>
 
       <div className="p-2 relative text-center">
         <ALink href={`/series/${id}`}>
-        <span className="cursor-pointer line-clamp-2 group-focus:underline  hover:underline">{title}</span>
+          <span className="cursor-pointer line-clamp-2 no-touch:group-focus:underline  hover:underline">{title}</span>
         </ALink>
         <span className="text-unimportant">{amount} Audiobooks</span>
       </div>
-    </span>);
-
-};
+    </span>
+  )
+}
