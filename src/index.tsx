@@ -1,21 +1,20 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import App from './index/App';
-import { SnackbarProvider } from './index/App/Common/Snackbar';
-import './index/index.scss';
-import './index/tailwind.css';
+import React from "react"
+import ReactDOM from "react-dom"
+import App from "./index/App"
+import { SnackbarProvider } from "./index/App/Common/Snackbar"
+import "./index/index.scss"
+import "./index/tailwind.css"
 
 ReactDOM.render(
   <React.StrictMode>
     <SnackbarProvider>
-      <App/>
+      <App />
     </SnackbarProvider>
   </React.StrictMode>,
-  document.getElementById('root')
-);
+  document.getElementById("root")
+)
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 //reportWebVitals(console.log);
-

@@ -4,19 +4,19 @@
 @tailwind variants;
 
 ::-webkit-scrollbar {
-    @apply w-2 h-2;
+  @apply w-2 h-2;
 }
 
 ::-webkit-scrollbar-track {
-    @apply rounded-full bg-elevate;
+  @apply rounded-full bg-elevate;
 }
 
 ::-webkit-scrollbar-thumb {
-    @apply rounded-full
+  @apply rounded-full
     transition transition-colors bg-light-active hover:bg-active;
 }
 
 input {
-    @apply border-0 shadow-none bg-transparent focus:bg-light-active transition-all;
-    outline: none !important;
+  @apply border-0 shadow-none bg-transparent focus:bg-light-active transition-all;
+  outline: none !important;
 }
