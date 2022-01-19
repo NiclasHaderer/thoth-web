@@ -1,9 +1,9 @@
-import { EffectCallback, useEffect } from 'react';
+import { EffectCallback, useEffect } from "react"
 
 export const useOnMount = (effect: EffectCallback) => {
-  useEffect(effect, [effect]);
-};
+  useEffect(effect, [effect])
+}
 
 export const useOnUnMount = (effect: () => void) => {
-  useEffect(() => effect, [effect]);
-};
+  useEffect(() => effect, [effect])
+}

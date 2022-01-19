@@ -1,5 +1,5 @@
-import { getClient, withBaseUrl, withCaching, withErrorHandler } from '../Client';
-import { environment } from '../env';
+import { getClient, withBaseUrl, withCaching, withErrorHandler } from "../Client"
+import { environment } from "../env"
 import {
   AuthorModel,
   AuthorModelWithBooks,
@@ -7,22 +7,16 @@ import {
   BookModelWithTracks,
   PatchBook,
   SeriesModel,
-  SeriesModelWithBooks
-} from './Audiobook';
-
+  SeriesModelWithBooks,
+} from "./Audiobook"
 
 const CLIENT = (() => {
-  let client = withErrorHandler(
-    withBaseUrl(
-      getClient(),
-      environment.apiURL
-    )
-  );
+  let client = withErrorHandler(withBaseUrl(getClient(), environment.apiURL))
   if (environment.production) {
-    client = withCaching(client);
+    client = withCaching(client)
   }
-  return client;
-})();
+  return client
+})()
 
 export const AudiobookClient = {
   // Authors
@@ -30,8 +24,7 @@ export const AudiobookClient = {
     CLIENT.get<AuthorModel[]>(`/audiobooks/authors?limit=${limit}&offset=${offset}`),
   fetchAuthorSorting: (offset: number, limit: number) =>
     CLIENT.get<string[]>(`/audiobooks/series?limit=${limit}&offset=${offset}`),
-  fetchAuthorWithBooks: (authorID: string) =>
-    CLIENT.get<AuthorModelWithBooks>(`/audiobooks/authors/${authorID}`),
+  fetchAuthorWithBooks: (authorID: string) => CLIENT.get<AuthorModelWithBooks>(`/audiobooks/authors/${authorID}`),
   // TODO
   updateAuthor: (data: any): any => null,
 
@@ -40,9 +33,8 @@ export const AudiobookClient = {
     CLIENT.get<BookModel[]>(`/audiobooks/books?limit=${limit}&offset=${offset}`),
   fetchBookSorting: (offset: number, limit: number) =>
     CLIENT.get<string[]>(`/audiobooks/series/sorting/?limit=${limit}&offset=${offset}`),
-  fetchBookWithTracks: (bookID: string) =>
-    CLIENT.get<BookModelWithTracks>(`/audiobooks/books/${bookID}`),
-  updateBook: ({id, ...book}: Partial<PatchBook> & { id: string }) =>
+  fetchBookWithTracks: (bookID: string) => CLIENT.get<BookModelWithTracks>(`/audiobooks/books/${bookID}`),
+  updateBook: ({ id, ...book }: Partial<PatchBook> & { id: string }) =>
     CLIENT.put<BookModel>(`/audiobooks/books/${id}`, book),
 
   // Series
@@ -50,11 +42,10 @@ export const AudiobookClient = {
     CLIENT.get<SeriesModel[]>(`/audiobooks/series?limit=${limit}&offset=${offset}`),
   fetchSeriesSorting: (offset: number, limit: number) =>
     CLIENT.get<string[]>(`/audiobooks/series/sorting/?limit=${limit}&offset=${offset}`),
-  fetchSeriesWithBooks: (seriesID: string) =>
-    CLIENT.get<SeriesModelWithBooks>(`/audiobooks/series/${seriesID}`),
+  fetchSeriesWithBooks: (seriesID: string) => CLIENT.get<SeriesModelWithBooks>(`/audiobooks/series/${seriesID}`),
   // TODO
   updateSeries: (data: any): any => null,
 
   // Misc
   rescan: () => CLIENT.post<null>(`/audiobooks/rescan`, {}),
-};
+}
