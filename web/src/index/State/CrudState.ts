@@ -1,16 +1,18 @@
-import { unstable_batchedUpdates } from 'react-dom';
-import { SetState } from 'zustand';
-import { GetState } from 'zustand/vanilla';
-import { ChangeEvent } from '../API/Audiobook';
-import { insertAtPosition, replaceRangeInList, toIdRecord } from '../helpers';
-import { WebsocketConnection } from '../Websocket';
+import { unstable_batchedUpdates } from "react-dom"
+import { SetState } from "zustand"
+import { GetState } from "zustand/vanilla"
+import { ChangeEvent } from "../API/Audiobook"
+import { insertAtPosition, replaceRangeInList, toIdRecord } from "../helpers"
+import { WebsocketConnection } from "../Websocket"
 
-type OPromise<T> = Promise<T> | T;
+type OPromise<T> = Promise<T> | T
 
-type CrudReturn<KEY extends string,
+type CrudReturn<
+  KEY extends string,
   TYPE extends { id: string },
   DETAIL_TYPE extends { id: string },
-  UPDATE_TYPE extends { id: string }> = {
+  UPDATE_TYPE extends { id: string }
+> = {
   [K in KEY as `${K}Sorting`]: string[]
 } & {
   [K in KEY as `${K}Mapping`]: Record<string, TYPE | DETAIL_TYPE>
@@ -24,63 +26,64 @@ type CrudReturn<KEY extends string,
   [K in KEY as `update${K}`]: (data: UPDATE_TYPE) => void
 }
 
-export const CrudState = <KEY extends string,
+export const CrudState = <
+  KEY extends string,
   COLLECTION extends { id: string }[],
   DETAILS extends { id: string } & COLLECTION[number] & { position: number },
   UPDATE extends { id: string },
-  SORTING_STATE extends { [K in KEY as `${K}Sorting`]: string[]; },
-  MAPPING_STATE extends { [K in KEY as `${K}Mapping`]: Record<string, { id: string }> }>(
+  SORTING_STATE extends { [K in KEY as `${K}Sorting`]: string[] },
+  MAPPING_STATE extends { [K in KEY as `${K}Mapping`]: Record<string, { id: string }> }
+>(
   key: KEY,
   config: {
-    fetchFunction: (offset: number, limit: number) => OPromise<COLLECTION | undefined>,
-    detailsFunction: (id: string) => OPromise<DETAILS | undefined>,
-    sortingFunction: (offset: number, limit: number) => OPromise<string[] | undefined>,
-    updateFunction: (data: UPDATE) => OPromise<COLLECTION[number] | undefined>,
+    fetchFunction: (offset: number, limit: number) => OPromise<COLLECTION | undefined>
+    detailsFunction: (id: string) => OPromise<DETAILS | undefined>
+    sortingFunction: (offset: number, limit: number) => OPromise<string[] | undefined>
+    updateFunction: (data: UPDATE) => OPromise<COLLECTION[number] | undefined>
     ws?: WebsocketConnection<ChangeEvent>
   },
   set: SetState<SORTING_STATE & MAPPING_STATE>,
   get: GetState<SORTING_STATE & MAPPING_STATE>
 ): CrudReturn<KEY, COLLECTION[number], DETAILS, UPDATE> => {
-
   const crudState = {
     [`${key}Sorting`]: [],
     [`${key}Mapping`]: {},
     [`fetch${key}`]: async (offset: number, limit: number = 30) => {
-      const response = await config.fetchFunction(offset, limit);
-      if (!response) return;
-      set((state) => ({
+      const response = await config.fetchFunction(offset, limit)
+      if (!response) return
+      set(state => ({
         ...state,
         [`${key}Mapping`]: {
           ...state[`${key}Mapping`],
-          ...toIdRecord(response)
+          ...toIdRecord(response),
         },
-        [`${key}Sorting`]: replaceRangeInList((state as SORTING_STATE)[`${key}Sorting`], offset * limit, response)
-      }));
+        [`${key}Sorting`]: replaceRangeInList((state as SORTING_STATE)[`${key}Sorting`], offset * limit, response),
+      }))
     },
     [`fetch${key}Sorting`]: async (offset: number, limit: number = 30) => {
-      const response = await config.sortingFunction(offset, limit);
-      if (!response) return;
+      const response = await config.sortingFunction(offset, limit)
+      if (!response) return
       set(state => ({
         ...state,
-        [`${key}Sorting`]: replaceRangeInList((state as SORTING_STATE)[`${key}Sorting`], offset * limit, response)
-      }));
+        [`${key}Sorting`]: replaceRangeInList((state as SORTING_STATE)[`${key}Sorting`], offset * limit, response),
+      }))
     },
     [`fetch${key}Details`]: async (id: string) => {
-      const response = await config.detailsFunction(id);
-      if (!response) return;
+      const response = await config.detailsFunction(id)
+      if (!response) return
 
       set(state => ({
         ...state,
         [`${key}Mapping`]: {
           ...state[`${key}Mapping`],
-          [response.id]: response
+          [response.id]: response,
         },
-        [`${key}Sorting`]: insertAtPosition((state as SORTING_STATE)[`${key}Sorting`], response.id, response.position)
-      }));
+        [`${key}Sorting`]: insertAtPosition((state as SORTING_STATE)[`${key}Sorting`], response.id, response.position),
+      }))
     },
     [`update${key}`]: async (data: UPDATE) => {
-      const response = await config.updateFunction(data);
-      if (!response) return;
+      const response = await config.updateFunction(data)
+      if (!response) return
       set(state => ({
         ...state,
         [`${key}Mapping`]: {
@@ -88,50 +91,50 @@ export const CrudState = <KEY extends string,
           [response.id]: {
             ...((state as MAPPING_STATE)[`${key}Mapping`][data.id] || {}),
             ...response,
-          }
-        }
-      }));
-    }
-  } as const;
+          },
+        },
+      }))
+    },
+  } as const
 
-  if (!config.ws) return crudState as CrudReturn<KEY, COLLECTION[number], DETAILS, UPDATE>;
+  if (!config.ws) return crudState as CrudReturn<KEY, COLLECTION[number], DETAILS, UPDATE>
 
   const idIsInState = (id: string) => {
-    const state = get();
-    const mappingState = (state as MAPPING_STATE)[`${key}Mapping`];
-    const sortingState = (state as SORTING_STATE)[`${key}Sorting`];
-    return id in mappingState || sortingState.includes(id);
-  };
+    const state = get()
+    const mappingState = (state as MAPPING_STATE)[`${key}Mapping`]
+    const sortingState = (state as SORTING_STATE)[`${key}Sorting`]
+    return id in mappingState || sortingState.includes(id)
+  }
 
   const handleUpdate = (id: string) => {
-    const fetchDetails = crudState[`fetch${key}Details`] as (id: string) => void;
-    fetchDetails(id);
-  };
+    const fetchDetails = crudState[`fetch${key}Details`] as (id: string) => void
+    fetchDetails(id)
+  }
 
   const handleRemove = (id: string) => {
-    if (!idIsInState(id)) return;
+    if (!idIsInState(id)) return
 
-    const state = get();
+    const state = get()
 
-    const newMappingState = {...(state as MAPPING_STATE)[`${key}Mapping`]};
-    delete newMappingState[id];
+    const newMappingState = { ...(state as MAPPING_STATE)[`${key}Mapping`] }
+    delete newMappingState[id]
 
     set(state => ({
       ...state,
       [`${key}Mapping`]: newMappingState,
-      [`${key}Sorting`]: (state as SORTING_STATE)[`${key}Sorting`].filter(i => i !== id)
-    }));
-  };
+      [`${key}Sorting`]: (state as SORTING_STATE)[`${key}Sorting`].filter(i => i !== id),
+    }))
+  }
 
-  config.ws.onMessage((m) => unstable_batchedUpdates(() => {
-    if (m.type === 'Removed') {
-      handleRemove(m.id);
-    } else {
-      handleUpdate(m.id);
-    }
-  }));
+  config.ws.onMessage(m =>
+    unstable_batchedUpdates(() => {
+      if (m.type === "Removed") {
+        handleRemove(m.id)
+      } else {
+        handleUpdate(m.id)
+      }
+    })
+  )
 
-
-  return crudState as CrudReturn<KEY, COLLECTION[number], DETAILS, UPDATE>;
-};
-
+  return crudState as CrudReturn<KEY, COLLECTION[number], DETAILS, UPDATE>
+}

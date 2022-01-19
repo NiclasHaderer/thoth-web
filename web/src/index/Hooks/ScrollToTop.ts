@@ -1,8 +1,8 @@
-import { useOnMount } from './OnMount';
+import { useOnMount } from "./OnMount"
 
 export const useScrollToTop = (selector: string) => {
   useOnMount(() => {
-    const element = document.querySelector(selector);
-    element && element.scrollTo(0, 0);
-  });
-};
+    const element = document.querySelector(selector)
+    element && element.scrollTo(0, 0)
+  })
+}

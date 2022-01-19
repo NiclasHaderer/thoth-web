@@ -1,7 +1,9 @@
-import React from 'react';
+import React from "react"
 
-export const ResponsiveGrid: React.FC = ({children}) => {
-  return <div className="w-full justify-items-center grid gap-4
+export const ResponsiveGrid: React.FC = ({ children }) => {
+  return (
+    <div
+      className="w-full justify-items-center grid gap-4
   grid-cols-2
   sm:grid-cols-3
   md:grid-cols-2
@@ -10,7 +12,9 @@ export const ResponsiveGrid: React.FC = ({children}) => {
   2xl:grid-cols-6
   3xl:grid-cols-7
   4xl:grid-cols-8
-  ">
-    {children}
-  </div>;
-};
+  "
+    >
+      {children}
+    </div>
+  )
+}
