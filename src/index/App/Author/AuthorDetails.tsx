@@ -36,6 +36,7 @@ export const AuthorDetails: React.VFC = () => {
       </div>
       <HtmlViewer content={author.biography} className="min-w-full pb-6" title="Biographie" />
 
+      <h2 className='text-xl'>Books</h2>
       <ResponsiveGrid>
         {(isAuthorWithBooks(author) ? author.books : []).map((book, k) => (
           <Book {...book} key={k} />
