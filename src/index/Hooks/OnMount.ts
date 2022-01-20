@@ -1,9 +1,11 @@
 import { EffectCallback, useEffect } from "react"
 
 export const useOnMount = (effect: EffectCallback) => {
-  useEffect(effect, [effect])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(effect, [])
 }
 
 export const useOnUnMount = (effect: () => void) => {
-  useEffect(() => effect, [effect])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => effect, [])
 }
