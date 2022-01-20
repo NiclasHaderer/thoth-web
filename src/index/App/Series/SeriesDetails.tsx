@@ -1,14 +1,14 @@
-import React, { useCallback, useEffect } from 'react';
-import { MdImageNotSupported } from 'react-icons/md';
-import { useRoute } from 'wouter';
+import React, { useCallback, useEffect } from "react"
+import { MdImageNotSupported } from "react-icons/md"
+import { useRoute } from "wouter"
 
-import { AudiobookSelectors } from '../../State/Audiobook.Selectors';
-import { useAudiobookState } from '../../State/Audiobook.State';
-import { isSeriesWithBooks } from '../../State/Audiobook.Typeguards';
-import { Book } from '../Books/Book';
-import { ALink } from '../Common/ActiveLink';
-import { HtmlViewer } from '../Common/HtmlViewer';
-import { ResponsiveGrid } from '../Common/ResponsiveGrid';
+import { AudiobookSelectors } from "../../State/Audiobook.Selectors"
+import { useAudiobookState } from "../../State/Audiobook.State"
+import { isSeriesWithBooks } from "../../State/Audiobook.Typeguards"
+import { Book } from "../Books/Book"
+import { ALink } from "../Common/ActiveLink"
+import { HtmlViewer } from "../Common/HtmlViewer"
+import { ResponsiveGrid } from "../Common/ResponsiveGrid"
 
 export const SeriesDetails: React.VFC = () => {
   const [, id] = useRoute("/series/:id")

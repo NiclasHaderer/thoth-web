@@ -1,16 +1,40 @@
 export type HTTP_METHOD = "GET" | "POST" | "PUT" | "DELETE" | "PATCH"
 
-export type TClient = {
-  request<T>(method: HTTP_METHOD, url: string, body?: any): Promise<T | undefined>
-  get<T>(url: string): Promise<T | undefined>
-  post<T, B = any>(url: string, body: B): Promise<T | undefined>
-  patch<T, B = any>(url: string, body: Partial<B>): Promise<T | undefined>
-  put<T, B = any>(url: string, body: B): Promise<T | undefined>
-  delete<T, B = any>(url: string, body: B): Promise<T | undefined>
+type QueryParameter = string | number
+type RequestBody = object | string
+
+export interface QueryParameters {
+  [name: string]: QueryParameter | QueryParameter[]
 }
 
-export const getClient = () => {
-  const executeRequest = (method: HTTP_METHOD, url: string, body: any) => {
+export type TClient = {
+  request<T>(method: HTTP_METHOD, url: string, params?: QueryParameters, body?: RequestBody): Promise<T | undefined>
+  get<T>(url: string, params?: QueryParameters): Promise<T | undefined>
+  post<T, B extends RequestBody>(url: string, body: B, params?: QueryParameters): Promise<T | undefined>
+  patch<T, B extends RequestBody>(url: string, body: Partial<B>, params?: QueryParameters): Promise<T | undefined>
+  put<T, B extends RequestBody>(url: string, body: B, params?: QueryParameters): Promise<T | undefined>
+  delete<T, B extends RequestBody>(url: string, params?: QueryParameters, body?: B): Promise<T | undefined>
+}
+
+const appendSearchParams = (urlParams: URL, query: QueryParameters) => {
+  const params = urlParams.searchParams
+  for (const [key, value] of Object.entries(query)) {
+    if (Array.isArray(value)) {
+      value.forEach(v => params.append(key, v.toString()))
+    } else {
+      params.append(key, value.toString())
+    }
+  }
+}
+
+export const withSearchParams = (url: string, query: QueryParameters | undefined) => {
+  const urlObject = new URL(url)
+  query && appendSearchParams(urlObject, query)
+  return urlObject.toString()
+}
+
+export const getClient = (): TClient => {
+  const executeRequest = (method: HTTP_METHOD, url: string, body: RequestBody | undefined) => {
     const isJson = typeof body === "object"
     return fetch(url, {
       method,
@@ -22,9 +46,11 @@ export const getClient = () => {
   }
 
   return {
-    request<T>(method: HTTP_METHOD, url: string, body: any = undefined): Promise<T | undefined> {
+    request<T>(method: HTTP_METHOD, url: string, params?: QueryParameters, body?: RequestBody): Promise<T | undefined> {
+      url = withSearchParams(url, params)
+
       return new Promise<T>(async (resolve, reject) => {
-        executeRequest(method, url, body)
+        executeRequest(method, url.toString(), body)
           .then(res => {
             if (res.status >= 400) {
               reject(res)
@@ -34,20 +60,20 @@ export const getClient = () => {
           .catch(reject)
       })
     },
-    get<T>(url: string): Promise<T | undefined> {
-      return this.request("GET", url)
+    get<T>(url: string, params?: QueryParameters): Promise<T | undefined> {
+      return this.request("GET", url, params)
     },
-    post<T, B = any>(url: string, body: B): Promise<T | undefined> {
-      return this.request("POST", url, body)
+    post<T, B extends RequestBody>(url: string, body: B, params?: QueryParameters): Promise<T | undefined> {
+      return this.request("POST", url, params, body)
     },
-    put<T, B = any>(url: string, body: B): Promise<T | undefined> {
-      return this.request("PUT", url, body)
+    put<T, B extends RequestBody>(url: string, body: B, params?: QueryParameters): Promise<T | undefined> {
+      return this.request("PUT", url, params, body)
     },
-    patch<T, B = any>(url: string, body: Partial<B>): Promise<T | undefined> {
-      return this.request("PATCH", url, body)
+    patch<T, B extends RequestBody>(url: string, body?: Partial<B>, params?: QueryParameters): Promise<T | undefined> {
+      return this.request("PATCH", url, params, body)
     },
-    delete<T>(url: string, body: Record<any, any>): Promise<T | undefined> {
-      return this.request("DELETE", url, body)
+    delete<T, B extends RequestBody>(url: string, params?: QueryParameters, body?: Partial<B>): Promise<T | undefined> {
+      return this.request("DELETE", url, params, body)
     },
   }
 }

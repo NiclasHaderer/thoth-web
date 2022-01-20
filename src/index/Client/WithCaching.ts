@@ -1,8 +1,8 @@
-import { TClient } from "./Client"
+import { QueryParameters, TClient, withSearchParams } from "./Client"
 
 export type TCachingClient = {
   expire(): void
-  get<T>(url: string, forceNew?: boolean): Promise<T>
+  get<T>(url: string, params?: QueryParameters, forceNew?: boolean): Promise<T>
 }
 export type TInternalCachingClient = TCachingClient & {
   getCache(): CacheHolder
@@ -52,14 +52,16 @@ export const withCaching = <C extends TClient>(
 
   return {
     ...client,
-    async get<T>(url: string, forceNew = false): Promise<T | undefined> {
+    async get<T>(url: string, params?: QueryParameters, forceNew = false): Promise<T | undefined> {
+      const cacheKey = withSearchParams(url, params)
+
       if (!forceNew) {
-        const cacheEntry = getEntryFromCache<T>(cache.entry, url, expiresMs)
+        const cacheEntry = getEntryFromCache<T>(cache.entry, cacheKey, expiresMs)
         if (cacheEntry.hasEntry) return Promise.resolve(cacheEntry.value)
       }
 
-      return client.get<T>(url).then(res => {
-        saveEntryInCache(cache.entry, url, res)
+      return client.get<T>(url, params).then(res => {
+        saveEntryInCache(cache.entry, cacheKey, res)
         return res
       })
     },

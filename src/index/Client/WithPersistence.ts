@@ -1,4 +1,5 @@
 import { TCachingClient, TInternalCachingClient } from "./WithCaching"
+import { QueryParameters } from "./Client"
 
 export const withPersistence = <C extends TCachingClient>(
   client: C,
@@ -11,8 +12,8 @@ export const withPersistence = <C extends TCachingClient>(
 
   return {
     ...client,
-    async get<T>(url: string, forceNew = false): Promise<T> {
-      return _cacheClient.get<T>(url, forceNew).then(response => {
+    async get<T>(url: string, params?: QueryParameters, forceNew = false): Promise<T> {
+      return _cacheClient.get<T>(url, params, forceNew).then(response => {
         storage.setItem(cacheName, JSON.stringify(cache.entry))
         return response
       })
