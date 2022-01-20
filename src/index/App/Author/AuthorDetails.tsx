@@ -1,14 +1,14 @@
-import React, { useCallback, useEffect } from 'react';
-import { MdPerson } from 'react-icons/md';
-import { useRoute } from 'wouter';
+import React, { useCallback, useEffect } from "react"
+import { MdPerson } from "react-icons/md"
+import { useRoute } from "wouter"
 
-import { environment } from '../../env';
-import { AudiobookSelectors } from '../../State/Audiobook.Selectors';
-import { useAudiobookState } from '../../State/Audiobook.State';
-import { isAuthorWithBooks } from '../../State/Audiobook.Typeguards';
-import { Book } from '../Books/Book';
-import { HtmlViewer } from '../Common/HtmlViewer';
-import { ResponsiveGrid } from '../Common/ResponsiveGrid';
+import { environment } from "../../env"
+import { AudiobookSelectors } from "../../State/Audiobook.Selectors"
+import { useAudiobookState } from "../../State/Audiobook.State"
+import { isAuthorWithBooks } from "../../State/Audiobook.Typeguards"
+import { Book } from "../Books/Book"
+import { HtmlViewer } from "../Common/HtmlViewer"
+import { ResponsiveGrid } from "../Common/ResponsiveGrid"
 
 export const AuthorDetails: React.VFC = () => {
   const [, id] = useRoute("/authors/:id")
@@ -36,7 +36,7 @@ export const AuthorDetails: React.VFC = () => {
       </div>
       <HtmlViewer content={author.biography} className="min-w-full pb-6" title="Biographie" />
 
-      <h2 className='text-xl'>Books</h2>
+      <h2 className="text-xl">Books</h2>
       <ResponsiveGrid>
         {(isAuthorWithBooks(author) ? author.books : []).map((book, k) => (
           <Book {...book} key={k} />

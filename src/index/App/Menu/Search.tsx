@@ -58,7 +58,7 @@ export const Search: React.VFC = () => {
     setResultVisible(true)
     clearTimeout(timeout.current)
     timeout.current = setTimeout(async () => {
-      const result = await CLIENT.get<SearchModel>(`/search?q=${input}`)
+      const result = await CLIENT.get<SearchModel>(`/search`, { q: input })
       result && setSearchResult(result)
     }, 100) as unknown as number
 
