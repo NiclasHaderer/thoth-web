@@ -1,4 +1,4 @@
-import React, { ReactElement, useState } from "react"
+import React, { ReactElement, useContext, useState } from "react"
 import { MdClose } from "react-icons/md"
 
 type SnackbarOptions = {
@@ -8,7 +8,7 @@ type SnackbarOptions = {
 }
 
 type SnackbarProps = {
-  element: ReactElement
+  element: ReactElement | string
   closable: boolean
   timeout: number
   type: "default" | "error" | "warn"
@@ -16,11 +16,11 @@ type SnackbarProps = {
 
 type SnackbarStore = { [key: string]: SnackbarProps }
 
-const error = (__: ReactElement, _?: SnackbarOptions) => {
+const error = (__: ReactElement | string, _?: SnackbarOptions) => {
   console.error("You cannot use the Snackbar without the provided SnackbarProvider")
 }
 
-export const Snackbar = React.createContext(error)
+const Snackbar = React.createContext(error)
 
 // Use this global store as single source of trough, because using setState
 // would cause a race condition
@@ -36,7 +36,7 @@ export const SnackbarProvider: React.FC = ({ children }) => {
   const [elements, setElements] = useState<SnackbarStore>({})
 
   const addSnackbar = (
-    element: ReactElement,
+    element: ReactElement | string,
     { closable = true, timeout = 2000, type = "default" }: SnackbarOptions = {}
   ) => {
     const key = Math.random().toString()
@@ -72,3 +72,7 @@ export const SnackbarProvider: React.FC = ({ children }) => {
     </Snackbar.Provider>
   )
 }
+
+export const useSnackbar = () => ({
+  show: useContext(Snackbar),
+})

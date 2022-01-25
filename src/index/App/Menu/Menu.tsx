@@ -5,6 +5,7 @@ import { AudiobookClient } from "../../API/AudiobookClient"
 import { ActiveLink, ALink } from "../Common/ActiveLink"
 import { Ripple } from "../Common/Ripple"
 import { Search } from "./Search"
+import { useSnackbar } from "../Common/Snackbar"
 
 const MenuImage: React.VFC = () => {
   return (
@@ -22,21 +23,27 @@ const MenuImage: React.VFC = () => {
   )
 }
 
-export const SearchBar: React.VFC = () => (
-  <div className="bg-elevate flex items-center m-3 pr-3 rounded-xl min-h-20 h-20">
-    <MenuImage />
-    <Search />
-    <Ripple>
-      <button
-        className="no-touch:focus:bg-light-active cursor-pointer h-12 w-12 p-2 focus:bg-light-active rounded-full"
-        style={{ transform: "scale(-1, 1)" }}
-        onClick={() => AudiobookClient.rescan()}
-      >
-        <MdRefresh className="h-full w-full" />
-      </button>
-    </Ripple>
-  </div>
-)
+export const SearchBar: React.VFC = () => {
+  const snackbar = useSnackbar()
+  return (
+    <div className="bg-elevate flex items-center m-3 pr-3 rounded-xl min-h-20 h-20">
+      <MenuImage />
+      <Search />
+      <Ripple>
+        <button
+          className="no-touch:focus:bg-light-active cursor-pointer h-12 w-12 p-2 focus:bg-light-active rounded-full"
+          style={{ transform: "scale(-1, 1)" }}
+          onClick={async () => {
+            await AudiobookClient.rescan()
+            snackbar.show("Scheduled rescan")
+          }}
+        >
+          <MdRefresh className="h-full w-full" />
+        </button>
+      </Ripple>
+    </div>
+  )
+}
 
 export const LargeMenu: React.FC = () => (
   <>
