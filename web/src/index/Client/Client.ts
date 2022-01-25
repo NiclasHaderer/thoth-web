@@ -1,7 +1,7 @@
 export type HTTP_METHOD = "GET" | "POST" | "PUT" | "DELETE" | "PATCH"
 
-type QueryParameter = string | number
-type RequestBody = object | string
+export type QueryParameter = string | number
+export type RequestBody = object | string
 
 export interface QueryParameters {
   [name: string]: QueryParameter | QueryParameter[]
@@ -49,13 +49,14 @@ export const getClient = (): TClient => {
     request<T>(method: HTTP_METHOD, url: string, params?: QueryParameters, body?: RequestBody): Promise<T | undefined> {
       url = withSearchParams(url, params)
 
-      return new Promise<T>(async (resolve, reject) => {
+      return new Promise<T>((resolve, reject) => {
         executeRequest(method, url.toString(), body)
-          .then(res => {
+          .then(async res => {
             if (res.status >= 400) {
               reject(res)
+            } else {
+              resolve(res.json())
             }
-            resolve(res.json())
           })
           .catch(reject)
       })

@@ -5,7 +5,7 @@ export const withBaseUrl = <C extends TClient>(client: C, baseURL: string): C =>
     ...client,
     request<T>(method: HTTP_METHOD, url: string, params?: QueryParameters, body?: any): Promise<T | undefined> {
       const replaceUrl = new URL(url, baseURL).toString()
-      return client.request<T>(method, replaceUrl, body)
+      return client.request<T>(method, replaceUrl, params, body)
     },
   }
 }
