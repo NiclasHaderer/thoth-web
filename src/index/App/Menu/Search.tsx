@@ -43,8 +43,10 @@ export const Search: React.VFC = () => {
 
   const modifyFocus = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key === "ArrowUp") {
+      event.preventDefault()
       focusPrevious()
     } else if (event.key === "ArrowDown") {
+      event.preventDefault()
       focusNext()
     }
   }
@@ -142,7 +144,7 @@ const AuthorSearchResult: React.VFC<{ authors: SearchModel["authors"]; onClose: 
 const BookSearchResult: React.VFC<{ books: SearchModel["books"]; onClose: () => void }> = ({ books, onClose }) => (
   <>
     {books.length === 0 ? (
-      <div>No authors found</div>
+      <div>No book found</div>
     ) : (
       books.map((book, i) => (
         <ALink
@@ -174,7 +176,7 @@ const BookSearchResult: React.VFC<{ books: SearchModel["books"]; onClose: () => 
 const SeriesSearchResult: React.VFC<{ series: SearchModel["series"]; onClose: () => void }> = ({ series, onClose }) => (
   <>
     {series.length === 0 ? (
-      <div>No authors found</div>
+      <div>No series found</div>
     ) : (
       series.map((series, i) => (
         <ALink
