@@ -1,4 +1,5 @@
 import { QueryParameters, TClient, withSearchParams } from "./Client"
+import { toRealURL } from "./WithBaseUrl"
 
 export type TCachingClient = {
   expire(): void
@@ -53,7 +54,7 @@ export const withCaching = <C extends TClient>(
   return {
     ...client,
     async get<T>(url: string, params?: QueryParameters, forceNew = false): Promise<T | undefined> {
-      const cacheKey = withSearchParams(url, params)
+      const cacheKey = withSearchParams(toRealURL(url), params)
 
       if (!forceNew) {
         const cacheEntry = getEntryFromCache<T>(cache.entry, cacheKey, expiresMs)
