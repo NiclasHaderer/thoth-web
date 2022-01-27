@@ -1,9 +1,27 @@
-export interface AuthorModel {
-  asin: string | null
+export interface ProviderWithIDMetadata {
+  itemID: string
+  provider: string
+}
+
+export interface ProviderIDModel extends ProviderWithIDMetadata {
+  itemID: string
+  provider: string
+}
+
+export interface IAuthorModel {
   biography: string | null
   id: string
   image: string | null
   name: string
+  providerID: ProviderIDModel | null
+}
+
+export interface AuthorModel extends IAuthorModel {
+  biography: string | null
+  id: string
+  image: string | null
+  name: string
+  providerID: ProviderIDModel | null
 }
 
 export interface NamedId {
@@ -16,42 +34,58 @@ export interface TitledId {
   title: string
 }
 
-export interface BookModel {
-  asin: string | null
+export interface IBookModel {
   author: NamedId
   cover: string | null
   description: string | null
   id: string
   language: string | null
   narrator: string | null
+  providerID: ProviderIDModel | null
   series: TitledId | null
   seriesIndex: number | null
   title: string
+  updateTime: number
   year: number | null
 }
 
-export interface AuthorModelWithBooks {
-  asin: string | null
+export interface BookModel extends IBookModel {
+  author: NamedId
+  cover: string | null
+  description: string | null
+  id: string
+  language: string | null
+  narrator: string | null
+  providerID: ProviderIDModel | null
+  series: TitledId | null
+  seriesIndex: number | null
+  title: string
+  updateTime: number
+  year: number | null
+}
+
+export interface AuthorModelWithBooks extends IAuthorModel {
   biography: string | null
   books: BookModel[]
   id: string
   image: string | null
   name: string
   position: number
+  providerID: ProviderIDModel | null
 }
 
 export interface TrackModel {
   accessTime: number
   book: TitledId
-  cover: string | null
   duration: number
   id: string
+  path: string
   title: string
   trackNr: number | null
+  updateTime: number
 }
 
-export interface BookModelWithTracks {
-  asin: string | null
+export interface BookModelWithTracks extends IBookModel {
   author: NamedId
   cover: string | null
   description: string | null
@@ -59,20 +93,35 @@ export interface BookModelWithTracks {
   language: string | null
   narrator: string | null
   position: number
+  providerID: ProviderIDModel | null
   series: TitledId | null
   seriesIndex: number | null
   title: string
   tracks: TrackModel[]
+  updateTime: number
   year: number | null
 }
 
-export interface SeriesModel {
+export interface ISeriesModel {
   amount: number
-  asin: string | null
   author: NamedId
   description: string | null
   id: string
+  images: string[]
+  providerID: ProviderIDModel | null
   title: string
+  updateTime: number
+}
+
+export interface SeriesModel extends ISeriesModel {
+  amount: number
+  author: NamedId
+  description: string | null
+  id: string
+  images: string[]
+  providerID: ProviderIDModel | null
+  title: string
+  updateTime: number
 }
 
 export interface SearchModel {
@@ -82,25 +131,25 @@ export interface SearchModel {
 }
 
 export interface PatchAuthor {
-  asin: string | null
   biography: string | null
   image: string | null
-  name: string | null
+  name: string
+  providerID: ProviderIDModel
 }
 
 export interface PatchSeries {
-  asin: string | null
   description: string | null
+  providerID: ProviderIDModel | null
   title: string
 }
 
 export interface PatchBook {
-  asin: string | null
   author: string
   cover: string | null
   description: string | null
   language: string | null
   narrator: string | null
+  providerID: ProviderIDModel | null
   series: string | null
   seriesIndex: number | null
   title: string
@@ -112,16 +161,18 @@ export interface YearRange {
   start: number
 }
 
-export interface SeriesModelWithBooks {
+export interface SeriesModelWithBooks extends ISeriesModel {
   amount: number
-  asin: string | null
   author: NamedId
   books: BookModel[]
   description: string | null
   id: string
+  images: string[]
   narrators: string[]
   position: number
+  providerID: ProviderIDModel | null
   title: string
+  updateTime: number
   yearRange: YearRange | null
 }
 
@@ -130,4 +181,11 @@ type EntityChangeType = "Created" | "Updated" | "Removed"
 export interface ChangeEvent {
   id: string
   type: EntityChangeType
+}
+
+export interface PaginatedResponse<T> {
+  items: T[]
+  limit: number
+  offset: number
+  total: number
 }
