@@ -9,18 +9,23 @@ import { Series } from "./Series"
 export const SeriesList: React.VFC = () => {
   const getSeries = useAudiobookState(AudiobookSelectors.fetchSeries)
   const series = useAudiobookState(AudiobookSelectors.selectSeriesList)
+  const seriesCount = useAudiobookState(AudiobookSelectors.selectSeriesCount)
   const loading = useRef<HTMLDivElement>(null)
   useScrollToTop("main")
   useInfinityScroll(loading.current, getSeries)
 
   return (
-    <ResponsiveGrid>
-      {series.map((series, k) => (
-        <Series {...series} key={k} />
-      ))}
-      <div className="min-w-full text-center opacity-0" ref={loading}>
-        Loading ...
-      </div>
-    </ResponsiveGrid>
+    <>
+      {seriesCount != null ? <h2 className="p-2 pb-6 text-2xl">{seriesCount} Series</h2> : null}
+
+      <ResponsiveGrid>
+        {series.map((series, k) => (
+          <Series {...series} key={k} />
+        ))}
+        <div className="min-w-full text-center opacity-0" ref={loading}>
+          Loading ...
+        </div>
+      </ResponsiveGrid>
+    </>
   )
 }

@@ -63,7 +63,7 @@ export const SeriesDetails: React.VFC = () => {
 
       {isSeriesWithBooks(series) ? (
         <>
-          <h2 className="p-2 pb-6 text-xl">{series.books.length} Books</h2>
+          <h2 className="p-2 pb-6 text-2xl">{series.books.length} Books</h2>
           <ResponsiveGrid>
             {series.books.map((book, k) => (
               <Book {...book} key={k} />

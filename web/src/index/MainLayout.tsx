@@ -29,7 +29,7 @@ export const MainWindow = () => {
   const isMD = breakPoint.matchDown(CHANGE_LAYOUT)
 
   return (
-    <div className={`flex-grow ${isMD ? "overflow-y-auto" : "flex"}`}>
+    <div className={`flex-grow overflow-y-auto ${isMD ? "" : "flex"}`}>
       {isMD ? null : <LargeMenu />}
       <main tabIndex={-1} className={`px-5 overflow-x-hidden flex-grow overflow-y-auto ${isMD ? "mt-4" : "mt-10"}`}>
         <RouterOutlet />
