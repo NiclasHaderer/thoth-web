@@ -13,14 +13,18 @@ export const AuthorList: React.VFC = () => {
   useInfinityScroll(loading.current, getAuthors)
 
   const authors = useAudiobookState(AudiobookSelectors.selectAuthors)
+  const authorCount = useAudiobookState(AudiobookSelectors.selectAuthorCount)
   return (
-    <ResponsiveGrid>
-      {authors.map((author, k) => (
-        <Author {...author} key={k} />
-      ))}
-      <div className="min-w-full text-center opacity-0" ref={loading}>
-        Loading ...
-      </div>
-    </ResponsiveGrid>
+    <>
+      {authorCount != null ? <h2 className="p-2 pb-6 text-2xl">{authorCount} Authors</h2> : null}
+      <ResponsiveGrid>
+        {authors.map((author, k) => (
+          <Author {...author} key={k} />
+        ))}
+        <div className="min-w-full text-center opacity-0" ref={loading}>
+          Loading ...
+        </div>
+      </ResponsiveGrid>
+    </>
   )
 }
