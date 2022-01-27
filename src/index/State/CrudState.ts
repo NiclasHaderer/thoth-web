@@ -1,7 +1,7 @@
 import { unstable_batchedUpdates } from "react-dom"
 import { SetState } from "zustand"
 import { GetState } from "zustand/vanilla"
-import { ChangeEvent } from "../API/Audiobook"
+import { ChangeEvent, PaginatedResponse } from "../API/Audiobook"
 import { insertAtPosition, replaceRangeInList, toIdRecord } from "../helpers"
 import { WebsocketConnection } from "../Websocket"
 
@@ -15,6 +15,8 @@ type CrudReturn<
 > = {
   [K in KEY as `${K}Sorting`]: string[]
 } & {
+  [K in KEY as `${K}Total`]: number
+} & {
   [K in KEY as `${K}Mapping`]: Record<string, TYPE | DETAIL_TYPE>
 } & {
   [K in KEY as `fetch${K}`]: (offset: number, limit?: number) => void
@@ -24,12 +26,14 @@ type CrudReturn<
   [K in KEY as `fetch${K}Details`]: (id: string) => void
 } & {
   [K in KEY as `update${K}`]: (data: UPDATE_TYPE) => void
+} & {
+  [K in KEY as `clear${K}`]: () => void
 }
 
 export const CrudState = <
   KEY extends string,
-  COLLECTION extends { id: string }[],
-  DETAILS extends { id: string } & COLLECTION[number] & { position: number },
+  COLLECTION extends PaginatedResponse<{ id: string }>,
+  DETAILS extends { id: string } & COLLECTION["items"][number] & { position: number },
   UPDATE extends { id: string },
   SORTING_STATE extends { [K in KEY as `${K}Sorting`]: string[] },
   MAPPING_STATE extends { [K in KEY as `${K}Mapping`]: Record<string, { id: string }> }
@@ -39,13 +43,15 @@ export const CrudState = <
     fetchFunction: (offset: number, limit: number) => OPromise<COLLECTION | undefined>
     detailsFunction: (id: string) => OPromise<DETAILS | undefined>
     sortingFunction: (offset: number, limit: number) => OPromise<string[] | undefined>
-    updateFunction: (data: UPDATE) => OPromise<COLLECTION[number] | undefined>
+    updateFunction: (data: UPDATE) => OPromise<COLLECTION["items"][number] | undefined>
     ws?: WebsocketConnection<ChangeEvent>
   },
   set: SetState<SORTING_STATE & MAPPING_STATE>,
   get: GetState<SORTING_STATE & MAPPING_STATE>
-): CrudReturn<KEY, COLLECTION[number], DETAILS, UPDATE> => {
+): CrudReturn<KEY, COLLECTION["items"][number], DETAILS, UPDATE> => {
   const crudState = {
+    // TODO update total count if you add a new book to the library
+    [`${key}Total`]: null,
     [`${key}Sorting`]: [],
     [`${key}Mapping`]: {},
     [`fetch${key}`]: async (offset: number, limit: number = 30) => {
@@ -53,11 +59,16 @@ export const CrudState = <
       if (!response) return
       set(state => ({
         ...state,
+        [`${key}Total`]: response.total,
         [`${key}Mapping`]: {
           ...state[`${key}Mapping`],
-          ...toIdRecord(response),
+          ...toIdRecord(response.items),
         },
-        [`${key}Sorting`]: replaceRangeInList((state as SORTING_STATE)[`${key}Sorting`], offset * limit, response),
+        [`${key}Sorting`]: replaceRangeInList(
+          (state as SORTING_STATE)[`${key}Sorting`],
+          offset * limit,
+          response.items
+        ),
       }))
     },
     [`fetch${key}Sorting`]: async (offset: number, limit: number = 30) => {
@@ -95,9 +106,17 @@ export const CrudState = <
         },
       }))
     },
+    [`clear${key}`]: async () => {
+      const newState = {
+        [`${key}Total`]: null,
+        [`${key}Sorting`]: [],
+        [`${key}Mapping`]: {},
+      }
+      set(newState as any)
+    },
   } as const
 
-  if (!config.ws) return crudState as CrudReturn<KEY, COLLECTION[number], DETAILS, UPDATE>
+  if (!config.ws) return crudState as CrudReturn<KEY, COLLECTION["items"][number], DETAILS, UPDATE>
 
   const idIsInState = (id: string) => {
     const state = get()
@@ -136,5 +155,5 @@ export const CrudState = <
     })
   )
 
-  return crudState as CrudReturn<KEY, COLLECTION[number], DETAILS, UPDATE>
+  return crudState as CrudReturn<KEY, COLLECTION["items"][number], DETAILS, UPDATE>
 }

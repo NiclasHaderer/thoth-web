@@ -7,9 +7,6 @@ module.exports = {
         "3xl": "1700px",
         "4xl": "1900px",
       },
-      zIndex: {
-        "-1": "-1",
-      },
       colors: {
         primary: "#a13c2a",
         unimportant: "#FFFFFF72",

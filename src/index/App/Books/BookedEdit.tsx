@@ -1,6 +1,13 @@
 import React, { useState } from "react"
-import { MdPerson } from "react-icons/md"
-import { MdCollectionsBookmark, MdEdit, MdEvent, MdFormatListNumbered, MdLanguage, MdSearch } from "react-icons/md"
+import {
+  MdCollectionsBookmark,
+  MdEdit,
+  MdEvent,
+  MdFormatListNumbered,
+  MdLanguage,
+  MdPerson,
+  MdSearch,
+} from "react-icons/md"
 import { BookModel } from "../../API/Audiobook"
 import { AudiobookSelectors } from "../../State/Audiobook.Selectors"
 import { useAudiobookState } from "../../State/Audiobook.State"
@@ -42,19 +49,20 @@ export const BookedEdit: React.VFC<{ book: Partial<BookModel> & { id: string } }
           seriesIndex: book.seriesIndex || undefined,
         }}
         onSubmit={values => {
-          updateBook({
-            id: book.id,
-            asin: book.asin,
-            cover: book.cover,
-            description: book.description,
-            title: values.title || book.title,
-            author: values.author || book.author!.name,
-            language: values.language || null,
-            narrator: values.narrator || null,
-            series: values.series || null,
-            year: values.year || null,
-            seriesIndex: values.seriesIndex || null,
-          })
+          // TODO
+          //updateBook({
+          //  id: book.id,
+          //  asin: book.asin,
+          //  cover: book.cover,
+          //  description: book.description,
+          //  title: values.title || book.title,
+          //  author: values.author || book.author!.name,
+          //  language: values.language || null,
+          //  narrator: values.narrator || null,
+          //  series: values.series || null,
+          //  year: values.year || null,
+          //  seriesIndex: values.seriesIndex || null,
+          //})
           closeModal()
         }}
       >

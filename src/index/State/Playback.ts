@@ -1,7 +1,7 @@
 import create from "zustand"
 import { NamedId, TrackModel } from "../API/Audiobook"
 
-export type PlaybackTrack = TrackModel & { author: NamedId }
+export type PlaybackTrack = TrackModel & { author: NamedId } & { cover: string | null }
 
 interface PlaybackState {
   isPlaying: boolean

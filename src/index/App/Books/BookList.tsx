@@ -12,15 +12,19 @@ export const BookList: React.VFC = () => {
   useScrollToTop("main")
   useInfinityScroll(loading.current, getBooks)
   const books = useAudiobookState(AudiobookSelectors.selectBooks)
+  const bookCount = useAudiobookState(AudiobookSelectors.selectBookCount)
 
   return (
-    <ResponsiveGrid>
-      {books.map((book, k) => (
-        <Book {...book} key={k} />
-      ))}
-      <div className="min-w-full text-center opacity-0" ref={loading}>
-        Loading ...
-      </div>
-    </ResponsiveGrid>
+    <>
+      {bookCount != null ? <h2 className="p-2 pb-6 text-2xl">{bookCount} Books</h2> : null}
+      <ResponsiveGrid>
+        {books.map((book, k) => (
+          <Book {...book} key={k} />
+        ))}
+        <div className="min-w-full text-center opacity-0" ref={loading}>
+          Loading ...
+        </div>
+      </ResponsiveGrid>
+    </>
   )
 }

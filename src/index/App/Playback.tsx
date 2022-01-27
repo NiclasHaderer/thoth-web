@@ -28,7 +28,7 @@ export const Playback: React.VFC<{ className?: string }> = ({ className }) => {
   if (!track) return <></>
 
   return (
-    <div className={`p-3 flex bg-elevate justify-between relative ${className}`}>
+    <div className={`p-2 md:p-3 flex bg-elevate justify-between relative ${className}`}>
       <ProgressBar
         className="absolute top-0 left-0 right-0 w-full -translate-y-1/2"
         percentage={percentage}
@@ -39,7 +39,7 @@ export const Playback: React.VFC<{ className?: string }> = ({ className }) => {
         <ALink href={`/books/${track.book.id}`} className="mr-3" aria-label={track.title} tabIndex={-1}>
           {track.cover ? (
             <img
-              className="w-10 h-10 md:w-20 md:h-20 rounded-md"
+              className="w-12 h-12 md:w-20 md:h-20 rounded-md"
               alt={track.title}
               loading="lazy"
               src={`${environment.apiURL}/image/${track.cover}`}

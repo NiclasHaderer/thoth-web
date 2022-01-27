@@ -28,9 +28,9 @@ export const BookDetails = () => {
   const startPlayback = (position: number) => {
     const tracks = (book as BookModelWithTracks).tracks
 
-    const start = { ...tracks[position], author: book.author }
-    const queue = tracks.slice(position + 1, tracks.length).map(q => ({ ...q, author: book.author }))
-    const history = tracks.slice(0, position).map(q => ({ ...q, author: book.author }))
+    const start = { ...tracks[position], author: book.author, cover: book.cover }
+    const queue = tracks.slice(position + 1, tracks.length).map(q => ({ ...q, author: book.author, cover: book.cover }))
+    const history = tracks.slice(0, position).map(q => ({ ...q, author: book.author, cover: book.cover }))
 
     play(start, queue, history)
   }
@@ -103,7 +103,7 @@ export const BookDetails = () => {
       <div>
         <h3 className="p-2 text-xl pb-6">{isBookWithTracks(book) ? book.tracks.length : ""} Tracks</h3>
         {(isBookWithTracks(book) ? book.tracks : []).map((track, k) => (
-          <Track author={book.author} startPlayback={startPlayback} {...track} key={k} index={k} />
+          <Track author={book.author} startPlayback={startPlayback} {...track} cover={book.cover} key={k} index={k} />
         ))}
       </div>
     </>
