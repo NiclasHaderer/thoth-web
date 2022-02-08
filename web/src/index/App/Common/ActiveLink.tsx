@@ -15,7 +15,7 @@ export const ActiveLink: React.FC<{ href: string; withSubroutes?: boolean; class
     <Link href={href}>
       <a
         href={href}
-        className={`cursor-pointer transition-colors group ${isActive ? "text-primary" : ""} ${className ?? ""}`}
+        className={`group cursor-pointer transition-colors ${isActive ? "text-primary" : ""} ${className ?? ""}`}
       >
         {children}
       </a>
