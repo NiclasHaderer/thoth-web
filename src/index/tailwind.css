@@ -4,7 +4,7 @@
 @tailwind variants;
 
 ::-webkit-scrollbar {
-  @apply w-2 h-2;
+  @apply h-2 w-2;
 }
 
 ::-webkit-scrollbar-track {
@@ -13,10 +13,10 @@
 
 ::-webkit-scrollbar-thumb {
   @apply rounded-full
-    transition transition-colors bg-light-active hover:bg-active;
+    bg-light-active transition transition-colors hover:bg-active;
 }
 
 input {
-  @apply border-0 shadow-none bg-transparent focus:bg-light-active transition-all;
+  @apply border-0 bg-transparent shadow-none transition-all focus:bg-light-active;
   outline: none !important;
 }

@@ -16,33 +16,33 @@ interface TrackProps {
 }
 
 export const Track: React.VFC<TrackProps> = ({ cover, title, duration, trackNr, index, author, startPlayback }) => (
-  <div className="flex even:bg-light-active p-2 mr-3 rounded-md">
+  <div className="mr-3 flex rounded-md p-2 even:bg-light-active">
     <div
-      className="relative group cursor-pointer"
+      className="group relative cursor-pointer"
       onClick={() => startPlayback(index)}
       onKeyUp={e => e.key === "Enter" && startPlayback(index)}
     >
       {cover ? (
         <img
-          className="w-16 h-16 object-contain rounded-md"
+          className="h-16 w-16 rounded-md object-contain"
           src={`${environment.apiURL}/image/${cover}`}
           alt={title}
           loading="lazy"
         />
       ) : (
-        <MdImageNotSupported className="w-16 h-16 rounded-md" />
+        <MdImageNotSupported className="h-16 w-16 rounded-md" />
       )}
-      <button className="rounded-md h-full w-full absolute flex items-center justify-center left-0 top-0 duration-300 transition-all opacity-0 group-hover:bg-background group-hover:bg-opacity-40 bg-opacity-0 group-hover:opacity-100 focus:opacity-100">
-        <MdPlayCircle className="w-6 h-6" />
+      <button className="absolute left-0 top-0 flex h-full w-full items-center justify-center rounded-md bg-opacity-0 opacity-0 transition-all duration-300 focus:opacity-100 group-hover:bg-background group-hover:bg-opacity-40 group-hover:opacity-100">
+        <MdPlayCircle className="h-6 w-6" />
       </button>
     </div>
-    <div className="pl-6 flex flex-grow items-center justify-between">
+    <div className="flex flex-grow items-center justify-between pl-6">
       <div className="flex items-center">
         {trackNr}
-        <div className="pl-6 flex flex-col">
+        <div className="flex flex-col pl-6">
           <span>{title}</span>
           <ALink href={`/authors/${author.id}`} tabIndex={-1}>
-            <span className="cursor-pointer group-focus:underline hover:underline">{author.name}</span>
+            <span className="cursor-pointer hover:underline group-focus:underline">{author.name}</span>
           </ALink>
         </div>
       </div>

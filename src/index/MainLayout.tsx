@@ -17,7 +17,7 @@ export const BottomBar = () => {
   return (
     <div>
       {isPlaying ? (
-        <Playback className={isMD ? "border-primary border-solid border-b-2 border-opacity-25" : ""} />
+        <Playback className={isMD ? "border-b-2 border-solid border-primary border-opacity-25" : ""} />
       ) : null}
       {isMD ? <SmallMenu /> : null}
     </div>
@@ -31,7 +31,7 @@ export const MainWindow = () => {
   return (
     <div className={`flex-grow overflow-y-auto ${isMD ? "" : "flex"}`}>
       {isMD ? null : <LargeMenu />}
-      <main tabIndex={-1} className={`px-5 overflow-x-hidden flex-grow overflow-y-auto ${isMD ? "mt-4" : "mt-10"}`}>
+      <main tabIndex={-1} className={`flex-grow overflow-y-auto overflow-x-hidden px-5 ${isMD ? "mt-4" : "mt-10"}`}>
         <RouterOutlet />
       </main>
     </div>

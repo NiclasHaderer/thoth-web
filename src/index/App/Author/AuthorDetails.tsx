@@ -21,18 +21,18 @@ export const AuthorDetails: React.VFC = () => {
 
   return (
     <>
-      <div className="flex flex-col pb-6 items-center flex-grow">
+      <div className="flex flex-grow flex-col items-center pb-6">
         {author.image ? (
           <img
-            className="w-40 h-40 md:w-80 md:h-80 rounded-full object-contain border-2 border-light-active"
+            className="h-40 w-40 rounded-full border-2 border-light-active object-contain md:h-80 md:w-80"
             alt={author.name}
             src={`${environment.apiURL}/image/${author.image}`}
             loading="lazy"
           />
         ) : (
-          <MdPerson className="w-40 h-40 md:w-80 md:h-80 rounded-full border-2 border-light-active" />
+          <MdPerson className="h-40 w-40 rounded-full border-2 border-light-active md:h-80 md:w-80" />
         )}
-        <h2 className="text-2xl py-3">{author.name}</h2>
+        <h2 className="py-3 text-2xl">{author.name}</h2>
       </div>
       <HtmlViewer content={author.biography} className="min-w-full pb-6" title="Biographie" />
 

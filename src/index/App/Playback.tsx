@@ -28,7 +28,7 @@ export const Playback: React.VFC<{ className?: string }> = ({ className }) => {
   if (!track) return <></>
 
   return (
-    <div className={`p-2 md:p-3 flex bg-elevate justify-between relative ${className}`}>
+    <div className={`relative flex justify-between bg-elevate p-2 md:p-3 ${className}`}>
       <ProgressBar
         className="absolute top-0 left-0 right-0 w-full -translate-y-1/2"
         percentage={percentage}
@@ -39,13 +39,13 @@ export const Playback: React.VFC<{ className?: string }> = ({ className }) => {
         <ALink href={`/books/${track.book.id}`} className="mr-3" aria-label={track.title} tabIndex={-1}>
           {track.cover ? (
             <img
-              className="w-12 h-12 md:w-20 md:h-20 rounded-md"
+              className="h-12 w-12 rounded-md md:h-20 md:w-20"
               alt={track.title}
               loading="lazy"
               src={`${environment.apiURL}/image/${track.cover}`}
             />
           ) : (
-            <MdImageNotSupported className="w-10 h-10 md:w-20 md:h-20 rounded-md" />
+            <MdImageNotSupported className="h-10 w-10 rounded-md md:h-20 md:w-20" />
           )}
         </ALink>
 
@@ -54,18 +54,18 @@ export const Playback: React.VFC<{ className?: string }> = ({ className }) => {
             {track.trackNr ? track.trackNr + ". " : null} {track.title}
           </div>
           <div className="line-clamp-1">
-            <ALink className="no-touch:focus:underline hover:underline pr-2" href={`/authors/${track.author.id}`}>
+            <ALink className="pr-2 hover:underline no-touch:focus:underline" href={`/authors/${track.author.id}`}>
               {track.author.name}
             </ALink>
             -
-            <ALink className="no-touch:focus:underline hover:underline pl-2" href={`/books/${track.book.id}`}>
+            <ALink className="pl-2 hover:underline no-touch:focus:underline" href={`/books/${track.book.id}`}>
               {track.book.title}
             </ALink>
           </div>
         </div>
       </div>
 
-      <div className="items-center hidden md:flex">
+      <div className="hidden items-center md:flex">
         <span className="pr-2">{toReadableTime(position)}</span>:
         <span className="pl-2">{toReadableTime(duration)}</span>
       </div>
@@ -76,36 +76,36 @@ export const Playback: React.VFC<{ className?: string }> = ({ className }) => {
           <button
             onClick={playback.previous}
             disabled={playback.history.length === 0}
-            className={`w-10 h-10 p-1 no-touch:focus:bg-light-active rounded-full ${
+            className={`h-10 w-10 rounded-full p-1 no-touch:focus:bg-light-active ${
               playback.history.length === 0 ? "text-elevate" : ""
             }`}
           >
-            <MdSkipPrevious className="w-full h-full" />
+            <MdSkipPrevious className="h-full w-full" />
           </button>
         </Ripple>
         <Ripple>
           <button
-            className="w-10 h-10 p-1 no-touch:focus:bg-light-active rounded-full"
+            className="h-10 w-10 rounded-full p-1 no-touch:focus:bg-light-active"
             onClick={() => setPlaying(!playing)}
             ref={initialFocus}
           >
-            {playing ? <MdPauseCircle className="w-full h-full" /> : <MdPlayCircle className="w-full h-full" />}
+            {playing ? <MdPauseCircle className="h-full w-full" /> : <MdPlayCircle className="h-full w-full" />}
           </button>
         </Ripple>
         <Ripple>
           <button
             onClick={playback.next}
             disabled={playback.queue.length === 0}
-            className={`w-10 h-10 p-1 no-touch:focus:bg-light-active rounded-full ${
+            className={`h-10 w-10 rounded-full p-1 no-touch:focus:bg-light-active ${
               playback.queue.length === 0 ? "text-elevate" : ""
             }`}
           >
-            <MdSkipNext className="w-full h-full" />
+            <MdSkipNext className="h-full w-full" />
           </button>
         </Ripple>
         <Ripple>
-          <button onClick={playback.stop} className="w-10 h-10 p-1 no-touch:focus:bg-light-active rounded-full">
-            <MdStop className="w-full h-full" />
+          <button onClick={playback.stop} className="h-10 w-10 rounded-full p-1 no-touch:focus:bg-light-active">
+            <MdStop className="h-full w-full" />
           </button>
         </Ripple>
       </div>

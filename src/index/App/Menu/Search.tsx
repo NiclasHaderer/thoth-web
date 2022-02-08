@@ -68,10 +68,10 @@ export const Search: React.VFC = () => {
   }, [input])
 
   return (
-    <div className="px-3 flex-grow shadow-none relative" onKeyDown={modifyFocus} ref={setSearchOverlay}>
+    <div className="relative flex-grow px-3 shadow-none" onKeyDown={modifyFocus} ref={setSearchOverlay}>
       <Input
-        className="bg-elevate rounded-3xl pl-11"
-        icon={<MdSearch className="w-6 h-6 mx-1" />}
+        className="rounded-3xl bg-elevate pl-11"
+        icon={<MdSearch className="mx-1 h-6 w-6" />}
         placeholder="Search ..."
         inputRef={inputElement}
         onKeyUp={event => setInput((event.target as HTMLInputElement).value)}
@@ -87,7 +87,7 @@ export const Search: React.VFC = () => {
         }}
       />
       {searchResult && resultVisible ? (
-        <div className="p-3 rounded-md z-10 absolute overflow-hidden shadow-2xl mx-3 bottom-0 left-0 right-0 translate-y-full bg-background">
+        <div className="absolute bottom-0 left-0 right-0 z-10 mx-3 translate-y-full overflow-hidden rounded-md bg-background p-3 shadow-2xl">
           <SearchResults search={searchResult} onClose={() => setResultVisible(false)} />
         </div>
       ) : null}
@@ -97,11 +97,11 @@ export const Search: React.VFC = () => {
 
 const SearchResults: React.VFC<{ search: SearchModel; onClose: () => void }> = ({ search, onClose }) => (
   <>
-    <h2 className="text-unimportant uppercase py-3">Books</h2>
+    <h2 className="py-3 uppercase text-unimportant">Books</h2>
     <BookSearchResult books={search.books} onClose={onClose} />
-    <h2 className="text-unimportant uppercase py-3">Authors</h2>
+    <h2 className="py-3 uppercase text-unimportant">Authors</h2>
     <AuthorSearchResult authors={search.authors} onClose={onClose} />
-    <h2 className="text-unimportant uppercase py-3">Series</h2>
+    <h2 className="py-3 uppercase text-unimportant">Series</h2>
     <SeriesSearchResult series={search.series} onClose={onClose} />
   </>
 )
@@ -120,18 +120,18 @@ const AuthorSearchResult: React.VFC<{ authors: SearchModel["authors"]; onClose: 
           onClick={onClose}
           key={i}
           aria-label={author.name}
-          className="block no-touch:focus:bg-light-active hover:bg-light-active rounded-md transition-colors"
+          className="block rounded-md transition-colors hover:bg-light-active no-touch:focus:bg-light-active"
         >
           <div className="flex items-center p-2">
             {author.image ? (
               <img
-                className="rounded-full w-8 h-8"
+                className="h-8 w-8 rounded-full"
                 src={`${environment.apiURL}/image/${author.image}`}
                 alt="Author"
                 loading="lazy"
               />
             ) : (
-              <MdPerson className="rounded-full w-8 h-8" />
+              <MdPerson className="h-8 w-8 rounded-full" />
             )}
             <h4 className="pl-3">{author.name}</h4>
           </div>
@@ -152,18 +152,18 @@ const BookSearchResult: React.VFC<{ books: SearchModel["books"]; onClose: () => 
           onClick={onClose}
           key={i}
           aria-label={book.title}
-          className="block no-touch:focus:bg-light-active hover:bg-light-active rounded-md transition-colors"
+          className="block rounded-md transition-colors hover:bg-light-active no-touch:focus:bg-light-active"
         >
           <div className="flex items-center p-2">
             {book.cover ? (
               <img
-                className="w-8 h-8 rounded-md object-cover"
+                className="h-8 w-8 rounded-md object-cover"
                 src={`${environment.apiURL}/image/${book.cover}`}
                 alt={book.title}
                 loading="lazy"
               />
             ) : (
-              <MdImageNotSupported className="rounded-full w-8 h-8" />
+              <MdImageNotSupported className="h-8 w-8 rounded-full" />
             )}
             <h4 className="pl-3">{book.title}</h4>
           </div>
@@ -184,10 +184,10 @@ const SeriesSearchResult: React.VFC<{ series: SearchModel["series"]; onClose: ()
           onClick={onClose}
           key={i}
           aria-label={series.title}
-          className="block no-touch:focus:bg-light-active hover:bg-light-active rounded-md transition-colors"
+          className="block rounded-md transition-colors hover:bg-light-active no-touch:focus:bg-light-active"
         >
           <div className="flex items-center p-2">
-            <MdImageNotSupported className="w-8 h-8 rounded-md" />
+            <MdImageNotSupported className="h-8 w-8 rounded-md" />
             <h4 className="pl-3">{series.title}</h4>
           </div>
         </ALink>

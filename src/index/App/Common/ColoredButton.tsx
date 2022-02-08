@@ -8,7 +8,7 @@ export interface ColoredButtonProps
 export const ColoredButton: React.FC<ColoredButtonProps> = ({ children, color = "primary", ...props }) => (
   <button
     {...props}
-    className={`overflow-hidden group rounded-md ${color === "primary" ? "bg-primary" : "bg-elevate"} ${
+    className={`group overflow-hidden rounded-md ${color === "primary" ? "bg-primary" : "bg-elevate"} ${
       props.className
     }`}
   >
