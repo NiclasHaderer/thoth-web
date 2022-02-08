@@ -56,10 +56,10 @@ export const SnackbarProvider: React.FC = ({ children }) => {
       {Object.keys(elements).length > 0 ? (
         <div className="fixed right-0 bottom-0 p-8">
           {Object.entries(elements).map(([key, value]) => (
-            <div key={key} className="bg-background mb-3">
-              <div className={`bg-active relative p-2 rounded-md ${classes[value.type]}`}>
+            <div key={key} className="mb-3 bg-background">
+              <div className={`relative rounded-md bg-active p-2 ${classes[value.type]}`}>
                 {value.closable ? (
-                  <button className="top-2 right-2 cursor-pointer absolute" onClick={() => removeElement(key)}>
+                  <button className="absolute top-2 right-2 cursor-pointer" onClick={() => removeElement(key)}>
                     <MdClose className="h-6 w-6" />
                   </button>
                 ) : null}

@@ -3,8 +3,8 @@ import React from "react"
 export const ResponsiveGrid: React.FC = ({ children }) => {
   return (
     <div
-      className="w-full justify-items-center grid gap-4
-  grid-cols-2
+      className="grid w-full grid-cols-2 justify-items-center
+  gap-4
   sm:grid-cols-3
   md:grid-cols-2
   lg:grid-cols-3

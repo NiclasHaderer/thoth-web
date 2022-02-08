@@ -18,22 +18,22 @@ export const Book: React.VFC<BookProps> = ({ cover, title, author, id }) => {
       <ALink href={`/books/${id}`} aria-label={title} tabIndex={-1}>
         {cover ? (
           <img
-            className="w-52 object-cover h-52 rounded-md border-2 cursor-pointer hover:border-primary border-transparent transition-colors"
+            className="h-52 w-52 cursor-pointer rounded-md border-2 border-transparent object-cover transition-colors hover:border-primary"
             src={`${environment.apiURL}/image/${cover}`}
             alt={title}
             loading="lazy"
           />
         ) : (
-          <MdImageNotSupported className="w-52 h-52 rounded-md border-2 cursor-pointer hover:border-primary border-transparent transition-colors" />
+          <MdImageNotSupported className="h-52 w-52 cursor-pointer rounded-md border-2 border-transparent transition-colors hover:border-primary" />
         )}
       </ALink>
 
-      <div className="p-2 relative text-center">
+      <div className="relative p-2 text-center">
         <ALink href={`/books/${id}`}>
           <span className="cursor-pointer line-clamp-2 hover:underline group-focus:underline ">{title}</span>
         </ALink>
         <ALink href={`/authors/${author.id}`}>
-          <span className="text-unimportant group-focus:underline  hover:underline cursor-pointer">{author.name}</span>
+          <span className="cursor-pointer text-unimportant  hover:underline group-focus:underline">{author.name}</span>
         </ALink>
       </div>
     </div>

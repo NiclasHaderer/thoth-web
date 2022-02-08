@@ -13,7 +13,7 @@ export const ResponsiveImage: React.VFC<ResponsiveImageProps> = ({ src, ...props
       ref={element}
       {...props}
       style={{ backgroundImage: `url(${src})` }}
-      className={`bg-no-repeat bg-center overflow-hidden bg-contain ${props.className}`}
+      className={`overflow-hidden bg-contain bg-center bg-no-repeat ${props.className}`}
     />
   )
 }

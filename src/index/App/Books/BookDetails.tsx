@@ -41,52 +41,52 @@ export const BookDetails = () => {
         <div className="flex flex-col justify-around">
           {book.cover ? (
             <img
-              className="w-40 h-40 md:w-80 object-contain md:h-80 rounded-md border-2 border-light-active"
+              className="h-40 w-40 rounded-md border-2 border-light-active object-contain md:h-80 md:w-80"
               alt={book.title}
               src={`${environment.apiURL}/image/${book.cover}`}
             />
           ) : (
-            <MdImageNotSupported className="w-40 h-40 md:w-80 md:h-80 rounded-md border-2 border-light-active" />
+            <MdImageNotSupported className="h-40 w-40 rounded-md border-2 border-light-active md:h-80 md:w-80" />
           )}
         </div>
-        <div className="flex-grow pl-4 md:pl-10 flex-col flex justify-between">
+        <div className="flex flex-grow flex-col justify-between pl-4 md:pl-10">
           <div>
-            <h2 className="text-2xl pb-3">{book.title}</h2>
+            <h2 className="pb-3 text-2xl">{book.title}</h2>
             {book.year ? (
               <div className="flex pb-3">
-                <h3 className="uppercase text-unimportant pr-3 min-w-40">Year</h3>
+                <h3 className="min-w-40 pr-3 uppercase text-unimportant">Year</h3>
                 <h3>{book.year}</h3>
               </div>
             ) : null}
             <div className="flex pb-3">
-              <h3 className="uppercase text-unimportant pr-3 min-w-40">Author</h3>
+              <h3 className="min-w-40 pr-3 uppercase text-unimportant">Author</h3>
               <ALink href={`/authors/${book.author.id}`}>
-                <h3 className="group-focus:underline  hover:underline focus:underline">{book.author.name}</h3>
+                <h3 className="hover:underline  focus:underline group-focus:underline">{book.author.name}</h3>
               </ALink>
             </div>
             {book.narrator ? (
               <div className="flex pb-3">
-                <h3 className="uppercase text-unimportant pr-3 min-w-40">Narrator</h3>
+                <h3 className="min-w-40 pr-3 uppercase text-unimportant">Narrator</h3>
                 <h3>{book.narrator}</h3>
               </div>
             ) : null}
             {book.series ? (
               <div className="flex pb-3">
-                <h3 className="uppercase text-unimportant pr-3 min-w-40">Series</h3>
+                <h3 className="min-w-40 pr-3 uppercase text-unimportant">Series</h3>
                 <ALink href={`/series/${book.series.id}`}>
-                  <h3 className="group-focus:underline hover:underline">{book.series.title}</h3>
+                  <h3 className="hover:underline group-focus:underline">{book.series.title}</h3>
                 </ALink>
               </div>
             ) : null}
             {book.seriesIndex ? (
               <div className="flex pb-3">
-                <h3 className="uppercase text-unimportant pr-3 min-w-40">Series Index</h3>
+                <h3 className="min-w-40 pr-3 uppercase text-unimportant">Series Index</h3>
                 <h3>{book.seriesIndex}</h3>
               </div>
             ) : null}
             {book.language ? (
               <div className="flex pb-3">
-                <h3 className="uppercase text-unimportant pr-3 min-w-40">Language</h3>
+                <h3 className="min-w-40 pr-3 uppercase text-unimportant">Language</h3>
                 <h3>{book.language}</h3>
               </div>
             ) : null}
@@ -101,7 +101,7 @@ export const BookDetails = () => {
       </div>
       <HtmlViewer content={book.description} className="min-w-full pb-6" title="Description" />
       <div>
-        <h3 className="p-2 text-xl pb-6">{isBookWithTracks(book) ? book.tracks.length : ""} Tracks</h3>
+        <h3 className="p-2 pb-6 text-xl">{isBookWithTracks(book) ? book.tracks.length : ""} Tracks</h3>
         {(isBookWithTracks(book) ? book.tracks : []).map((track, k) => (
           <Track author={book.author} startPlayback={startPlayback} {...track} cover={book.cover} key={k} index={k} />
         ))}

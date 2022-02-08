@@ -9,15 +9,15 @@ import { useSnackbar } from "../Common/Snackbar"
 
 const MenuImage: React.VFC = () => {
   return (
-    <ALink href="/" className="flex rounded-l-xl overflow-hidden" aria-label={"HOME"}>
-      <div className="no-touch:group-focus:bg-light-active pr-2 inline-flex items-center cursor-pointer">
+    <ALink href="/" className="flex overflow-hidden rounded-l-xl" aria-label={"HOME"}>
+      <div className="inline-flex cursor-pointer items-center pr-2 no-touch:group-focus:bg-light-active">
         <img
           className="h-20 p-3"
           src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Thoth.svg"
           loading="lazy"
           alt="Logo"
         />
-        <h1 className="font-extrabold font-serif text-3xl">THOTH</h1>
+        <h1 className="font-serif text-3xl font-extrabold">THOTH</h1>
       </div>
     </ALink>
   )
@@ -26,12 +26,12 @@ const MenuImage: React.VFC = () => {
 export const SearchBar: React.VFC = () => {
   const snackbar = useSnackbar()
   return (
-    <div className="bg-elevate flex items-center m-3 pr-3 rounded-xl min-h-20 h-20">
+    <div className="m-3 flex h-20 min-h-20 items-center rounded-xl bg-elevate pr-3">
       <MenuImage />
       <Search />
       <Ripple>
         <button
-          className="no-touch:focus:bg-light-active cursor-pointer h-12 w-12 p-2 focus:bg-light-active rounded-full"
+          className="h-12 w-12 cursor-pointer rounded-full p-2 focus:bg-light-active no-touch:focus:bg-light-active"
           style={{ transform: "scale(-1, 1)" }}
           onClick={async () => {
             await AudiobookClient.rescan()
@@ -47,7 +47,7 @@ export const SearchBar: React.VFC = () => {
 
 export const LargeMenu: React.FC = () => (
   <>
-    <aside className="overflow-hidden inline-block bg-elevate rounded-xl my-10 ml-10 min-w-80 max-w-80">
+    <aside className="my-10 ml-10 inline-block min-w-80 max-w-80 overflow-hidden rounded-xl bg-elevate">
       <MenuItems />
     </aside>
   </>
@@ -62,40 +62,40 @@ export const SmallMenu: React.VFC = () => (
 const MenuItems: React.VFC = () => (
   <ul>
     <ActiveLink href="/books" withSubroutes={true}>
-      <li className="flex w-full px-3 items-center group-focus:bg-light-active hover:bg-light-active transition-colors duration-300">
+      <li className="flex w-full items-center px-3 transition-colors duration-300 hover:bg-light-active group-focus:bg-light-active">
         <MdBook className="ml-3" />
-        <span className="inline-block m-3">Books</span>
+        <span className="m-3 inline-block">Books</span>
       </li>
     </ActiveLink>
     <ActiveLink href="/series" withSubroutes={true}>
-      <li className="flex w-full px-3 items-center group-focus:bg-light-active hover:bg-light-active transition-colors duration-300">
+      <li className="flex w-full items-center px-3 transition-colors duration-300 hover:bg-light-active group-focus:bg-light-active">
         <MdCollectionsBookmark className="ml-3" />
-        <span className="inline-block m-3">Series</span>
+        <span className="m-3 inline-block">Series</span>
       </li>
     </ActiveLink>
     <ActiveLink href="/authors" withSubroutes={true}>
-      <li className="flex w-full px-3 items-center group-focus:bg-light-active hover:bg-light-active transition-colors duration-300">
+      <li className="flex w-full items-center px-3 transition-colors duration-300 hover:bg-light-active group-focus:bg-light-active">
         <MdPerson className="ml-3" />
-        <span className="inline-block m-3">Authors</span>
+        <span className="m-3 inline-block">Authors</span>
       </li>
     </ActiveLink>
   </ul>
 )
 
 const BottomToolbar: React.VFC<{ className?: string }> = ({ className = "" }) => (
-  <div className={`flex justify-between items-center px-4 h-16 relative ${className}`}>
-    <Ripple className="flex-grow h-full cursor-pointer bg-opacity-30" rippleClasses={"bg-primary bg-opacity-80"}>
-      <ActiveLink href="/authors" withSubroutes={true} className="h-full flex items-center justify-center">
+  <div className={`relative flex h-16 items-center justify-between px-4 ${className}`}>
+    <Ripple className="h-full flex-grow cursor-pointer bg-opacity-30" rippleClasses={"bg-primary bg-opacity-80"}>
+      <ActiveLink href="/authors" withSubroutes={true} className="flex h-full items-center justify-center">
         <MdPerson className="aspect-square h-3/5 w-auto" />
       </ActiveLink>
     </Ripple>
-    <Ripple className="flex-grow h-full cursor-pointer" rippleClasses={"bg-primary bg-opacity-80"}>
-      <ActiveLink href="/books" withSubroutes={true} className="h-full flex items-center justify-center">
+    <Ripple className="h-full flex-grow cursor-pointer" rippleClasses={"bg-primary bg-opacity-80"}>
+      <ActiveLink href="/books" withSubroutes={true} className="flex h-full items-center justify-center">
         <MdBook className="aspect-square h-3/5 w-auto" />
       </ActiveLink>
     </Ripple>
-    <Ripple className="flex-grow h-full cursor-pointer" rippleClasses={"bg-primary bg-opacity-80"}>
-      <ActiveLink href="/series" withSubroutes={true} className="h-full flex items-center justify-center">
+    <Ripple className="h-full flex-grow cursor-pointer" rippleClasses={"bg-primary bg-opacity-80"}>
+      <ActiveLink href="/series" withSubroutes={true} className="flex h-full items-center justify-center">
         <MdCollectionsBookmark className="aspect-square h-3/5 w-auto" />
       </ActiveLink>
     </Ripple>

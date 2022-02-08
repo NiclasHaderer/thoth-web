@@ -7,7 +7,7 @@ const App = memo(() => {
   return (
     <>
       <ErrorSnackbar />
-      <div className="h-full flex flex-col">
+      <div className="flex h-full flex-col">
         <TopBar />
         <MainWindow />
         <BottomBar />

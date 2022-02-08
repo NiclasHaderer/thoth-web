@@ -37,7 +37,7 @@ export const Input: React.VFC<InputProps> = ({
         placeholder={placeholder}
         {...props}
         ref={inputRef}
-        className={`p-2 w-full bg-elevate rounded-md box-border ${iconPosition === "left" && icon ? "pl-8" : "pr-8"} ${
+        className={`box-border w-full rounded-md bg-elevate p-2 ${iconPosition === "left" && icon ? "pl-8" : "pr-8"} ${
           className ?? ""
         }`}
       />
