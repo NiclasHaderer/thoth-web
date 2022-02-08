@@ -13,7 +13,7 @@ import { BookModel } from "../../API/Audiobook"
 import { AudiobookSelectors } from "../../State/Audiobook.Selectors"
 import { useAudiobookState } from "../../State/Audiobook.State"
 import { ColoredButton } from "../Common/ColoredButton"
-import { Dialog, MyModal } from "../Common/Dialog"
+import { Dialog } from "../Common/Dialog"
 import { FormikInput } from "../Common/Input"
 
 export const BookEdit: React.VFC<{ book: Partial<BookModel> & { id: string } }> = ({ book }) => {
@@ -25,7 +25,6 @@ export const BookEdit: React.VFC<{ book: Partial<BookModel> & { id: string } }> 
 
   return (
     <>
-      <MyModal />
       <ColoredButton color="secondary" onClick={openModal}>
         <MdEdit className="mr-2" /> Edit
       </ColoredButton>

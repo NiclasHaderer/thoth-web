@@ -17,18 +17,18 @@ export const Series: React.VFC<CollectionProps> = ({ id, title, amount, cover })
         {cover ? (
           <img
             loading="lazy"
-            className="w-52 h-52 rounded-md border-2 cursor-pointer hover:border-primary border-transparent transition-colors"
+            className="h-52 w-52 cursor-pointer rounded-md border-2 border-transparent transition-colors hover:border-primary"
             src={cover}
             alt="Series"
           />
         ) : (
-          <MdImageNotSupported className="w-52 h-52 rounded-md border-2 cursor-pointer hover:border-primary border-transparent transition-colors" />
+          <MdImageNotSupported className="h-52 w-52 cursor-pointer rounded-md border-2 border-transparent transition-colors hover:border-primary" />
         )}
       </ALink>
 
-      <div className="p-2 relative text-center">
+      <div className="relative p-2 text-center">
         <ALink href={`/series/${id}`}>
-          <span className="cursor-pointer line-clamp-2 no-touch:group-focus:underline  hover:underline">{title}</span>
+          <span className="cursor-pointer line-clamp-2 hover:underline  no-touch:group-focus:underline">{title}</span>
         </ALink>
         <span className="text-unimportant">{amount} Audiobooks</span>
       </div>

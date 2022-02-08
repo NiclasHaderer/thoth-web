@@ -18,18 +18,18 @@ export const Author: React.VFC<AuthorProps> = ({ image, name, id, className }) =
         {image ? (
           <img
             loading="lazy"
-            className="w-52 h-52 object-cover  rounded-full border-2 cursor-pointer hover:border-primary border-light-active transition-colors"
+            className="h-52 w-52 cursor-pointer  rounded-full border-2 border-light-active object-cover transition-colors hover:border-primary"
             src={`${environment.apiURL}/image/${image}`}
             alt="Author"
           />
         ) : (
-          <MdPerson className="w-52 h-52 rounded-full border-2 cursor-pointer hover:border-primary border-transparent transition-colors" />
+          <MdPerson className="h-52 w-52 cursor-pointer rounded-full border-2 border-transparent transition-colors hover:border-primary" />
         )}
       </ALink>
 
-      <div className="p-2 relative text-center">
+      <div className="relative p-2 text-center">
         <ALink href={`/authors/${id}`}>
-          <span className="group-focus:underline hover:underline cursor-pointer">{name}</span>
+          <span className="cursor-pointer hover:underline group-focus:underline">{name}</span>
         </ALink>
       </div>
     </div>
