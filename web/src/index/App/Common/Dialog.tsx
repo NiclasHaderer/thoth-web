@@ -1,6 +1,6 @@
 import { Dialog as HDialog, Transition as HTransition } from "@headlessui/react"
 import { Form, Formik, FormikHelpers } from "formik"
-import React, { Fragment, ReactElement } from "react"
+import React, { Fragment, ReactElement, useState } from "react"
 
 interface DialogProps<T> {
   isOpen: boolean
@@ -27,7 +27,7 @@ export function Dialog<T>({ isOpen, values, closeModal, title, children, onSubmi
               leaveFrom="opacity-100"
               leaveTo="opacity-0"
             >
-              <HDialog.Overlay className="fixed inset-0 bg-elevate" />
+              <HDialog.Overlay className="fixed inset-0" />
             </HTransition.Child>
 
             {/* This element is to trick the browser into centering the modal contents. */}
@@ -43,7 +43,8 @@ export function Dialog<T>({ isOpen, values, closeModal, title, children, onSubmi
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <div className="inline-block w-full sm:max-w-full md:max-w-2xl overflow-hidden text-left align-middle transition-all shadow-2xl bg-background rounded-2xl">
+              {/*Do not remove the transform class. This will lead to the modal closing if you click on the modal background! */}
+              <div className="inline-block w-full transform overflow-hidden rounded-2xl bg-background text-left align-middle shadow-2xl transition-all sm:max-w-full md:max-w-2xl">
                 <div className="bg-light-active p-6">
                   <HDialog.Title as="h3" className="text-xl font-medium leading-6">
                     {title}
@@ -72,6 +73,6 @@ const InputContent: React.FC<{ buttons?: ReactElement | undefined }> = ({ childr
   <>
     <div className="mt-2">{children}</div>
 
-    <div className="flex flex-row-reverse justify-between mt-4">{buttons}</div>
+    <div className="mt-4 flex flex-row-reverse justify-between">{buttons}</div>
   </>
 )
