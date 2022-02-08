@@ -1,5 +1,5 @@
 import { Tab } from "@headlessui/react"
-import React, { useState } from "react"
+import React, { Fragment, useState } from "react"
 import {
   MdCollectionsBookmark,
   MdEdit,
@@ -14,9 +14,9 @@ import { AudiobookSelectors } from "../../State/Audiobook.Selectors"
 import { useAudiobookState } from "../../State/Audiobook.State"
 import { ColoredButton } from "../Common/ColoredButton"
 import { Dialog } from "../Common/Dialog"
-import { FormikInput } from "../Common/Input"
+import { FormikInput, Input } from "../Common/Input"
 
-export const BookEdit: React.VFC<{ book: Partial<BookModel> & { id: string } }> = ({ book }) => {
+export const BookEdit: React.VFC<{ book: BookModel & { id: string } }> = ({ book }) => {
   let [isOpen, setIsOpen] = useState(false)
   const updateBook = useAudiobookState(AudiobookSelectors.updateBook)
 
@@ -31,6 +31,7 @@ export const BookEdit: React.VFC<{ book: Partial<BookModel> & { id: string } }> 
       <Dialog
         closeModal={closeModal}
         isOpen={isOpen}
+        dialogClass="min-h-[510px]"
         title="Edit Book"
         buttons={
           <>
@@ -69,18 +70,37 @@ export const BookEdit: React.VFC<{ book: Partial<BookModel> & { id: string } }> 
       >
         <>
           <Tab.Group>
-            <Tab.List>
-              <Tab>Tab 1</Tab>
-              <Tab>Tab 2</Tab>
-              <Tab>Tab 3</Tab>
+            <Tab.List className="p-2-solid w-full rounded-md border-2 border-primary border-opacity-50">
+              <Tab as={Fragment}>
+                {({ selected }) => (
+                  <button
+                    className={`w-1/2 p-2 transition-colors focus:bg-active ${selected ? "bg-light-active" : ""}`}
+                  >
+                    Tags
+                  </button>
+                )}
+              </Tab>
+              <Tab as={Fragment}>
+                {({ selected }) => (
+                  <button
+                    className={`w-1/2 border-l-2 border-primary border-opacity-50 p-2 transition-colors focus:bg-active ${
+                      selected ? "bg-light-active" : ""
+                    }`}
+                  >
+                    Fix Match
+                  </button>
+                )}
+              </Tab>
             </Tab.List>
-            <Tab.Panels>
-              <Tab.Panel>Content 1</Tab.Panel>
-              <Tab.Panel>Content 2</Tab.Panel>
-              <Tab.Panel>Content 3</Tab.Panel>
+            <Tab.Panels className="mt-2">
+              <Tab.Panel className="rounded-md border-2 border-primary border-opacity-0 focus:border-opacity-20">
+                <BookForm />
+              </Tab.Panel>
+              <Tab.Panel>
+                <BookSearch book={book.title} author={book.author.name} />
+              </Tab.Panel>
             </Tab.Panels>
           </Tab.Group>
-          <BookForm />
         </>
       </Dialog>
     </>
@@ -104,3 +124,14 @@ const BookForm = () => (
     />
   </>
 )
+
+const BookSearch: React.VFC<{ author: string; book: string }> = ({ book, author }) => {
+  return (
+    <>
+      <div className="flex">
+        <Input wrapperClassName="grow pr-2" label="Author" defaultValue={author} />
+        <Input wrapperClassName="grow" label="Book" defaultValue={book} />
+      </div>
+    </>
+  )
+}

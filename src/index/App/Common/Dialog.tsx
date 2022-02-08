@@ -1,18 +1,28 @@
 import { Dialog as HDialog, Transition as HTransition } from "@headlessui/react"
 import { Form, Formik, FormikHelpers } from "formik"
-import React, { Fragment, ReactElement, useState } from "react"
+import React, { Fragment, ReactElement } from "react"
 
 interface DialogProps<T> {
   isOpen: boolean
   closeModal: () => void
   title: string
   buttons?: ReactElement | undefined
+  dialogClass?: string | undefined
   values?: T
   onSubmit?: (values: T, formikHelpers: FormikHelpers<T>) => void | Promise<any>
   children?: ReactElement | undefined
 }
 
-export function Dialog<T>({ isOpen, values, closeModal, title, children, onSubmit, buttons }: DialogProps<T>) {
+export function Dialog<T>({
+  isOpen,
+  values,
+  closeModal,
+  title,
+  children,
+  dialogClass,
+  onSubmit,
+  buttons,
+}: DialogProps<T>) {
   return (
     <>
       <HTransition appear show={isOpen} as={Fragment}>
@@ -45,7 +55,7 @@ export function Dialog<T>({ isOpen, values, closeModal, title, children, onSubmi
             >
               {/*Do not remove the transform class. This will lead to the modal closing if you click on the modal background! */}
               <div className="inline-block w-full transform overflow-hidden rounded-2xl bg-background text-left align-middle shadow-2xl transition-all sm:max-w-full md:max-w-2xl">
-                <div className="bg-light-active p-6">
+                <div className={`flex flex-col bg-light-active p-6 ${dialogClass || ""}`}>
                   <HDialog.Title as="h3" className="text-xl font-medium leading-6">
                     {title}
                   </HDialog.Title>
@@ -55,7 +65,7 @@ export function Dialog<T>({ isOpen, values, closeModal, title, children, onSubmi
                       onSubmit && onSubmit(values as T, formikHelpers as FormikHelpers<T>)
                     }
                   >
-                    <Form>
+                    <Form className="flex grow flex-col justify-between">
                       <InputContent children={children} buttons={buttons} />
                     </Form>
                   </Formik>
