@@ -1,3 +1,4 @@
+import { Tab } from "@headlessui/react"
 import React, { useState } from "react"
 import {
   MdCollectionsBookmark,
@@ -12,10 +13,10 @@ import { BookModel } from "../../API/Audiobook"
 import { AudiobookSelectors } from "../../State/Audiobook.Selectors"
 import { useAudiobookState } from "../../State/Audiobook.State"
 import { ColoredButton } from "../Common/ColoredButton"
-import { Dialog } from "../Common/Dialog"
+import { Dialog, MyModal } from "../Common/Dialog"
 import { FormikInput } from "../Common/Input"
 
-export const BookedEdit: React.VFC<{ book: Partial<BookModel> & { id: string } }> = ({ book }) => {
+export const BookEdit: React.VFC<{ book: Partial<BookModel> & { id: string } }> = ({ book }) => {
   let [isOpen, setIsOpen] = useState(false)
   const updateBook = useAudiobookState(AudiobookSelectors.updateBook)
 
@@ -24,6 +25,7 @@ export const BookedEdit: React.VFC<{ book: Partial<BookModel> & { id: string } }
 
   return (
     <>
+      <MyModal />
       <ColoredButton color="secondary" onClick={openModal}>
         <MdEdit className="mr-2" /> Edit
       </ColoredButton>
@@ -63,25 +65,43 @@ export const BookedEdit: React.VFC<{ book: Partial<BookModel> & { id: string } }
           //  year: values.year || null,
           //  seriesIndex: values.seriesIndex || null,
           //})
-          closeModal()
+          //closeModal()
         }}
       >
         <>
-          <FormikInput name="title" labelClassName="w-28" label="Title" icon={<MdSearch />} />
-          <FormikInput name="author" labelClassName="w-28" label="Author" icon={<MdPerson />} />
-          <FormikInput name="language" labelClassName="w-28" label="Language" icon={<MdLanguage />} />
-          <FormikInput name="narrator" labelClassName="w-28" label="Narrator" icon={<MdPerson />} />
-          <FormikInput name="series" labelClassName="w-28" label="Series" icon={<MdCollectionsBookmark />} />
-          <FormikInput name="year" labelClassName="w-28" type="number" label="Year" icon={<MdEvent />} />
-          <FormikInput
-            name="seriesIndex"
-            labelClassName="w-28"
-            type="number"
-            label="Series Index"
-            icon={<MdFormatListNumbered />}
-          />
+          <Tab.Group>
+            <Tab.List>
+              <Tab>Tab 1</Tab>
+              <Tab>Tab 2</Tab>
+              <Tab>Tab 3</Tab>
+            </Tab.List>
+            <Tab.Panels>
+              <Tab.Panel>Content 1</Tab.Panel>
+              <Tab.Panel>Content 2</Tab.Panel>
+              <Tab.Panel>Content 3</Tab.Panel>
+            </Tab.Panels>
+          </Tab.Group>
+          <BookForm />
         </>
       </Dialog>
     </>
   )
 }
+
+const BookForm = () => (
+  <>
+    <FormikInput name="title" labelClassName="w-28" label="Title" icon={<MdSearch />} />
+    <FormikInput name="author" labelClassName="w-28" label="Author" icon={<MdPerson />} />
+    <FormikInput name="language" labelClassName="w-28" label="Language" icon={<MdLanguage />} />
+    <FormikInput name="narrator" labelClassName="w-28" label="Narrator" icon={<MdPerson />} />
+    <FormikInput name="series" labelClassName="w-28" label="Series" icon={<MdCollectionsBookmark />} />
+    <FormikInput name="year" labelClassName="w-28" type="number" label="Year" icon={<MdEvent />} />
+    <FormikInput
+      name="seriesIndex"
+      labelClassName="w-28"
+      type="number"
+      label="Series Index"
+      icon={<MdFormatListNumbered />}
+    />
+  </>
+)

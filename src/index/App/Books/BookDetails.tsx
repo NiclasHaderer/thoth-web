@@ -12,7 +12,7 @@ import { ALink } from "../Common/ActiveLink"
 import { ColoredButton } from "../Common/ColoredButton"
 import { HtmlViewer } from "../Common/HtmlViewer"
 import { Track } from "../Track/Track"
-import { BookedEdit } from "./BookedEdit"
+import { BookEdit } from "./BookEdit"
 
 export const BookDetails = () => {
   const [, id] = useRoute("/books/:id")
@@ -95,7 +95,7 @@ export const BookDetails = () => {
             <ColoredButton className="mr-3" onClick={() => startPlayback(0)}>
               <MdPlayCircle className="mr-2" /> Play
             </ColoredButton>
-            <BookedEdit book={book} />
+            <BookEdit book={book} />
           </div>
         </div>
       </div>
