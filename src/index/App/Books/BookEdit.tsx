@@ -9,12 +9,13 @@ import {
   MdPerson,
   MdSearch,
 } from "react-icons/md"
-import { BookModel } from "../../API/Audiobook"
+import { BookModel } from "../../API/models/Audiobook"
 import { AudiobookSelectors } from "../../State/Audiobook.Selectors"
 import { useAudiobookState } from "../../State/Audiobook.State"
 import { ColoredButton } from "../Common/ColoredButton"
 import { Dialog } from "../Common/Dialog"
-import { FormikInput, Input } from "../Common/Input"
+import { FormikInput } from "../Common/Input"
+import { BookSearch } from "./BookMatch"
 
 export const BookEdit: React.VFC<{ book: BookModel & { id: string } }> = ({ book }) => {
   let [isOpen, setIsOpen] = useState(false)
@@ -124,14 +125,3 @@ const BookForm = () => (
     />
   </>
 )
-
-const BookSearch: React.VFC<{ author: string; book: string }> = ({ book, author }) => {
-  return (
-    <>
-      <div className="flex">
-        <Input wrapperClassName="grow pr-2" label="Author" defaultValue={author} />
-        <Input wrapperClassName="grow" label="Book" defaultValue={book} />
-      </div>
-    </>
-  )
-}

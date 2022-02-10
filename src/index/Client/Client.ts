@@ -1,11 +1,13 @@
 export type HTTP_METHOD = "GET" | "POST" | "PUT" | "DELETE" | "PATCH"
 
-export type QueryParameter = string | number
+export type QueryParameter = string | number | null
 export type RequestBody = object | string
 
 export interface QueryParameters {
   [name: string]: QueryParameter | QueryParameter[]
 }
+
+const notNull = <T>(p: T | null): p is T => p !== null
 
 export type TClient = {
   request<T>(method: HTTP_METHOD, url: string, params?: QueryParameters, body?: RequestBody): Promise<T | undefined>
@@ -20,9 +22,11 @@ const appendSearchParams = (urlParams: URL, query: QueryParameters) => {
   const params = urlParams.searchParams
   for (const [key, value] of Object.entries(query)) {
     if (Array.isArray(value)) {
-      value.forEach(v => params.append(key, v.toString()))
+      value.filter(notNull).forEach(v => params.append(key, v.toString()))
     } else {
-      params.append(key, value.toString())
+      if (notNull(value)) {
+        params.append(key, value.toString())
+      }
     }
   }
 }

@@ -1,7 +1,7 @@
 import React from "react"
 import { MdImageNotSupported } from "react-icons/md"
 
-import { NamedId } from "../../API/Audiobook"
+import { NamedId } from "../../API/models/Audiobook"
 import { environment } from "../../env"
 import { ALink } from "../Common/ActiveLink"
 

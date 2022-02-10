@@ -2,7 +2,7 @@ import React, { useCallback, useEffect } from "react"
 import { MdImageNotSupported, MdPlayCircle } from "react-icons/md"
 import { useRoute } from "wouter"
 
-import { BookModelWithTracks } from "../../API/Audiobook"
+import { BookModelWithTracks } from "../../API/models/Audiobook"
 import { environment } from "../../env"
 import { AudiobookSelectors } from "../../State/Audiobook.Selectors"
 import { useAudiobookState } from "../../State/Audiobook.State"
