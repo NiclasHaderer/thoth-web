@@ -1,21 +1,13 @@
 import React, { KeyboardEvent, useEffect, useRef, useState } from "react"
 import { MdImageNotSupported, MdPerson, MdSearch } from "react-icons/md"
 
-import { SearchModel } from "../../API/Audiobook"
-import { getClient, withBaseUrl, withCaching, withErrorHandler } from "../../Client"
+import { SearchModel } from "../../API/models/Audiobook"
 import { environment } from "../../env"
 import { useFocusTrap, useTabModifier } from "../../Hooks/FocusTrap"
 import { useGlobalEvent } from "../../Hooks/GlobalEvent"
 import { ALink } from "../Common/ActiveLink"
 import { Input } from "../Common/Input"
-
-const CLIENT = (() => {
-  let client = withErrorHandler(withBaseUrl(getClient(), environment.apiURL))
-  if (environment.production) {
-    client = withCaching(client, { useGlobalCache: false })
-  }
-  return client
-})()
+import { SEARCH_CLIENT } from "../../API/SearchClient"
 
 export const Search: React.VFC = () => {
   const [input, setInput] = useState("")
@@ -60,7 +52,7 @@ export const Search: React.VFC = () => {
     setResultVisible(true)
     clearTimeout(timeout.current)
     timeout.current = setTimeout(async () => {
-      const result = await CLIENT.get<SearchModel>(`/search`, { q: input })
+      const result = await SEARCH_CLIENT.search(input)
       result && setSearchResult(result)
     }, 100) as unknown as number
 

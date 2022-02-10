@@ -1,6 +1,6 @@
 import create, { SetState } from "zustand"
 import { GetState } from "zustand/vanilla"
-import { ChangeEvent } from "../API/Audiobook"
+import { ChangeEvent } from "../API/models/Audiobook"
 import { AudiobookClient } from "../API/AudiobookClient"
 import { environment } from "../env"
 import { websocketWithBaseUrl } from "../Websocket"
