@@ -11,7 +11,7 @@ import {
   PatchSeries,
   SeriesModel,
   SeriesModelWithBooks,
-} from "./Audiobook"
+} from "./models/Audiobook"
 
 const CLIENT = (() => {
   let client = withErrorHandler(withBaseUrl(getClient(), environment.apiURL))

@@ -1,14 +1,14 @@
 import { FieldMetaProps, useField } from "formik"
-import React, { HTMLInputTypeAttribute, MutableRefObject, ReactNode } from "react"
+import React, { MutableRefObject, ReactNode } from "react"
 
-interface InputProps extends React.HTMLAttributes<HTMLInputElement> {
+type InputProps = Omit<Omit<React.ComponentProps<"input">, "defaultValue">, "value"> & {
   label?: string | undefined
   icon?: ReactNode | undefined
   iconPosition?: "left" | "right" | undefined
   labelClassName?: string | undefined
+  defaultValue?: string | number | ReadonlyArray<string> | undefined | null
+  value?: string | ReadonlyArray<string> | number | undefined | null
   wrapperClassName?: string | undefined
-  name?: string | undefined
-  type?: HTMLInputTypeAttribute | undefined
   meta?: FieldMetaProps<any> | undefined
   inputRef?: MutableRefObject<any> | undefined
 }
@@ -20,7 +20,9 @@ export const Input: React.VFC<InputProps> = ({
   wrapperClassName,
   placeholder = label,
   labelClassName,
+  defaultValue,
   className,
+  value,
   meta,
   inputRef,
   ...props
@@ -37,6 +39,8 @@ export const Input: React.VFC<InputProps> = ({
       ) : null}
       <input
         placeholder={placeholder}
+        defaultValue={defaultValue ?? undefined}
+        value={value ?? undefined}
         {...props}
         ref={inputRef}
         className={`box-border w-full rounded-md bg-elevate p-2 ${iconPosition === "left" && icon ? "pl-8" : "pr-8"} ${
