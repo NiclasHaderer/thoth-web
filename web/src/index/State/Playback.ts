@@ -1,5 +1,5 @@
 import create from "zustand"
-import { NamedId, TrackModel } from "../API/Audiobook"
+import { NamedId, TrackModel } from "../API/models/Audiobook"
 
 export type PlaybackTrack = TrackModel & { author: NamedId } & { cover: string | null }
 
