@@ -1,5 +1,5 @@
 import { Tab } from "@headlessui/react"
-import React, { Fragment, useState } from "react"
+import React, { Fragment, useEffect, useState } from "react"
 import {
   MdCollectionsBookmark,
   MdEdit,
@@ -17,9 +17,15 @@ import { Dialog } from "../Common/Dialog"
 import { FormikInput } from "../Common/Input"
 import { BookSearch } from "./BookMatch"
 
-export const BookEdit: React.VFC<{ book: BookModel & { id: string } }> = ({ book }) => {
+export const BookEdit: React.VFC<{ book: BookModel & { id: string } }> = ({ book: _bookProp }) => {
   let [isOpen, setIsOpen] = useState(false)
+  const [book, setBook] = useState(_bookProp)
+  useEffect(() => {
+    setBook(_bookProp)
+  }, [_bookProp])
+
   const updateBook = useAudiobookState(AudiobookSelectors.updateBook)
+  const [selectedTabIndex, setSelectedTabIndex] = useState(0)
 
   const closeModal = () => setIsOpen(false)
   const openModal = () => setIsOpen(true)
@@ -70,7 +76,7 @@ export const BookEdit: React.VFC<{ book: BookModel & { id: string } }> = ({ book
         }}
       >
         <>
-          <Tab.Group>
+          <Tab.Group selectedIndex={selectedTabIndex} onChange={index => setSelectedTabIndex(index)}>
             <Tab.List className="p-2-solid w-full rounded-md border-2 border-primary border-opacity-50">
               <Tab as={Fragment}>
                 {({ selected }) => (
@@ -98,7 +104,13 @@ export const BookEdit: React.VFC<{ book: BookModel & { id: string } }> = ({ book
                 <BookForm />
               </Tab.Panel>
               <Tab.Panel>
-                <BookSearch book={book.title} author={book.author.name} />
+                <BookSearch
+                  book={book.title}
+                  author={book.author.name}
+                  select={bookMeta => {
+                    setSelectedTabIndex(0)
+                  }}
+                />
               </Tab.Panel>
             </Tab.Panels>
           </Tab.Group>
