@@ -1,21 +1,27 @@
-import React, { useRef, useState } from "react"
+import React, { useRef } from "react"
 import { Input } from "../Common/Input"
 import { ColoredButton } from "../Common/ColoredButton"
 import { MdSearch } from "react-icons/md"
 import { BookMetadata } from "../../API/models/Metadat"
 import { METADATA_CLIENT } from "../../API/MetadataClient"
+import { useHttpRequest } from "../../Hooks/AsyncResponse"
+import { LoadingCards } from "../Common/LoadingCard"
 
-export const BookSearch: React.VFC<{ author: string; book: string }> = ({ book, author }) => {
-  const [searchResults, setSearchResults] = useState<BookMetadata[]>([])
+export const BookSearch: React.VFC<{ author: string; book: string; select: (result: BookMetadata) => void }> = ({
+  book,
+  author,
+  select,
+}) => {
   const authorInput = useRef<HTMLInputElement>()
   const bookInput = useRef<HTMLInputElement>()
+  const { result, loading, invoke } = useHttpRequest(METADATA_CLIENT.findBook)
+
   const search = async () => {
     if (!authorInput.current || !bookInput.current) return
-    const response = await METADATA_CLIENT.findBook({
+    invoke({
       bookName: bookInput.current.value,
       authorName: authorInput.current.value,
     })
-    response && setSearchResults(response)
   }
 
   return (
@@ -39,29 +45,35 @@ export const BookSearch: React.VFC<{ author: string; book: string }> = ({ book, 
         </ColoredButton>
       </div>
       <div className="max-h-96 overflow-y-auto">
-        {searchResults ? <BookSearchResult results={searchResults} /> : null}
+        {result ? <BookSearchResult results={result} select={select} /> : null}
+        {loading ? <LoadingCards amount={10} /> : null}
       </div>
     </>
   )
 }
 
-const BookSearchResult: React.VFC<{ results: BookMetadata[] }> = ({ results }) => {
+const BookSearchResult: React.VFC<{ results: BookMetadata[]; select: (result: BookMetadata) => void }> = ({
+  results,
+  select,
+}) => {
   return (
     <>
+      {results.length === 0 ? <div>Nothing was found</div> : null}
       {results.map((book, i) => (
-        <>
-          <div className="flex pr-2" key={i}>
-            <div className="grow">
-              <Input className="w-full" labelClassName="w-28" label="Book" defaultValue={book.title} />
-              <Input className="w-full" labelClassName="w-28" label="Author" defaultValue={book.author?.name} />
-              <Input className="w-full" labelClassName="w-28" label="Series" defaultValue={book.series?.name} />
-              <Input className="w-full" labelClassName="w-28" label="Series Index" defaultValue={book.series?.index} />
-              <Input className="w-full" labelClassName="w-28" label="Narrator" defaultValue={book.narrator} />
+        <React.Fragment key={i}>
+          <div
+            onClick={() => select(book)}
+            className="flex cursor-pointer items-center rounded-md p-2 transition-colors hover:bg-light-active focus:bg-light-active"
+            tabIndex={0}
+          >
+            <div>
+              <h3 className="pb-2 pr-2 text-xl">{book.title || "Unknown"}</h3>
+              <p className="pr-2 line-clamp-4">{book.description}</p>
             </div>
-            <ColoredButton className="my-2 ml-2 self-center">Apply</ColoredButton>
+            {book.image ? <img className="h-28 w-28" alt={book.title ?? "Cover"} src={book.image} /> : null}
           </div>
-          {results.length !== i ? <hr className="border-elevate" /> : null}
-        </>
+          {results.length !== i ? <hr className="my-4 border-elevate" /> : null}
+        </React.Fragment>
       ))}
     </>
   )
