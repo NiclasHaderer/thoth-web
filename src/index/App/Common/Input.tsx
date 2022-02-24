@@ -27,8 +27,8 @@ export const Input: React.VFC<InputProps> = ({
   inputRef,
   ...props
 }) => (
-  <label className={`flex items-center ${wrapperClassName ?? wrapperClassName}`}>
-    {label ? <div className={`px-2 ${labelClassName ?? labelClassName}`}>{label}</div> : null}
+  <label className={`flex items-center ${wrapperClassName ?? ""}`}>
+    {label ? <div className={`px-2 ${labelClassName ?? ""}`}>{label}</div> : null}
     <div className="relative my-2 flex-grow">
       {icon ? (
         <div

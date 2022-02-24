@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react"
+import React, { Suspense, useCallback, useEffect } from "react"
 import { MdImageNotSupported, MdPlayCircle } from "react-icons/md"
 import { useRoute } from "wouter"
 
@@ -12,7 +12,8 @@ import { ALink } from "../Common/ActiveLink"
 import { ColoredButton } from "../Common/ColoredButton"
 import { HtmlViewer } from "../Common/HtmlViewer"
 import { Track } from "../Track/Track"
-import { BookEdit } from "./BookEdit"
+
+const BookEdit = React.lazy(() => import("./BookEdit"))
 
 export const BookDetails = () => {
   const [, id] = useRoute("/books/:id")
@@ -95,7 +96,10 @@ export const BookDetails = () => {
             <ColoredButton className="mr-3" onClick={() => startPlayback(0)}>
               <MdPlayCircle className="mr-2" /> Play
             </ColoredButton>
-            <BookEdit book={book} />
+
+            <Suspense fallback={<div>Loading...</div>}>
+              <BookEdit book={book} />
+            </Suspense>
           </div>
         </div>
       </div>
