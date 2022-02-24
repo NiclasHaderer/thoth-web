@@ -60,6 +60,7 @@ export function Dialog<T>({
                     {title}
                   </HDialog.Title>
                   <Formik
+                    enableReinitialize={true}
                     initialValues={values || {}}
                     onSubmit={(values, formikHelpers) =>
                       onSubmit && onSubmit(values as T, formikHelpers as FormikHelpers<T>)
