@@ -28,7 +28,7 @@ export const AudiobookClient = {
   fetchAuthorSorting: (offset: number, limit: number) => CLIENT.get<string[]>(`/audiobooks/series`, { limit, offset }),
   fetchAuthorWithBooks: (authorID: string) => CLIENT.get<AuthorModelWithBooks>(`/audiobooks/authors/${authorID}`),
   updateAuthor: ({ id, ...author }: PatchAuthor & { id: string }) =>
-    CLIENT.put<AuthorModelWithBooks, PatchAuthor>(`/audiobooks/authors/${id}`, author),
+    CLIENT.patch<AuthorModelWithBooks, PatchAuthor>(`/audiobooks/authors/${id}`, author),
 
   // Books
   fetchBooks: (offset: number, limit = 30) =>
@@ -40,7 +40,7 @@ export const AudiobookClient = {
     }),
   fetchBookWithTracks: (bookID: string) => CLIENT.get<BookModelWithTracks>(`/audiobooks/books/${bookID}`),
   updateBook: ({ id, ...book }: PatchBook & { id: string }) =>
-    CLIENT.put<BookModel, Partial<PatchBook>>(`/audiobooks/books/${id}`, book),
+    CLIENT.patch<BookModel, Partial<PatchBook>>(`/audiobooks/books/${id}`, book),
 
   // Series
   fetchSeries: (offset: number, limit = 30) =>
@@ -52,7 +52,7 @@ export const AudiobookClient = {
     }),
   fetchSeriesWithBooks: (seriesID: string) => CLIENT.get<SeriesModelWithBooks>(`/audiobooks/series/${seriesID}`),
   updateSeries: ({ id, ...series }: PatchSeries & { id: string }) =>
-    CLIENT.put<SeriesModelWithBooks, PatchSeries>(`/audiobooks/authors/${id}`, series),
+    CLIENT.patch<SeriesModelWithBooks, PatchSeries>(`/audiobooks/authors/${id}`, series),
 
   // Misc
   rescan: () => CLIENT.post<null, object>(`/audiobooks/rescan`, {}),

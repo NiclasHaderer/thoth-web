@@ -9,19 +9,43 @@ import {
   MdPerson,
   MdSearch,
 } from "react-icons/md"
-import { BookModel } from "../../API/models/Audiobook"
+import { BookModel, PatchBook } from "../../API/models/Audiobook"
 import { AudiobookSelectors } from "../../State/Audiobook.Selectors"
 import { useAudiobookState } from "../../State/Audiobook.State"
 import { ColoredButton } from "../Common/ColoredButton"
 import { Dialog } from "../Common/Dialog"
 import { FormikInput } from "../Common/Input"
 import { BookSearch } from "./BookMatch"
+import { BookMetadata } from "../../API/models/Metadat"
+import { useField } from "formik"
 
-export const BookEdit: React.VFC<{ book: BookModel & { id: string } }> = ({ book: _bookProp }) => {
+const HtmlEditor = React.lazy(() => import("../Common/HtmlEditor"))
+
+const mergeMetaIntoBook = ({ ...book }: PatchBook, meta: BookMetadata): PatchBook => {
+  book.title = meta.title || book.title
+  book.author = meta.author?.name || book.author
+  book.cover = meta.image || book.cover
+  book.description = meta.description || book.description
+  book.narrator = meta.narrator || book.narrator
+  book.providerID = meta.id || book.providerID
+  book.series = meta.series?.name || book.series
+  book.seriesIndex = meta.series?.index || book.seriesIndex
+  return book
+}
+
+const toPatchBook = (book: BookModel): PatchBook => {
+  return {
+    ...book,
+    author: book.author.name,
+    series: book.series?.title || null,
+  }
+}
+
+const BookEdit: React.VFC<{ book: BookModel }> = ({ book: _bookProp }) => {
   let [isOpen, setIsOpen] = useState(false)
-  const [book, setBook] = useState(_bookProp)
+  const [book, setBook] = useState(toPatchBook(_bookProp))
   useEffect(() => {
-    setBook(_bookProp)
+    setBook(toPatchBook(_bookProp))
   }, [_bookProp])
 
   const updateBook = useAudiobookState(AudiobookSelectors.updateBook)
@@ -48,31 +72,10 @@ export const BookEdit: React.VFC<{ book: BookModel & { id: string } }> = ({ book
             </ColoredButton>
           </>
         }
-        values={{
-          title: book.title,
-          author: book.author?.name || "",
-          language: book.language || "",
-          narrator: book.narrator || "",
-          series: book.series?.title || "",
-          year: book.year || undefined,
-          seriesIndex: book.seriesIndex || undefined,
-        }}
+        values={book}
         onSubmit={values => {
-          // TODO
-          //updateBook({
-          //  id: book.id,
-          //  asin: book.asin,
-          //  cover: book.cover,
-          //  description: book.description,
-          //  title: values.title || book.title,
-          //  author: values.author || book.author!.name,
-          //  language: values.language || null,
-          //  narrator: values.narrator || null,
-          //  series: values.series || null,
-          //  year: values.year || null,
-          //  seriesIndex: values.seriesIndex || null,
-          //})
-          //closeModal()
+          updateBook({ ...values, id: _bookProp.id })
+          closeModal()
         }}
       >
         <>
@@ -106,8 +109,9 @@ export const BookEdit: React.VFC<{ book: BookModel & { id: string } }> = ({ book
               <Tab.Panel>
                 <BookSearch
                   book={book.title}
-                  author={book.author.name}
+                  author={book.author}
                   select={bookMeta => {
+                    setBook(mergeMetaIntoBook(book, bookMeta))
                     setSelectedTabIndex(0)
                   }}
                 />
@@ -120,20 +124,41 @@ export const BookEdit: React.VFC<{ book: BookModel & { id: string } }> = ({ book
   )
 }
 
-const BookForm = () => (
-  <>
-    <FormikInput name="title" labelClassName="w-28" label="Title" icon={<MdSearch />} />
-    <FormikInput name="author" labelClassName="w-28" label="Author" icon={<MdPerson />} />
-    <FormikInput name="language" labelClassName="w-28" label="Language" icon={<MdLanguage />} />
-    <FormikInput name="narrator" labelClassName="w-28" label="Narrator" icon={<MdPerson />} />
-    <FormikInput name="series" labelClassName="w-28" label="Series" icon={<MdCollectionsBookmark />} />
-    <FormikInput name="year" labelClassName="w-28" type="number" label="Year" icon={<MdEvent />} />
-    <FormikInput
-      name="seriesIndex"
-      labelClassName="w-28"
-      type="number"
-      label="Series Index"
-      icon={<MdFormatListNumbered />}
-    />
-  </>
-)
+const BookForm = () => {
+  const descriptionAccessor: keyof PatchBook = "description"
+  const imageAccessor: keyof PatchBook = "cover"
+
+  const [description, , descriptionHelpers] = useField(descriptionAccessor)
+  const [image] = useField(imageAccessor)
+
+  return (
+    <>
+      <div className="flex cursor-pointer justify-center">
+        {/*TODO add image upload*/}
+        {image.value ? <img className="h-40 w-40" src={image.value} alt="book" /> : null}
+      </div>
+      <FormikInput name="title" labelClassName="w-28" label="Title" icon={<MdSearch />} />
+      <FormikInput name="author" labelClassName="w-28" label="Author" icon={<MdPerson />} />
+      <FormikInput name="language" labelClassName="w-28" label="Language" icon={<MdLanguage />} />
+      <FormikInput name="narrator" labelClassName="w-28" label="Narrator" icon={<MdPerson />} />
+      <FormikInput name="series" labelClassName="w-28" label="Series" icon={<MdCollectionsBookmark />} />
+      <FormikInput name="year" labelClassName="w-28" type="number" label="Year" icon={<MdEvent />} />
+      <FormikInput
+        name="seriesIndex"
+        labelClassName="w-28"
+        type="number"
+        label="Series Index"
+        icon={<MdFormatListNumbered />}
+      />
+      <div>
+        <label className="flex items-center">
+          <div className="w-28 min-w-28 px-2"> Description</div>
+          <React.Suspense fallback={<div />}>
+            <HtmlEditor className="flex-grow" value={description.value} onChange={descriptionHelpers.setValue} />
+          </React.Suspense>
+        </label>
+      </div>
+    </>
+  )
+}
+export default BookEdit
