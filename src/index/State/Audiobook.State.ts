@@ -1,9 +1,6 @@
 import create, { SetState } from "zustand"
 import { GetState } from "zustand/vanilla"
-import { ChangeEvent } from "../API/models/Audiobook"
 import { AudiobookClient } from "../API/AudiobookClient"
-import { environment } from "../env"
-import { websocketWithBaseUrl } from "../Websocket"
 import { CrudState } from "./CrudState"
 
 export const useAudiobookState = create(
@@ -16,7 +13,7 @@ export const useAudiobookState = create(
           detailsFunction: AudiobookClient.fetchAuthorWithBooks,
           sortingFunction: AudiobookClient.fetchAuthorSorting,
           updateFunction: AudiobookClient.updateAuthor,
-          ws: websocketWithBaseUrl<ChangeEvent>(environment.apiURL, "ws/authors"),
+          //ws: websocketWithBaseUrl<ChangeEvent>(environment.apiURL, "ws/authors"),
         },
         set as SetState<any>,
         get as GetState<any>
@@ -28,7 +25,7 @@ export const useAudiobookState = create(
           detailsFunction: AudiobookClient.fetchSeriesWithBooks,
           sortingFunction: AudiobookClient.fetchSeriesSorting,
           updateFunction: AudiobookClient.updateSeries,
-          ws: websocketWithBaseUrl<ChangeEvent>(environment.apiURL, "ws/series"),
+          //ws: websocketWithBaseUrl<ChangeEvent>(environment.apiURL, "ws/series"),
         },
         set as SetState<any>,
         get as GetState<any>
@@ -40,7 +37,7 @@ export const useAudiobookState = create(
           detailsFunction: AudiobookClient.fetchBookWithTracks,
           sortingFunction: AudiobookClient.fetchBookSorting,
           updateFunction: AudiobookClient.updateBook,
-          ws: websocketWithBaseUrl<ChangeEvent>(environment.apiURL, "ws/books"),
+          //ws: websocketWithBaseUrl<ChangeEvent>(environment.apiURL, "ws/books"),
         },
         set as SetState<any>,
         get as GetState<any>

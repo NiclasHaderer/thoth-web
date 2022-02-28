@@ -19,7 +19,7 @@ import { BookSearch } from "./BookMatch"
 import { BookMetadata } from "../../API/models/Metadat"
 import { useField } from "formik"
 
-const HtmlEditor = React.lazy(() => import("../Common/HtmlEditor"))
+const HtmlEditor = React.lazy(() => import("../Common/Editor"))
 
 const mergeMetaIntoBook = ({ ...book }: PatchBook, meta: BookMetadata): PatchBook => {
   book.title = meta.title || book.title
