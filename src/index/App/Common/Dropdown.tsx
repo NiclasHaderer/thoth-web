@@ -1,5 +1,5 @@
 import { Menu, Transition } from "@headlessui/react"
-import { Fragment, useEffect, useState } from "react"
+import React, { Fragment } from "react"
 
 type DropdownProps<T extends any> = {
   options: {
@@ -7,37 +7,24 @@ type DropdownProps<T extends any> = {
     disabled?: boolean
   }[]
   title: string
-  active?: T
-  changeTitle?: boolean
   vDir?: "top" | "bottom"
   hDir?: "right" | "left"
   onChange?: (v: T) => void
-  valueDisplay?: (v: T) => string
+  valueDisplay?: (v: T) => {}
 }
 
 export function Dropdown<T extends any>({
-  vDir = "top",
-  hDir = "left",
   options,
-  onChange,
-  changeTitle,
-  active,
   title,
+  vDir = "bottom",
+  hDir = "left",
+  onChange,
   valueDisplay,
 }: DropdownProps<T>) {
-  const [activeValue, setActiveValue] = useState(active)
-  useEffect(() => {
-    setActiveValue(active)
-  }, [active])
-
   return (
-    <Menu as="div" className="relative inline-block text-left">
-      <Menu.Button>
-        {changeTitle && activeValue
-          ? valueDisplay
-            ? valueDisplay(activeValue)
-            : (activeValue as any).toString()
-          : title}
+    <Menu as="div" className="relative inline-block h-fit text-left">
+      <Menu.Button className="group cursor-pointer overflow-hidden rounded">
+        <span className="h-full w-full p-1 group-hover:bg-light-active group-focus:bg-light-active">{title}</span>
       </Menu.Button>
       <Transition
         as={Fragment}
@@ -60,7 +47,6 @@ export function Dropdown<T extends any>({
                   key={i}
                   disabled={disabled}
                   onClick={() => {
-                    setActiveValue(value)
                     onChange && onChange(value)
                   }}
                 >
