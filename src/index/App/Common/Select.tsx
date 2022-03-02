@@ -15,6 +15,7 @@ type SelectProps<T extends any> = {
   className?: string
   onChange: (v: T) => void
   valueDisplay?: (v: T) => ReactNode
+  headerClassName?: string
 }
 
 export function Select<T extends any>({
@@ -25,6 +26,7 @@ export function Select<T extends any>({
   hDir = "left",
   className,
   value,
+  headerClassName,
   onChange,
   valueDisplay,
 }: SelectProps<T>) {
@@ -43,11 +45,11 @@ export function Select<T extends any>({
       className="relative inline-block h-fit"
     >
       <Listbox.Button
-        className={`flex min-w-32 cursor-pointer items-center overflow-hidden rounded bg-elevate p-1 text-left hover:bg-light-active focus:bg-light-active ${
+        className={`flex min-w-32 cursor-pointer items-center overflow-hidden rounded bg-elevate p-1 text-left hover:!bg-light-active focus:!bg-light-active ${
           className || ""
         }`}
       >
-        <span className="h-full w-full p-1 ">
+        <span className={`h-full w-full p-1 ${headerClassName || ""}`}>
           {selected ? (valueDisplay ? valueDisplay(selected) : (selected as ReactNode)) : title}
         </span>
         <SelectIcon />
@@ -77,7 +79,7 @@ export function Select<T extends any>({
                     `relative flex overflow-hidden rounded pl-7 ${active ? "bg-light-active" : ""}`
                   }
                 >
-                  {({ active, selected, disabled }) => (
+                  {({ selected, disabled }) => (
                     <>
                       {selected ? <MdDone className="absolute left-1 top-1/2 h-7 w-7 -translate-y-1/2 p-1" /> : null}
                       <button
