@@ -50,6 +50,8 @@ const TextStyle: React.VFC<{ editor: Editor }> = ({ editor }) => {
 
   return (
     <Select
+      className="!min-w-0 !bg-transparent !p-0"
+      headerClassName="px-1 py-0"
       vDir={"top"}
       options={textStyleOptions}
       title="Text style"
@@ -58,6 +60,18 @@ const TextStyle: React.VFC<{ editor: Editor }> = ({ editor }) => {
     />
   )
 }
+
+const EditorControlButton: React.FC<{ onClick: () => void; active: boolean }> = ({ onClick, active, children }) => (
+  <button
+    type="button"
+    className={`m-1 h-6 w-6 cursor-pointer rounded hover:bg-light-active focus:bg-light-active ${
+      active ? "bg-active" : ""
+    }`}
+    onClick={onClick}
+  >
+    {children}
+  </button>
+)
 
 export const EditorControls: React.VFC<{ editor: Editor | null }> = ({ editor }) => {
   if (!editor) return null
@@ -68,76 +82,37 @@ export const EditorControls: React.VFC<{ editor: Editor | null }> = ({ editor })
       <button type="button" className="hidden" />
       <TextStyle editor={editor} />
 
-      <button
-        type="button"
-        className={`m-1 h-6 w-6 cursor-pointer rounded focus:bg-light-active ${
-          editor && editor.isActive("italic") ? "bg-active" : ""
-        }`}
+      <EditorControlButton
+        active={editor.isActive("italic")}
+        onClick={() => editor.chain().focus().toggleItalic().run()}
       >
-        <MdFormatItalic
-          className="h-full w-full"
-          onClick={() => {
-            if (!editor) return
-            editor.chain().focus().toggleItalic().run()
-          }}
-        />
-      </button>
-      <button
-        type="button"
-        className={`m-1 h-6 w-6 cursor-pointer rounded focus:bg-light-active ${
-          editor && editor.isActive("bold") ? "bg-active" : ""
-        }`}
+        <MdFormatItalic className="h-full w-full" />
+      </EditorControlButton>
+
+      <EditorControlButton active={editor.isActive("bold")} onClick={() => editor.chain().focus().toggleBold().run()}>
+        <MdFormatBold className="h-full w-full" />
+      </EditorControlButton>
+
+      <EditorControlButton
+        active={editor.isActive("underline")}
+        onClick={() => editor.chain().focus().toggleUnderline().run()}
       >
-        <MdFormatBold
-          className="h-full w-full"
-          onClick={() => {
-            if (!editor) return
-            editor.chain().focus().toggleBold().run()
-          }}
-        />
-      </button>
-      <button
-        type="button"
-        className={`m-1 h-6 w-6 cursor-pointer rounded focus:bg-light-active ${
-          editor && editor.isActive("underline") ? "bg-active" : ""
-        }`}
+        <MdFormatUnderlined className="h-full w-full" />
+      </EditorControlButton>
+
+      <EditorControlButton
+        active={editor.isActive("orderedList")}
+        onClick={() => editor.chain().focus().toggleOrderedList().run()}
       >
-        <MdFormatUnderlined
-          className="h-full w-full"
-          onClick={() => {
-            if (!editor) return
-            editor.chain().focus().toggleUnderline().run()
-          }}
-        />
-      </button>
-      <button
-        type="button"
-        className={`m-1 h-6 w-6 cursor-pointer rounded focus:bg-light-active ${
-          editor && editor.isActive("orderedList") ? "bg-active" : ""
-        }`}
+        <MdFormatListNumbered className="h-full w-full" />
+      </EditorControlButton>
+
+      <EditorControlButton
+        active={editor.isActive("bulletList")}
+        onClick={() => editor.chain().focus().toggleBulletList().run()}
       >
-        <MdFormatListNumbered
-          className="h-full w-full"
-          onClick={() => {
-            if (!editor) return
-            editor.chain().focus().toggleOrderedList().run()
-          }}
-        />
-      </button>
-      <button
-        type="button"
-        className={`m-1 h-6 w-6 cursor-pointer rounded focus:bg-light-active ${
-          editor && editor.isActive("bulletList") ? "bg-active" : ""
-        }`}
-      >
-        <MdFormatListBulleted
-          className="h-full w-full"
-          onClick={() => {
-            if (!editor) return
-            editor.chain().focus().toggleBulletList().run()
-          }}
-        />
-      </button>
+        <MdFormatListBulleted className="h-full w-full" />
+      </EditorControlButton>
     </div>
   )
 }

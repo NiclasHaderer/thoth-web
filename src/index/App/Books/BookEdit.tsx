@@ -1,10 +1,11 @@
 import { Tab } from "@headlessui/react"
-import React, { Fragment, useEffect, useState } from "react"
+import React, { Fragment, useEffect, useRef, useState } from "react"
 import {
   MdCollectionsBookmark,
   MdEdit,
   MdEvent,
   MdFormatListNumbered,
+  MdImageNotSupported,
   MdLanguage,
   MdPerson,
   MdSearch,
@@ -18,6 +19,8 @@ import { FormikInput } from "../Common/Input"
 import { BookSearch } from "./BookMatch"
 import { BookMetadata } from "../../API/models/Metadat"
 import { useField } from "formik"
+import { toBase64 } from "../../helpers"
+import { ResponsiveImage } from "../Common/ResponsiveImage"
 
 const HtmlEditor = React.lazy(() => import("../Common/Editor"))
 
@@ -61,6 +64,7 @@ const BookEdit: React.VFC<{ book: BookModel }> = ({ book: _bookProp }) => {
       </ColoredButton>
       <Dialog
         closeModal={closeModal}
+        submitOnEnter={false}
         isOpen={isOpen}
         dialogClass="min-h-[510px]"
         title="Edit Book"
@@ -97,7 +101,7 @@ const BookEdit: React.VFC<{ book: BookModel }> = ({ book: _bookProp }) => {
                       selected ? "bg-light-active" : ""
                     }`}
                   >
-                    Fix Match
+                    Lookup information
                   </button>
                 )}
               </Tab>
@@ -128,36 +132,75 @@ const BookForm = () => {
   const descriptionAccessor: keyof PatchBook = "description"
   const imageAccessor: keyof PatchBook = "cover"
 
+  const imageRef = useRef<HTMLInputElement>(null)
+
   const [description, , descriptionHelpers] = useField(descriptionAccessor)
-  const [image] = useField(imageAccessor)
+  const [image, , imageHelpers] = useField(imageAccessor)
 
   return (
     <>
-      <div className="flex cursor-pointer justify-center">
-        {/*TODO add image upload*/}
-        {image.value ? <img className="h-40 w-40" src={image.value} alt="book" /> : null}
+      <div className={"flex flex-col md:flex-row"}>
+        <div className="flex cursor-pointer items-center justify-center pr-2">
+          <div className="flex flex-col justify-center">
+            {image.value ? (
+              <ResponsiveImage
+                className="h-52 min-h-52 w-52 min-w-52 rounded-md"
+                src={image.value}
+                alt="book"
+                onClick={() => imageRef.current && imageRef.current.click()}
+              />
+            ) : (
+              <MdImageNotSupported
+                className="h-52 w-52 cursor-pointer  rounded-md"
+                onClick={() => imageRef.current && imageRef.current.click()}
+              />
+            )}
+            <input
+              className="hidden"
+              ref={imageRef}
+              type="file"
+              accept="image/*"
+              onChange={async () => {
+                const file = await imageRef.current!.files![0]
+                const base64 = await toBase64(file)
+                imageHelpers.setValue(base64)
+              }}
+            />
+            <ColoredButton
+              color="secondary"
+              className="mt-2 self-center"
+              onClick={() => imageRef.current && imageRef.current.click()}
+            >
+              Upload image
+            </ColoredButton>
+          </div>
+        </div>
+        <div>
+          <FormikInput name="title" labelClassName="w-28" label="Title" icon={<MdSearch />} />
+          <FormikInput name="author" labelClassName="w-28" label="Author" icon={<MdPerson />} />
+          <FormikInput name="language" labelClassName="w-28" label="Language" icon={<MdLanguage />} />
+          <FormikInput name="narrator" labelClassName="w-28" label="Narrator" icon={<MdPerson />} />
+          <FormikInput name="series" labelClassName="w-28" label="Series" icon={<MdCollectionsBookmark />} />
+          <FormikInput name="year" labelClassName="w-28" type="number" label="Year" icon={<MdEvent />} />
+          <FormikInput
+            name="seriesIndex"
+            labelClassName="w-28"
+            type="number"
+            label="Series Index"
+            icon={<MdFormatListNumbered />}
+          />
+        </div>
       </div>
-      <FormikInput name="title" labelClassName="w-28" label="Title" icon={<MdSearch />} />
-      <FormikInput name="author" labelClassName="w-28" label="Author" icon={<MdPerson />} />
-      <FormikInput name="language" labelClassName="w-28" label="Language" icon={<MdLanguage />} />
-      <FormikInput name="narrator" labelClassName="w-28" label="Narrator" icon={<MdPerson />} />
-      <FormikInput name="series" labelClassName="w-28" label="Series" icon={<MdCollectionsBookmark />} />
-      <FormikInput name="year" labelClassName="w-28" type="number" label="Year" icon={<MdEvent />} />
-      <FormikInput
-        name="seriesIndex"
-        labelClassName="w-28"
-        type="number"
-        label="Series Index"
-        icon={<MdFormatListNumbered />}
-      />
-      <div>
-        <label className="flex items-center">
-          <div className="w-28 min-w-28 px-2"> Description</div>
-          <React.Suspense fallback={<div />}>
-            <HtmlEditor className="flex-grow" value={description.value} onChange={descriptionHelpers.setValue} />
-          </React.Suspense>
-        </label>
-      </div>
+      <label className="flex items-center">
+        <React.Suspense fallback={<div />}>
+          <HtmlEditor
+            className="flex-grow"
+            placeholder="Description"
+            value={description.value}
+            onChange={descriptionHelpers.setValue}
+          />
+        </React.Suspense>
+      </label>
     </>
   )
 }
