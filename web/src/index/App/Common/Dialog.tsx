@@ -11,6 +11,7 @@ interface DialogProps<T> {
   values?: T
   onSubmit?: (values: T, formikHelpers: FormikHelpers<T>) => void | Promise<any>
   children?: ReactElement | undefined
+  submitOnEnter?: boolean | undefined
 }
 
 export function Dialog<T>({
@@ -19,6 +20,7 @@ export function Dialog<T>({
   closeModal,
   title,
   children,
+  submitOnEnter,
   dialogClass,
   onSubmit,
   buttons,
@@ -66,7 +68,12 @@ export function Dialog<T>({
                       onSubmit && onSubmit(values as T, formikHelpers as FormikHelpers<T>)
                     }
                   >
-                    <Form className="flex grow flex-col justify-between">
+                    <Form
+                      className="flex grow flex-col justify-between"
+                      {...{
+                        ...(submitOnEnter ? null : { onSubmit: () => null }),
+                      }}
+                    >
                       <InputContent children={children} buttons={buttons} />
                     </Form>
                   </Formik>
