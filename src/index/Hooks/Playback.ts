@@ -14,8 +14,8 @@ export const useAudio = (
     autoplay && audioElement.play()
     setAudio(audioElement)
     return () => {
-      audioElement.remove()
       audioElement.pause()
+      audioElement.remove()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [url])
@@ -90,7 +90,7 @@ export const usePercentage = (
     (percentage: number) => {
       if (!audio) return
       audio.currentTime = Math.floor(audio.duration * percentage)
-      audio.play()
+      audio.play().then()
     },
   ]
 }
@@ -133,5 +133,8 @@ export const useOnEnded = (audio: HTMLAudioElement | undefined | null, callback:
     const ended = () => callback()
 
     audio.addEventListener("ended", ended)
+    return () => {
+      audio.removeEventListener("ended", ended)
+    }
   }, [audio, callback])
 }

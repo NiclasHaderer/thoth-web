@@ -44,7 +44,7 @@ const toPatchBook = (book: BookModel): PatchBook => {
   }
 }
 
-const BookEdit: React.VFC<{ book: BookModel }> = ({ book: _bookProp }) => {
+export const BookEdit: React.VFC<{ book: BookModel }> = ({ book: _bookProp }) => {
   let [isOpen, setIsOpen] = useState(false)
   const [book, setBook] = useState(toPatchBook(_bookProp))
   useEffect(() => {
