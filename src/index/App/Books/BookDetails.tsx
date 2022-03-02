@@ -1,5 +1,5 @@
-import React, { Suspense, useCallback, useEffect } from "react"
-import { MdImageNotSupported, MdPlayCircle } from "react-icons/md"
+import React, { useCallback, useEffect } from "react"
+import { MdCheckCircle, MdImageNotSupported, MdPlayCircle, MdRadioButtonUnchecked } from "react-icons/md"
 import { useRoute } from "wouter"
 
 import { BookModelWithTracks } from "../../API/models/Audiobook"
@@ -12,8 +12,7 @@ import { ALink } from "../Common/ActiveLink"
 import { ColoredButton } from "../Common/ColoredButton"
 import { HtmlViewer } from "../Common/HtmlViewer"
 import { Track } from "../Track/Track"
-
-const BookEdit = React.lazy(() => import("./BookEdit"))
+import { BookEdit } from "./BookEdit"
 
 export const BookDetails = () => {
   const [, id] = useRoute("/books/:id")
@@ -97,9 +96,13 @@ export const BookDetails = () => {
               <MdPlayCircle className="mr-2" /> Play
             </ColoredButton>
 
-            <Suspense fallback={<div>Loading...</div>}>
-              <BookEdit book={book} />
-            </Suspense>
+            <ColoredButton color="secondary" className="mr-3">
+              <MdCheckCircle className="mr-2" />
+              Done
+              <MdRadioButtonUnchecked className="ml-2" />
+            </ColoredButton>
+
+            <BookEdit book={book} />
           </div>
         </div>
       </div>
