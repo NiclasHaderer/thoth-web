@@ -39,3 +39,7 @@ export const toBase64 = (file: File) =>
     reader.onload = () => resolve(reader.result)
     reader.onerror = reject
   })
+
+export const isUUID = (uuidString: string): boolean => {
+  return /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i.test(uuidString)
+}

@@ -52,7 +52,7 @@ export const AudiobookClient = {
     }),
   fetchSeriesWithBooks: (seriesID: string) => CLIENT.get<SeriesModelWithBooks>(`/audiobooks/series/${seriesID}`),
   updateSeries: ({ id, ...series }: PatchSeries & { id: string }) =>
-    CLIENT.patch<SeriesModelWithBooks, PatchSeries>(`/audiobooks/authors/${id}`, series),
+    CLIENT.patch<SeriesModelWithBooks, PatchSeries>(`/audiobooks/series/${id}`, series),
 
   // Misc
   rescan: () => CLIENT.post<null, object>(`/audiobooks/rescan`, {}),

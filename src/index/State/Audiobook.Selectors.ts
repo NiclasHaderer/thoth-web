@@ -18,6 +18,7 @@ export const AudiobookSelectors = {
   // Authors
   selectAuthors: (state: AudiobookState) => state.AuthorsSorting.map(id => state.AuthorsMapping[id]),
   selectAuthorCount: (state: AudiobookState) => state.AuthorsTotal,
+  updateAuthor: (state: AudiobookState) => state.updateAuthors,
   selectAuthor: (id: string | undefined) => {
     return (state: AudiobookState) => {
       if (!(id! in state.AuthorsMapping)) return null
@@ -31,6 +32,7 @@ export const AudiobookSelectors = {
   // Series
   selectSeriesList: (state: AudiobookState) => state.SeriesSorting.map(id => state.SeriesMapping[id]),
   selectSeriesCount: (state: AudiobookState) => state.SeriesTotal,
+  updateSeries: (state: AudiobookState) => state.updateSeries,
   selectSeries: (id: string | undefined) => {
     return (state: AudiobookState) => {
       if (!(id! in state.SeriesMapping)) return null
