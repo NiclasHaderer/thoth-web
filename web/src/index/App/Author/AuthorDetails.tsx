@@ -9,6 +9,7 @@ import { isAuthorWithBooks } from "../../State/Audiobook.Typeguards"
 import { Book } from "../Books/Book"
 import { HtmlViewer } from "../Common/HtmlViewer"
 import { ResponsiveGrid } from "../Common/ResponsiveGrid"
+import AuthorEdit from "./AuthorEdit"
 
 export const AuthorDetails: React.VFC = () => {
   const [, id] = useRoute("/authors/:id")
@@ -32,7 +33,8 @@ export const AuthorDetails: React.VFC = () => {
         ) : (
           <MdPerson className="h-40 w-40 rounded-full border-2 border-light-active md:h-80 md:w-80" />
         )}
-        <h2 className="py-3 text-2xl">{author.name}</h2>
+        <h2 className="flex items-center py-3 text-2xl">{author.name}</h2>
+        <AuthorEdit author={author} />
       </div>
       <HtmlViewer content={author.biography} className="min-w-full pb-6" title="Biographie" />
 

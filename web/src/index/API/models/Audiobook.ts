@@ -134,13 +134,14 @@ export interface PatchAuthor {
   biography: string | null
   image: string | null
   name: string
-  providerID: ProviderIDModel
+  providerID: ProviderIDModel | null
 }
 
 export interface PatchSeries {
   description: string | null
   providerID: ProviderIDModel | null
   title: string
+  author: string | null
 }
 
 export interface PatchBook {
