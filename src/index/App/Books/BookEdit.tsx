@@ -16,7 +16,7 @@ import { useAudiobookState } from "../../State/Audiobook.State"
 import { ColoredButton } from "../Common/ColoredButton"
 import { Dialog } from "../Common/Dialog"
 import { FormikInput } from "../Common/Input"
-import { BookSearch } from "./BookMatch"
+import { BookSearch } from "./BookSearch"
 import { BookMetadata } from "../../API/models/Metadat"
 import { useField } from "formik"
 import { toBase64 } from "../../helpers"
@@ -64,7 +64,6 @@ export const BookEdit: React.VFC<{ book: BookModel }> = ({ book: _bookProp }) =>
       </ColoredButton>
       <Dialog
         closeModal={closeModal}
-        submitOnEnter={false}
         isOpen={isOpen}
         dialogClass="min-h-[510px]"
         title="Edit Book"

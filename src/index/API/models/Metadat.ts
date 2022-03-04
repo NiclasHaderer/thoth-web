@@ -45,6 +45,7 @@ export interface SearchBookMetadata {
 }
 
 export interface SeriesMetadata {
+  author: string | null
   amount: number | null
   books: SearchBookMetadata[] | null
   description: string | null
