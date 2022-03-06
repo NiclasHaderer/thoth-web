@@ -1,4 +1,4 @@
-import React, { useRef } from "react"
+import React, { memo, useRef, useState } from "react"
 import { Input } from "../Common/Input"
 import { ColoredButton } from "../Common/ColoredButton"
 import { MdSearch } from "react-icons/md"
@@ -11,7 +11,10 @@ export const BookSearch: React.VFC<{
   author?: string | null | undefined
   book: string
   select: (result: BookMetadata) => void
-}> = ({ book, author, select }) => {
+}> = memo(({ book: _book, author: _author, select }) => {
+  const [author, setAuthor] = useState(_author)
+  const [book, setBook] = useState(_book)
+
   const authorInput = useRef<HTMLInputElement>()
   const bookInput = useRef<HTMLInputElement>()
   const { result, loading, invoke } = useHttpRequest(METADATA_CLIENT.findBook)
@@ -33,8 +36,17 @@ export const BookSearch: React.VFC<{
           wrapperClassName="grow pr-2"
           label="Author"
           defaultValue={author}
+          onValue={setAuthor}
+          onEnter={search}
         />
-        <Input inputRef={bookInput} wrapperClassName="grow" label="Book" defaultValue={book} />
+        <Input
+          inputRef={bookInput}
+          wrapperClassName="grow"
+          label="Book"
+          onValue={setBook}
+          defaultValue={book}
+          onEnter={search}
+        />
         <ColoredButton
           className="ml-2 h-10 w-10 min-w-10"
           innerClassName="!p-2 items-center justify-around"
@@ -50,7 +62,7 @@ export const BookSearch: React.VFC<{
       </div>
     </>
   )
-}
+})
 
 const BookSearchResult: React.VFC<{ results: BookMetadata[]; select: (result: BookMetadata) => void }> = ({
   results,
@@ -63,7 +75,7 @@ const BookSearchResult: React.VFC<{ results: BookMetadata[]; select: (result: Bo
         <React.Fragment key={i}>
           <div
             onClick={() => select(book)}
-            className="flex cursor-pointer items-center rounded-md p-2 transition-colors hover:bg-light-active focus:bg-light-active"
+            className="flex cursor-pointer items-center rounded-md p-2 transition-colors hover:bg-active-light focus:bg-active-light"
             tabIndex={0}
           >
             <div>

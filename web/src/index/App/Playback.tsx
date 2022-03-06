@@ -76,7 +76,7 @@ export const Playback: React.VFC<{ className?: string }> = ({ className }) => {
           <button
             onClick={playback.previous}
             disabled={playback.history.length === 0}
-            className={`h-10 w-10 rounded-full p-1 no-touch:focus:bg-light-active ${
+            className={`h-10 w-10 rounded-full p-1 no-touch:focus:bg-active-light ${
               playback.history.length === 0 ? "text-elevate" : ""
             }`}
           >
@@ -85,7 +85,7 @@ export const Playback: React.VFC<{ className?: string }> = ({ className }) => {
         </Ripple>
         <Ripple>
           <button
-            className="h-10 w-10 rounded-full p-1 no-touch:focus:bg-light-active"
+            className="h-10 w-10 rounded-full p-1 no-touch:focus:bg-active-light"
             onClick={() => setPlaying(!playing)}
             ref={initialFocus}
           >
@@ -96,7 +96,7 @@ export const Playback: React.VFC<{ className?: string }> = ({ className }) => {
           <button
             onClick={playback.next}
             disabled={playback.queue.length === 0}
-            className={`h-10 w-10 rounded-full p-1 no-touch:focus:bg-light-active ${
+            className={`h-10 w-10 rounded-full p-1 no-touch:focus:bg-active-light ${
               playback.queue.length === 0 ? "text-elevate" : ""
             }`}
           >
@@ -104,7 +104,7 @@ export const Playback: React.VFC<{ className?: string }> = ({ className }) => {
           </button>
         </Ripple>
         <Ripple>
-          <button onClick={playback.stop} className="h-10 w-10 rounded-full p-1 no-touch:focus:bg-light-active">
+          <button onClick={playback.stop} className="h-10 w-10 rounded-full p-1 no-touch:focus:bg-active-light">
             <MdStop className="h-full w-full" />
           </button>
         </Ripple>

@@ -18,7 +18,7 @@ export const Author: React.VFC<AuthorProps> = ({ image, name, id, className }) =
         {image ? (
           <img
             loading="lazy"
-            className="h-52 w-52 cursor-pointer  rounded-full border-2 border-light-active object-cover transition-colors hover:border-primary"
+            className="h-52 w-52 cursor-pointer  rounded-full border-2 border-active-light object-cover transition-colors hover:border-primary"
             src={`${environment.apiURL}/image/${image}`}
             alt="Author"
           />

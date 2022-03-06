@@ -16,7 +16,7 @@ interface TrackProps {
 }
 
 export const Track: React.VFC<TrackProps> = ({ cover, title, duration, trackNr, index, author, startPlayback }) => (
-  <div className="mr-3 flex rounded-md p-2 even:bg-light-active">
+  <div className="mr-3 flex rounded-md p-2 even:bg-active-light">
     <div
       className="group relative cursor-pointer"
       onClick={() => startPlayback(index)}
@@ -32,7 +32,7 @@ export const Track: React.VFC<TrackProps> = ({ cover, title, duration, trackNr, 
       ) : (
         <MdImageNotSupported className="h-16 w-16 rounded-md" />
       )}
-      <button className="absolute left-0 top-0 flex h-full w-full items-center justify-center rounded-md bg-opacity-0 opacity-0 transition-all duration-300 focus:opacity-100 group-hover:bg-background group-hover:bg-opacity-40 group-hover:opacity-100">
+      <button className="absolute left-0 top-0 flex h-full w-full items-center justify-center rounded-md bg-opacity-0 opacity-0 transition-all duration-300 focus:opacity-100 group-hover:bg-surface group-hover:bg-opacity-40 group-hover:opacity-100">
         <MdPlayCircle className="h-6 w-6" />
       </button>
     </div>
