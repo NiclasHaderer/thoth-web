@@ -1,4 +1,4 @@
-import React, { useRef } from "react"
+import React, { useRef, useState } from "react"
 import { Input } from "../Common/Input"
 import { ColoredButton } from "../Common/ColoredButton"
 import { MdSearch } from "react-icons/md"
@@ -11,7 +11,10 @@ export const SeriesSearch: React.VFC<{
   series: string
   author?: string | null | undefined
   select: (result: SeriesMetadata) => void
-}> = ({ series, author, select }) => {
+}> = ({ series: _series, author: _author, select }) => {
+  const [author, setAuthor] = useState(_author)
+  const [series, setSeries] = useState(_series)
+
   const seriesInput = useRef<HTMLInputElement>()
   const authorInput = useRef<HTMLInputElement>()
   const { result, loading, invoke } = useHttpRequest(METADATA_CLIENT.findSeries)
@@ -28,17 +31,21 @@ export const SeriesSearch: React.VFC<{
       <div className="mb-4 flex items-center">
         <Input
           labelClassName="w-28"
-          inputRef={seriesInput}
-          wrapperClassName="grow pr-2"
-          label="Series"
-          defaultValue={series}
-        />
-        <Input
-          labelClassName="w-28"
           inputRef={authorInput}
           wrapperClassName="grow pr-2"
           label="Author"
+          onValue={setAuthor}
           defaultValue={author}
+          onEnter={search}
+        />
+        <Input
+          labelClassName="w-28"
+          inputRef={seriesInput}
+          wrapperClassName="grow pr-2"
+          label="Series"
+          onValue={setSeries}
+          defaultValue={series}
+          onEnter={search}
         />
         <ColoredButton
           className="ml-2 h-10 w-10 min-w-10"
@@ -68,7 +75,7 @@ const AuthorSearchResult: React.VFC<{ results: SeriesMetadata[]; select: (result
         <React.Fragment key={i}>
           <div
             onClick={() => select(series)}
-            className="flex cursor-pointer items-center rounded-md p-2 transition-colors hover:bg-light-active focus:bg-light-active"
+            className="flex cursor-pointer items-center rounded-md p-2 transition-colors hover:bg-active-light focus:bg-active-light"
             tabIndex={0}
           >
             <div>
