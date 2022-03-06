@@ -64,7 +64,7 @@ const TextStyle: React.VFC<{ editor: Editor }> = ({ editor }) => {
 const EditorControlButton: React.FC<{ onClick: () => void; active: boolean }> = ({ onClick, active, children }) => (
   <button
     type="button"
-    className={`m-1 h-6 w-6 cursor-pointer rounded hover:bg-light-active focus:bg-light-active ${
+    className={`m-1 h-6 w-6 cursor-pointer rounded hover:bg-active-light focus:bg-active-light ${
       active ? "bg-active" : ""
     }`}
     onClick={onClick}

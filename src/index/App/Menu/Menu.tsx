@@ -10,7 +10,7 @@ import { useSnackbar } from "../Common/Snackbar"
 const MenuImage: React.VFC = () => {
   return (
     <ALink href="/" className="flex overflow-hidden rounded-l-xl" aria-label={"HOME"}>
-      <div className="inline-flex cursor-pointer items-center pr-2 no-touch:group-focus:bg-light-active">
+      <div className="inline-flex cursor-pointer items-center pr-2 no-touch:group-focus:bg-active-light">
         <img
           className="h-20 p-3"
           src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Thoth.svg"
@@ -31,7 +31,7 @@ export const SearchBar: React.VFC = () => {
       <Search />
       <Ripple>
         <button
-          className="h-12 w-12 cursor-pointer rounded-full p-2 focus:bg-light-active no-touch:focus:bg-light-active"
+          className="h-12 w-12 cursor-pointer rounded-full p-2 focus:bg-active-light no-touch:focus:bg-active-light"
           style={{ transform: "scale(-1, 1)" }}
           onClick={async () => {
             await AudiobookClient.rescan()
@@ -54,7 +54,7 @@ export const LargeMenu: React.FC = () => (
 )
 
 export const SmallMenu: React.VFC = () => (
-  <aside className="bg-background">
+  <aside className="bg-surface">
     <BottomToolbar className="bg-elevate" />
   </aside>
 )
@@ -62,19 +62,19 @@ export const SmallMenu: React.VFC = () => (
 const MenuItems: React.VFC = () => (
   <ul>
     <ActiveLink href="/books" withSubroutes={true}>
-      <li className="flex w-full items-center px-3 transition-colors duration-300 hover:bg-light-active group-focus:bg-light-active">
+      <li className="flex w-full items-center px-3 transition-colors duration-300 hover:bg-active-light group-focus:bg-active-light">
         <MdBook className="ml-3" />
         <span className="m-3 inline-block">Books</span>
       </li>
     </ActiveLink>
     <ActiveLink href="/series" withSubroutes={true}>
-      <li className="flex w-full items-center px-3 transition-colors duration-300 hover:bg-light-active group-focus:bg-light-active">
+      <li className="flex w-full items-center px-3 transition-colors duration-300 hover:bg-active-light group-focus:bg-active-light">
         <MdCollectionsBookmark className="ml-3" />
         <span className="m-3 inline-block">Series</span>
       </li>
     </ActiveLink>
     <ActiveLink href="/authors" withSubroutes={true}>
-      <li className="flex w-full items-center px-3 transition-colors duration-300 hover:bg-light-active group-focus:bg-light-active">
+      <li className="flex w-full items-center px-3 transition-colors duration-300 hover:bg-active-light group-focus:bg-active-light">
         <MdPerson className="ml-3" />
         <span className="m-3 inline-block">Authors</span>
       </li>

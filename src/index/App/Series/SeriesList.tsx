@@ -1,6 +1,6 @@
 import React, { useRef } from "react"
 import { useInfinityScroll } from "../../Hooks/InfinityScroll"
-import { useScrollToTop } from "../../Hooks/ScrollToTop"
+import { useScrollTo } from "../../Hooks/ScrollToTop"
 import { AudiobookSelectors } from "../../State/Audiobook.Selectors"
 import { useAudiobookState } from "../../State/Audiobook.State"
 import { ResponsiveGrid } from "../Common/ResponsiveGrid"
@@ -11,7 +11,7 @@ export const SeriesList: React.VFC = () => {
   const series = useAudiobookState(AudiobookSelectors.selectSeriesList)
   const seriesCount = useAudiobookState(AudiobookSelectors.selectSeriesCount)
   const loading = useRef<HTMLDivElement>(null)
-  useScrollToTop("main")
+  useScrollTo("main")
   useInfinityScroll(loading.current, getSeries)
 
   return (

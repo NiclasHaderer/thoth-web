@@ -1,4 +1,4 @@
-import React, { useRef } from "react"
+import React, { useRef, useState } from "react"
 import { Input } from "../Common/Input"
 import { ColoredButton } from "../Common/ColoredButton"
 import { MdSearch } from "react-icons/md"
@@ -10,8 +10,10 @@ import { ResponsiveImage } from "../Common/ResponsiveImage"
 
 export const AuthorSearch: React.VFC<{ author: string; select: (result: AuthorMetadata) => void }> = ({
   select,
-  author,
+  author: _author,
 }) => {
+  const [author, setAuthor] = useState(_author)
+
   const authorInput = useRef<HTMLInputElement>()
   const { result, loading, invoke } = useHttpRequest(METADATA_CLIENT.findAuthor)
 
@@ -30,6 +32,8 @@ export const AuthorSearch: React.VFC<{ author: string; select: (result: AuthorMe
           inputRef={authorInput}
           wrapperClassName="grow pr-2"
           label="Author"
+          onEnter={search}
+          onValue={setAuthor}
           defaultValue={author}
         />
         <ColoredButton
@@ -60,7 +64,7 @@ const AuthorSearchResult: React.VFC<{ results: AuthorMetadata[]; select: (result
         <React.Fragment key={i}>
           <div
             onClick={() => select(author)}
-            className="flex cursor-pointer items-center rounded-md p-2 transition-colors hover:bg-light-active focus:bg-light-active"
+            className="flex cursor-pointer items-center rounded-md p-2 transition-colors hover:bg-active-light focus:bg-active-light"
             tabIndex={0}
           >
             <div>

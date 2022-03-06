@@ -54,8 +54,8 @@ export function Dialog<T>({
               leaveTo="opacity-0 scale-95"
             >
               {/*Do not remove the transform class. This will lead to the modal closing if you click on the modal background! */}
-              <div className="inline-block w-full transform overflow-hidden rounded-2xl bg-background text-left align-middle shadow-2xl transition-all sm:max-w-full md:max-w-2xl">
-                <div className={`flex flex-col bg-light-active p-6 ${dialogClass || ""}`}>
+              <div className="inline-block w-full transform overflow-hidden rounded-2xl bg-surface text-left align-middle shadow-2xl transition-all sm:max-w-full md:max-w-2xl">
+                <div className={`flex flex-col bg-active-light p-6 ${dialogClass || ""}`}>
                   <HDialog.Title as="h3" className="text-xl font-medium leading-6">
                     {title}
                   </HDialog.Title>

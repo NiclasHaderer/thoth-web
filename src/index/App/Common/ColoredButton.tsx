@@ -21,7 +21,7 @@ export const ColoredButton: React.FC<ColoredButtonProps> = ({
     }`}
   >
     <div
-      className={`flex h-full items-center px-3 py-1 hover:bg-light-active group-focus:bg-light-active ${
+      className={`flex h-full items-center px-3 py-1 hover:bg-active-light group-focus:bg-active-light ${
         innerClassName || ""
       }`}
     >
