@@ -62,7 +62,7 @@ export const Search: React.VFC = () => {
   return (
     <div className="relative flex-grow px-3 shadow-none" onKeyDown={modifyFocus} ref={setSearchOverlay}>
       <Input
-        className="rounded-3xl bg-elevate pl-11"
+        className="rounded-3xl bg-elevate-1 pl-11"
         icon={<MdSearch className="mx-1 h-6 w-6" />}
         placeholder="Search ..."
         inputRef={inputElement}
@@ -79,7 +79,7 @@ export const Search: React.VFC = () => {
         }}
       />
       {searchResult && resultVisible ? (
-        <div className="absolute bottom-0 left-0 right-0 z-10 mx-3 translate-y-full overflow-hidden rounded-md bg-background p-3 shadow-2xl">
+        <div className="absolute bottom-0 left-0 right-0 z-10 mx-3 translate-y-full overflow-hidden rounded-md bg-surface p-3 shadow-2xl">
           <SearchResults search={searchResult} onClose={() => setResultVisible(false)} />
         </div>
       ) : null}
@@ -112,7 +112,7 @@ const AuthorSearchResult: React.VFC<{ authors: SearchModel["authors"]; onClose: 
           onClick={onClose}
           key={i}
           aria-label={author.name}
-          className="block rounded-md transition-colors hover:bg-light-active no-touch:focus:bg-light-active"
+          className="block rounded-md transition-colors hover:bg-active-light no-touch:focus:bg-active-light"
         >
           <div className="flex items-center p-2">
             {author.image ? (
@@ -144,7 +144,7 @@ const BookSearchResult: React.VFC<{ books: SearchModel["books"]; onClose: () => 
           onClick={onClose}
           key={i}
           aria-label={book.title}
-          className="block rounded-md transition-colors hover:bg-light-active no-touch:focus:bg-light-active"
+          className="block rounded-md transition-colors hover:bg-active-light no-touch:focus:bg-active-light"
         >
           <div className="flex items-center p-2">
             {book.cover ? (
@@ -176,7 +176,7 @@ const SeriesSearchResult: React.VFC<{ series: SearchModel["series"]; onClose: ()
           onClick={onClose}
           key={i}
           aria-label={series.title}
-          className="block rounded-md transition-colors hover:bg-light-active no-touch:focus:bg-light-active"
+          className="block rounded-md transition-colors hover:bg-active-light no-touch:focus:bg-active-light"
         >
           <div className="flex items-center p-2">
             <MdImageNotSupported className="h-8 w-8 rounded-md" />

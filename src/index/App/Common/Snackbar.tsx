@@ -37,7 +37,7 @@ export const SnackbarProvider: React.FC = ({ children }) => {
 
   const addSnackbar = (
     element: ReactElement | string,
-    { closable = true, timeout = 2000, type = "default" }: SnackbarOptions = {}
+    { closable = true, timeout = 2000000, type = "default" }: SnackbarOptions = {}
   ) => {
     const key = Math.random().toString()
     globalStore[key] = { element, closable, timeout, type }
@@ -56,8 +56,8 @@ export const SnackbarProvider: React.FC = ({ children }) => {
       {Object.keys(elements).length > 0 ? (
         <div className="fixed right-0 bottom-0 p-8">
           {Object.entries(elements).map(([key, value]) => (
-            <div key={key} className="mb-3 bg-background">
-              <div className={`relative rounded-md bg-active p-2 ${classes[value.type]}`}>
+            <div key={key} className="mb-3 overflow-hidden rounded-md bg-surface">
+              <div className={`relative bg-active p-2 ${classes[value.type]}`}>
                 {value.closable ? (
                   <button className="absolute top-2 right-2 cursor-pointer" onClick={() => removeElement(key)}>
                     <MdClose className="h-6 w-6" />

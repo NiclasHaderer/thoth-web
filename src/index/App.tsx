@@ -6,12 +6,12 @@ import { ErrorSnackbar } from "./ErrorSnackbar"
 const App = memo(() => {
   return (
     <>
-      <ErrorSnackbar />
       <div className="flex h-full flex-col">
         <TopBar />
         <MainWindow />
         <BottomBar />
       </div>
+      <ErrorSnackbar />
     </>
   )
 })

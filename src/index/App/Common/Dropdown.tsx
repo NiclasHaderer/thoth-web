@@ -24,7 +24,7 @@ export function Dropdown<T extends any>({
   return (
     <Menu as="div" className="relative inline-block h-fit text-left">
       <Menu.Button className="group cursor-pointer overflow-hidden rounded">
-        <span className="h-full w-full p-1 group-hover:bg-light-active group-focus:bg-light-active">{title}</span>
+        <span className="h-full w-full p-1 group-hover:bg-active-light group-focus:bg-active-light">{title}</span>
       </Menu.Button>
       <Transition
         as={Fragment}
@@ -38,7 +38,7 @@ export function Dropdown<T extends any>({
         <Menu.Items
           className={`${hDir === "right" ? "right-0" : "left-0"} ${
             vDir === "top" ? "top-0 mb-2 -translate-y-full" : "mt-2"
-          } absolute z-10 w-56 origin-top-right overflow-hidden rounded-md bg-background`}
+          } absolute z-10 w-56 origin-top-right overflow-hidden rounded-md bg-surface`}
         >
           <div className="bg-elevate">
             <div className="px-1 py-1">
@@ -54,7 +54,7 @@ export function Dropdown<T extends any>({
                     <button
                       type="button"
                       disabled={disabled}
-                      className={`${active && !disabled ? "bg-light-active" : ""} ${
+                      className={`${active && !disabled ? "bg-active-light" : ""} ${
                         disabled ? "text-active" : ""
                       } group flex w-full items-center rounded-md px-2 py-2`}
                     >

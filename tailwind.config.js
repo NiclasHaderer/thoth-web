@@ -1,20 +1,22 @@
-const sizes = require("./sizes")
+const sizes = require("./tailwind.sizes")
+const colors = require("./tailwind.color")
 module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}", "./public/index.html"],
   theme: {
+    colors: {
+      primary: colors.variable("--primary"),
+      unimportant: colors.variable("--unimportant"),
+      surface: colors.variable("--surface"),
+      font: colors.variable("--text-color"),
+      active: "var(--active)",
+      "active-light": "var(--active-light)",
+      elevate: "var(--elevate)",
+      transparent: "transparent",
+    },
     extend: {
       screens: {
         "3xl": "1700px",
         "4xl": "1900px",
-      },
-      colors: {
-        primary: "#a13c2a",
-        unimportant: "#FFFFFF72",
-        background: "#29323e",
-        font: "#eee",
-        "light-active": "rgba(255, 255, 255, .1)",
-        active: "rgba(255, 255, 255, .2)",
-        elevate: "rgba(0, 0, 0, .15)",
       },
       minWidth: sizes,
       maxWidth: sizes,
@@ -22,5 +24,5 @@ module.exports = {
       maxHeight: sizes,
     },
   },
-  plugins: [require("@tailwindcss/typography"), require("@tailwindcss/line-clamp"), require("./touch-variants")],
+  plugins: [require("@tailwindcss/typography"), require("@tailwindcss/line-clamp"), require("./tailwind.touch")],
 }

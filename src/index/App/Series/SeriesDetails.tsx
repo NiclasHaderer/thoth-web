@@ -24,7 +24,7 @@ export const SeriesDetails: React.VFC = () => {
     <>
       <div className="flex pb-6">
         <div className="flex flex-col justify-around">
-          <MdImageNotSupported className="h-40 w-40 rounded-md border-2 border-light-active md:h-80 md:w-80" />
+          <MdImageNotSupported className="h-40 w-40 rounded-md border-2 border-active-light md:h-80 md:w-80" />
         </div>
         <div className="flex flex-grow flex-col justify-between pl-4 md:pl-10">
           <div>

@@ -25,13 +25,13 @@ export const AuthorDetails: React.VFC = () => {
       <div className="flex flex-grow flex-col items-center pb-6">
         {author.image ? (
           <img
-            className="h-40 w-40 rounded-full border-2 border-light-active object-contain md:h-80 md:w-80"
+            className="h-40 w-40 rounded-full border-2 border-active-light object-contain md:h-80 md:w-80"
             alt={author.name}
             src={`${environment.apiURL}/image/${author.image}`}
             loading="lazy"
           />
         ) : (
-          <MdPerson className="h-40 w-40 rounded-full border-2 border-light-active md:h-80 md:w-80" />
+          <MdPerson className="h-40 w-40 rounded-full border-2 border-active-light md:h-80 md:w-80" />
         )}
         <h2 className="flex items-center py-3 text-2xl">{author.name}</h2>
         <AuthorEdit author={author} />

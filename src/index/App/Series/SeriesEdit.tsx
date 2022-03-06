@@ -67,7 +67,7 @@ export const SeriesEdit: React.VFC<{ series: SeriesModel }> = ({ series: _series
               <Tab as={Fragment}>
                 {({ selected }) => (
                   <button
-                    className={`w-1/2 p-2 transition-colors focus:bg-active ${selected ? "bg-light-active" : ""}`}
+                    className={`w-1/2 p-2 transition-colors focus:bg-active ${selected ? "bg-active-light" : ""}`}
                   >
                     Tags
                   </button>
@@ -77,7 +77,7 @@ export const SeriesEdit: React.VFC<{ series: SeriesModel }> = ({ series: _series
                 {({ selected }) => (
                   <button
                     className={`w-1/2 border-l-2 border-primary border-opacity-50 p-2 transition-colors focus:bg-active ${
-                      selected ? "bg-light-active" : ""
+                      selected ? "bg-active-light" : ""
                     }`}
                   >
                     Lookup information

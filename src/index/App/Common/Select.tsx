@@ -45,7 +45,7 @@ export function Select<T extends any>({
       className="relative inline-block h-fit"
     >
       <Listbox.Button
-        className={`flex min-w-32 cursor-pointer items-center overflow-hidden rounded bg-elevate p-1 text-left hover:!bg-light-active focus:!bg-light-active ${
+        className={`flex min-w-32 cursor-pointer items-center overflow-hidden rounded bg-elevate p-1 text-left hover:!bg-active-light focus:!bg-active-light ${
           className || ""
         }`}
       >
@@ -66,7 +66,7 @@ export function Select<T extends any>({
         <Listbox.Options
           className={`${hDir === "right" ? "right-0" : "left-0"} ${
             vDir === "top" ? "top-0 mb-2 -translate-y-full" : "mt-2"
-          } absolute z-10 w-56 origin-top-right overflow-hidden rounded-md bg-background`}
+          } absolute z-10 w-56 origin-top-right overflow-hidden rounded-md bg-surface`}
         >
           <div className="bg-elevate">
             <div className="px-1 py-1">
@@ -76,7 +76,7 @@ export function Select<T extends any>({
                   disabled={disabled}
                   value={value}
                   className={({ active }) =>
-                    `relative flex overflow-hidden rounded pl-7 ${active ? "bg-light-active" : ""}`
+                    `relative flex overflow-hidden rounded pl-7 ${active ? "bg-active-light" : ""}`
                   }
                 >
                   {({ selected, disabled }) => (
