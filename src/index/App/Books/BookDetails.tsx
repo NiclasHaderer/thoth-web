@@ -116,3 +116,4 @@ export const BookDetails = () => {
     </>
   )
 }
+export default BookDetails

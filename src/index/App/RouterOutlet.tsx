@@ -1,25 +1,41 @@
 import React from "react"
 import { Redirect, Route, Switch } from "wouter"
-
-import { AuthorDetails } from "./Author/AuthorDetails"
-import { AuthorList } from "./Author/AuthorList"
-import { BookDetails } from "./Books/BookDetails"
-import { BookList } from "./Books/BookList"
-import { SeriesDetails } from "./Series/SeriesDetails"
-import { SeriesList } from "./Series/SeriesList"
 import { useClearUnimportantState } from "../Hooks/ClearUnimportantState"
+
+const SeriesList = React.lazy(() => import("./Series/SeriesList"))
+const SeriesDetails = React.lazy(() => import("./Series/SeriesDetails"))
+const BookList = React.lazy(() => import("./Books/BookList"))
+const BookDetails = React.lazy(() => import("./Books/BookDetails"))
+const AuthorList = React.lazy(() => import("./Author/AuthorList"))
+const AuthorDetails = React.lazy(() => import("./Author/AuthorDetails"))
+
+const LazyOutlet: React.VFC<{ component: React.ReactNode }> = ({ component }) => (
+  <React.Suspense fallback={<div />}>{component}</React.Suspense>
+)
 
 export const RouterOutlet: React.VFC = () => {
   useClearUnimportantState()
 
   return (
     <Switch>
-      <Route path="/books" component={BookList} />
-      <Route path="/books/:id" component={BookDetails} />
-      <Route path="/authors" component={AuthorList} />
-      <Route path="/authors/:id" component={AuthorDetails} />
-      <Route path="/series" component={SeriesList} />
-      <Route path="/series/:id" component={SeriesDetails} />
+      <Route path="/books">
+        <LazyOutlet component={<BookList />} />
+      </Route>
+      <Route path="/books/:id">
+        <LazyOutlet component={<BookDetails />} />
+      </Route>
+      <Route path="/authors">
+        <LazyOutlet component={<AuthorList />} />
+      </Route>
+      <Route path="/authors/:id">
+        <LazyOutlet component={<AuthorDetails />} />
+      </Route>
+      <Route path="/series">
+        <LazyOutlet component={<SeriesList />} />
+      </Route>
+      <Route path="/series/:id">
+        <LazyOutlet component={<SeriesDetails />} />
+      </Route>
       <Route path="">
         <Redirect to="/books" />
       </Route>

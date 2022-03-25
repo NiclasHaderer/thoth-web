@@ -47,3 +47,4 @@ export const AuthorDetails: React.VFC = () => {
     </>
   )
 }
+export default AuthorDetails

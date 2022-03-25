@@ -1,7 +1,7 @@
-import { FieldMetaProps, useField } from "formik"
+import { FieldMetaProps } from "formik"
 import React, { KeyboardEvent, memo, MutableRefObject, ReactNode } from "react"
 
-type InputProps = Omit<Omit<React.ComponentProps<"input">, "defaultValue">, "value"> & {
+export type InputProps = Omit<Omit<React.ComponentProps<"input">, "defaultValue">, "value"> & {
   label?: string | undefined
   icon?: ReactNode | undefined
   iconPosition?: "left" | "right" | undefined
@@ -74,8 +74,3 @@ export const Input: React.VFC<InputProps> = memo(
     </label>
   )
 )
-
-export const FormikInput: React.VFC<InputProps & { name: string }> = ({ name, ...props }) => {
-  const [field, meta] = useField(name)
-  return <Input {...props} {...field} meta={meta} />
-}
