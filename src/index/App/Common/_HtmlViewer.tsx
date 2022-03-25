@@ -1,5 +1,4 @@
 import { sanitize } from "dompurify"
-import React from "react"
 
 export const HtmlViewer: React.VFC<{
   content: string | null | undefined
