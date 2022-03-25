@@ -80,3 +80,5 @@ export const SeriesDetails: React.VFC = () => {
     </>
   )
 }
+
+export default SeriesDetails

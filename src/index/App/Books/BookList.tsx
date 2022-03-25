@@ -28,3 +28,4 @@ export const BookList: React.VFC = () => {
     </>
   )
 }
+export default BookList

@@ -4,7 +4,7 @@ import React from "react"
 import { TextAlign } from "@tiptap/extension-text-align"
 import { Placeholder } from "@tiptap/extension-placeholder"
 import { Underline } from "@tiptap/extension-underline"
-import "../HtmlEditor.scss"
+import "./HtmlEditor.scss"
 import { EditorControls } from "./Controls"
 
 export const HtmlEditor: React.VFC<{
