@@ -29,3 +29,4 @@ export const SeriesList: React.VFC = () => {
     </>
   )
 }
+export default SeriesList

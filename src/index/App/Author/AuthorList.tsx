@@ -28,3 +28,4 @@ export const AuthorList: React.VFC = () => {
     </>
   )
 }
+export default AuthorList
