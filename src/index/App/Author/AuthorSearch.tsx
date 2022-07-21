@@ -64,7 +64,7 @@ const AuthorSearchResult: React.VFC<{ results: AuthorMetadata[]; select: (result
         <React.Fragment key={i}>
           <div
             onClick={() => select(author)}
-            className="flex cursor-pointer items-center rounded-md p-2 transition-colors hover:bg-active-light focus:bg-active-light"
+            className="flex cursor-pointer items-center items-stretch justify-between rounded-md p-2 transition-colors hover:bg-active-light focus:bg-active-light"
             tabIndex={0}
           >
             <div>

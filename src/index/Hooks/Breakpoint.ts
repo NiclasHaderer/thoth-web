@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 
 type Breakpoints = "sm" | "md" | "lg" | "xl" | "2xl"
+export const CHANGE_LAYOUT = "md" as const
 
 interface Breakpoint {
   matchDown(size: Breakpoints): boolean
