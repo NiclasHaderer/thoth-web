@@ -1,22 +1,14 @@
 import React from "react"
-import { MdBook, MdCollectionsBookmark, MdPerson, MdRefresh } from "react-icons/md"
-
-import { AudiobookClient } from "../../API/AudiobookClient"
+import { MdAccountCircle, MdBook, MdCollectionsBookmark, MdPerson } from "react-icons/md"
 import { ActiveLink, ALink } from "../Common/ActiveLink"
 import { Ripple } from "../Common/Ripple"
 import { Search } from "./Search"
-import { useSnackbar } from "../Common/Snackbar"
 
 const MenuImage: React.VFC = () => {
   return (
     <ALink href="/" className="flex overflow-hidden rounded-l-xl" aria-label={"HOME"}>
       <div className="inline-flex cursor-pointer items-center pr-2 no-touch:group-focus:bg-active-light">
-        <img
-          className="h-20 p-3"
-          src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Thoth.svg"
-          loading="lazy"
-          alt="Logo"
-        />
+        <img className="h-20 p-3" src="/logo.svg" loading="lazy" alt="Logo" />
         <h1 className="font-serif text-3xl font-extrabold">THOTH</h1>
       </div>
     </ALink>
@@ -24,22 +16,16 @@ const MenuImage: React.VFC = () => {
 }
 
 export const SearchBar: React.VFC = () => {
-  const snackbar = useSnackbar()
   return (
     <div className="m-3 flex h-20 min-h-20 items-center rounded-xl bg-elevate pr-3">
       <MenuImage />
       <Search />
       <Ripple>
-        <button
-          className="h-12 w-12 cursor-pointer rounded-full p-2 focus:bg-active-light no-touch:focus:bg-active-light"
-          style={{ transform: "scale(-1, 1)" }}
-          onClick={async () => {
-            await AudiobookClient.rescan()
-            snackbar.show("Scheduled rescan")
-          }}
-        >
-          <MdRefresh className="h-full w-full" />
-        </button>
+        <ALink href="account">
+          <button className="h-12 w-12 cursor-pointer rounded-full p-2 focus:bg-active-light no-touch:focus:bg-active-light">
+            <MdAccountCircle className="h-full w-full" />
+          </button>
+        </ALink>
       </Ripple>
     </div>
   )

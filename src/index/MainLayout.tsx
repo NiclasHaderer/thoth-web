@@ -1,10 +1,8 @@
 import { LargeMenu, SearchBar, SmallMenu } from "./App/Menu/Menu"
 import { Playback } from "./App/Playback"
 import { RouterOutlet } from "./App/RouterOutlet"
-import { useBreakpoint } from "./Hooks/Breakpoint"
+import { CHANGE_LAYOUT, useBreakpoint } from "./Hooks/Breakpoint"
 import { usePlaybackState } from "./State/Playback"
-
-const CHANGE_LAYOUT = "md" as const
 
 export const TopBar = () => <SearchBar />
 
