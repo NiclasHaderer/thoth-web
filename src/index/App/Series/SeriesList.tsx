@@ -3,6 +3,7 @@ import { useInfinityScroll } from "../../Hooks/InfinityScroll"
 import { useScrollTo } from "../../Hooks/ScrollToTop"
 import { AudiobookSelectors } from "../../State/Audiobook.Selectors"
 import { useAudiobookState } from "../../State/Audiobook.State"
+import { CleanIfNotVisible } from "../Common/CleanIfNotVisible"
 import { ResponsiveGrid } from "../Common/ResponsiveGrid"
 import { Series } from "./Series"
 
@@ -20,7 +21,9 @@ export const SeriesList: React.VFC = () => {
 
       <ResponsiveGrid>
         {series.map((series, k) => (
-          <Series {...series} key={k} />
+          <CleanIfNotVisible key={k}>
+            <Series {...series} />
+          </CleanIfNotVisible>
         ))}
         <div className="min-w-full text-center opacity-0" ref={loading}>
           Loading ...
