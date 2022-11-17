@@ -1,6 +1,5 @@
 import React from "react"
 import { Redirect, Route, Switch } from "wouter"
-import { useClearUnimportantState } from "../Hooks/ClearUnimportantState"
 
 const SeriesList = React.lazy(() => import("./Series/SeriesList"))
 const SeriesDetails = React.lazy(() => import("./Series/SeriesDetails"))
@@ -14,8 +13,6 @@ const LazyOutlet: React.VFC<{ component: React.ReactNode }> = ({ component }) =>
 )
 
 export const RouterOutlet: React.VFC = () => {
-  useClearUnimportantState()
-
   return (
     <Switch>
       <Route path="/books">

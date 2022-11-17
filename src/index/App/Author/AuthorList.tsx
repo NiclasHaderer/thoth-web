@@ -3,6 +3,7 @@ import { useInfinityScroll } from "../../Hooks/InfinityScroll"
 import { useScrollTo } from "../../Hooks/ScrollToTop"
 import { AudiobookSelectors } from "../../State/Audiobook.Selectors"
 import { useAudiobookState } from "../../State/Audiobook.State"
+import { CleanIfNotVisible } from "../Common/CleanIfNotVisible"
 import { ResponsiveGrid } from "../Common/ResponsiveGrid"
 import { Author } from "./Author"
 
@@ -19,7 +20,9 @@ export const AuthorList: React.VFC = () => {
       {authorCount != null ? <h2 className="p-2 pb-6 text-2xl">{authorCount} Authors</h2> : null}
       <ResponsiveGrid>
         {authors.map((author, k) => (
-          <Author {...author} key={k} />
+          <CleanIfNotVisible key={k}>
+            <Author {...author} />
+          </CleanIfNotVisible>
         ))}
         <div className="min-w-full text-center opacity-0" ref={loading}>
           Loading ...
