@@ -1,25 +1,25 @@
 import React from "react"
 import { MdImageNotSupported } from "react-icons/md"
 
-import { NamedId } from "../../API/models/Audiobook"
+import { NamedId } from "../../API/models/Api"
 import { environment } from "../../env"
 import { ALink } from "../Common/ActiveLink"
 
 interface BookProps {
   id: string
-  cover: string | null
+  coverID: string | null
+  authors: NamedId[]
   title: string
-  author: NamedId
 }
 
-export const Book: React.VFC<BookProps> = ({ cover, title, author, id }) => {
+export const Book: React.VFC<BookProps> = ({ coverID, title, authors, id }) => {
   return (
     <div className="mx-6 mb-6 inline-block w-52">
       <ALink href={`/books/${id}`} aria-label={title} tabIndex={-1}>
-        {cover ? (
+        {coverID ? (
           <img
             className="h-52 w-52 cursor-pointer rounded-md border-2 border-transparent object-cover transition-colors hover:border-primary"
-            src={`${environment.apiURL}/image/${cover}`}
+            src={`${environment.apiURL}/image/${coverID}`}
             alt={title}
             loading="lazy"
           />
@@ -32,9 +32,13 @@ export const Book: React.VFC<BookProps> = ({ cover, title, author, id }) => {
         <ALink href={`/books/${id}`}>
           <span className="cursor-pointer line-clamp-2 hover:underline group-focus:underline ">{title}</span>
         </ALink>
-        <ALink href={`/authors/${author.id}`}>
-          <span className="cursor-pointer text-unimportant  hover:underline group-focus:underline">{author.name}</span>
-        </ALink>
+        {authors.map(author => (
+          <ALink href={`/authors/${author.id}`} key={author.id}>
+            <span className="cursor-pointer text-unimportant  hover:underline group-focus:underline">
+              {author.name}
+            </span>
+          </ALink>
+        ))}
       </div>
     </div>
   )

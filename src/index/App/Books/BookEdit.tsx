@@ -10,38 +10,36 @@ import {
   MdPerson,
   MdSearch,
 } from "react-icons/md"
-import { BookModel, PatchBook } from "../../API/models/Audiobook"
+import { BookModel, PatchBook } from "../../API/models/Api"
 import { AudiobookSelectors } from "../../State/Audiobook.Selectors"
 import { useAudiobookState } from "../../State/Audiobook.State"
 import { ColoredButton } from "../Common/ColoredButton"
 import { Dialog } from "../Common/Dialog"
 import { FormikInput } from "../Common/FormikInput"
 import { BookSearch } from "./BookSearch"
-import { BookMetadata } from "../../API/models/Metadat"
+import { MetadataBook } from "../../API/models/Metadata"
 import { useField } from "formik"
 import { toBase64 } from "../../helpers"
 import { ResponsiveImage } from "../Common/ResponsiveImage"
 
 const HtmlEditor = React.lazy(() => import("../Common/Editor"))
 
-const mergeMetaIntoBook = ({ ...book }: PatchBook, meta: BookMetadata): PatchBook => {
+const mergeMetaIntoBook = ({ ...book }: PatchBook, meta: MetadataBook): PatchBook => {
+  // TODO fix
   book.title = meta.title || book.title
-  book.author = meta.author?.name || book.author
-  book.cover = meta.image || book.cover
+  // book.author = meta.author?.name || book.author
+  // book.cover = meta.image || book.cover
   book.description = meta.description || book.description
   book.narrator = meta.narrator || book.narrator
-  book.providerID = meta.id || book.providerID
-  book.series = meta.series?.name || book.series
-  book.seriesIndex = meta.series?.index || book.seriesIndex
+  // book.providerID = meta.id || book.providerID
+  // book.series = meta.series?.name || book.series
+  // book.seriesIndex = meta.series?.index || book.seriesIndex
   return book
 }
 
 const toPatchBook = (book: BookModel): PatchBook => {
-  return {
-    ...book,
-    author: book.author.name,
-    series: book.series?.title || null,
-  }
+  // TODO
+  return book as unknown as PatchBook
 }
 
 export const BookEdit: React.VFC<{ book: BookModel }> = ({ book: _bookProp }) => {
@@ -112,7 +110,7 @@ export const BookEdit: React.VFC<{ book: BookModel }> = ({ book: _bookProp }) =>
               <Tab.Panel>
                 <BookSearch
                   book={book.title}
-                  author={book.author}
+                  authors={book.authors}
                   select={bookMeta => {
                     setBook(mergeMetaIntoBook(book, bookMeta))
                     setSelectedTabIndex(0)

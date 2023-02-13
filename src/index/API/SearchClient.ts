@@ -1,6 +1,6 @@
 import { getClient, withBaseUrl, withCaching, withErrorHandler } from "../Client"
 import { environment } from "../env"
-import { SearchModel } from "./models/Audiobook"
+import { SearchModel } from "./models/Api"
 
 const CLIENT = (() => {
   let client = withErrorHandler(withBaseUrl(getClient(), environment.apiURL))

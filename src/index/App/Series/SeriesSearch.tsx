@@ -2,17 +2,17 @@ import React, { useRef, useState } from "react"
 import { Input } from "../Common/Input"
 import { ColoredButton } from "../Common/ColoredButton"
 import { MdSearch } from "react-icons/md"
-import { SeriesMetadata } from "../../API/models/Metadat"
+import { MetadataSeries } from "../../API/models/Metadata"
 import { METADATA_CLIENT } from "../../API/MetadataClient"
 import { useHttpRequest } from "../../Hooks/AsyncResponse"
 import { LoadingCards } from "../Common/LoadingCard"
 
 export const SeriesSearch: React.VFC<{
-  series: string
-  author?: string | null | undefined
-  select: (result: SeriesMetadata) => void
-}> = ({ series: _series, author: _author, select }) => {
-  const [author, setAuthor] = useState(_author)
+  series?: string | null | undefined
+  authors?: string[] | null | undefined
+  select: (result: MetadataSeries) => void
+}> = ({ series: _series, authors: _authors, select }) => {
+  const [authors, setAuthors] = useState(_authors)
   const [series, setSeries] = useState(_series)
 
   const seriesInput = useRef<HTMLInputElement>()
@@ -34,8 +34,8 @@ export const SeriesSearch: React.VFC<{
           inputRef={authorInput}
           wrapperClassName="grow pr-2"
           label="Author"
-          onValue={setAuthor}
-          defaultValue={author}
+          onValue={newValue => setAuthors(newValue.split(",").map(a => a.trim()))}
+          defaultValue={authors?.join(", ")}
           onEnter={search}
         />
         <Input
@@ -64,7 +64,7 @@ export const SeriesSearch: React.VFC<{
   )
 }
 
-const AuthorSearchResult: React.VFC<{ results: SeriesMetadata[]; select: (result: SeriesMetadata) => void }> = ({
+const AuthorSearchResult: React.VFC<{ results: MetadataSeries[]; select: (result: MetadataSeries) => void }> = ({
   results,
   select,
 }) => {
@@ -79,7 +79,7 @@ const AuthorSearchResult: React.VFC<{ results: SeriesMetadata[]; select: (result
             tabIndex={0}
           >
             <div>
-              <h3 className="pb-2 pr-2 text-xl">{series.name || "Unknown"}</h3>
+              <h3 className="pb-2 pr-2 text-xl">{series.title || "Unknown"}</h3>
               <p className="pr-2 line-clamp-4">{series.description}</p>
             </div>
           </div>

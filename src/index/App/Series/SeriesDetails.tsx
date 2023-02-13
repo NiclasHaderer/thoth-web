@@ -37,9 +37,11 @@ export const SeriesDetails: React.VFC = () => {
             <div>
               <div className="flex pb-3">
                 <h3 className="min-w-40 pr-3 uppercase text-unimportant">Author</h3>
-                <ALink href={`/authors/${series.author.id}`}>
-                  <h3 className="text-xl hover:underline no-touch:group-focus:underline">{series.author.name}</h3>
-                </ALink>
+                {series.authors.map(author => (
+                  <ALink href={`/authors/${author.id}`} key={author.id}>
+                    <h3 className="text-xl hover:underline no-touch:group-focus:underline">{author.name}</h3>
+                  </ALink>
+                ))}
               </div>
               {isSeriesWithBooks(series) && series.narrators.length > 0 ? (
                 <div className="flex pb-3">
@@ -55,8 +57,8 @@ export const SeriesDetails: React.VFC = () => {
               ) : null}
 
               <div className="flex pb-3">
-                <h3 className="min-w-40 pr-3 uppercase text-unimportant">Books</h3>
-                <h3 className="text-xl">{series.amount}</h3>
+                <h3 className="min-w-40 pr-3 uppercase text-unimportant">Primary works</h3>
+                <h3 className="text-xl">{series.primaryWorks}</h3>
               </div>
             </div>
           </div>
