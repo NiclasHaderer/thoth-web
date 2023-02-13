@@ -2,17 +2,17 @@ import React, { memo, useRef, useState } from "react"
 import { Input } from "../Common/Input"
 import { ColoredButton } from "../Common/ColoredButton"
 import { MdSearch } from "react-icons/md"
-import { BookMetadata } from "../../API/models/Metadat"
+import { MetadataBook } from "../../API/models/Metadata"
 import { METADATA_CLIENT } from "../../API/MetadataClient"
 import { useHttpRequest } from "../../Hooks/AsyncResponse"
 import { LoadingCards } from "../Common/LoadingCard"
 
 export const BookSearch: React.VFC<{
-  author?: string | null | undefined
-  book: string
-  select: (result: BookMetadata) => void
-}> = memo(({ book: _book, author: _author, select }) => {
-  const [author, setAuthor] = useState(_author)
+  authors?: string[] | null | undefined
+  book?: string | null | undefined
+  select: (result: MetadataBook) => void
+}> = memo(({ book: _book, authors: _authors, select }) => {
+  const [authors, setAuthors] = useState(_authors)
   const [book, setBook] = useState(_book)
 
   const authorInput = useRef<HTMLInputElement>()
@@ -30,15 +30,17 @@ export const BookSearch: React.VFC<{
   return (
     <>
       <div className="mb-4 flex items-center">
+        {/*TODO check authors*/}
         <Input
           labelClassName="w-28"
           inputRef={authorInput}
           wrapperClassName="grow pr-2"
           label="Author"
-          defaultValue={author}
-          onValue={setAuthor}
+          defaultValue={authors?.join(", ")}
+          onValue={newValue => setAuthors(newValue.split(",").map(a => a.trim()))}
           onEnter={search}
         />
+
         <Input
           inputRef={bookInput}
           wrapperClassName="grow"
@@ -64,7 +66,7 @@ export const BookSearch: React.VFC<{
   )
 })
 
-const BookSearchResult: React.VFC<{ results: BookMetadata[]; select: (result: BookMetadata) => void }> = ({
+const BookSearchResult: React.VFC<{ results: MetadataBook[]; select: (result: MetadataBook) => void }> = ({
   results,
   select,
 }) => {
@@ -82,7 +84,7 @@ const BookSearchResult: React.VFC<{ results: BookMetadata[]; select: (result: Bo
               <h3 className="pb-2 pr-2 text-xl">{book.title || "Unknown"}</h3>
               <p className="pr-2 line-clamp-4">{book.description}</p>
             </div>
-            {book.image ? <img className="h-28 w-28" alt={book.title ?? "Cover"} src={book.image} /> : null}
+            {book.coverURL ? <img className="h-28 w-28" alt={book.title ?? "Cover"} src={book.coverURL} /> : null}
           </div>
           {results.length - 1 !== i ? <hr className="my-4 border-elevate" /> : null}
         </React.Fragment>

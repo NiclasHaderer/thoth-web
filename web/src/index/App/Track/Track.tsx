@@ -1,31 +1,31 @@
 import React from "react"
 import { MdImageNotSupported, MdPlayCircle } from "react-icons/md"
-import { NamedId } from "../../API/models/Audiobook"
+import { NamedId } from "../../API/models/Api"
 import { environment } from "../../env"
 import { ALink } from "../Common/ActiveLink"
 import { toReadableTime } from "./helpers"
 
 interface TrackProps {
-  cover: string | null
+  coverID: string | null
   title: string
-  author: NamedId
+  authors: NamedId[]
   duration: number
   index: number
   trackNr: number | null
   startPlayback: (index: number) => void
 }
 
-export const Track: React.VFC<TrackProps> = ({ cover, title, duration, trackNr, index, author, startPlayback }) => (
+export const Track: React.VFC<TrackProps> = ({ coverID, title, duration, trackNr, index, authors, startPlayback }) => (
   <div className="mr-3 flex rounded-md p-2 even:bg-active-light">
     <div
       className="group relative cursor-pointer"
       onClick={() => startPlayback(index)}
       onKeyUp={e => e.key === "Enter" && startPlayback(index)}
     >
-      {cover ? (
+      {coverID ? (
         <img
           className="h-16 w-16 rounded-md object-contain"
-          src={`${environment.apiURL}/image/${cover}`}
+          src={`${environment.apiURL}/image/${coverID}`}
           alt={title}
           loading="lazy"
         />
@@ -41,9 +41,11 @@ export const Track: React.VFC<TrackProps> = ({ cover, title, duration, trackNr, 
         {trackNr}
         <div className="flex flex-col pl-6">
           <span>{title}</span>
-          <ALink href={`/authors/${author.id}`} tabIndex={-1}>
-            <span className="cursor-pointer hover:underline group-focus:underline">{author.name}</span>
-          </ALink>
+          {authors.map(author => (
+            <ALink href={`/authors/${author.id}`} tabIndex={-1} key={author.id}>
+              <span className="cursor-pointer hover:underline group-focus:underline">{author.name}</span>
+            </ALink>
+          ))}
         </div>
       </div>
       {toReadableTime(duration)}

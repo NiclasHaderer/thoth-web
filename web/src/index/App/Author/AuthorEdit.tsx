@@ -1,14 +1,14 @@
 import { Tab } from "@headlessui/react"
 import React, { Fragment, useEffect, useRef, useState } from "react"
 import { MdEdit, MdPerson } from "react-icons/md"
-import { AuthorModel, PatchAuthor } from "../../API/models/Audiobook"
+import { AuthorModel, PatchAuthor } from "../../API/models/Api"
 import { AudiobookSelectors } from "../../State/Audiobook.Selectors"
 import { useAudiobookState } from "../../State/Audiobook.State"
 import { ColoredButton } from "../Common/ColoredButton"
 import { Dialog } from "../Common/Dialog"
 import { FormikInput } from "../Common/FormikInput"
 import { AuthorSearch } from "./AuthorSearch"
-import { AuthorMetadata } from "../../API/models/Metadat"
+import { MetadataAuthor } from "../../API/models/Metadata"
 import { useField } from "formik"
 import { isUUID, toBase64 } from "../../helpers"
 import { ResponsiveImage } from "../Common/ResponsiveImage"
@@ -16,15 +16,19 @@ import { environment } from "../../env"
 
 const HtmlEditor = React.lazy(() => import("../Common/Editor"))
 
-const mergeMetaIntoAuthor = ({ ...author }: PatchAuthor, meta: AuthorMetadata): PatchAuthor => {
-  author.image = meta.image || author.image
+const mergeMetaIntoAuthor = ({ ...author }: PatchAuthor, meta: MetadataAuthor): PatchAuthor => {
+  // TODO fix
+  author.image = meta.imageURL || author.image
   author.name = meta.name || author.name
   author.biography = meta.biography || author.biography
-  author.providerID = meta.id || author.providerID
+  // author.providerID = meta.id || author.providerID
   return author
 }
 
-const toPatchAuthor = ({ id, ...rest }: AuthorModel): PatchAuthor => rest
+const toPatchAuthor = ({ id, ...rest }: AuthorModel): PatchAuthor => {
+  // TODO fix
+  return rest as unknown as PatchAuthor
+}
 
 export const AuthorEdit: React.VFC<{ author: AuthorModel }> = ({ author: _authorProp }) => {
   let [isOpen, setIsOpen] = useState(false)

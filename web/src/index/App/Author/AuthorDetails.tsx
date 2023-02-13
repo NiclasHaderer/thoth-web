@@ -23,11 +23,11 @@ export const AuthorDetails: React.VFC = () => {
   return (
     <>
       <div className="flex flex-grow flex-col items-center pb-6">
-        {author.image ? (
+        {author.imageID ? (
           <img
             className="h-40 w-40 rounded-full border-2 border-active-light object-contain md:h-80 md:w-80"
             alt={author.name}
-            src={`${environment.apiURL}/image/${author.image}`}
+            src={`${environment.apiURL}/image/${author.imageID}`}
             loading="lazy"
           />
         ) : (
