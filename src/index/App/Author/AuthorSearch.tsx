@@ -2,16 +2,16 @@ import React, { useRef, useState } from "react"
 import { Input } from "../Common/Input"
 import { ColoredButton } from "../Common/ColoredButton"
 import { MdSearch } from "react-icons/md"
-import { AuthorMetadata } from "../../API/models/Metadat"
+import { MetadataAuthor } from "../../API/models/Metadata"
 import { METADATA_CLIENT } from "../../API/MetadataClient"
 import { useHttpRequest } from "../../Hooks/AsyncResponse"
 import { LoadingCards } from "../Common/LoadingCard"
 import { ResponsiveImage } from "../Common/ResponsiveImage"
 
-export const AuthorSearch: React.VFC<{ author: string; select: (result: AuthorMetadata) => void }> = ({
-  select,
-  author: _author,
-}) => {
+export const AuthorSearch: React.VFC<{
+  author?: string | null | undefined
+  select: (result: MetadataAuthor) => void
+}> = ({ select, author: _author }) => {
   const [author, setAuthor] = useState(_author)
 
   const authorInput = useRef<HTMLInputElement>()
@@ -53,7 +53,7 @@ export const AuthorSearch: React.VFC<{ author: string; select: (result: AuthorMe
   )
 }
 
-const AuthorSearchResult: React.VFC<{ results: AuthorMetadata[]; select: (result: AuthorMetadata) => void }> = ({
+const AuthorSearchResult: React.VFC<{ results: MetadataAuthor[]; select: (result: MetadataAuthor) => void }> = ({
   results,
   select,
 }) => {
@@ -71,11 +71,11 @@ const AuthorSearchResult: React.VFC<{ results: AuthorMetadata[]; select: (result
               <h3 className="pb-2 pr-2 text-xl">{author.name || "Unknown"}</h3>
               <p className="pr-2 line-clamp-4">{author.biography}</p>
             </div>
-            {author.image ? (
+            {author.imageURL ? (
               <ResponsiveImage
                 className="h-28 w-28 min-w-28 rounded-full bg-cover"
                 alt={author.name ?? "Cover"}
-                src={author.image}
+                src={author.imageURL}
               />
             ) : null}
           </div>

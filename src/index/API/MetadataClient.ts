@@ -1,6 +1,6 @@
 import { getClient, withBaseUrl, withCaching, withErrorHandler } from "../Client"
 import { environment } from "../env"
-import { AuthorMetadata, BookMetadata, SeriesMetadata } from "./models/Metadat"
+import { MetadataAuthor, MetadataBook, MetadataSeries } from "./models/Metadata"
 
 const CLIENT = (() => {
   let client = withErrorHandler(withBaseUrl(getClient(), environment.apiURL))
@@ -12,9 +12,9 @@ const CLIENT = (() => {
 
 export const METADATA_CLIENT = {
   findBook: ({ bookName, authorName }: { bookName: string; authorName?: string }) =>
-    CLIENT.get<BookMetadata[]>(`/metadata/book/search/${bookName}`, { authorName: authorName || null }),
+    CLIENT.get<MetadataBook[]>(`/metadata/book/search/${bookName}`, { authorName: authorName || null }),
   findAuthor: ({ authorName }: { authorName: string }) =>
-    CLIENT.get<AuthorMetadata[]>(`/metadata/author/search/${authorName}`),
+    CLIENT.get<MetadataAuthor[]>(`/metadata/author/search/${authorName}`),
   findSeries: ({ name, authorName }: { name: string; authorName?: string }) =>
-    CLIENT.get<SeriesMetadata[]>(`/metadata/series/search/${name}`, { authorName: authorName || null }),
+    CLIENT.get<MetadataSeries[]>(`/metadata/series/search/${name}`, { authorName: authorName || null }),
 }

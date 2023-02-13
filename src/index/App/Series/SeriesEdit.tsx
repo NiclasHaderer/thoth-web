@@ -1,30 +1,34 @@
 import { Tab } from "@headlessui/react"
 import React, { Fragment, useEffect, useState } from "react"
 import { MdEdit, MdPerson, MdSearch } from "react-icons/md"
-import { PatchSeries, SeriesModel } from "../../API/models/Audiobook"
+import { PatchSeries, SeriesModel } from "../../API/models/Api"
 import { AudiobookSelectors } from "../../State/Audiobook.Selectors"
 import { useAudiobookState } from "../../State/Audiobook.State"
 import { ColoredButton } from "../Common/ColoredButton"
 import { Dialog } from "../Common/Dialog"
 import { FormikInput } from "../Common/FormikInput"
 import { SeriesSearch } from "./SeriesSearch"
-import { SeriesMetadata } from "../../API/models/Metadat"
+import { MetadataSeries } from "../../API/models/Metadata"
 import { useField } from "formik"
 
 const HtmlEditor = React.lazy(() => import("../Common/Editor"))
 
-const mergeMetaIntoSeries = ({ ...series }: PatchSeries, meta: SeriesMetadata): PatchSeries => {
-  series.title = meta.name || series.title
-  series.author = meta.author || series.author
+const mergeMetaIntoSeries = ({ ...series }: PatchSeries, meta: MetadataSeries): PatchSeries => {
+  // TODO fix this
+  series.title = meta.title || series.title
   series.description = meta.description || series.description
-  series.providerID = meta.id || series.providerID
+  series.providerID = meta.id.itemID || series.providerID
+  series.provider = meta.id.provider || series.provider
+  series.primaryWorks = meta.primaryWorks || series.primaryWorks
+  series.totalBooks = meta.totalBooks || series.totalBooks
+  series.cover = meta.coverURL || series.cover
   return series
 }
 
-const toPatchSeries = ({ id, author, ...rest }: SeriesModel): PatchSeries => ({
-  ...rest,
-  author: author.name,
-})
+const toPatchSeries = ({ id, ...rest }: SeriesModel): PatchSeries => {
+  // TODO fix
+  return rest as unknown as PatchSeries
+}
 
 export const SeriesEdit: React.VFC<{ series: SeriesModel }> = ({ series: _seriesProp }) => {
   let [isOpen, setIsOpen] = useState(false)
@@ -92,7 +96,7 @@ export const SeriesEdit: React.VFC<{ series: SeriesModel }> = ({ series: _series
               <Tab.Panel>
                 <SeriesSearch
                   series={series.title}
-                  author={series.author}
+                  authors={series.authors}
                   select={seriesMeta => {
                     setSeries(mergeMetaIntoSeries(series, seriesMeta))
                     setSelectedTabIndex(0)

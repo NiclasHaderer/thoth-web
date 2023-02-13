@@ -2,7 +2,7 @@ import React, { useCallback, useEffect } from "react"
 import { MdCheckCircle, MdImageNotSupported, MdPlayCircle, MdRadioButtonUnchecked } from "react-icons/md"
 import { useRoute } from "wouter"
 
-import { BookModelWithTracks } from "../../API/models/Audiobook"
+import { BookModelWithTracks } from "../../API/models/Api"
 import { environment } from "../../env"
 import { AudiobookSelectors } from "../../State/Audiobook.Selectors"
 import { useAudiobookState } from "../../State/Audiobook.State"
@@ -28,9 +28,13 @@ export const BookDetails = () => {
   const startPlayback = (position: number) => {
     const tracks = (book as BookModelWithTracks).tracks
 
-    const start = { ...tracks[position], author: book.author, cover: book.cover }
-    const queue = tracks.slice(position + 1, tracks.length).map(q => ({ ...q, author: book.author, cover: book.cover }))
-    const history = tracks.slice(0, position).map(q => ({ ...q, author: book.author, cover: book.cover }))
+    const start = { ...tracks[position], authors: book.authors, coverID: book.coverID }
+    const queue = tracks.slice(position + 1, tracks.length).map(q => ({
+      ...q,
+      authors: book.authors,
+      coverID: book.coverID,
+    }))
+    const history = tracks.slice(0, position).map(q => ({ ...q, authors: book.authors, coverID: book.coverID }))
 
     play(start, queue, history)
   }
@@ -39,11 +43,11 @@ export const BookDetails = () => {
     <>
       <div className="flex pb-6">
         <div className="flex flex-col justify-around">
-          {book.cover ? (
+          {book.coverID ? (
             <img
               className="h-40 w-40 rounded-md border-2 border-active-light object-contain md:h-80 md:w-80"
               alt={book.title}
-              src={`${environment.apiURL}/image/${book.cover}`}
+              src={`${environment.apiURL}/image/${book.coverID}`}
             />
           ) : (
             <MdImageNotSupported className="h-40 w-40 rounded-md border-2 border-active-light md:h-80 md:w-80" />
@@ -52,17 +56,19 @@ export const BookDetails = () => {
         <div className="flex flex-grow flex-col justify-between pl-4 md:pl-10">
           <div>
             <h2 className="pb-3 text-2xl">{book.title}</h2>
-            {book.year ? (
+            {book.releaseDate ? (
               <div className="flex pb-3">
                 <h3 className="min-w-40 pr-3 uppercase text-unimportant">Year</h3>
-                <h3>{book.year}</h3>
+                <h3>{new Date(book.releaseDate).getFullYear()}</h3>
               </div>
             ) : null}
             <div className="flex pb-3">
               <h3 className="min-w-40 pr-3 uppercase text-unimportant">Author</h3>
-              <ALink href={`/authors/${book.author.id}`}>
-                <h3 className="hover:underline  focus:underline group-focus:underline">{book.author.name}</h3>
-              </ALink>
+              {book.authors.map(author => (
+                <ALink href={`/authors/${author.id}`} key={author.id}>
+                  <h3 className="hover:underline  focus:underline group-focus:underline">{author.name}</h3>
+                </ALink>
+              ))}
             </div>
             {book.narrator ? (
               <div className="flex pb-3">
@@ -73,17 +79,20 @@ export const BookDetails = () => {
             {book.series ? (
               <div className="flex pb-3">
                 <h3 className="min-w-40 pr-3 uppercase text-unimportant">Series</h3>
-                <ALink href={`/series/${book.series.id}`}>
-                  <h3 className="hover:underline group-focus:underline">{book.series.title}</h3>
-                </ALink>
+                {book.series.map(series => (
+                  <ALink href={`/series/${series.id}`} key={series.id}>
+                    <h3 className="hover:underline group-focus:underline">{series.title}</h3>
+                  </ALink>
+                ))}
               </div>
             ) : null}
-            {book.seriesIndex ? (
-              <div className="flex pb-3">
-                <h3 className="min-w-40 pr-3 uppercase text-unimportant">Series Index</h3>
-                <h3>{book.seriesIndex}</h3>
-              </div>
-            ) : null}
+            {/*TODO fix this*/}
+            {/*{book.seriesIndex ? (*/}
+            {/*  <div className="flex pb-3">*/}
+            {/*    <h3 className="min-w-40 pr-3 uppercase text-unimportant">Series Index</h3>*/}
+            {/*    <h3>{book.seriesIndex}</h3>*/}
+            {/*  </div>*/}
+            {/*) : null}*/}
             {book.language ? (
               <div className="flex pb-3">
                 <h3 className="min-w-40 pr-3 uppercase text-unimportant">Language</h3>
@@ -110,7 +119,14 @@ export const BookDetails = () => {
       <div>
         <h3 className="p-2 pb-6 text-xl">{isBookWithTracks(book) ? book.tracks.length : ""} Tracks</h3>
         {(isBookWithTracks(book) ? book.tracks : []).map((track, k) => (
-          <Track author={book.author} startPlayback={startPlayback} {...track} cover={book.cover} key={k} index={k} />
+          <Track
+            authors={book.authors}
+            startPlayback={startPlayback}
+            {...track}
+            coverID={book?.coverID}
+            key={k}
+            index={k}
+          />
         ))}
       </div>
     </>

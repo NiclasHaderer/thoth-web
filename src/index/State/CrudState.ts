@@ -1,7 +1,7 @@
 import { unstable_batchedUpdates } from "react-dom"
 import { GetState } from "zustand/vanilla"
 
-import { ChangeEvent, PaginatedResponse } from "../API/models/Audiobook"
+import { ChangeEvent, PaginatedResponse } from "../API/models/Api"
 import { insertAtPosition, replaceRangeInList, toIdRecord } from "../helpers"
 import { WebsocketConnection } from "../Websocket"
 import { SetState } from "zustand"
