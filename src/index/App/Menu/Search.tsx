@@ -1,7 +1,7 @@
 import React, { KeyboardEvent, useEffect, useRef, useState } from "react"
 import { MdImageNotSupported, MdPerson, MdSearch } from "react-icons/md"
 
-import { SearchModel } from "../../API/models/Audiobook"
+import { SearchModel } from "../../API/models/Api"
 import { environment } from "../../env"
 import { useFocusTrap, useTabModifier } from "../../Hooks/FocusTrap"
 import { useGlobalEvent } from "../../Hooks/GlobalEvent"
@@ -130,10 +130,10 @@ const AuthorSearchResult: React.VFC<{ authors: SearchModel["authors"]; onClose: 
         className="block rounded-md transition-colors hover:bg-active-light no-touch:focus:bg-active-light"
       >
         <div className="flex items-center p-2">
-          {author.image ? (
+          {author.imageID ? (
             <img
               className="h-8 w-8 rounded-full"
-              src={`${environment.apiURL}/image/${author.image}`}
+              src={`${environment.apiURL}/image/${author.imageID}`}
               alt="Author"
               loading="lazy"
             />
@@ -158,10 +158,10 @@ const BookSearchResult: React.VFC<{ books: SearchModel["books"]; onClose: () => 
         className="block rounded-md transition-colors hover:bg-active-light no-touch:focus:bg-active-light"
       >
         <div className="flex items-center p-2">
-          {book.cover ? (
+          {book.coverID ? (
             <img
               className="h-8 w-8 rounded-md object-cover"
-              src={`${environment.apiURL}/image/${book.cover}`}
+              src={`${environment.apiURL}/image/${book.coverID}`}
               alt={book.title}
               loading="lazy"
             />

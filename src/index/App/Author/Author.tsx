@@ -5,21 +5,21 @@ import { environment } from "../../env"
 import { ALink } from "../Common/ActiveLink"
 
 interface AuthorProps {
-  image: string | null
+  imageID: string | null
   name: string
   id: string
   className?: string
 }
 
-export const Author: React.VFC<AuthorProps> = ({ image, name, id, className }) => {
+export const Author: React.VFC<AuthorProps> = ({ imageID, name, id, className }) => {
   return (
     <div className={`mx-6 mb-6 inline-block w-52 min-w-52 ${className}`}>
       <ALink href={`/authors/${id}`} aria-label={name} tabIndex={-1}>
-        {image ? (
+        {imageID ? (
           <img
             loading="lazy"
             className="h-52 w-52 cursor-pointer  rounded-full border-2 border-active-light object-cover transition-colors hover:border-primary"
-            src={`${environment.apiURL}/image/${image}`}
+            src={`${environment.apiURL}/image/${imageID}`}
             alt="Author"
           />
         ) : (

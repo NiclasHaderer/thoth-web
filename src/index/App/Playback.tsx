@@ -37,12 +37,12 @@ export const Playback: React.VFC<{ className?: string }> = ({ className }) => {
 
       <div className="flex items-center">
         <ALink href={`/books/${track.book.id}`} className="mr-3" aria-label={track.title} tabIndex={-1}>
-          {track.cover ? (
+          {track.coverID ? (
             <img
               className="h-12 w-12 rounded-md md:h-20 md:w-20"
               alt={track.title}
               loading="lazy"
-              src={`${environment.apiURL}/image/${track.cover}`}
+              src={`${environment.apiURL}/image/${track.coverID}`}
             />
           ) : (
             <MdImageNotSupported className="h-10 w-10 rounded-md md:h-20 md:w-20" />
@@ -54,9 +54,11 @@ export const Playback: React.VFC<{ className?: string }> = ({ className }) => {
             {track.trackNr ? track.trackNr + ". " : null} {track.title}
           </div>
           <div className="line-clamp-1">
-            <ALink className="pr-2 hover:underline no-touch:focus:underline" href={`/authors/${track.author.id}`}>
-              {track.author.name}
-            </ALink>
+            {track.authors.map(author => (
+              <ALink className="pr-2 hover:underline no-touch:focus:underline" href={`/authors/${author.id}`}>
+                {author.name}
+              </ALink>
+            ))}
             -
             <ALink className="pl-2 hover:underline no-touch:focus:underline" href={`/books/${track.book.id}`}>
               {track.book.title}
