@@ -8,7 +8,7 @@ import {
   PaginatedResponse,
   PatchAuthor,
   PatchBook,
-  PatchSeries,
+  PatchSeries, Position,
   SeriesModel,
   SeriesModelWithBooks,
 } from "./models/Api"
@@ -29,6 +29,7 @@ export const AudiobookClient = {
   fetchAuthorWithBooks: (authorID: string) => CLIENT.get<AuthorModelWithBooks>(`/audiobooks/authors/${authorID}`),
   updateAuthor: ({ id, ...author }: PatchAuthor & { id: string }) =>
     CLIENT.patch<AuthorModelWithBooks, PatchAuthor>(`/audiobooks/authors/${id}`, author),
+  fetchAuthorPosition: (authorID: string) => CLIENT.get<Position>(`/audiobooks/authors/${authorID}/position`),
 
   // Books
   fetchBooks: (offset: number, limit = 30) =>
@@ -41,6 +42,7 @@ export const AudiobookClient = {
   fetchBookWithTracks: (bookID: string) => CLIENT.get<BookModelWithTracks>(`/audiobooks/books/${bookID}`),
   updateBook: ({ id, ...book }: PatchBook & { id: string }) =>
     CLIENT.patch<BookModel, Partial<PatchBook>>(`/audiobooks/books/${id}`, book),
+  fetchBookPosition: (bookID: string) => CLIENT.get<Position>(`/audiobooks/books/${bookID}/position`),
 
   // Series
   fetchSeries: (offset: number, limit = 30) =>
@@ -53,6 +55,8 @@ export const AudiobookClient = {
   fetchSeriesWithBooks: (seriesID: string) => CLIENT.get<SeriesModelWithBooks>(`/audiobooks/series/${seriesID}`),
   updateSeries: ({ id, ...series }: PatchSeries & { id: string }) =>
     CLIENT.patch<SeriesModelWithBooks, PatchSeries>(`/audiobooks/series/${id}`, series),
+  fetchSeriesPosition: (seriesID: string) => CLIENT.get<Position>(`/audiobooks/series/${seriesID}/position`),
+
 
   // Misc
   rescan: () => CLIENT.post<null, object>(`/audiobooks/rescan`, {}),
