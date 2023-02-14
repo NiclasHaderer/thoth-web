@@ -34,7 +34,7 @@ type CrudReturn<
 export const CrudState = <
   KEY extends string,
   COLLECTION extends PaginatedResponse<{ id: string }>,
-  DETAILS extends { id: string } & COLLECTION["items"][number] & { position: number },
+  DETAILS extends { id: string } & COLLECTION["items"][number],
   UPDATE extends { id: string },
   SORTING_STATE extends { [K in KEY as `${K}Sorting`]: string[] },
   MAPPING_STATE extends { [K in KEY as `${K}Mapping`]: Record<string, { id: string }> }
@@ -43,6 +43,7 @@ export const CrudState = <
   config: {
     fetchFunction: (offset: number, limit: number) => OPromise<COLLECTION | undefined>
     detailsFunction: (id: string) => OPromise<DETAILS | undefined>
+    positionFunction: (id: string) => OPromise<{ sortIndex: number, id: string, order: "ASC" | "DESC" } | undefined>
     sortingFunction: (offset: number, limit: number) => OPromise<string[] | undefined>
     updateFunction: (data: UPDATE) => OPromise<COLLECTION["items"][number] | undefined>
     ws?: WebsocketConnection<ChangeEvent>
@@ -84,14 +85,17 @@ export const CrudState = <
       const response = await config.detailsFunction(id)
       if (!response) return
 
-      set(state => ({
-        ...state,
-        [`${key}Mapping`]: {
-          ...state[`${key}Mapping`],
-          [response.id]: response,
-        },
-        [`${key}Sorting`]: insertAtPosition((state as SORTING_STATE)[`${key}Sorting`], response.id, response.position),
-      }))
+      const position = await config.positionFunction(id)
+      if (!position) return
+
+        set(state => ({
+          ...state,
+          [`${key}Mapping`]: {
+            ...state[`${key}Mapping`],
+            [response.id]: response,
+          },
+          [`${key}Sorting`]: insertAtPosition((state as SORTING_STATE)[`${key}Sorting`], response.id, position.sortIndex),
+        }))
     },
     [`update${key}`]: async (data: UPDATE) => {
       const response = await config.updateFunction(data)

@@ -211,3 +211,9 @@ export interface PaginatedResponse<T> {
   offset: number
   total: number
 }
+
+export interface Position {
+  sortIndex: number
+  id: string
+  order: "ASC" | "DESC"
+}
