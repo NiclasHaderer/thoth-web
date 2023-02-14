@@ -56,8 +56,10 @@ export const CrudState = <
     [`${key}Total`]: null,
     [`${key}Sorting`]: [],
     [`${key}Mapping`]: {},
-    [`fetch${key}`]: async (offset: number, limit: number = 30) => {
-      const response = await config.fetchFunction(offset, limit)
+    [`fetch${key}`]: async (offset: number) => {
+      const limit = 30
+      const offsetCount = offset * limit
+      const response = await config.fetchFunction(offsetCount, limit)
       if (!response) return
       set(state => ({
         ...state,
@@ -68,17 +70,19 @@ export const CrudState = <
         },
         [`${key}Sorting`]: replaceRangeInList(
           (state as SORTING_STATE)[`${key}Sorting`],
-          offset * limit,
+          offsetCount,
           response.items
         ),
       }))
     },
-    [`fetch${key}Sorting`]: async (offset: number, limit: number = 30) => {
-      const response = await config.sortingFunction(offset, limit)
+    [`fetch${key}Sorting`]: async (offset: number) => {
+      const limit = 30
+      const offsetCount = offset * limit
+      const response = await config.sortingFunction(offsetCount, limit)
       if (!response) return
       set(state => ({
         ...state,
-        [`${key}Sorting`]: replaceRangeInList((state as SORTING_STATE)[`${key}Sorting`], offset * limit, response),
+        [`${key}Sorting`]: replaceRangeInList((state as SORTING_STATE)[`${key}Sorting`], offsetCount, response),
       }))
     },
     [`fetch${key}Details`]: async (id: string) => {
