@@ -46,12 +46,12 @@ export function Dropdown<T extends any>({
                 <Menu.Item
                   key={i}
                   disabled={disabled}
-                  onClick={() => {
-                    onChange && onChange(value)
-                  }}
                 >
                   {({ active, disabled }) => (
                     <button
+                      onClick={() => {
+                        onChange && onChange(value)
+                      }}
                       type="button"
                       disabled={disabled}
                       className={`${active && !disabled ? "bg-active-light" : ""} ${
