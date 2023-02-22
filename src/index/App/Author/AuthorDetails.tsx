@@ -17,7 +17,7 @@ export const AuthorDetails: React.VFC = () => {
   const author = useAudiobookState(useCallback(AudiobookSelectors.selectAuthor(id?.id), [id?.id]))
   const getAuthorDetails = useAudiobookState(AudiobookSelectors.fetchAuthorDetails)
 
-  useEffect(() => getAuthorDetails(id?.id!), [id?.id, getAuthorDetails])
+  useEffect(() => void getAuthorDetails(id?.id!), [id?.id, getAuthorDetails])
   if (!author) return <></>
 
   return (

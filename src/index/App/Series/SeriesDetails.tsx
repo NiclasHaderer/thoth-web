@@ -17,7 +17,7 @@ export const SeriesDetails: React.VFC = () => {
   //eslint-disable-next-line react-hooks/exhaustive-deps
   const series = useAudiobookState(useCallback(AudiobookSelectors.selectSeries(id?.id), [id?.id]))
 
-  useEffect(() => getSeriesWithBooks(id?.id!), [id?.id, getSeriesWithBooks])
+  useEffect(() => void getSeriesWithBooks(id?.id!), [id?.id, getSeriesWithBooks])
   if (!series) return <></>
 
   return (
