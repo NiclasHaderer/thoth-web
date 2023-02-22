@@ -5,12 +5,8 @@ export const toIdRecord = <T extends { id: string }>(itemList: T[]) => {
   }, {} as Record<string, T>)
 }
 
-export const getItemById = <T extends { id: string }>(itemList: T[], id: string | undefined) => {
-  return itemList.find(i => i.id === id)
-}
-
 export const replaceRangeInList = <T extends string, R extends T | { id: T }>(
-  [...originalList]: T[]| Readonly<T[]>,
+  [...originalList]: T[] | Readonly<T[]>,
   startIndex: number,
   replaceList: R[]
 ): T[] => {
@@ -22,7 +18,7 @@ export const replaceRangeInList = <T extends string, R extends T | { id: T }>(
   return [...new Set(originalList)]
 }
 
-export const insertAtPosition = <T>([...list]: T[], item: T, position: number): T[] => {
+export const insertAtPosition = <T>(list: T[], item: T, position: number): T[] => {
   list = list.filter(i => i !== item)
   if (position >= list.length) {
     list.push(item)
