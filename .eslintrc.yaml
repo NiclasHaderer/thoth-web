@@ -4,11 +4,7 @@ extends:
   - react-app/jest
   - plugin:import/errors
 
-rules:
-  import/no-internal-modules:
-    - error
-    - forbid:
-        - "**/client/*"
+rules: {}
 
 settings:
   import/ignore:

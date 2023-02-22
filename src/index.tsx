@@ -1,7 +1,7 @@
 import React from "react"
 import ReactDOM from "react-dom"
-import App from "./index/App"
-import { SnackbarProvider } from "./index/App/Common/Snackbar"
+import App from "./index/app"
+import { SnackbarProvider } from "./index/app/common/snackbar"
 import "./index/index.scss"
 import "./index/tailwind.css"
 
