@@ -16,13 +16,13 @@ import { BookEdit } from "./BookEdit"
 
 export const BookDetails = () => {
   const [, id] = useRoute("/books/:id")
-  const getBookWithTracks = useAudiobookState(s => s.fetchBooksDetails)
+  const getBookWithTracks = useAudiobookState(s => s.fetchBookDetails)
   const play = usePlaybackState(state => state.start)
 
   //eslint-disable-next-line react-hooks/exhaustive-deps
   const book = useAudiobookState(useCallback(AudiobookSelectors.selectBook(id?.id), [id?.id]))
 
-  useEffect(() => getBookWithTracks(id?.id!), [id?.id, getBookWithTracks])
+  useEffect(() => void getBookWithTracks(id?.id!), [id?.id, getBookWithTracks])
   if (!book) return <></>
 
   const startPlayback = (position: number) => {

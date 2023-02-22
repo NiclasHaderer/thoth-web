@@ -9,13 +9,13 @@ export const useClearUnimportantState = () => {
   useEffect(() => {
     const clearer: (() => void)[] = []
     if (importantState !== "books") {
-      clearer.push(audiobookState.clearBooks)
+      clearer.push(audiobookState.clearBook)
     }
     if (importantState !== "series") {
       clearer.push(audiobookState.clearSeries)
     }
     if (importantState !== "authors") {
-      clearer.push(audiobookState.clearAuthors)
+      clearer.push(audiobookState.clearAuthor)
     }
     clearer.forEach(c => c())
   }, [importantState])
