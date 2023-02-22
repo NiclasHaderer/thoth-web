@@ -10,7 +10,7 @@ export const getItemById = <T extends { id: string }>(itemList: T[], id: string 
 }
 
 export const replaceRangeInList = <T extends string, R extends T | { id: T }>(
-  [...originalList]: T[],
+  [...originalList]: T[]| Readonly<T[]>,
   startIndex: number,
   replaceList: R[]
 ): T[] => {
