@@ -31,17 +31,17 @@ export const SeriesSearch: React.VFC<{
         <Input
           labelClassName="w-28"
           wrapperClassName="grow pr-2"
-          label="Author"
-          onValue={setAuthors}
-          defaultValue={authors}
+          label="Series"
+          onValue={setSeries}
+          defaultValue={series}
           onEnter={search}
         />
         <Input
           labelClassName="w-28"
           wrapperClassName="grow pr-2"
-          label="Series"
-          onValue={setSeries}
-          defaultValue={series}
+          label="Author"
+          onValue={setAuthors}
+          defaultValue={authors}
           onEnter={search}
         />
         <ColoredButton
