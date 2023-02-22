@@ -17,17 +17,23 @@ import { environment } from "../../env"
 const HtmlEditor = React.lazy(() => import("../common/editor"))
 
 const mergeMetaIntoAuthor = ({ ...author }: PatchAuthor, meta: MetadataAuthor): PatchAuthor => {
-  // TODO fix
+  author.biography = meta.biography || author.biography
+  author.birthDate = meta.birthDate || author.birthDate
+  author.bornIn = meta.bornIn || author.bornIn
+  author.deathDate = meta.deathDate || author.deathDate
   author.image = meta.imageURL || author.image
   author.name = meta.name || author.name
-  author.biography = meta.biography || author.biography
-  // author.providerID = meta.id || author.providerID
+  // TODO provider
+  author.provider = author.provider
+  author.website = meta.website || author.website
   return author
 }
 
-const toPatchAuthor = ({ id, ...rest }: AuthorModel): PatchAuthor => {
-  // TODO fix
-  return rest as unknown as PatchAuthor
+const toPatchAuthor = ({ id, imageID, ...rest }: AuthorModel): PatchAuthor => {
+  return {
+    ...rest,
+    image: imageID,
+  }
 }
 
 export const AuthorEdit: React.VFC<{ author: AuthorModel }> = ({ author: _authorProp }) => {

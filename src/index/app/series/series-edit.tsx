@@ -1,7 +1,7 @@
 import { Tab } from "@headlessui/react"
 import React, { Fragment, useEffect, useState } from "react"
 import { MdEdit, MdPerson, MdSearch } from "react-icons/md"
-import { PatchSeries, SeriesModel } from "../../models/api"
+import { PatchSeries, SeriesModelWithBooks } from "../../models/api"
 import { AudiobookSelectors } from "../../state/audiobook.selectors"
 import { useAudiobookState } from "../../state/audiobook.state"
 import { ColoredButton } from "../common/colored-button"
@@ -14,23 +14,25 @@ import { useField } from "formik"
 const HtmlEditor = React.lazy(() => import("../common/editor"))
 
 const mergeMetaIntoSeries = ({ ...series }: PatchSeries, meta: MetadataSeries): PatchSeries => {
-  // TODO fix this
-  series.title = meta.title || series.title
-  series.description = meta.description || series.description
-  series.providerID = meta.id.itemID || series.providerID
-  series.provider = meta.id.provider || series.provider
-  series.primaryWorks = meta.primaryWorks || series.primaryWorks
-  series.totalBooks = meta.totalBooks || series.totalBooks
-  series.cover = meta.coverURL || series.cover
+  // TODO fix
   return series
 }
 
-const toPatchSeries = ({ id, ...rest }: SeriesModel): PatchSeries => {
-  // TODO fix
-  return rest as unknown as PatchSeries
+const toPatchSeries = ({ id, ...rest }: SeriesModelWithBooks): PatchSeries => {
+  return {
+    authors: rest.authors.flatMap(author => [author.id, author.id]),
+    cover: rest.coverID,
+    description: rest.description,
+    title: rest.title,
+    books: rest.books.map(book => book.id),
+    primaryWorks: rest.primaryWorks,
+    provider: rest.provider,
+    providerID: rest.providerID,
+    totalBooks: rest.totalBooks,
+  }
 }
 
-export const SeriesEdit: React.VFC<{ series: SeriesModel }> = ({ series: _seriesProp }) => {
+export const SeriesEdit: React.VFC<{ series: SeriesModelWithBooks }> = ({ series: _seriesProp }) => {
   let [isOpen, setIsOpen] = useState(false)
   const [series, setSeries] = useState(toPatchSeries(_seriesProp))
   const updateSeries = useAudiobookState(AudiobookSelectors.updateSeries)
@@ -119,12 +121,12 @@ const SeriesForm = () => {
   return (
     <>
       <FormikInput name="title" labelClassName="w-28" label="Title" icon={<MdSearch />} />
-      <FormikInput name="author" labelClassName="w-28" label="Author" icon={<MdPerson />} />
+      <FormikInput name="authors" labelClassName="w-28" label="Author" icon={<MdPerson />} />
 
       <label className="flex items-center">
         <React.Suspense fallback={<div />}>
           <HtmlEditor
-            className="!max-h-64 flex-grow"
+            className="h-64 !max-h-64 flex-grow"
             placeholder="Description"
             value={description.value}
             onChange={descriptionHelpers.setValue}

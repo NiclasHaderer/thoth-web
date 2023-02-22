@@ -55,16 +55,27 @@ export const SeriesDetails: React.VFC = () => {
                   </div>
                 </div>
               ) : null}
-
-              <div className="flex pb-3">
-                <h3 className="min-w-40 pr-3 uppercase text-unimportant">Primary works</h3>
-                <h3 className="text-xl">{series.primaryWorks}</h3>
-              </div>
+              {isSeriesWithBooks(series) ? (
+                <div className="flex pb-3">
+                  <h3 className="min-w-40 pr-3 uppercase text-unimportant">Book count</h3>
+                  <h3 className="text-xl">{series.books.length}</h3>
+                </div>
+              ) : null}
+              {series.totalBooks ? (
+                <div className="flex pb-3">
+                  <h3 className="min-w-40 pr-3 uppercase text-unimportant">Total works</h3>
+                  <h3 className="text-xl">{series.totalBooks}</h3>
+                </div>
+              ) : null}
+              {series.primaryWorks ? (
+                <div className="flex pb-3">
+                  <h3 className="min-w-40 pr-3 uppercase text-unimportant">Primary works</h3>
+                  <h3 className="text-xl">{series.primaryWorks}</h3>
+                </div>
+              ) : null}
             </div>
           </div>
-          <div className="mt-2">
-            <SeriesEdit series={series} />
-          </div>
+          <div className="mt-2">{isSeriesWithBooks(series) ? <SeriesEdit series={series} /> : null}</div>
         </div>
       </div>
       <HtmlViewer title="Description" content={series.description} className="min-w-full pb-6" />
