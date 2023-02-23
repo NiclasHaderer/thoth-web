@@ -1,7 +1,7 @@
 import { Tab } from "@headlessui/react"
 import React, { Fragment, useEffect, useRef, useState } from "react"
-import { MdEdit, MdPerson } from "react-icons/md"
-import { AuthorModel, PatchAuthor } from "../../models/api"
+import { MdAddLink, MdCelebration, MdEdit, MdPerson } from "react-icons/md"
+import { AuthorModel, NamedId, PatchAuthor, TitledId } from "../../models/api"
 import { AudiobookSelectors } from "../../state/audiobook.selectors"
 import { useAudiobookState } from "../../state/audiobook.state"
 import { ColoredButton } from "../common/colored-button"
@@ -13,10 +13,13 @@ import { useField } from "formik"
 import { isUUID, toBase64 } from "../../helpers"
 import { ResponsiveImage } from "../common/responsive-image"
 import { environment } from "../../env"
+import { MdDeceased } from "../icons/deceased"
 
 const HtmlEditor = React.lazy(() => import("../common/editor"))
 
-const mergeMetaIntoAuthor = ({ ...author }: PatchAuthor, meta: MetadataAuthor): PatchAuthor => {
+type EditAuthor = PatchAuthor
+
+const mergeMetaIntoAuthor = ({ ...author }: EditAuthor, meta: MetadataAuthor): PatchAuthor => {
   author.biography = meta.biography || author.biography
   author.birthDate = meta.birthDate || author.birthDate
   author.bornIn = meta.bornIn || author.bornIn
@@ -29,7 +32,7 @@ const mergeMetaIntoAuthor = ({ ...author }: PatchAuthor, meta: MetadataAuthor): 
   return author
 }
 
-const toPatchAuthor = ({ id, imageID, ...rest }: AuthorModel): PatchAuthor => {
+const toEditAuthor = ({ id, imageID, ...rest }: AuthorModel): EditAuthor => {
   return {
     ...rest,
     image: imageID,
@@ -38,11 +41,11 @@ const toPatchAuthor = ({ id, imageID, ...rest }: AuthorModel): PatchAuthor => {
 
 export const AuthorEdit: React.VFC<{ author: AuthorModel }> = ({ author: _authorProp }) => {
   let [isOpen, setIsOpen] = useState(false)
-  const [author, setAuthor] = useState(toPatchAuthor(_authorProp))
+  const [author, setAuthor] = useState(toEditAuthor(_authorProp))
   const updateAuthor = useAudiobookState(AudiobookSelectors.updateAuthor)
   const [selectedTabIndex, setSelectedTabIndex] = useState(0)
 
-  useEffect(() => setAuthor(toPatchAuthor(_authorProp)), [_authorProp])
+  useEffect(() => setAuthor(toEditAuthor(_authorProp)), [_authorProp])
 
   const closeModal = () => setIsOpen(false)
   const openModal = () => setIsOpen(true)
@@ -120,43 +123,55 @@ const AuthorForm = () => {
   const descriptionAccessor: keyof PatchAuthor = "biography"
   const imageAccessor: keyof PatchAuthor = "image"
 
-  const imageRef = useRef<HTMLInputElement>(null)
+  const imageInputRef = useRef<HTMLInputElement>(null)
 
   const [description, , descriptionHelpers] = useField(descriptionAccessor)
   const [image, , imageHelpers] = useField(imageAccessor)
 
   return (
     <>
-      <FormikInput name="name" labelClassName="w-28" label="Name" icon={<MdPerson />} />
-
-      <div className="flex flex-col items-center justify-center">
-        {image.value ? (
-          <ResponsiveImage
-            className="h-52 min-h-52 w-52 cursor-pointer rounded-full bg-cover"
-            src={isUUID(image.value) ? `${environment.apiURL}/image/${image.value}` : image.value}
-            alt="author"
-            onClick={() => imageRef.current && imageRef.current.click()}
-          />
-        ) : (
-          <MdPerson
-            className="h-52 w-52 cursor-pointer rounded-full"
-            onClick={() => imageRef.current && imageRef.current.click()}
-          />
-        )}
-        <input
-          className="hidden"
-          ref={imageRef}
-          type="file"
-          accept="image/*"
-          onChange={async () => {
-            const file = await imageRef.current!.files![0]
-            const base64 = await toBase64(file)
-            imageHelpers.setValue(base64)
-          }}
-        />
-        <ColoredButton color="secondary" className="my-2" onClick={() => imageRef.current && imageRef.current.click()}>
-          Upload image
-        </ColoredButton>
+      <div className="flex flex-col md:flex-row">
+        <div className="flex cursor-pointer items-center justify-center pr-2">
+          <div className="flex flex-col justify-center">
+            {image.value ? (
+              <ResponsiveImage
+                className="h-52 min-h-52 w-52 cursor-pointer rounded-full bg-cover"
+                src={isUUID(image.value) ? `${environment.apiURL}/image/${image.value}` : image.value}
+                alt="author"
+                onClick={() => imageInputRef.current && imageInputRef.current.click()}
+              />
+            ) : (
+              <MdPerson
+                className="h-52 w-52 cursor-pointer rounded-full"
+                onClick={() => imageInputRef.current && imageInputRef.current.click()}
+              />
+            )}
+            <input
+              className="hidden"
+              ref={imageInputRef}
+              type="file"
+              accept="image/*"
+              onChange={async () => {
+                const file = await imageInputRef.current!.files![0]
+                const base64 = await toBase64(file)
+                imageHelpers.setValue(base64)
+              }}
+            />
+            <ColoredButton
+              color="secondary"
+              className="my-2 self-center"
+              onClick={() => imageInputRef.current && imageInputRef.current.click()}
+            >
+              Upload image
+            </ColoredButton>
+          </div>
+        </div>
+        <div>
+          <FormikInput name="name" labelClassName="w-28" label="Name" icon={<MdPerson />} />
+          <FormikInput name="birthDate" type="date" labelClassName="w-28" label="Birth" icon={<MdCelebration />} />
+          <FormikInput name="deathDate" type="date" labelClassName="w-28" label="Death" icon={<MdDeceased />} />
+          <FormikInput name="website" labelClassName="w-28" label="Website" icon={<MdAddLink />} />
+        </div>
       </div>
       <label className="flex items-center">
         <React.Suspense fallback={<div />}>
