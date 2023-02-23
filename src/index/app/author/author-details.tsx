@@ -34,6 +34,30 @@ export const AuthorDetails: React.VFC = () => {
           <MdPerson className="h-40 w-40 rounded-full border-2 border-active-light md:h-80 md:w-80" />
         )}
         <h2 className="flex items-center py-3 text-2xl">{author.name}</h2>
+        {author.bornIn ? (
+          <div className="flex pb-3">
+            <h3 className="min-w-40 pr-3 uppercase text-unimportant">Born in</h3>
+            <h3>{author.bornIn}</h3>
+          </div>
+        ) : null}
+        {author.birthDate ? (
+          <div className="flex pb-3">
+            <h3 className="min-w-40 pr-3 uppercase text-unimportant">Born</h3>
+            <h3>{author.birthDate}</h3>
+          </div>
+        ) : null}
+        {author.deathDate ? (
+          <div className="flex pb-3">
+            <h3 className="min-w-40 pr-3 uppercase text-unimportant">Died</h3>
+            <h3>{author.deathDate}</h3>
+          </div>
+        ) : null}
+        {author.website ? (
+          <div className="flex pb-3">
+            <h3 className="min-w-40 pr-3 uppercase text-unimportant">Website</h3>
+            <h3>{author.website}</h3>
+          </div>
+        ) : null}
         <AuthorEdit author={author} />
       </div>
       <HtmlViewer content={author.biography} className="min-w-full pb-6" title="Biographie" />

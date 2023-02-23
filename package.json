@@ -2,7 +2,6 @@
   "name": "my-app",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://0.0.0.0:8080",
   "scripts": {
     "start": "craco start",
     "build": "craco build",

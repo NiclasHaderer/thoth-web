@@ -136,7 +136,7 @@ const BookForm = () => {
 
   return (
     <>
-      <div className={"flex flex-col md:flex-row"}>
+      <div className="flex flex-col md:flex-row">
         <div className="flex cursor-pointer items-center justify-center pr-2">
           <div className="flex flex-col justify-center">
             {image.value ? (
