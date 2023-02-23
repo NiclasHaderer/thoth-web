@@ -13,7 +13,7 @@ import {
   SeriesModel,
   SeriesModelWithBooks,
 } from "../models/api"
-import { insertAtPosition, replaceRangeInList, toIdRecord } from "../helpers"
+import { insertAtPosition, replaceRangeInList, toIdRecord } from "../utils"
 import { AudiobookClient } from "../api/audiobook-client"
 import { WrappedResponse } from "../client"
 

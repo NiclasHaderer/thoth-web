@@ -1,3 +1,5 @@
+import { FormikTouched } from "formik"
+
 export const toIdRecord = <T extends { id: string }>(itemList: T[]) => {
   return itemList.reduce((previousValue, currentValue) => {
     previousValue[currentValue.id] = currentValue
@@ -38,4 +40,22 @@ export const toBase64 = (file: File) =>
 
 export const isUUID = (uuidString: string): boolean => {
   return /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i.test(uuidString)
+}
+
+export const getModifiedValues = <T>(original: T, modified: FormikTouched<T>): Partial<T> => {
+  const modifiedValues: Partial<T> = {}
+  for (const key in modified) {
+    if (modified[key] === true) {
+      modifiedValues[key] = original[key]
+    }
+  }
+  return modifiedValues
+}
+
+export const formatDate = (date: Date | number | string) => {
+  return new Date(date).toLocaleDateString(undefined, {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  })
 }

@@ -1,47 +1,52 @@
 import { Tab } from "@headlessui/react"
-import React, { Fragment, useEffect, useRef, useState } from "react"
-import { MdAddLink, MdCelebration, MdEdit, MdPerson } from "react-icons/md"
-import { AuthorModel, NamedId, PatchAuthor, TitledId } from "../../models/api"
+import React, { Fragment, useEffect, useState } from "react"
+import { MdEdit } from "react-icons/md"
+import { AuthorModel, AuthorModelWithBooks, PostAuthor } from "../../models/api"
 import { AudiobookSelectors } from "../../state/audiobook.selectors"
 import { useAudiobookState } from "../../state/audiobook.state"
 import { ColoredButton } from "../common/colored-button"
 import { Dialog } from "../common/dialog"
-import { FormikInput } from "../common/formik-input"
 import { AuthorSearch } from "./author-search"
 import { MetadataAuthor } from "../../models/metadata"
-import { useField } from "formik"
-import { isUUID, toBase64 } from "../../helpers"
-import { ResponsiveImage } from "../common/responsive-image"
-import { environment } from "../../env"
-import { MdDeceased } from "../icons/deceased"
+import { AuthorForm } from "./author-form"
 
-const HtmlEditor = React.lazy(() => import("../common/editor"))
+type EditAuthor = Omit<PostAuthor, "birthDate" | "deathDate"> & {
+  birthDate?: string | null
+  deathDate?: string | null
+}
 
-type EditAuthor = PatchAuthor
-
-const mergeMetaIntoAuthor = ({ ...author }: EditAuthor, meta: MetadataAuthor): PatchAuthor => {
+const mergeMetaIntoAuthor = ({ ...author }: EditAuthor, meta: MetadataAuthor): EditAuthor => {
   author.biography = meta.biography || author.biography
-  author.birthDate = meta.birthDate || author.birthDate
+  author.birthDate = meta.birthDate ? new Date(meta.birthDate).toISOString().slice(0, 10) : author.birthDate
+  author.deathDate = meta.deathDate ? new Date(meta.deathDate).toISOString().slice(0, 10) : author.deathDate
   author.bornIn = meta.bornIn || author.bornIn
-  author.deathDate = meta.deathDate || author.deathDate
   author.image = meta.imageURL || author.image
   author.name = meta.name || author.name
-  // TODO provider
-  author.provider = author.provider
+  author.provider = meta.id.provider
+  author.providerID = meta.id.itemID
   author.website = meta.website || author.website
   return author
 }
 
 const toEditAuthor = ({ id, imageID, ...rest }: AuthorModel): EditAuthor => {
+  if ("books" in rest) {
+    delete rest.books
+  }
+  if ("series" in rest) {
+    delete rest.series
+  }
+
   return {
     ...rest,
     image: imageID,
+    birthDate: rest.birthDate ? new Date(rest.birthDate).toISOString().slice(0, 10) : undefined,
+    deathDate: rest.deathDate ? new Date(rest.deathDate).toISOString().slice(0, 10) : undefined,
   }
 }
 
-export const AuthorEdit: React.VFC<{ author: AuthorModel }> = ({ author: _authorProp }) => {
+export const AuthorEdit: React.VFC<{ author: AuthorModel | AuthorModelWithBooks }> = ({ author: _authorProp }) => {
   let [isOpen, setIsOpen] = useState(false)
-  const [author, setAuthor] = useState(toEditAuthor(_authorProp))
+  const [author, setAuthor] = useState<EditAuthor>(toEditAuthor(_authorProp))
   const updateAuthor = useAudiobookState(AudiobookSelectors.updateAuthor)
   const [selectedTabIndex, setSelectedTabIndex] = useState(0)
 
@@ -70,7 +75,14 @@ export const AuthorEdit: React.VFC<{ author: AuthorModel }> = ({ author: _author
         }
         values={author}
         onSubmit={values => {
-          updateAuthor({ ...values, id: _authorProp.id })
+          updateAuthor({
+            ...{
+              ...values,
+              birthDate: values.birthDate ? new Date(values.birthDate).getTime() : null,
+              deathDate: values.deathDate ? new Date(values.deathDate).getTime() : null,
+            },
+            id: _authorProp.id,
+          })
           closeModal()
         }}
       >
@@ -119,71 +131,4 @@ export const AuthorEdit: React.VFC<{ author: AuthorModel }> = ({ author: _author
   )
 }
 
-const AuthorForm = () => {
-  const descriptionAccessor: keyof PatchAuthor = "biography"
-  const imageAccessor: keyof PatchAuthor = "image"
-
-  const imageInputRef = useRef<HTMLInputElement>(null)
-
-  const [description, , descriptionHelpers] = useField(descriptionAccessor)
-  const [image, , imageHelpers] = useField(imageAccessor)
-
-  return (
-    <>
-      <div className="flex flex-col md:flex-row">
-        <div className="flex cursor-pointer items-center justify-center pr-2">
-          <div className="flex flex-col justify-center">
-            {image.value ? (
-              <ResponsiveImage
-                className="h-52 min-h-52 w-52 cursor-pointer rounded-full bg-cover"
-                src={isUUID(image.value) ? `${environment.apiURL}/image/${image.value}` : image.value}
-                alt="author"
-                onClick={() => imageInputRef.current && imageInputRef.current.click()}
-              />
-            ) : (
-              <MdPerson
-                className="h-52 w-52 cursor-pointer rounded-full"
-                onClick={() => imageInputRef.current && imageInputRef.current.click()}
-              />
-            )}
-            <input
-              className="hidden"
-              ref={imageInputRef}
-              type="file"
-              accept="image/*"
-              onChange={async () => {
-                const file = await imageInputRef.current!.files![0]
-                const base64 = await toBase64(file)
-                imageHelpers.setValue(base64)
-              }}
-            />
-            <ColoredButton
-              color="secondary"
-              className="my-2 self-center"
-              onClick={() => imageInputRef.current && imageInputRef.current.click()}
-            >
-              Upload image
-            </ColoredButton>
-          </div>
-        </div>
-        <div>
-          <FormikInput name="name" labelClassName="w-28" label="Name" icon={<MdPerson />} />
-          <FormikInput name="birthDate" type="date" labelClassName="w-28" label="Birth" icon={<MdCelebration />} />
-          <FormikInput name="deathDate" type="date" labelClassName="w-28" label="Death" icon={<MdDeceased />} />
-          <FormikInput name="website" labelClassName="w-28" label="Website" icon={<MdAddLink />} />
-        </div>
-      </div>
-      <label className="flex items-center">
-        <React.Suspense fallback={<div />}>
-          <HtmlEditor
-            className="flex-grow"
-            placeholder="Description"
-            value={description.value}
-            onChange={descriptionHelpers.setValue}
-          />
-        </React.Suspense>
-      </label>
-    </>
-  )
-}
 export default AuthorEdit
