@@ -1,6 +1,6 @@
 import { Dialog as HDialog, Transition as HTransition } from "@headlessui/react"
-import { Form, Formik, FormikHelpers } from "formik"
-import React, { Fragment, ReactElement } from "react"
+import { Form, Formik, FormikHelpers, FormikProps, FormikTouched } from "formik"
+import React, { Fragment, ReactElement, useRef } from "react"
 
 interface DialogProps<T> {
   isOpen: boolean
@@ -9,7 +9,7 @@ interface DialogProps<T> {
   buttons?: ReactElement | undefined
   dialogClass?: string | undefined
   values?: T
-  onSubmit?: (values: T, formikHelpers: FormikHelpers<T>) => void | Promise<any>
+  onSubmit?: (values: T, touched: FormikTouched<T>, formikHelpers: FormikHelpers<T>) => void | Promise<any>
   children?: ReactElement | undefined
 }
 
@@ -23,6 +23,7 @@ export function Dialog<T>({
   onSubmit,
   buttons,
 }: DialogProps<T>) {
+  const touched = useRef<FormikTouched<T>>({})
   return (
     <>
       <HTransition appear show={isOpen} as={Fragment}>
@@ -63,12 +64,17 @@ export function Dialog<T>({
                     enableReinitialize={true}
                     initialValues={values || {}}
                     onSubmit={(values, formikHelpers) =>
-                      onSubmit && onSubmit(values as T, formikHelpers as FormikHelpers<T>)
+                      onSubmit && onSubmit(values as T, touched.current, formikHelpers as FormikHelpers<T>)
                     }
                   >
-                    <Form className="flex grow flex-col justify-between">
-                      <InputContent children={children} buttons={buttons} />
-                    </Form>
+                    {(props: FormikProps<T>) => {
+                      touched.current = props.touched
+                      return (
+                        <Form className="flex grow flex-col justify-between">
+                          <InputContent children={children} buttons={buttons} />
+                        </Form>
+                      )
+                    }}
                   </Formik>
                 </div>
               </div>

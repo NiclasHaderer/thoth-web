@@ -6,10 +6,10 @@ import {
   BookModel,
   BookModelWithTracks,
   PaginatedResponse,
-  PatchAuthor,
   PatchBook,
   PatchSeries,
   Position,
+  PostAuthor,
   SeriesModel,
   SeriesModelWithBooks,
 } from "../models/api"
@@ -22,8 +22,8 @@ export const AudiobookClient = {
     CLIENT.get<PaginatedResponse<AuthorModel>>(`/audiobooks/authors`, { limit, offset }),
   fetchAuthorSorting: (offset: number, limit: number) => CLIENT.get<string[]>(`/audiobooks/series`, { limit, offset }),
   fetchAuthorWithBooks: (authorID: string) => CLIENT.get<AuthorModelWithBooks>(`/audiobooks/authors/${authorID}`),
-  updateAuthor: ({ id, ...author }: PatchAuthor & { id: string }) =>
-    CLIENT.patch<AuthorModelWithBooks, PatchAuthor>(`/audiobooks/authors/${id}`, author),
+  updateAuthor: ({ id, ...author }: PostAuthor & { id: string }) =>
+    CLIENT.post<AuthorModelWithBooks, PostAuthor>(`/audiobooks/authors/${id}`, author),
   fetchAuthorPosition: (authorID: string) => CLIENT.get<Position>(`/audiobooks/authors/${authorID}/position`),
 
   // Books
