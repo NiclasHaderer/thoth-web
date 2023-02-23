@@ -1,4 +1,4 @@
-import create from "zustand"
+import { create } from "zustand"
 import { NamedId, TrackModel } from "../models/api"
 
 export type PlaybackTrack = TrackModel & { authors: NamedId[] } & { coverID: string | null }
