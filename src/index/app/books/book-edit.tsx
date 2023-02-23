@@ -19,7 +19,7 @@ import { FormikInput } from "../common/formik-input"
 import { BookSearch } from "./book-search"
 import { MetadataBook } from "../../models/metadata"
 import { useField } from "formik"
-import { toBase64 } from "../../helpers"
+import { toBase64 } from "../../utils"
 import { ResponsiveImage } from "../common/responsive-image"
 
 const HtmlEditor = React.lazy(() => import("../common/editor"))

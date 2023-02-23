@@ -7,6 +7,7 @@ export interface IAuthorModel {
   imageID: string | null
   name: string
   provider: string | null
+  providerID: string | null
   website: string | null
 }
 
@@ -19,6 +20,7 @@ export interface AuthorModel extends IAuthorModel {
   imageID: string | null
   name: string
   provider: string | null
+  providerID: string | null
   website: string | null
 }
 
@@ -140,26 +142,27 @@ export interface SearchModel {
 }
 
 export interface PatchAuthor {
-  biography: string | null
-  birthDate: number | null
-  bornIn: string | null
-  deathDate: number | null
-  image: string | null
-  name: string | null
-  provider: string | null
-  website: string | null
+  biography?: string | null
+  birthDate?: number | null
+  bornIn?: string | null
+  deathDate?: number | null
+  image?: string | null
+  name?: string | null
+  provider?: string | null
+  providerID?: string | null
+  website?: string | null
 }
 
 export interface PatchSeries {
-  authors: string[] | null
-  books: string[] | null
-  cover: string | null
-  description: string | null
-  primaryWorks: number | null
-  provider: string | null
-  providerID: string | null
-  title: string | null
-  totalBooks: number | null
+  authors?: string[] | null
+  books?: string[] | null
+  cover?: string | null
+  description?: string | null
+  primaryWorks?: number | null
+  provider?: string | null
+  providerID?: string | null
+  title?: string | null
+  totalBooks?: number | null
 }
 
 export interface PatchBook {
@@ -216,4 +219,44 @@ export interface Position {
   sortIndex: number
   id: string
   order: "ASC" | "DESC"
+}
+
+export interface PostAuthor {
+  biography: string | null
+  birthDate: number | null
+  bornIn: string | null
+  deathDate: number | null
+  image: string | null
+  name: string
+  provider: string | null
+  providerID: string | null
+  website: string | null
+}
+
+export interface PostSeries {
+  authors: string[]
+  books: string[]
+  cover: string | null
+  description: string | null
+  primaryWorks: number | null
+  provider: string | null
+  providerID: string | null
+  title: string
+  totalBooks: number | null
+}
+
+export interface PostBook {
+  authors: string[]
+  cover: string | null
+  description: string | null
+  isbn: string | null
+  language: string | null
+  narrator: string | null
+  provider: string | null
+  providerID: string | null
+  providerRating: number | null
+  publisher: string | null
+  releaseDate: number | null
+  series: string[] | null
+  title: string
 }
