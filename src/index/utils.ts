@@ -59,3 +59,6 @@ export const formatDate = (date: Date | number | string) => {
     day: "2-digit",
   })
 }
+
+export const notNull = <T>(p: T | null): p is T => p !== null
+export const notNullIsh = <T>(p: T | null | undefined): p is T => p !== null && p !== undefined
