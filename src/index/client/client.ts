@@ -1,3 +1,5 @@
+import { notNull } from "../utils"
+
 export type HTTP_METHOD = "GET" | "POST" | "PUT" | "DELETE" | "PATCH"
 
 export type QueryParameter = string | number | null
@@ -6,8 +8,6 @@ export type RequestBody = object | string
 export interface QueryParameters {
   [name: string]: QueryParameter | QueryParameter[]
 }
-
-const notNull = <T>(p: T | null): p is T => p !== null
 
 export type WrappedResponse<T> =
   | {
