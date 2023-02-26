@@ -60,8 +60,8 @@ export const AuthorForm = () => {
         </div>
         <div>
           <ManagedInput name="name" labelClassName="w-28" label="Name" icon={<MdPerson />} />
-          <ManagedInput name="birthDate" type="date" labelClassName="w-28" label="Birth" icon={<MdCelebration />} />
-          <ManagedInput name="deathDate" type="date" labelClassName="w-28" label="Death" icon={<MdDeceased />} />
+          <ManagedInput name="birthDate" type="date" labelClassName="w-28" label="Born" icon={<MdCelebration />} />
+          <ManagedInput name="deathDate" type="date" labelClassName="w-28" label="Died" icon={<MdDeceased />} />
           <ManagedInput name="website" labelClassName="w-28" label="Website" icon={<MdAddLink />} />
         </div>
       </div>

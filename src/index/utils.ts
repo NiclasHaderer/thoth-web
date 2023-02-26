@@ -54,3 +54,7 @@ export const notNullIsh = <T>(p: T | null | undefined): p is T => p !== null && 
 export const toFormDate = (date: Date | number | string): string | null => {
   return date ? new Date(date).toISOString().slice(0, 10) : null
 }
+
+export const toUnixTime = (date: Date | number | string): number => {
+  return Math.floor(new Date(date).getTime())
+}

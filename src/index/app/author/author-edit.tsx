@@ -1,7 +1,7 @@
 import { Tab } from "@headlessui/react"
 import React, { Fragment, useState } from "react"
 import { MdEdit } from "react-icons/md"
-import { AuthorModel, AuthorModelWithBooks, PostAuthor } from "../../models/api"
+import { PostAuthor } from "../../models/api"
 import { AudiobookSelectors } from "../../state/audiobook.selectors"
 import { useAudiobookState } from "../../state/audiobook.state"
 import { ColoredButton } from "../common/colored-button"
@@ -10,7 +10,7 @@ import { AuthorSearch } from "./author-search"
 import { MetadataAuthor } from "../../models/metadata"
 import { AuthorForm } from "./author-form"
 import { Form, useForm } from "../../hooks/form"
-import { toFormDate } from "../../utils"
+import { toFormDate, toUnixTime } from "../../utils"
 
 type EditAuthor = PostAuthor
 
@@ -27,28 +27,18 @@ const mergeMetaIntoAuthor = ({ ...author }: EditAuthor, meta: MetadataAuthor): E
   return author
 }
 
-const toEditAuthor = ({ id, imageID, ...rest }: AuthorModel): EditAuthor => {
-  if ("books" in rest) {
-    delete rest.books
-  }
-  if ("series" in rest) {
-    delete rest.series
-  }
-
-  return {
-    ...rest,
-    image: imageID,
-  }
-}
-
-export const AuthorEdit: React.VFC<{ author: AuthorModel | AuthorModelWithBooks }> = ({ author: _authorProp }) => {
+export const AuthorEdit: React.VFC<{ author: EditAuthor; authorID: string }> = ({ author, authorID }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [selectedTabIndex, setSelectedTabIndex] = useState(0)
   const updateAuthor = useAudiobookState(AudiobookSelectors.updateAuthor)
-  const form = useForm(toEditAuthor(_authorProp), {
+  const form = useForm(author, {
     toForm: {
-      birthDate: value => value && toFormDate,
-      deathDate: value => value && toFormDate,
+      birthDate: value => value && toFormDate(value),
+      deathDate: value => value && toFormDate(value),
+    },
+    fromForm: {
+      birthDate: value => (value ? toUnixTime(value) : null),
+      deathDate: value => (value ? toUnixTime(value) : null),
     },
   })
 
@@ -66,18 +56,12 @@ export const AuthorEdit: React.VFC<{ author: AuthorModel | AuthorModelWithBooks 
           form={form}
           onSubmit={values => {
             updateAuthor({
-              ...{
-                ...values,
-                birthDate: values.birthDate ? new Date(values.birthDate).getTime() : null,
-                deathDate: values.deathDate ? new Date(values.deathDate).getTime() : null,
-              },
-              id: _authorProp.id,
+              ...values,
+              id: authorID,
             })
             closeModal()
           }}
         >
-          {JSON.stringify(form.fields)}
-
           <DialogBody>
             <DialogContent>
               <Tab.Group selectedIndex={selectedTabIndex} onChange={index => setSelectedTabIndex(index)}>
