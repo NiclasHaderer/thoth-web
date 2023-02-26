@@ -1,9 +1,10 @@
 import React from "react"
 import ReactDOM from "react-dom"
-import App from "./index/app"
+import { App } from "./index/app"
 import { SnackbarProvider } from "./index/app/common/snackbar"
 import "./index/index.scss"
 import "./index/tailwind.css"
+import "preact/debug"
 
 ReactDOM.render(
   <React.StrictMode>

@@ -1,4 +1,3 @@
-import { FieldMetaProps } from "formik"
 import React, { KeyboardEvent, memo, MutableRefObject, ReactNode } from "react"
 
 export type InputProps = Omit<Omit<React.ComponentProps<"input">, "defaultValue">, "value"> & {
@@ -9,7 +8,8 @@ export type InputProps = Omit<Omit<React.ComponentProps<"input">, "defaultValue"
   defaultValue?: string | number | ReadonlyArray<string> | undefined | null
   value?: string | ReadonlyArray<string> | number | undefined | null
   wrapperClassName?: string | undefined
-  meta?: FieldMetaProps<any> | undefined
+  touched?: boolean | undefined
+  errors?: string[] | undefined
   inputRef?: MutableRefObject<any> | undefined
   preventSubmit?: boolean
   onValue?: (value: string) => void
@@ -32,7 +32,8 @@ export const Input: React.VFC<InputProps> = memo(
     onEnter,
     onKeyDown,
     onChange,
-    meta,
+    touched,
+    errors,
     inputRef,
     ...props
   }) => (
@@ -69,7 +70,13 @@ export const Input: React.VFC<InputProps> = memo(
             iconPosition === "left" && icon ? "pl-8" : "pr-8"
           } ${className ?? ""}`}
         />
-        {meta?.touched && meta.error ? <div className="error">{meta.error}</div> : null}
+        {touched && errors ? (
+          <div className="error">
+            {errors.map((error, index) => (
+              <div key={index}>{error}</div>
+            ))}
+          </div>
+        ) : null}
       </div>
     </label>
   )

@@ -1,4 +1,4 @@
-import React, { createContext, ReactNode, useContext, useState } from "react"
+import React, { createContext, ReactNode, useContext, useEffect, useState } from "react"
 import { notNullIsh } from "../utils"
 
 export interface FormContext<T extends Record<string, any>> {
@@ -17,7 +17,7 @@ export interface FormContext<T extends Record<string, any>> {
     [K in keyof T]?: (value: T[K]) => any
   }
   fromFormTransformers: {
-    [K in keyof T]?: (value: string) => T[K]
+    [K in keyof T]?: (value?: string | null) => T[K]
   }
   formValidators: {
     [K in keyof T]?: ((value: T[K]) => string | undefined) | ((value: T[K]) => string | undefined)[]
@@ -47,39 +47,13 @@ export const CONTEXT = createContext<FormContext<Record<any, any>>>({
   forceValidateAll: () => {},
 })
 
-const applyToFormTransformers = <T extends Record<string, any>>(
-  state: Partial<T>,
-  toForm?: FormContext<T>["toFormTransformers"]
-) => {
-  return Object.entries(state).reduce((acc, [key, value]) => {
-    if (toForm && key in toForm) {
-      acc[key as keyof T] = toForm[key as keyof T]!(value)
-    }
-
-    return acc
-  }, {} as T)
-}
-
-const applyFromFormTransformers = <T extends Record<string, any>>(
-  state: Partial<Record<keyof T, string>>,
-  fromForm: FormContext<T>["fromFormTransformers"]
-) => {
-  return Object.entries(state).reduce((acc, [key, value]) => {
-    if (fromForm && key in fromForm && value !== undefined) {
-      acc[key as keyof T] = fromForm[key as keyof T]!(value)
-    }
-
-    return acc
-  }, {} as T)
-}
-
-const getFilledObject = <T extends Record<string, any>, V>(state: T, defaultValue: V): Record<keyof T, V> => {
-  return Object.keys(state).reduce(
+const getFilledObject = <T extends string | symbol | number, V>(state: T[], defaultValue: V): Record<T, V> => {
+  return state.reduce(
     (acc, key) => ({
       ...acc,
       [key]: defaultValue,
     }),
-    {} as Record<keyof T, V>
+    {} as Record<T, V>
   )
 }
 
@@ -91,11 +65,10 @@ export const useForm = <T extends Record<string, any>>(
     validate?: FormContext<T>["formValidators"]
   } = {}
 ): FormContext<T> => {
-  initialState = applyToFormTransformers(initialState, options.fromForm)
-
   const [fields, setFields] = useState(initialState)
-  const [touched, setTouched] = useState<Record<keyof T, boolean>>(getFilledObject(initialState, false))
-  const [errors, setErrors] = useState<Record<keyof T, string[] | undefined>>(getFilledObject(initialState, undefined))
+  useEffect(() => setFields(initialState), [initialState])
+  const [touched, setTouched] = useState(getFilledObject(Object.keys(initialState) as (keyof T)[], false))
+  const [errors, setErrors] = useState(getFilledObject(Object.keys(initialState) as (keyof T)[], undefined))
 
   const validateField = (key: keyof T): string[] | undefined => {
     if (!touched[key]) return undefined
@@ -113,7 +86,7 @@ export const useForm = <T extends Record<string, any>>(
   }
 
   const validateFields = (fieldsToValidate: Partial<T>) => {
-    const newErrors = getFilledObject<Partial<T>, undefined | string[]>(fieldsToValidate, undefined)
+    const newErrors = getFilledObject<keyof T, string[] | undefined>(Object.keys(fieldsToValidate), undefined)
     for (const key of Object.keys(fieldsToValidate) as (keyof T)[]) {
       newErrors[key] = validateField(key)
     }
@@ -135,7 +108,7 @@ export const useForm = <T extends Record<string, any>>(
   return {
     fields,
     setFields: (newValue: Partial<T>) => {
-      setFields(currFields => ({ ...currFields, ...applyToFormTransformers(newValue, options.toForm) }))
+      setFields(currFields => ({ ...currFields, ...newValue }))
       validateFields(newValue)
     },
     errors,
@@ -161,7 +134,8 @@ export const useForm = <T extends Record<string, any>>(
 }
 
 export const useField = <T extends Record<string, any>>(name: keyof T) => {
-  const { fields, setFields, touched, setTouched, fromFormTransformers, contextType } = useContext(CONTEXT)
+  const { fields, setFields, touched, setTouched, fromFormTransformers, toFormTransformers, contextType } =
+    useContext(CONTEXT)
   if (contextType === DEFAULT) {
     console.error("useField must be used inside a FormProvider")
   }
@@ -169,9 +143,12 @@ export const useField = <T extends Record<string, any>>(name: keyof T) => {
   return {
     value: fields[name],
     setValue: (newValue: T[keyof T]) => setFields({ [name]: newValue }),
-    formSetValue: (newValue: string) => {
-      setFields(applyFromFormTransformers({ [name]: newValue }, fromFormTransformers))
+    formSetValue: (newValue?: string | null) => {
+      setFields({
+        [name]: fromFormTransformers[name]?.(newValue) ?? newValue,
+      })
     },
+    toForm: toFormTransformers[name],
     touched: touched[name],
     setTouched: (newValue: boolean) => {
       setTouched({ ...touched, [name]: newValue })
@@ -179,16 +156,21 @@ export const useField = <T extends Record<string, any>>(name: keyof T) => {
   }
 }
 
-export const useFieldUpdater = <T extends Record<string, any>>(
+export const useInputUpdater = <T extends Record<string, any>>(
   field: keyof T
 ): React.InputHTMLAttributes<HTMLInputElement> => {
-  const { value, formSetValue, setTouched } = useField(field)
+  const { value, formSetValue, setTouched, toForm } = useField(field)
+  const [transformedValue, setTransformedValue] = useState(toForm?.(value) ?? value)
+
+  useEffect(() => setTransformedValue(toForm?.(value) ?? value), [value, toForm])
 
   return {
-    value: value,
+    value: transformedValue,
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-      setTouched(true)
       formSetValue(e.target.value)
+    },
+    onBlur: () => {
+      setTouched(true)
     },
   }
 }
@@ -197,12 +179,14 @@ export const Form = <T extends Record<string, any>>({
   form,
   children,
   onSubmit,
+  ...props
 }: {
   form: FormContext<T>
   children?: ReactNode | undefined
   onSubmit?: (values: T) => void
-}) => (
+} & Omit<React.FormHTMLAttributes<HTMLFormElement>, "onSubmit">) => (
   <form
+    {...props}
     onSubmit={e => {
       e.preventDefault()
       e.stopPropagation()

@@ -1,13 +1,13 @@
 import { PatchAuthor } from "../../models/api"
 import React, { useRef } from "react"
-import { useField } from "formik"
 import { ResponsiveImage } from "../common/responsive-image"
 import { isUUID, toBase64 } from "../../utils"
 import { environment } from "../../env"
 import { MdAddLink, MdCelebration, MdPerson } from "react-icons/md"
 import { ColoredButton } from "../common/colored-button"
-import { FormikInput } from "../common/formik-input"
+import { ManagedInput } from "../common/managed-input"
 import { MdDeceased } from "../icons/deceased"
+import { useField } from "../../hooks/form"
 
 const HtmlEditor = React.lazy(() => import("../common/editor"))
 
@@ -17,18 +17,18 @@ export const AuthorForm = () => {
 
   const imageInputRef = useRef<HTMLInputElement>(null)
 
-  const [description, , descriptionHelpers] = useField(descriptionAccessor)
-  const [image, , imageHelpers] = useField(imageAccessor)
+  const { value: descriptionValue, formSetValue: setDescriptionValue } = useField(descriptionAccessor)
+  const { value: imageValue, formSetValue: setImageValue } = useField(imageAccessor)
 
   return (
     <>
       <div className="flex flex-col md:flex-row">
         <div className="flex cursor-pointer items-center justify-center pr-2">
           <div className="flex flex-col justify-center">
-            {image.value ? (
+            {imageValue ? (
               <ResponsiveImage
                 className="h-52 min-h-52 w-52 cursor-pointer rounded-full bg-cover"
-                src={isUUID(image.value) ? `${environment.apiURL}/image/${image.value}` : image.value}
+                src={isUUID(imageValue) ? `${environment.apiURL}/image/${imageValue}` : imageValue}
                 alt="author"
                 onClick={() => imageInputRef.current && imageInputRef.current.click()}
               />
@@ -46,7 +46,7 @@ export const AuthorForm = () => {
               onChange={async () => {
                 const file = await imageInputRef.current!.files![0]
                 const base64 = await toBase64(file)
-                imageHelpers.setValue(base64)
+                setImageValue(base64)
               }}
             />
             <ColoredButton
@@ -59,10 +59,10 @@ export const AuthorForm = () => {
           </div>
         </div>
         <div>
-          <FormikInput name="name" labelClassName="w-28" label="Name" icon={<MdPerson />} />
-          <FormikInput name="birthDate" type="date" labelClassName="w-28" label="Birth" icon={<MdCelebration />} />
-          <FormikInput name="deathDate" type="date" labelClassName="w-28" label="Death" icon={<MdDeceased />} />
-          <FormikInput name="website" labelClassName="w-28" label="Website" icon={<MdAddLink />} />
+          <ManagedInput name="name" labelClassName="w-28" label="Name" icon={<MdPerson />} />
+          <ManagedInput name="birthDate" type="date" labelClassName="w-28" label="Birth" icon={<MdCelebration />} />
+          <ManagedInput name="deathDate" type="date" labelClassName="w-28" label="Death" icon={<MdDeceased />} />
+          <ManagedInput name="website" labelClassName="w-28" label="Website" icon={<MdAddLink />} />
         </div>
       </div>
       <label className="flex items-center">
@@ -70,8 +70,8 @@ export const AuthorForm = () => {
           <HtmlEditor
             className="flex-grow"
             placeholder="Description"
-            value={description.value}
-            onChange={descriptionHelpers.setValue}
+            value={descriptionValue}
+            onChange={setDescriptionValue}
           />
         </React.Suspense>
       </label>
