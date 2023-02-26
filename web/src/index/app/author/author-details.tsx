@@ -67,7 +67,20 @@ export const AuthorDetails: React.VFC = () => {
             </h3>
           </div>
         ) : null}
-        <AuthorEdit author={author} />
+        <AuthorEdit
+          authorID={author.id}
+          author={{
+            name: author.name,
+            providerID: author.providerID,
+            provider: author.provider,
+            image: author.imageID,
+            birthDate: author.birthDate,
+            deathDate: author.deathDate,
+            bornIn: author.bornIn,
+            website: author.website,
+            biography: author.biography,
+          }}
+        />
       </div>
       <HtmlViewer content={author.biography} className="min-w-full pb-6" title="Biographie" />
 
