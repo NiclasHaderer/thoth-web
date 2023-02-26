@@ -5,11 +5,11 @@ import { PatchSeries, SeriesModelWithBooks } from "../../models/api"
 import { AudiobookSelectors } from "../../state/audiobook.selectors"
 import { useAudiobookState } from "../../state/audiobook.state"
 import { ColoredButton } from "../common/colored-button"
-import { Dialog } from "../common/dialog"
-import { FormikInput } from "../common/formik-input"
+import { Dialog, DialogButtons } from "../common/dialog"
 import { SeriesSearch } from "./series-search"
 import { MetadataSeries } from "../../models/metadata"
-import { useField } from "formik"
+import { ManagedInput } from "../common/managed-input"
+import { Form, useField, useForm } from "../../hooks/form"
 
 const HtmlEditor = React.lazy(() => import("../common/editor"))
 
@@ -33,10 +33,11 @@ const toPatchSeries = ({ id, ...rest }: SeriesModelWithBooks): PatchSeries => {
 }
 
 export const SeriesEdit: React.VFC<{ series: SeriesModelWithBooks }> = ({ series: _seriesProp }) => {
-  let [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
   const [series, setSeries] = useState(toPatchSeries(_seriesProp))
-  const updateSeries = useAudiobookState(AudiobookSelectors.updateSeries)
   const [selectedTabIndex, setSelectedTabIndex] = useState(0)
+  const updateSeries = useAudiobookState(AudiobookSelectors.updateSeries)
+  const form = useForm(series)
 
   useEffect(() => setSeries(toPatchSeries(_seriesProp)), [_seriesProp])
 
@@ -48,26 +49,14 @@ export const SeriesEdit: React.VFC<{ series: SeriesModelWithBooks }> = ({ series
       <ColoredButton color="secondary" onClick={openModal}>
         <MdEdit className="mr-2" /> Edit
       </ColoredButton>
-      <Dialog
-        closeModal={closeModal}
-        isOpen={isOpen}
-        dialogClass="min-h-[510px]"
-        title="Edit Series"
-        buttons={
-          <>
-            <ColoredButton type="submit">Submit</ColoredButton>
-            <ColoredButton type="button" color="secondary" onClick={closeModal}>
-              Cancel
-            </ColoredButton>
-          </>
-        }
-        values={series}
-        onSubmit={values => {
-          updateSeries({ ...values, id: _seriesProp.id })
-          closeModal()
-        }}
-      >
-        <>
+      <Dialog closeModal={closeModal} isOpen={isOpen} dialogClass="min-h-[510px]" title="Edit Series">
+        <Form
+          form={form}
+          onSubmit={values => {
+            updateSeries({ ...values, id: _seriesProp.id })
+            closeModal()
+          }}
+        >
           <Tab.Group selectedIndex={selectedTabIndex} onChange={index => setSelectedTabIndex(index)}>
             <Tab.List className="p-2-solid w-full rounded-md border-2 border-primary border-opacity-50">
               <Tab as={Fragment}>
@@ -107,7 +96,8 @@ export const SeriesEdit: React.VFC<{ series: SeriesModelWithBooks }> = ({ series
               </Tab.Panel>
             </Tab.Panels>
           </Tab.Group>
-        </>
+          <DialogButtons closeModal={closeModal} />
+        </Form>
       </Dialog>
     </>
   )
@@ -116,20 +106,20 @@ export const SeriesEdit: React.VFC<{ series: SeriesModelWithBooks }> = ({ series
 const SeriesForm = () => {
   const descriptionAccessor: keyof PatchSeries = "description"
 
-  const [description, , descriptionHelpers] = useField(descriptionAccessor)
+  const { value: descriptionValue, formSetValue: setDescriptionValue } = useField(descriptionAccessor)
 
   return (
     <>
-      <FormikInput name="title" labelClassName="w-28" label="Title" icon={<MdSearch />} />
-      <FormikInput name="authors" labelClassName="w-28" label="Author" icon={<MdPerson />} />
+      <ManagedInput name="title" labelClassName="w-28" label="Title" icon={<MdSearch />} />
+      <ManagedInput name="authors" labelClassName="w-28" label="Author" icon={<MdPerson />} />
 
       <label className="flex items-center">
         <React.Suspense fallback={<div />}>
           <HtmlEditor
             className="h-64 !max-h-64 flex-grow"
             placeholder="Description"
-            value={description.value}
-            onChange={descriptionHelpers.setValue}
+            value={descriptionValue}
+            onChange={setDescriptionValue}
           />
         </React.Suspense>
       </label>

@@ -1,5 +1,3 @@
-import { FormikTouched } from "formik"
-
 export const toIdRecord = <T extends { id: string }>(itemList: T[]) => {
   return itemList.reduce((previousValue, currentValue) => {
     previousValue[currentValue.id] = currentValue
@@ -31,25 +29,15 @@ export const insertAtPosition = <T>(list: T[], item: T, position: number): T[] =
 }
 
 export const toBase64 = (file: File) =>
-  new Promise((resolve, reject) => {
+  new Promise<string>((resolve, reject) => {
     const reader = new FileReader()
     reader.readAsDataURL(file)
-    reader.onload = () => resolve(reader.result)
+    reader.onload = () => resolve(reader.result!.toString())
     reader.onerror = reject
   })
 
 export const isUUID = (uuidString: string): boolean => {
   return /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i.test(uuidString)
-}
-
-export const getModifiedValues = <T>(original: T, modified: FormikTouched<T>): Partial<T> => {
-  const modifiedValues: Partial<T> = {}
-  for (const key in modified) {
-    if (modified[key] === true) {
-      modifiedValues[key] = original[key]
-    }
-  }
-  return modifiedValues
 }
 
 export const formatDate = (date: Date | number | string) => {
@@ -62,3 +50,7 @@ export const formatDate = (date: Date | number | string) => {
 
 export const notNull = <T>(p: T | null): p is T => p !== null
 export const notNullIsh = <T>(p: T | null | undefined): p is T => p !== null && p !== undefined
+
+export const toFormDate = (date: Date | number | string): string | null => {
+  return date ? new Date(date).toISOString().slice(0, 10) : null
+}
