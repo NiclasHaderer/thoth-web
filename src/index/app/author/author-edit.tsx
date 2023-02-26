@@ -16,8 +16,8 @@ type EditAuthor = PostAuthor
 
 const mergeMetaIntoAuthor = ({ ...author }: EditAuthor, meta: MetadataAuthor): EditAuthor => {
   author.biography = meta.biography || author.biography
-  author.birthDate = meta.birthDate
-  author.deathDate = meta.deathDate
+  author.birthDate = meta.birthDate || author.birthDate
+  author.deathDate = meta.deathDate || author.deathDate
   author.bornIn = meta.bornIn || author.bornIn
   author.image = meta.imageURL || author.image
   author.name = meta.name || author.name
