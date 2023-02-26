@@ -6,7 +6,7 @@ import { Route, Switch } from "wouter"
 
 const Account = React.lazy(() => import("./app/account/account"))
 
-const App = memo(() => {
+export const App = memo(() => {
   return (
     <>
       <div className="flex h-full flex-col">
@@ -27,5 +27,3 @@ const App = memo(() => {
     </>
   )
 })
-
-export default App
