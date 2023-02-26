@@ -14,13 +14,13 @@ import { BookModel, PatchBook } from "../../models/api"
 import { AudiobookSelectors } from "../../state/audiobook.selectors"
 import { useAudiobookState } from "../../state/audiobook.state"
 import { ColoredButton } from "../common/colored-button"
-import { Dialog } from "../common/dialog"
-import { FormikInput } from "../common/formik-input"
+import { Dialog, DialogButtons } from "../common/dialog"
+import { ManagedInput } from "../common/managed-input"
 import { BookSearch } from "./book-search"
 import { MetadataBook } from "../../models/metadata"
-import { useField } from "formik"
 import { toBase64 } from "../../utils"
 import { ResponsiveImage } from "../common/responsive-image"
+import { Form, useField, useForm } from "../../hooks/form"
 
 const HtmlEditor = React.lazy(() => import("../common/editor"))
 
@@ -43,14 +43,13 @@ const toPatchBook = (book: BookModel): PatchBook => {
 }
 
 export const BookEdit: React.VFC<{ book: BookModel }> = ({ book: _bookProp }) => {
-  let [isOpen, setIsOpen] = useState(false)
-  const [book, setBook] = useState(toPatchBook(_bookProp))
-  useEffect(() => {
-    setBook(toPatchBook(_bookProp))
-  }, [_bookProp])
-
-  const updateBook = useAudiobookState(AudiobookSelectors.updateBook)
+  const [isOpen, setIsOpen] = useState(false)
   const [selectedTabIndex, setSelectedTabIndex] = useState(0)
+  const [book, setBook] = useState(toPatchBook(_bookProp))
+  const updateBook = useAudiobookState(AudiobookSelectors.updateBook)
+  const form = useForm(book)
+
+  useEffect(() => setBook(toPatchBook(_bookProp)), [_bookProp])
 
   const closeModal = () => setIsOpen(false)
   const openModal = () => setIsOpen(true)
@@ -60,26 +59,14 @@ export const BookEdit: React.VFC<{ book: BookModel }> = ({ book: _bookProp }) =>
       <ColoredButton color="secondary" onClick={openModal}>
         <MdEdit className="mr-2" /> Edit
       </ColoredButton>
-      <Dialog
-        closeModal={closeModal}
-        isOpen={isOpen}
-        dialogClass="min-h-[510px]"
-        title="Edit Book"
-        buttons={
-          <>
-            <ColoredButton type="submit">Submit</ColoredButton>
-            <ColoredButton type="button" color="secondary" onClick={closeModal}>
-              Cancel
-            </ColoredButton>
-          </>
-        }
-        values={book}
-        onSubmit={values => {
-          updateBook({ ...values, id: _bookProp.id })
-          closeModal()
-        }}
-      >
-        <>
+      <Dialog closeModal={closeModal} isOpen={isOpen} dialogClass="min-h-[510px]" title="Edit Book">
+        <Form
+          form={form}
+          onSubmit={values => {
+            updateBook({ ...values, id: _bookProp.id })
+            closeModal()
+          }}
+        >
           <Tab.Group selectedIndex={selectedTabIndex} onChange={index => setSelectedTabIndex(index)}>
             <Tab.List className="p-2-solid w-full rounded-md border-2 border-primary border-opacity-50">
               <Tab as={Fragment}>
@@ -119,7 +106,8 @@ export const BookEdit: React.VFC<{ book: BookModel }> = ({ book: _bookProp }) =>
               </Tab.Panel>
             </Tab.Panels>
           </Tab.Group>
-        </>
+          <DialogButtons closeModal={closeModal} />
+        </Form>
       </Dialog>
     </>
   )
@@ -131,18 +119,18 @@ const BookForm = () => {
 
   const imageRef = useRef<HTMLInputElement>(null)
 
-  const [description, , descriptionHelpers] = useField(descriptionAccessor)
-  const [image, , imageHelpers] = useField(imageAccessor)
+  const { value: descriptionValue, formSetValue: setDescriptionValue } = useField(descriptionAccessor)
+  const { value: imageValue, formSetValue: setImageValue } = useField(imageAccessor)
 
   return (
     <>
       <div className="flex flex-col md:flex-row">
         <div className="flex cursor-pointer items-center justify-center pr-2">
           <div className="flex flex-col justify-center">
-            {image.value ? (
+            {imageValue ? (
               <ResponsiveImage
                 className="h-52 min-h-52 w-52 min-w-52 rounded-md"
-                src={image.value}
+                src={imageValue}
                 alt="book"
                 onClick={() => imageRef.current && imageRef.current.click()}
               />
@@ -160,7 +148,7 @@ const BookForm = () => {
               onChange={async () => {
                 const file = await imageRef.current!.files![0]
                 const base64 = await toBase64(file)
-                imageHelpers.setValue(base64)
+                setImageValue(base64)
               }}
             />
             <ColoredButton
@@ -173,13 +161,13 @@ const BookForm = () => {
           </div>
         </div>
         <div>
-          <FormikInput name="title" labelClassName="w-28" label="Title" icon={<MdSearch />} />
-          <FormikInput name="author" labelClassName="w-28" label="Author" icon={<MdPerson />} />
-          <FormikInput name="language" labelClassName="w-28" label="Language" icon={<MdLanguage />} />
-          <FormikInput name="narrator" labelClassName="w-28" label="Narrator" icon={<MdPerson />} />
-          <FormikInput name="series" labelClassName="w-28" label="Series" icon={<MdCollectionsBookmark />} />
-          <FormikInput name="year" labelClassName="w-28" type="number" label="Year" icon={<MdEvent />} />
-          <FormikInput
+          <ManagedInput name="title" labelClassName="w-28" label="Title" icon={<MdSearch />} />
+          <ManagedInput name="author" labelClassName="w-28" label="Author" icon={<MdPerson />} />
+          <ManagedInput name="language" labelClassName="w-28" label="Language" icon={<MdLanguage />} />
+          <ManagedInput name="narrator" labelClassName="w-28" label="Narrator" icon={<MdPerson />} />
+          <ManagedInput name="series" labelClassName="w-28" label="Series" icon={<MdCollectionsBookmark />} />
+          <ManagedInput name="year" labelClassName="w-28" type="number" label="Year" icon={<MdEvent />} />
+          <ManagedInput
             name="seriesIndex"
             labelClassName="w-28"
             type="number"
@@ -193,12 +181,11 @@ const BookForm = () => {
           <HtmlEditor
             className="flex-grow"
             placeholder="Description"
-            value={description.value}
-            onChange={descriptionHelpers.setValue}
+            value={descriptionValue}
+            onChange={setDescriptionValue}
           />
         </React.Suspense>
       </label>
     </>
   )
 }
-export default BookEdit
