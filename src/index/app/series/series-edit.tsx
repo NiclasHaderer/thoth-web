@@ -10,8 +10,7 @@ import { SeriesSearch } from "./series-search"
 import { MetadataSeries } from "../../models/metadata"
 import { ManagedInput } from "../common/managed-input"
 import { Form, useField, useForm } from "../../hooks/form"
-
-const HtmlEditor = React.lazy(() => import("../common/editor"))
+import HtmlEditor from "../common/editor"
 
 const mergeMetaIntoSeries = ({ ...series }: PatchSeries, meta: MetadataSeries): PatchSeries => {
   // TODO fix
@@ -114,14 +113,12 @@ const SeriesForm = () => {
       <ManagedInput name="authors" labelClassName="w-28" label="Author" icon={<MdPerson />} />
 
       <label className="flex items-center">
-        <React.Suspense fallback={<div />}>
-          <HtmlEditor
-            className="h-64 !max-h-64 flex-grow"
-            placeholder="Description"
-            value={descriptionValue}
-            onChange={setDescriptionValue}
-          />
-        </React.Suspense>
+        <HtmlEditor
+          className="h-64 !max-h-64 flex-grow"
+          placeholder="Description"
+          value={descriptionValue}
+          onChange={setDescriptionValue}
+        />
       </label>
     </>
   )

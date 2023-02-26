@@ -21,8 +21,7 @@ import { MetadataBook } from "../../models/metadata"
 import { toBase64 } from "../../utils"
 import { ResponsiveImage } from "../common/responsive-image"
 import { Form, useField, useForm } from "../../hooks/form"
-
-const HtmlEditor = React.lazy(() => import("../common/editor"))
+import HtmlEditor from "../common/editor"
 
 const mergeMetaIntoBook = ({ ...book }: PatchBook, meta: MetadataBook): PatchBook => {
   // TODO fix
@@ -177,14 +176,12 @@ const BookForm = () => {
         </div>
       </div>
       <label className="flex items-center">
-        <React.Suspense fallback={<div />}>
-          <HtmlEditor
-            className="flex-grow"
-            placeholder="Description"
-            value={descriptionValue}
-            onChange={setDescriptionValue}
-          />
-        </React.Suspense>
+        <HtmlEditor
+          className="flex-grow"
+          placeholder="Description"
+          value={descriptionValue}
+          onChange={setDescriptionValue}
+        />
       </label>
     </>
   )

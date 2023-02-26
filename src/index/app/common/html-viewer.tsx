@@ -1,15 +1,19 @@
+import { sanitize } from "dompurify"
 import React from "react"
-
-const LazyHtmlViewer = React.lazy(() => import("./_html-viewer"))
 
 export const HtmlViewer: React.VFC<{
   content: string | null | undefined
   className?: string | undefined
   title: string
-}> = props => {
+}> = ({ content, className, title }) => {
+  if (!content) return null
   return (
-    <React.Suspense fallback={<div />}>
-      <LazyHtmlViewer {...props} />
-    </React.Suspense>
+    <>
+      <h2 className="text-xl">{title}</h2>
+      <div
+        className={`prose prose-invert ${className ?? ""}`}
+        dangerouslySetInnerHTML={{ __html: sanitize(content ?? "") }}
+      />
+    </>
   )
 }

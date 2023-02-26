@@ -7,6 +7,7 @@ const BookList = React.lazy(() => import("./books/book-list"))
 const BookDetails = React.lazy(() => import("./books/book-details"))
 const AuthorList = React.lazy(() => import("./author/author-list"))
 const AuthorDetails = React.lazy(() => import("./author/author-details"))
+const Account = React.lazy(() => import("./account/account"))
 
 const LazyOutlet: React.VFC<{ component: React.ReactNode }> = ({ component }) => (
   <React.Suspense fallback={<div />}>{component}</React.Suspense>
@@ -15,6 +16,9 @@ const LazyOutlet: React.VFC<{ component: React.ReactNode }> = ({ component }) =>
 export const RouterOutlet: React.VFC = () => {
   return (
     <Switch>
+      <Route path="/account">
+        <LazyOutlet component={<Account />} />
+      </Route>
       <Route path="/books">
         <LazyOutlet component={<BookList />} />
       </Route>

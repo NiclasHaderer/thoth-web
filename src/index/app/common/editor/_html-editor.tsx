@@ -7,7 +7,7 @@ import { Underline } from "@tiptap/extension-underline"
 import "./html-editor.scss"
 import { EditorControls } from "./controls"
 
-export const HtmlEditor: React.VFC<{
+export const _HtmlEditor: React.VFC<{
   value?: Content
   placeholder?: string
   className?: string | undefined
@@ -51,3 +51,5 @@ export const HtmlEditor: React.VFC<{
     </div>
   )
 }
+
+export default _HtmlEditor
