@@ -61,7 +61,7 @@ export const DialogBody: React.FC = ({ children }) => {
 }
 
 export const DialogContent: React.FC = ({ children }) => {
-  return <>{children}</>
+  return <div>{children}</div>
 }
 
 export const DialogActions: React.FC = ({ children }) => {
