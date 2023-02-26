@@ -8,8 +8,7 @@ import { ColoredButton } from "../common/colored-button"
 import { ManagedInput } from "../common/managed-input"
 import { MdDeceased } from "../icons/deceased"
 import { useField } from "../../hooks/form"
-
-const HtmlEditor = React.lazy(() => import("../common/editor"))
+import HtmlEditor from "../common/editor"
 
 export const AuthorForm = () => {
   const descriptionAccessor: keyof PatchAuthor = "biography"
@@ -66,14 +65,12 @@ export const AuthorForm = () => {
         </div>
       </div>
       <label className="flex items-center">
-        <React.Suspense fallback={<div />}>
-          <HtmlEditor
-            className="flex-grow"
-            placeholder="Description"
-            value={descriptionValue}
-            onChange={setDescriptionValue}
-          />
-        </React.Suspense>
+        <HtmlEditor
+          className="flex-grow"
+          placeholder="Description"
+          value={descriptionValue}
+          onChange={setDescriptionValue}
+        />
       </label>
     </>
   )
