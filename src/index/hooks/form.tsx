@@ -156,7 +156,7 @@ export const useField = <T extends Record<string, any>>(name: keyof T) => {
   }
 }
 
-export const useInputUpdater = <T extends Record<string, any>>(
+export const useFieldUpdater = <T extends Record<string, any>>(
   field: keyof T
 ): React.InputHTMLAttributes<HTMLInputElement> => {
   const { value, formSetValue, setTouched, toForm } = useField(field)
