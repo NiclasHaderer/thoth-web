@@ -8,6 +8,8 @@ class StringTsGenerator : TsGenerator() {
         return "string"
     }
 
+    override fun parseMethod(classType: ClassType): ParseMethod = ParseMethod.TEXT
+
     override fun shouldInline(classType: ClassType): Boolean = true
 
     override fun generateName(classType: ClassType): String = "string"
