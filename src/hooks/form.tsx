@@ -23,6 +23,7 @@ export interface FormContext<T extends Record<string, any>> {
     [K in keyof T]?: ((value: T[K]) => string | undefined) | ((value: T[K]) => string | undefined)[]
   }
 
+  restoreInitial: () => void
   markAllAsTouched: () => void
   revalidateAll: () => void
   forceValidateAll: () => void
@@ -42,6 +43,7 @@ export const CONTEXT = createContext<FormContext<Record<any, any>>>({
   fromFormTransformers: {},
   markAllAsTouched: () => {},
   contextType: DEFAULT,
+  restoreInitial: () => {},
   formValidators: {},
   revalidateAll: () => {},
   forceValidateAll: () => {},
@@ -59,14 +61,22 @@ const getFilledObject = <T extends string | symbol | number, V>(state: T[], defa
 
 export const useForm = <T extends Record<string, any>>(
   initialState: T,
-  options: {
+  {
+    reloadOnInitialChange,
+    ...options
+  }: {
     toForm?: FormContext<T>["toFormTransformers"]
     fromForm?: FormContext<T>["fromFormTransformers"]
     validate?: FormContext<T>["formValidators"]
+    reloadOnInitialChange?: boolean
   } = {}
 ): FormContext<T> => {
   const [fields, setFields] = useState(initialState)
-  useEffect(() => setFields(initialState), [initialState])
+  useEffect(() => {
+    if (reloadOnInitialChange) {
+      setFields(initialState)
+    }
+  }, [initialState, reloadOnInitialChange])
   const [touched, setTouched] = useState(getFilledObject(Object.keys(initialState) as (keyof T)[], false))
   const [errors, setErrors] = useState(getFilledObject(Object.keys(initialState) as (keyof T)[], undefined))
 
@@ -120,6 +130,7 @@ export const useForm = <T extends Record<string, any>>(
     setTouched: (newValue: Partial<Record<keyof T, boolean>>) => {
       setTouched(currTouched => ({ ...currTouched, ...newValue }))
     },
+    restoreInitial: () => setFields(initialState),
     fromFormTransformers: options.fromForm || {},
     toFormTransformers: options.toForm || {},
     formValidators: options.validate || {},

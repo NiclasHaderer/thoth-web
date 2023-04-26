@@ -23,11 +23,12 @@ input {
 }
 
 body.dark-theme {
-    --primary: 161 62 41;
-    --unimportant: 255 255 255;
-    --surface: 41 50 62;
-    --text-color: 238 238 238;
-    --active: rgba(255, 255, 255, 0.2);
-    --active-light: rgba(255, 255, 255, 0.1);
-    --elevate: rgba(0, 0, 0, 0.15);
+    --primary: rgb(161, 62, 41);
+    --surface: rgb(41, 50, 62);
+    --font-color-secondary: rgb(255, 255, 255);
+    --font-color: rgb(238, 238, 238);
+    --active: rgba(255, 255, 255, 0.1);
+    --active-light: rgba(255, 255, 255, 0.04);
+    --elevate-1: rgb(35, 43, 53);
+    --elevate-2: rgb(30, 37, 45);
 }

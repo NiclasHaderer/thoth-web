@@ -7,7 +7,7 @@ import AuthorEdit from "./author-edit"
 import { formatDate } from "../../utils"
 import { UUID } from "@thoth/models/api-models"
 import { environment } from "@thoth/environment"
-import { HtmlViewer } from "@thoth/components/html-viewer"
+import { HtmlViewer } from "@thoth/components/html-editor/html-viewer"
 import { isDetailedAuthor } from "@thoth/models/typeguards"
 import { ResponsiveGrid } from "@thoth/components/responsive-grid"
 import { BookDisplay } from "@thoth/components/book/book"
@@ -35,25 +35,25 @@ export const AuthorDetails: React.FC<{ authorId: UUID }> = ({ authorId }) => {
         <h2 className="flex items-center py-3 text-2xl">{author.name}</h2>
         {author.bornIn ? (
           <div className="flex pb-3">
-            <h3 className="min-w-40 pr-3 uppercase text-unimportant">Born in</h3>
+            <h3 className="min-w-40 pr-3 uppercase text-font-secondary">Born in</h3>
             <h3>{author.bornIn}</h3>
           </div>
         ) : null}
         {author.birthDate ? (
           <div className="flex pb-3">
-            <h3 className="min-w-40 pr-3 uppercase text-unimportant">Born</h3>
+            <h3 className="min-w-40 pr-3 uppercase text-font-secondary">Born</h3>
             <h3>{formatDate(author.birthDate)}</h3>
           </div>
         ) : null}
         {author.deathDate ? (
           <div className="flex pb-3">
-            <h3 className="min-w-40 pr-3 uppercase text-unimportant">Died</h3>
+            <h3 className="min-w-40 pr-3 uppercase text-font-secondary">Died</h3>
             <h3>{formatDate(author.deathDate)}</h3>
           </div>
         ) : null}
         {author.website ? (
           <div className="flex pb-3">
-            <h3 className="min-w-40 pr-3 uppercase text-unimportant">Website</h3>
+            <h3 className="min-w-40 pr-3 uppercase text-font-secondary">Website</h3>
             <h3>
               <a
                 className="hover:underline"

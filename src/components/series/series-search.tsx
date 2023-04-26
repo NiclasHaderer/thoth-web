@@ -3,7 +3,7 @@ import { MdSearch } from "react-icons/md"
 import { useHttpRequest } from "../../hooks/async-response"
 import { MetadataSeries } from "@thoth/models/api-models"
 import { Api } from "@thoth/client"
-import { Input } from "@thoth/components/input"
+import { Input } from "@thoth/components/input/input"
 import { ColoredButton } from "@thoth/components/colored-button"
 import { LoadingCards } from "@thoth/components/loading-card"
 

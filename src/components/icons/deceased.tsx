@@ -1,6 +1,7 @@
 import * as React from "react"
+import { SVGAttributes } from "react"
 
-export const MdDeceased = (props: React.SVGAttributes<SVGElement>) => {
+export const MdDeceased = (props: SVGAttributes<SVGElement>) => {
   return (
     <svg
       stroke="currentColor"
