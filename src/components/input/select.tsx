@@ -3,7 +3,7 @@ import React, { Fragment, ReactNode, useEffect, useState } from "react"
 import { MdDone } from "react-icons/md"
 
 export type SelectProps<T extends any, MULTIPLE extends boolean = false> = {
-  options: (
+  options: readonly (
     | {
         value: T
         disabled?: boolean
