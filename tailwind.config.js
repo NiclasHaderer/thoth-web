@@ -10,8 +10,13 @@ const colors = {
   },
 }
 
+/** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["./src/**/*.{js,jsx,ts,tsx}", "./public/index.html"],
+  content: [
+    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+  ],
   theme: {
     colors: {
       primary: colors.variable("--primary"),
@@ -34,5 +39,5 @@ module.exports = {
       maxHeight: sizes,
     },
   },
-  plugins: [require("@tailwindcss/typography"), require("@tailwindcss/line-clamp"), require("./tailwind.touch")],
+  plugins: [require("@tailwindcss/typography"), require("./tailwind.touch")],
 }
