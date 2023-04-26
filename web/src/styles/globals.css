@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@tailwind variants;
+
+
+::-webkit-scrollbar {
+    @apply h-2 w-2;
+}
+
+::-webkit-scrollbar-track {
+    @apply rounded-full bg-elevate;
+}
+
+::-webkit-scrollbar-thumb {
+    @apply rounded-full
+    bg-active-light transition-colors hover:bg-active;
+}
+
+input {
+    @apply border-0 bg-transparent shadow-none transition-all focus:bg-active-light;
+    outline: none !important;
+}
+
+body.dark-theme {
+    --primary: 161 62 41;
+    --unimportant: 255 255 255;
+    --surface: 41 50 62;
+    --text-color: 238 238 238;
+    --active: rgba(255, 255, 255, 0.2);
+    --active-light: rgba(255, 255, 255, 0.1);
+    --elevate: rgba(0, 0, 0, 0.15);
+}
