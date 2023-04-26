@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 
-export const useIntersectionObserver = (target: HTMLElement | null, scrollElement = document.body) => {
+export const useIntersectionObserver = (target: HTMLElement | null, scrollElement?: HTMLElement) => {
   const [visible, setVisible] = useState(false)
   const callback = ([entry]: IntersectionObserverEntry[], _: IntersectionObserver) => {
     setVisible(entry.intersectionRatio > 0)
@@ -8,7 +8,7 @@ export const useIntersectionObserver = (target: HTMLElement | null, scrollElemen
 
   useEffect(() => {
     if (!target) return
-    const observer = new IntersectionObserver(callback, { root: scrollElement, threshold: [0, 0.01] })
+    const observer = new IntersectionObserver(callback, { root: scrollElement ?? document.body, threshold: [0, 0.01] })
     observer.observe(target)
     return () => observer.disconnect()
   })
