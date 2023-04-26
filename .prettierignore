@@ -4,3 +4,6 @@ vscode
 build
 node_modules
 LICENSE
+dist
+.next
+public
