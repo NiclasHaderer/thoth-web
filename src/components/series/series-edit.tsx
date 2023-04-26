@@ -8,8 +8,8 @@ import { Form, useField, useForm } from "../../hooks/form"
 import { DetailedSeriesModel, MetadataSeries, PartialSeriesApiModel, UUID } from "@thoth/models/api-models"
 import { ColoredButton } from "@thoth/components/colored-button"
 import { Dialog, DialogButtons } from "@thoth/components/dialog"
-import { ManagedInput } from "@thoth/components/managed-input"
-import HtmlEditor from "@thoth/components/editor"
+import { ManagedInput } from "@thoth/components/input/managed-input"
+import HtmlEditor from "../html-editor"
 
 const mergeMetaIntoSeries = ({ ...series }: PartialSeriesApiModel, meta: MetadataSeries): PartialSeriesApiModel => {
   // TODO fix

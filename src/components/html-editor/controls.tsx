@@ -1,6 +1,6 @@
 import React, { FC, PropsWithChildren } from "react"
 import { Editor } from "@tiptap/react"
-import { Select } from "../select"
+import { Select } from "../input/select"
 import {
   MdFormatBold,
   MdFormatItalic,
@@ -50,8 +50,8 @@ const TextStyle: FC<{ editor: Editor }> = ({ editor }) => {
 
   return (
     <Select
-      className="!min-w-0 !bg-transparent !p-0"
-      headerClassName="px-1 py-0"
+      placeholderButtonClassName="!min-w-0 !bg-transparent !p-0"
+      placeholderClassName="px-1 py-0"
       vDir={"top"}
       options={textStyleOptions}
       title="Text style"

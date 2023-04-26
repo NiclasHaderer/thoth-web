@@ -29,7 +29,7 @@ export const SeriesDisplay: React.FC<CollectionProps> = ({ id, title, amount, co
         <Link href={`/series/${id}`}>
           <span className="line-clamp-2 cursor-pointer hover:underline  no-touch:group-focus:underline">{title}</span>
         </Link>
-        <span className="text-unimportant">{amount} Audiobooks</span>
+        <span className="text-font-secondary">{amount} Audiobooks</span>
       </div>
     </span>
   )

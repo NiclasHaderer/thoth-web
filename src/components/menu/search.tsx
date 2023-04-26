@@ -5,7 +5,7 @@ import { environment } from "../../environment"
 import { useFocusTrap } from "../../hooks/trap-focus"
 import { useGlobalEvent } from "../../hooks/global-events"
 import { SearchModel } from "@thoth/models/api-models"
-import { Input } from "@thoth/components/input"
+import { Input } from "@thoth/components/input/input"
 import { Api } from "@thoth/client"
 import Link from "next/link"
 
@@ -61,7 +61,7 @@ export const Search: FC = () => {
   return (
     <div className="relative flex-grow px-3 shadow-none" onKeyDown={modifyFocus} ref={setSearchOverlay}>
       <Input
-        className="bg-elevate-1 rounded-3xl pl-11"
+        className="rounded-3xl bg-elevate-2 pl-11"
         icon={<MdSearch className="mx-1 h-6 w-6" />}
         placeholder="Search ..."
         inputRef={inputElement}
@@ -92,19 +92,19 @@ const SearchResults: React.FC<{ search: SearchModel; onClose: () => void }> = ({
       <>
         {search.books.length ? (
           <>
-            <h2 className="py-3 uppercase text-unimportant">Books</h2>
+            <h2 className="py-3 uppercase text-font-secondary">Books</h2>
             <BookSearchResult books={search.books} onClose={onClose} />
           </>
         ) : null}
         {search.authors.length ? (
           <>
-            <h2 className="py-3 uppercase text-unimportant">Authors</h2>
+            <h2 className="py-3 uppercase text-font-secondary">Authors</h2>
             <AuthorSearchResult authors={search.authors} onClose={onClose} />
           </>
         ) : null}
         {search.series.length ? (
           <>
-            <h2 className="py-3 uppercase text-unimportant">Series</h2>
+            <h2 className="py-3 uppercase text-font-secondary">Series</h2>
             <SeriesSearchResult series={search.series} onClose={onClose} />
           </>
         ) : null}

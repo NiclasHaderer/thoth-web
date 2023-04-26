@@ -33,7 +33,7 @@ export const BookDisplay: React.FC<BookProps> = ({ coverID, title, authors, id }
         </Link>
         {authors.map(author => (
           <Link href={`/authors/${author.id}`} key={author.id}>
-            <span className="cursor-pointer text-unimportant  hover:underline group-focus:underline">
+            <span className="cursor-pointer text-font-secondary  hover:underline group-focus:underline">
               {author.name}
             </span>
           </Link>

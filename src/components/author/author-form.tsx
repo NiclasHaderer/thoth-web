@@ -6,8 +6,8 @@ import { useField } from "../../hooks/form"
 import { ResponsiveImage } from "@thoth/components/responsive-image"
 import { environment } from "@thoth/environment"
 import { ColoredButton } from "@thoth/components/colored-button"
-import { ManagedInput } from "@thoth/components/managed-input"
-import HtmlEditor from "@thoth/components/editor"
+import { ManagedInput } from "@thoth/components/input/managed-input"
+import HtmlEditor from "../html-editor"
 import { PartialAuthorApiModel } from "@thoth/models/api-models"
 
 export const AuthorForm = () => {

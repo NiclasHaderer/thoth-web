@@ -19,8 +19,8 @@ import { BookModel, MetadataBook, PartialBookApiModel, UUID } from "@thoth/model
 import { ColoredButton } from "@thoth/components/colored-button"
 import { Dialog, DialogButtons } from "@thoth/components/dialog"
 import { ResponsiveImage } from "@thoth/components/responsive-image"
-import { ManagedInput } from "@thoth/components/managed-input"
-import HtmlEditor from "@thoth/components/editor"
+import { ManagedInput } from "@thoth/components/input/managed-input"
+import HtmlEditor from "../html-editor"
 
 const mergeMetaIntoBook = ({ ...book }: PartialBookApiModel, meta: MetadataBook): PartialBookApiModel => {
   // TODO fix

@@ -9,7 +9,7 @@ import { BookEdit } from "./book-edit"
 import { environment } from "@thoth/environment"
 import Link from "next/link"
 import { ColoredButton } from "@thoth/components/colored-button"
-import { HtmlViewer } from "@thoth/components/html-viewer"
+import { HtmlViewer } from "@thoth/components/html-editor/html-viewer"
 import { isDetailedBook } from "@thoth/models/typeguards"
 import { DetailedBookModel, UUID } from "@thoth/models/api-models"
 
@@ -57,12 +57,12 @@ export const BookDetails: FC<{ bookId: UUID }> = ({ bookId }) => {
             <h2 className="pb-3 text-2xl">{book.title}</h2>
             {book.releaseDate ? (
               <div className="flex pb-3">
-                <h3 className="min-w-40 pr-3 uppercase text-unimportant">Year</h3>
+                <h3 className="min-w-40 pr-3 uppercase text-font-secondary">Year</h3>
                 <h3>{new Date(book.releaseDate).getFullYear()}</h3>
               </div>
             ) : null}
             <div className="flex pb-3">
-              <h3 className="min-w-40 pr-3 uppercase text-unimportant">Author</h3>
+              <h3 className="min-w-40 pr-3 uppercase text-font-secondary">Author</h3>
               {book.authors.map(author => (
                 <Link href={`/authors/${author.id}`} key={author.id}>
                   <h3 className="hover:underline focus:underline group-focus:underline">{author.name}</h3>
@@ -71,13 +71,13 @@ export const BookDetails: FC<{ bookId: UUID }> = ({ bookId }) => {
             </div>
             {book.narrator ? (
               <div className="flex pb-3">
-                <h3 className="min-w-40 pr-3 uppercase text-unimportant">Narrator</h3>
+                <h3 className="min-w-40 pr-3 uppercase text-font-secondary">Narrator</h3>
                 <h3>{book.narrator}</h3>
               </div>
             ) : null}
             {book.series ? (
               <div className="flex pb-3">
-                <h3 className="min-w-40 pr-3 uppercase text-unimportant">Series</h3>
+                <h3 className="min-w-40 pr-3 uppercase text-font-secondary">Series</h3>
                 {book.series.map(series => (
                   <Link href={`/series/${series.id}`} key={series.id}>
                     <h3 className="hover:underline group-focus:underline">{series.title}</h3>
@@ -88,13 +88,13 @@ export const BookDetails: FC<{ bookId: UUID }> = ({ bookId }) => {
             {/*TODO fix this*/}
             {/*{book.seriesIndex ? (*/}
             {/*  <div className="flex pb-3">*/}
-            {/*    <h3 className="min-w-40 pr-3 uppercase text-unimportant">Series Index</h3>*/}
+            {/*    <h3 className="min-w-40 pr-3 uppercase text-font-secondary">Series Index</h3>*/}
             {/*    <h3>{book.seriesIndex}</h3>*/}
             {/*  </div>*/}
             {/*) : null}*/}
             {book.language ? (
               <div className="flex pb-3">
-                <h3 className="min-w-40 pr-3 uppercase text-unimportant">Language</h3>
+                <h3 className="min-w-40 pr-3 uppercase text-font-secondary">Language</h3>
                 <h3>{book.language}</h3>
               </div>
             ) : null}
