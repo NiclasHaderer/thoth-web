@@ -1,7 +1,7 @@
 import React, { CSSProperties, ReactElement, useEffect, useRef, useState } from "react"
 import { useIntersectionObserver } from "@thoth/hooks/intersection-observer"
 
-export const CleanIfNotVisible: React.VFC<{ children: ReactElement }> = ({ children }) => {
+export const CleanIfNotVisible: React.FC<{ children: ReactElement }> = ({ children }) => {
   const wrapperRef = useRef<HTMLDivElement>(null)
   const visible = useIntersectionObserver(wrapperRef.current)
   const [placeHolderStyle, setPlaceHolderStyle] = useState<CSSProperties | undefined>(undefined)

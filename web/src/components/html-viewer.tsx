@@ -1,7 +1,7 @@
 import { sanitize } from "dompurify"
 import React from "react"
 
-export const HtmlViewer: React.VFC<{
+export const HtmlViewer: React.FC<{
   content: string | null | undefined
   className?: string | undefined
   title: string
