@@ -4,6 +4,7 @@ import { Search } from "./search"
 import { ActiveLink } from "@thoth/components/active-link"
 import { Ripple } from "@thoth/components/ripple"
 import Link from "next/link"
+import { Menu } from "@headlessui/react"
 
 const MenuImage: React.FC = () => {
   return (
@@ -21,18 +22,42 @@ export const SearchBar: React.FC = () => {
     <div className="m-3 flex h-20 min-h-20 items-center rounded-xl bg-elevate pr-3">
       <MenuImage />
       <Search />
-      <Ripple>
-        <Link href={"account"}>
-          <button className="h-12 w-12 cursor-pointer rounded-full p-2 focus:bg-active-light no-touch:focus:bg-active-light">
-            <MdAccountCircle className="h-full w-full" />
-          </button>
-        </Link>
-        <Link href={"server-settings"}>
-          <button className="h-12 w-12 cursor-pointer rounded-full p-2 focus:bg-active-light no-touch:focus:bg-active-light">
-            <MdCollectionsBookmark className="h-full w-full" />
-          </button>
-        </Link>
-      </Ripple>
+      <Menu as="div" className="relative">
+        <Menu.Button className="h-12 w-12 cursor-pointer rounded-full p-2 focus:bg-active-light no-touch:focus:bg-active-light">
+          <MdAccountCircle className="h-full w-full" />
+        </Menu.Button>
+
+        <Menu.Items className="absolute right-0 w-56 origin-top-right divide-y rounded-md bg-elevate-2 shadow-lg focus:outline-none">
+          <div className="px-1 py-1 ">
+            <Menu.Item>
+              {({ active }) => (
+                <ActiveLink
+                  href={"/account"}
+                  className={`${
+                    active ? "bg-active-light" : "text-gray-900"
+                  } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                >
+                  <MdPerson className="mr-3 h-6 w-6" />
+                  Account
+                </ActiveLink>
+              )}
+            </Menu.Item>
+            <Menu.Item>
+              {({ active }) => (
+                <ActiveLink
+                  href="/server-settings"
+                  className={`${
+                    active ? "bg-active-light" : "text-gray-900"
+                  } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                >
+                  <MdCollectionsBookmark className="mr-3 h-6 w-6" />
+                  Server Settings
+                </ActiveLink>
+              )}
+            </Menu.Item>
+          </div>
+        </Menu.Items>
+      </Menu>
     </div>
   )
 }
