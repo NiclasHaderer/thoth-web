@@ -58,7 +58,7 @@ export const SeriesSearch: React.FC<{
   )
 }
 
-const AuthorSearchResult: React.VFC<{ results: MetadataSeries[]; select: (result: MetadataSeries) => void }> = ({
+const AuthorSearchResult: React.FC<{ results: MetadataSeries[]; select: (result: MetadataSeries) => void }> = ({
   results,
   select,
 }) => {

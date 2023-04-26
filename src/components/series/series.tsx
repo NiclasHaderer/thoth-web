@@ -9,7 +9,7 @@ interface CollectionProps {
   cover?: string
 }
 
-export const SeriesDisplay: React.VFC<CollectionProps> = ({ id, title, amount, cover }) => {
+export const SeriesDisplay: React.FC<CollectionProps> = ({ id, title, amount, cover }) => {
   return (
     <span className="mx-6 mb-6 inline-block w-52 ">
       <Link href={`/series/${id}`} aria-label={title} tabIndex={-1}>

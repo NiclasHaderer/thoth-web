@@ -86,7 +86,7 @@ export const Search: FC = () => {
   )
 }
 
-const SearchResults: React.VFC<{ search: SearchModel; onClose: () => void }> = ({ search, onClose }) => (
+const SearchResults: React.FC<{ search: SearchModel; onClose: () => void }> = ({ search, onClose }) => (
   <>
     {search.books.length || search.authors.length || search.series.length ? (
       <>
@@ -115,7 +115,7 @@ const SearchResults: React.VFC<{ search: SearchModel; onClose: () => void }> = (
   </>
 )
 
-const AuthorSearchResult: React.VFC<{ authors: SearchModel["authors"]; onClose: () => void }> = ({
+const AuthorSearchResult: React.FC<{ authors: SearchModel["authors"]; onClose: () => void }> = ({
   authors,
   onClose,
 }) => (
@@ -146,7 +146,7 @@ const AuthorSearchResult: React.VFC<{ authors: SearchModel["authors"]; onClose: 
   </>
 )
 
-const BookSearchResult: React.VFC<{ books: SearchModel["books"]; onClose: () => void }> = ({ books, onClose }) => (
+const BookSearchResult: React.FC<{ books: SearchModel["books"]; onClose: () => void }> = ({ books, onClose }) => (
   <>
     {books.map((book, i) => (
       <Link
@@ -174,7 +174,7 @@ const BookSearchResult: React.VFC<{ books: SearchModel["books"]; onClose: () => 
   </>
 )
 
-const SeriesSearchResult: React.VFC<{ series: SearchModel["series"]; onClose: () => void }> = ({ series, onClose }) => (
+const SeriesSearchResult: React.FC<{ series: SearchModel["series"]; onClose: () => void }> = ({ series, onClose }) => (
   <>
     {series.map((series, i) => (
       <Link

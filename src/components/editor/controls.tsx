@@ -77,7 +77,7 @@ const EditorControlButton: React.FC<{ onClick: () => void; active: boolean } & P
   </button>
 )
 
-export const EditorControls: React.VFC<{ editor: Editor | null }> = ({ editor }) => {
+export const EditorControls: React.FC<{ editor: Editor | null }> = ({ editor }) => {
   if (!editor) return null
 
   return (

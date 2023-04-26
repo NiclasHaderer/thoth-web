@@ -6,7 +6,7 @@ interface ResponsiveImageProps
   src: string
 }
 
-export const ResponsiveImage: React.VFC<ResponsiveImageProps> = ({ src, ...props }) => {
+export const ResponsiveImage: React.FC<ResponsiveImageProps> = ({ src, ...props }) => {
   const element = useRef<HTMLDivElement>(null)
 
   return (

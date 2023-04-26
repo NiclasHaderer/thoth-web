@@ -49,7 +49,7 @@ export const AuthorSearch: FC<{
   )
 }
 
-const AuthorSearchResult: React.VFC<{ results: MetadataAuthor[]; select: (result: MetadataAuthor) => void }> = ({
+const AuthorSearchResult: React.FC<{ results: MetadataAuthor[]; select: (result: MetadataAuthor) => void }> = ({
   results,
   select,
 }) => {

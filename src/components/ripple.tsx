@@ -24,7 +24,7 @@ interface SpanPosition {
   height: string
 }
 
-const RippleSpan: React.VFC<{ spans: SpanPosition[]; duration: string; className: string }> = ({
+const RippleSpan: React.FC<{ spans: SpanPosition[]; duration: string; className: string }> = ({
   spans,
   className,
   duration,

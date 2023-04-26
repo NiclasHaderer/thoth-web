@@ -1,6 +1,5 @@
-import React, { useCallback, useEffect } from "react"
+import React, { useEffect } from "react"
 import { MdPerson } from "react-icons/md"
-import { useRoute } from "wouter"
 
 import { AudiobookSelectors } from "../../state/audiobook.selectors"
 import { useAudiobookState } from "../../state/audiobook.state"

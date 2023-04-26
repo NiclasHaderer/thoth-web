@@ -5,7 +5,7 @@ import { ActiveLink } from "@thoth/components/active-link"
 import { Ripple } from "@thoth/components/ripple"
 import Link from "next/link"
 
-const MenuImage: React.VFC = () => {
+const MenuImage: React.FC = () => {
   return (
     <Link href="/" className="flex overflow-hidden rounded-l-xl" aria-label={"HOME"}>
       <div className="inline-flex cursor-pointer items-center pr-2 no-touch:group-focus:bg-active-light">
@@ -22,9 +22,14 @@ export const SearchBar: React.FC = () => {
       <MenuImage />
       <Search />
       <Ripple>
-        <Link href="account">
+        <Link href={"account"}>
           <button className="h-12 w-12 cursor-pointer rounded-full p-2 focus:bg-active-light no-touch:focus:bg-active-light">
             <MdAccountCircle className="h-full w-full" />
+          </button>
+        </Link>
+        <Link href={"server-settings"}>
+          <button className="h-12 w-12 cursor-pointer rounded-full p-2 focus:bg-active-light no-touch:focus:bg-active-light">
+            <MdCollectionsBookmark className="h-full w-full" />
           </button>
         </Link>
       </Ripple>
