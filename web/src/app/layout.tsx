@@ -1,6 +1,6 @@
 "use client"
 import React from "react"
-import { BottomBar, MainWindow, TopBar } from "@thoth/components/layout"
+import { BottomBar, TopBar } from "@thoth/components/layout"
 import "../styles/globals.css"
 import "../styles/reset.css"
 
@@ -10,8 +10,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="dark-theme h-full bg-surface text-font">
         <div className="flex h-full flex-col">
           <TopBar />
-          <MainWindow>{children}</MainWindow>
-          <BottomBar />
+          <div className={`m-3 flex-grow overflow-y-auto`}>{children}</div>
         </div>
       </body>
     </html>
