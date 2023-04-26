@@ -1,6 +1,5 @@
-import React, { FC } from "react"
+import React from "react"
 
-export const Account: FC = () => {
-  return <>hello world</>
+export default function AccountOutlet() {
+  return <div>AccountOutlet</div>
 }
-export default Account

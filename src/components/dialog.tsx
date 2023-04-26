@@ -68,7 +68,7 @@ export const DialogActions: React.FC<PropsWithChildren> = ({ children }) => {
   return <div className="mt-4 flex flex-row-reverse justify-between">{children}</div>
 }
 
-export const DialogButtons: React.VFC<{ closeModal(): void }> = ({ closeModal }) => {
+export const DialogButtons: React.FC<{ closeModal(): void }> = ({ closeModal }) => {
   return (
     <>
       <ColoredButton type="submit">Submit</ColoredButton>
