@@ -1,25 +1,12 @@
-import React, { FC, useState } from "react"
-import {
-  MdAutoAwesome,
-  MdEdit,
-  MdFolder,
-  MdGasMeter,
-  MdLanguage,
-  MdLocalLibrary,
-  MdPerson,
-  MdRadar,
-} from "react-icons/md"
-import { Form, FormContext, useForm } from "@thoth/hooks/form"
+import React, { useState } from "react"
+import { MdEdit, MdFolder, MdGasMeter, MdPerson } from "react-icons/md"
+import { useForm } from "@thoth/hooks/form"
 import { ColoredButton } from "@thoth/components/colored-button"
 import { useHttpRequest } from "@thoth/hooks/async-response"
 import { Api } from "@thoth/client"
 import { useOnMount } from "@thoth/hooks/lifecycle"
 import { FileScanner, MetadataAgent } from "@thoth/models/api-models"
-import { Dialog, DialogActions, DialogBody, DialogButtons } from "@thoth/components/dialog"
-import { ManagedInput } from "@thoth/components/input/managed-input"
-import { SelectLine } from "@thoth/components/input/select-line"
-import { MdScan } from "@thoth/components/icons/scan"
-import { unique } from "@thoth/utils"
+import { LibraryDialog } from "@thoth/components/library-dialog"
 
 export const LibraryManager = () => {
   const { invoke, error, result: libraries, loading } = useHttpRequest(Api.listLibraries)
@@ -124,95 +111,5 @@ export const LibraryManager = () => {
       </div>
       <LibraryDialog isOpen={isOpen} setIsOpen={setIsOpen} form={form} />
     </>
-  )
-}
-
-export const LibraryDialog: FC<{
-  isOpen: boolean
-  setIsOpen: (open: boolean) => void
-  form: FormContext<{
-    id: string | undefined
-    name: string
-    language: string
-    preferEmbeddedMetadata: boolean
-    folders: string[]
-    metadataScanners: MetadataAgent[]
-    fileScanners: FileScanner[]
-    mode: "create" | "edit"
-  }>
-}> = ({ isOpen, setIsOpen, form }) => {
-  const metadataAgents = useHttpRequest(Api.listMetadataAgents)
-  const fileScanners = useHttpRequest(Api.listFileScanners)
-  useOnMount(() => {
-    metadataAgents.invoke()
-    fileScanners.invoke()
-  })
-  return (
-    <Dialog
-      isOpen={isOpen}
-      closeModal={() => setIsOpen(false)}
-      title={form.fields.mode === "create" ? "Create new Library" : "Edit Library"}
-    >
-      <Form form={form}>
-        <DialogBody>
-          <ManagedInput
-            labelClassName="w-28"
-            label="Library name"
-            name="name"
-            icon={<MdLocalLibrary />}
-            placeholder="Enter a name for the library"
-            required
-            autoFocus
-          />
-
-          <SelectLine
-            labelClassName="w-28"
-            label="Language"
-            icon={<MdLanguage />}
-            name="language"
-            title={"Language"}
-            options={unique(metadataAgents.result?.flatMap(a => a.supportedCountryCodes))}
-          />
-          <SelectLine
-            labelClassName="w-28"
-            title="Metadata preference"
-            label="Metadata"
-            name="preferEmbeddedMetadata"
-            icon={<MdAutoAwesome />}
-            options={[
-              { label: "Embedded", value: true },
-              { label: "External", value: false },
-            ]}
-          />
-          <SelectLine
-            title={"Metadata scanners"}
-            labelClassName="w-28"
-            label="Metadata"
-            name="metadataScanners"
-            icon={<MdRadar />}
-            options={metadataAgents?.result?.map(a => a.name) ?? []}
-          />
-          <ManagedInput
-            labelClassName="w-28"
-            label="Folders"
-            name="folders"
-            icon={<MdFolder />}
-            placeholder="Enter the folders to scan"
-            required
-          />
-          <SelectLine
-            labelClassName="w-28"
-            label="File"
-            icon={<MdScan />}
-            name="fileScanners"
-            title={"File scanners"}
-            options={fileScanners?.result?.map(a => a.name) ?? []}
-          />
-        </DialogBody>
-        <DialogActions>
-          <DialogButtons closeModal={() => setIsOpen(false)} />
-        </DialogActions>
-      </Form>
-    </Dialog>
   )
 }
