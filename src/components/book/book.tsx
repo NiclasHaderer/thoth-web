@@ -2,7 +2,6 @@ import React from "react"
 import { MdImageNotSupported } from "react-icons/md"
 import { NamedId } from "@thoth/models/api-models"
 import Link from "next/link"
-import { environment } from "@thoth/environment"
 
 interface BookProps {
   id: string
@@ -18,7 +17,7 @@ export const BookDisplay: React.FC<BookProps> = ({ coverID, title, authors, id }
         {coverID ? (
           <img
             className="h-52 w-52 cursor-pointer rounded-md border-2 border-transparent object-cover transition-colors hover:border-primary"
-            src={`${environment.apiURL}/image/${coverID}`}
+            src={`/api/image/${coverID}`}
             alt={title}
             loading="lazy"
           />
