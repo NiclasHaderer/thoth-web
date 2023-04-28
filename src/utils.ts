@@ -65,3 +65,7 @@ export const toRealURL = (baseUrl: string): string => {
   }
   return baseUrl
 }
+
+export const unique = <T>(list?: T[]): T[] => {
+  return [...new Set(list)]
+}
