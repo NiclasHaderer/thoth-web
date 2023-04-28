@@ -7,14 +7,15 @@ interface DialogProps {
   closeModal: () => void
   title: string
   dialogClass?: string | undefined
+  outerDialogClass?: string | undefined
   children?: ReactElement | undefined
 }
 
-export const Dialog = ({ isOpen, closeModal, title, children, dialogClass }: DialogProps) => {
+export const Dialog = ({ isOpen, closeModal, title, children, dialogClass, outerDialogClass }: DialogProps) => {
   return (
     <HTransition appear show={isOpen} as={Fragment}>
       <HDialog as="div" className="fixed inset-0 z-10 overflow-y-auto" onClose={closeModal}>
-        <div className="min-h-screen px-4 text-center">
+        <div className="h-screen px-4 text-center">
           <HTransition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -41,9 +42,13 @@ export const Dialog = ({ isOpen, closeModal, title, children, dialogClass }: Dia
             leaveTo="opacity-0 scale-95"
           >
             {/*Do not remove the transform class. This will lead to the modal closing if you click on the modal background! */}
-            <div className="inline-block w-full transform rounded-2xl bg-surface text-left align-middle shadow-2xl transition-all sm:max-w-full md:max-w-2xl">
-              <div className={`flex flex-col rounded-2xl bg-active-light p-6 ${dialogClass || ""}`}>
-                <HDialog.Title as="h3" className="text-xl font-medium leading-6">
+            <div
+              className={`inline-block w-full transform rounded-2xl bg-surface text-left align-middle shadow-2xl transition-all sm:max-w-full md:max-w-2xl ${
+                outerDialogClass ?? ""
+              }`}
+            >
+              <div className={`flex h-full flex-col rounded-2xl bg-active-light p-6 ${dialogClass || ""}`}>
+                <HDialog.Title as="h3" className="pb-2 text-xl font-medium leading-6">
                   {title}
                 </HDialog.Title>
                 {children}
@@ -57,7 +62,7 @@ export const Dialog = ({ isOpen, closeModal, title, children, dialogClass }: Dia
 }
 
 export const DialogBody: React.FC<PropsWithChildren> = ({ children }) => {
-  return <div className="flex grow flex-col justify-between">{children}</div>
+  return <div className="flex h-4/5 grow flex-col justify-between">{children}</div>
 }
 
 export const DialogContent: React.FC<PropsWithChildren> = ({ children }) => {
