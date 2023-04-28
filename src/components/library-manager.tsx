@@ -8,7 +8,6 @@ import {
   MdLocalLibrary,
   MdPerson,
   MdRadar,
-  MdScanner,
 } from "react-icons/md"
 import { Form, FormContext, useForm } from "@thoth/hooks/form"
 import { ColoredButton } from "@thoth/components/colored-button"
@@ -20,6 +19,7 @@ import { Dialog, DialogActions, DialogBody, DialogButtons } from "@thoth/compone
 import { ManagedInput } from "@thoth/components/input/managed-input"
 import { SelectLine } from "@thoth/components/input/select-line"
 import { MdScan } from "@thoth/components/icons/scan"
+import { unique } from "@thoth/utils"
 
 export const LibraryManager = () => {
   const { invoke, error, result: libraries, loading } = useHttpRequest(Api.listLibraries)
@@ -141,6 +141,12 @@ export const LibraryDialog: FC<{
     mode: "create" | "edit"
   }>
 }> = ({ isOpen, setIsOpen, form }) => {
+  const metadataAgents = useHttpRequest(Api.listMetadataAgents)
+  const fileScanners = useHttpRequest(Api.listFileScanners)
+  useOnMount(() => {
+    metadataAgents.invoke()
+    fileScanners.invoke()
+  })
   return (
     <Dialog
       isOpen={isOpen}
@@ -159,13 +165,13 @@ export const LibraryDialog: FC<{
             autoFocus
           />
 
-          <ManagedInput
+          <SelectLine
             labelClassName="w-28"
             label="Language"
             icon={<MdLanguage />}
             name="language"
-            placeholder="Enter the language of the library"
-            required
+            title={"Language"}
+            options={unique(metadataAgents.result?.flatMap(a => a.supportedCountryCodes))}
           />
           <SelectLine
             labelClassName="w-28"
@@ -178,6 +184,14 @@ export const LibraryDialog: FC<{
               { label: "External", value: false },
             ]}
           />
+          <SelectLine
+            title={"Metadata scanners"}
+            labelClassName="w-28"
+            label="Metadata"
+            name="metadataScanners"
+            icon={<MdRadar />}
+            options={metadataAgents?.result?.map(a => a.name) ?? []}
+          />
           <ManagedInput
             labelClassName="w-28"
             label="Folders"
@@ -186,21 +200,13 @@ export const LibraryDialog: FC<{
             placeholder="Enter the folders to scan"
             required
           />
-          <ManagedInput
-            labelClassName="w-28"
-            label="Metadata"
-            name="metadataScanners"
-            icon={<MdRadar />}
-            placeholder="Enter the metadata scanners to use"
-            required
-          />
-          <ManagedInput
+          <SelectLine
             labelClassName="w-28"
             label="File"
             icon={<MdScan />}
             name="fileScanners"
-            placeholder="Enter the file scanners to use"
-            required
+            title={"File scanners"}
+            options={fileScanners?.result?.map(a => a.name) ?? []}
           />
         </DialogBody>
         <DialogActions>
