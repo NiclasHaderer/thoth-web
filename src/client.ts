@@ -9,12 +9,14 @@ import type {
   DetailedAuthorModel,
   DetailedBookModel,
   DetailedSeriesModel,
+  FileScanner,
   FileSystemItem,
   JWKsResponse,
   JwtPair,
   LibraryApiModel,
   LibraryModel,
   LoginUser,
+  MetadataAgentApiModel,
   MetadataAuthor,
   MetadataBook,
   MetadataLanguage,
@@ -129,7 +131,7 @@ export const Api = {
     const __finalUrl = `/api/auth/register`
     return __request(__finalUrl, "POST", "json", headers, body, interceptors)
   },
-  retrieveJwks(headers: HeadersInit, interceptors?: ApiInterceptor[]): Promise<ApiResponse<JWKsResponse>> {
+  retrieveJwks(headers: HeadersInit = {}, interceptors?: ApiInterceptor[]): Promise<ApiResponse<JWKsResponse>> {
     const __finalUrl = `/api/auth/.well-known/jwks.json`
     return __request(__finalUrl, "GET", "json", headers, undefined, interceptors)
   },
@@ -142,11 +144,11 @@ export const Api = {
     const __finalUrl = __createUrl(`/api/auth/user/edit`, { id })
     return __request(__finalUrl, "PUT", "json", headers, body, interceptors)
   },
-  listUsers(headers: HeadersInit, interceptors?: ApiInterceptor[]): Promise<ApiResponse<UserModel>> {
+  listUsers(headers: HeadersInit = {}, interceptors?: ApiInterceptor[]): Promise<ApiResponse<UserModel>> {
     const __finalUrl = `/api/auth/user`
     return __request(__finalUrl, "GET", "json", headers, undefined, interceptors)
   },
-  deleteUser(headers: HeadersInit, interceptors?: ApiInterceptor[]): Promise<ApiResponse<Unit>> {
+  deleteUser(headers: HeadersInit = {}, interceptors?: ApiInterceptor[]): Promise<ApiResponse<Unit>> {
     const __finalUrl = `/api/auth/user`
     return __request(__finalUrl, "DELETE", "json", headers, undefined, interceptors)
   },
@@ -174,7 +176,7 @@ export const Api = {
     const __finalUrl = __createUrl(`/api/fs`, { path })
     return __request(__finalUrl, "GET", "json", headers, undefined, interceptors)
   },
-  listLibraries(headers: HeadersInit, interceptors?: ApiInterceptor[]): Promise<ApiResponse<LibraryModel[]>> {
+  listLibraries(headers: HeadersInit = {}, interceptors?: ApiInterceptor[]): Promise<ApiResponse<LibraryModel[]>> {
     const __finalUrl = `/api/libraries`
     return __request(__finalUrl, "GET", "json", headers, undefined, interceptors)
   },
@@ -220,7 +222,7 @@ export const Api = {
     const __finalUrl = `/api/libraries/${libraryId}/rescan`
     return __request(__finalUrl, "POST", "json", headers, undefined, interceptors)
   },
-  rescanAllLibraries(headers: HeadersInit, interceptors?: ApiInterceptor[]): Promise<ApiResponse<Unit>> {
+  rescanAllLibraries(headers: HeadersInit = {}, interceptors?: ApiInterceptor[]): Promise<ApiResponse<Unit>> {
     const __finalUrl = `/api/libraries/rescan`
     return __request(__finalUrl, "POST", "json", headers, undefined, interceptors)
   },
@@ -233,6 +235,17 @@ export const Api = {
     interceptors?: ApiInterceptor[]
   ): Promise<ApiResponse<SearchModel>> {
     const __finalUrl = __createUrl(`/api/libraries/search`, { author, book, q, series })
+    return __request(__finalUrl, "GET", "json", headers, undefined, interceptors)
+  },
+  listFileScanners(headers: HeadersInit = {}, interceptors?: ApiInterceptor[]): Promise<ApiResponse<FileScanner[]>> {
+    const __finalUrl = `/api/scanners`
+    return __request(__finalUrl, "GET", "json", headers, undefined, interceptors)
+  },
+  listMetadataScanners(
+    headers: HeadersInit = {},
+    interceptors?: ApiInterceptor[]
+  ): Promise<ApiResponse<MetadataAgentApiModel[]>> {
+    const __finalUrl = `/api/metadata-scanners`
     return __request(__finalUrl, "GET", "json", headers, undefined, interceptors)
   },
   listBooks(
@@ -442,6 +455,7 @@ export const Api = {
     return __request(__finalUrl, "GET", "json", headers, undefined, interceptors)
   },
   searchMetadata(
+    region: string,
     author?: string,
     keywords?: string,
     language?: MetadataLanguage,
@@ -451,60 +465,74 @@ export const Api = {
     headers: HeadersInit = {},
     interceptors?: ApiInterceptor[]
   ): Promise<ApiResponse<MetadataSearchBook[]>> {
-    const __finalUrl = __createUrl(`/api/metadata/search`, { author, keywords, language, narrator, pageSize, title })
+    const __finalUrl = __createUrl(`/api/metadata/search`, {
+      author,
+      keywords,
+      language,
+      narrator,
+      pageSize,
+      region,
+      title,
+    })
     return __request(__finalUrl, "GET", "json", headers, undefined, interceptors)
   },
   getAuthorMetadata(
     id: string,
     provider: string,
+    region: string,
     headers: HeadersInit = {},
     interceptors?: ApiInterceptor[]
   ): Promise<ApiResponse<MetadataAuthor>> {
-    const __finalUrl = __createUrl(`/api/metadata/author/${id}`, { provider })
+    const __finalUrl = __createUrl(`/api/metadata/author/${id}`, { provider, region })
     return __request(__finalUrl, "GET", "json", headers, undefined, interceptors)
   },
   searchAuthorMetadata(
     q: string,
+    region: string,
     headers: HeadersInit = {},
     interceptors?: ApiInterceptor[]
   ): Promise<ApiResponse<MetadataAuthor[]>> {
-    const __finalUrl = __createUrl(`/api/metadata/author/search`, { q })
+    const __finalUrl = __createUrl(`/api/metadata/author/search`, { q, region })
     return __request(__finalUrl, "GET", "json", headers, undefined, interceptors)
   },
   getBookMetadata(
     id: string,
     provider: string,
+    region: string,
     headers: HeadersInit = {},
     interceptors?: ApiInterceptor[]
   ): Promise<ApiResponse<MetadataBook>> {
-    const __finalUrl = __createUrl(`/api/metadata/book/${id}`, { provider })
+    const __finalUrl = __createUrl(`/api/metadata/book/${id}`, { provider, region })
     return __request(__finalUrl, "GET", "json", headers, undefined, interceptors)
   },
   searchBookMetadata(
     q: string,
+    region: string,
     authorName?: string,
     headers: HeadersInit = {},
     interceptors?: ApiInterceptor[]
   ): Promise<ApiResponse<MetadataBook[]>> {
-    const __finalUrl = __createUrl(`/api/metadata/book/search`, { authorName, q })
+    const __finalUrl = __createUrl(`/api/metadata/book/search`, { authorName, q, region })
     return __request(__finalUrl, "GET", "json", headers, undefined, interceptors)
   },
   getSeriesMetadata(
     id: string,
     provider: string,
+    region: string,
     headers: HeadersInit = {},
     interceptors?: ApiInterceptor[]
   ): Promise<ApiResponse<MetadataSeries>> {
-    const __finalUrl = __createUrl(`/api/metadata/series/${id}`, { provider })
+    const __finalUrl = __createUrl(`/api/metadata/series/${id}`, { provider, region })
     return __request(__finalUrl, "GET", "json", headers, undefined, interceptors)
   },
   searchSeriesMetadata(
     q: string,
+    region: string,
     authorName?: string,
     headers: HeadersInit = {},
     interceptors?: ApiInterceptor[]
   ): Promise<ApiResponse<MetadataSeries[]>> {
-    const __finalUrl = __createUrl(`/api/metadata/series/search`, { authorName, q })
+    const __finalUrl = __createUrl(`/api/metadata/series/search`, { authorName, q, region })
     return __request(__finalUrl, "GET", "json", headers, undefined, interceptors)
   },
   getAudioFile(id: UUID, headers: HeadersInit = {}, interceptors?: ApiInterceptor[]): Promise<ApiResponse<Blob>> {
@@ -515,7 +543,7 @@ export const Api = {
     const __finalUrl = `/api/stream/images/${id}`
     return __request(__finalUrl, "GET", "blob", headers, undefined, interceptors)
   },
-  pingServer(headers: HeadersInit, interceptors?: ApiInterceptor[]): Promise<ApiResponse<Unit>> {
+  pingServer(headers: HeadersInit = {}, interceptors?: ApiInterceptor[]): Promise<ApiResponse<Unit>> {
     const __finalUrl = `/api/ping`
     return __request(__finalUrl, "GET", "json", headers, undefined, interceptors)
   },

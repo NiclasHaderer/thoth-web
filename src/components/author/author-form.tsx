@@ -4,7 +4,6 @@ import { MdAddLink, MdCelebration, MdPerson } from "react-icons/md"
 import { MdDeceased } from "../icons/deceased"
 import { useField } from "../../hooks/form"
 import { ResponsiveImage } from "@thoth/components/responsive-image"
-import { environment } from "@thoth/environment"
 import { ColoredButton } from "@thoth/components/colored-button"
 import { ManagedInput } from "@thoth/components/input/managed-input"
 import HtmlEditor from "../html-editor"
@@ -26,7 +25,7 @@ export const AuthorForm = () => {
             {imageValue ? (
               <ResponsiveImage
                 className="h-52 min-h-52 w-52 cursor-pointer rounded-full bg-cover"
-                src={isUUID(imageValue) ? `${environment.apiURL}/image/${imageValue}` : imageValue}
+                src={isUUID(imageValue) ? `/api/image/${imageValue}` : imageValue}
                 alt="author"
                 onClick={() => imageInputRef.current && imageInputRef.current.click()}
               />

@@ -1,6 +1,5 @@
 import React from "react"
 import { MdImageNotSupported, MdPlayCircle } from "react-icons/md"
-import { environment } from "../../environment"
 import { toReadableTime } from "./helpers"
 import { NamedId } from "@thoth/models/api-models"
 import Link from "next/link"
@@ -23,12 +22,7 @@ export const Track: React.FC<TrackProps> = ({ coverID, title, duration, trackNr,
       onKeyUp={e => e.key === "Enter" && startPlayback(index)}
     >
       {coverID ? (
-        <img
-          className="h-16 w-16 rounded-md object-contain"
-          src={`${environment.apiURL}/image/${coverID}`}
-          alt={title}
-          loading="lazy"
-        />
+        <img className="h-16 w-16 rounded-md object-contain" src={`/api/image/${coverID}`} alt={title} loading="lazy" />
       ) : (
         <MdImageNotSupported className="h-16 w-16 rounded-md" />
       )}

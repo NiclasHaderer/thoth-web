@@ -43,7 +43,7 @@ export interface RegisterUser {
   username: string
 }
 
-export type UUID = `${string}-${string}-${string}-${string}-${string}`
+export type UUID = `${string}-${string}-${string}-${string}-${string}` | string
 
 export interface UserModel {
   admin: boolean
@@ -95,7 +95,6 @@ export interface FileScanner {
 }
 
 export interface MetadataAgent {
-  countryCode: string
   name: string
 }
 
@@ -104,6 +103,7 @@ export interface LibraryModel {
   folders: Array<string>
   icon?: string
   id: UUID
+  language: string
   metadataScanners: Array<MetadataAgent>
   name: string
   preferEmbeddedMetadata: boolean
@@ -114,6 +114,7 @@ export interface LibraryApiModel {
   fileScanners: Array<FileScanner>
   folders: Array<string>
   icon?: string
+  language: string
   metadataScanners: Array<MetadataAgent>
   name: string
   preferEmbeddedMetadata: boolean
@@ -186,6 +187,11 @@ export interface SearchModel {
   authors: Array<AuthorModel>
   books: Array<BookModel>
   series: Array<SeriesModel>
+}
+
+export interface MetadataAgentApiModel {
+  name: string
+  supportedCountryCodes: Array<string>
 }
 
 export interface PaginatedResponse<T> {
