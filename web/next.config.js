@@ -4,7 +4,13 @@ const nextConfig = {
   experimental: {
     appDir: true,
   },
-  output: "export",
+  rewrites: async () => [
+    {
+      source: "/api/:path*",
+      destination: "http://127.0.0.1:8080/api/:path*",
+    },
+  ],
+  output: "standalone",
   distDir: "dist",
   trailingSlash: true,
   skipTrailingSlashRedirect: true,

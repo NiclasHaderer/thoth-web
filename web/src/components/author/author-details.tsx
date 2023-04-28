@@ -6,7 +6,6 @@ import { useAudiobookState } from "../../state/audiobook.state"
 import AuthorEdit from "./author-edit"
 import { formatDate } from "../../utils"
 import { UUID } from "@thoth/models/api-models"
-import { environment } from "@thoth/environment"
 import { HtmlViewer } from "@thoth/components/html-editor/html-viewer"
 import { isDetailedAuthor } from "@thoth/models/typeguards"
 import { ResponsiveGrid } from "@thoth/components/responsive-grid"
@@ -26,7 +25,7 @@ export const AuthorDetails: React.FC<{ authorId: UUID }> = ({ authorId }) => {
           <img
             className="h-40 w-40 rounded-full border-2 border-active-light object-contain md:h-80 md:w-80"
             alt={author.name}
-            src={`${environment.apiURL}/image/${author.imageID}`}
+            src={`/api/image/${author.imageID}`}
             loading="lazy"
           />
         ) : (

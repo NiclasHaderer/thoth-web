@@ -1,7 +1,6 @@
 import React, { FC, KeyboardEvent, useEffect, useRef, useState } from "react"
 import { MdImageNotSupported, MdPerson, MdSearch } from "react-icons/md"
 
-import { environment } from "../../environment"
 import { useFocusTrap } from "../../hooks/trap-focus"
 import { useGlobalEvent } from "../../hooks/global-events"
 import { SearchModel } from "@thoth/models/api-models"
@@ -130,12 +129,7 @@ const AuthorSearchResult: React.FC<{ authors: SearchModel["authors"]; onClose: (
       >
         <div className="flex items-center p-2">
           {author.imageID ? (
-            <img
-              className="h-8 w-8 rounded-full"
-              src={`${environment.apiURL}/image/${author.imageID}`}
-              alt="Author"
-              loading="lazy"
-            />
+            <img className="h-8 w-8 rounded-full" src={`/api/image/${author.imageID}`} alt="Author" loading="lazy" />
           ) : (
             <MdPerson className="h-8 w-8 rounded-full" />
           )}
@@ -160,7 +154,7 @@ const BookSearchResult: React.FC<{ books: SearchModel["books"]; onClose: () => v
           {book.coverID ? (
             <img
               className="h-8 w-8 rounded-md object-cover"
-              src={`${environment.apiURL}/image/${book.coverID}`}
+              src={`/api/image/${book.coverID}`}
               alt={book.title}
               loading="lazy"
             />

@@ -1,28 +1,61 @@
 import { Listbox, Transition } from "@headlessui/react"
-import React, { Fragment, ReactNode, useEffect, useState } from "react"
+import React, { Fragment, useEffect, useState } from "react"
 import { MdDone } from "react-icons/md"
 
+type SelectValue<T> =
+  | {
+      value: T
+      label?: string
+      disabled?: boolean
+    }
+  | T
+
 export type SelectProps<T extends any, MULTIPLE extends boolean = false> = {
-  options: readonly (
-    | {
-        value: T
-        disabled?: boolean
-      }
-    | T
-  )[]
-  title: ReactNode
-  displayValue?: (v: T) => ReactNode
+  options: readonly SelectValue<T>[]
+  title: string
+  displayValue?: (v: SelectValue<T>) => string
   disabled?: boolean
   vDir?: "top" | "bottom"
   hDir?: "right" | "left"
-  value?: T
+  value?: MULTIPLE extends true ? SelectValue<T>[] : SelectValue<T>
   multiple?: MULTIPLE
-  onChange?: (v: MULTIPLE extends true ? T[] : T) => void
+  onChange?: (v: MULTIPLE extends true ? SelectValue<T>[] : SelectValue<T>) => void
   outerClassName?: string
   placeholderButtonClassName?: string
   placeholderClassName?: string
   optionClassName?: string
   optionListClassName?: string
+}
+
+const getSelectedValue = <T extends any>(
+  options: readonly SelectValue<T>[],
+  value: SelectValue<T> | undefined | SelectValue<T>[],
+  multiple: boolean | undefined
+) => {
+  const getValue = (value: SelectValue<T>) => {
+    if (typeof value === "object" && value !== null && "value" in value) {
+      return value.value
+    }
+    return value
+  }
+
+  const areEqual = (a: SelectValue<T>, b: SelectValue<T>) => {
+    return getValue(a) === getValue(b)
+  }
+
+  if (value === undefined) return null
+  const selectedValue = options.filter(option => {
+    if (Array.isArray(value)) {
+      return value.find(v => areEqual(v, option))
+    } else {
+      return areEqual(option, value)
+    }
+  })
+
+  if (multiple) {
+    return selectedValue
+  }
+  return selectedValue?.[0]
 }
 
 export function Select<T extends any, MULTIPLE extends boolean = false>({
@@ -39,15 +72,26 @@ export function Select<T extends any, MULTIPLE extends boolean = false>({
   outerClassName,
   onChange,
   multiple,
-  displayValue = (v: T) => v?.toString() ?? "",
+  displayValue = (v: SelectValue<T>) => v?.toString() ?? "",
 }: SelectProps<T, MULTIPLE>) {
-  const [selected, setSelected] = useState(value)
-  useEffect(() => setSelected(value), [value])
+  const toDisplayValue = (value: SelectValue<T>): string => {
+    if (typeof value === "object" && value !== null && "label" in value && value.label) {
+      return value.label
+    } else {
+      return displayValue(value)
+    }
+  }
+
+  const [selected, setSelected] = useState(() => getSelectedValue(options, value, multiple))
+  useEffect(() => {
+    const newSelection = getSelectedValue(options, value, multiple)
+    setSelected(newSelection)
+  }, [multiple, options, value])
 
   return (
     <Listbox
       disabled={disabled}
-      value={selected}
+      value={selected ?? null}
       onChange={value => {
         setSelected(value)
         onChange?.(value as MULTIPLE extends true ? T[] : T)
@@ -62,11 +106,11 @@ export function Select<T extends any, MULTIPLE extends boolean = false>({
         }`}
       >
         <span className={`h-full w-full p-1 ${placeholderClassName || ""}`}>
-          {!selected || (Array.isArray(selected) && selected.length === 0)
+          {selected === undefined || (Array.isArray(selected) && selected.length === 0)
             ? title
             : multiple
-            ? (selected as T[]).map(displayValue).join(", ")
-            : displayValue(selected as T)}
+            ? (selected as SelectValue<T>[]).map(toDisplayValue).join(", ")
+            : toDisplayValue(selected as SelectValue<T>)}
         </span>
         <SelectIcon />
       </Listbox.Button>
@@ -86,17 +130,7 @@ export function Select<T extends any, MULTIPLE extends boolean = false>({
         >
           <div className="bg-elevate">
             <div className="px-1 py-1">
-              {options.map((ogValue, i) => {
-                let value: T
-                let disabled: boolean
-                if (typeof ogValue === "object" && ogValue !== null && "value" in ogValue && "disabled" in ogValue) {
-                  value = ogValue.value
-                  disabled = ogValue.disabled ?? false
-                } else {
-                  value = ogValue as T
-                  disabled = false
-                }
-
+              {options.map((value, i) => {
                 return (
                   <Listbox.Option
                     key={i}
@@ -116,7 +150,7 @@ export function Select<T extends any, MULTIPLE extends boolean = false>({
                           disabled={disabled}
                           className={`group flex w-full items-center rounded-md px-2 py-2`}
                         >
-                          {displayValue(value)}
+                          {toDisplayValue(value)}
                         </button>
                       </>
                     )}

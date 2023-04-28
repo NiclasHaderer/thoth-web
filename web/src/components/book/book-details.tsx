@@ -6,7 +6,6 @@ import { useAudiobookState } from "../../state/audiobook.state"
 import { usePlaybackState } from "../../state/playback.state"
 import { Track } from "../track/track"
 import { BookEdit } from "./book-edit"
-import { environment } from "@thoth/environment"
 import Link from "next/link"
 import { ColoredButton } from "@thoth/components/colored-button"
 import { HtmlViewer } from "@thoth/components/html-editor/html-viewer"
@@ -46,7 +45,7 @@ export const BookDetails: FC<{ bookId: UUID }> = ({ bookId }) => {
             <img
               className="h-40 w-40 rounded-md border-2 border-active-light object-contain md:h-80 md:w-80"
               alt={book.title}
-              src={`${environment.apiURL}/image/${book.coverID}`}
+              src={`/api/image/${book.coverID}`}
             />
           ) : (
             <MdImageNotSupported className="h-40 w-40 rounded-md border-2 border-active-light md:h-80 md:w-80" />
