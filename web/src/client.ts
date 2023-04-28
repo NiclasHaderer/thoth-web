@@ -241,11 +241,11 @@ export const Api = {
     const __finalUrl = `/api/scanners`
     return __request(__finalUrl, "GET", "json", headers, undefined, interceptors)
   },
-  listMetadataScanners(
+  listMetadataAgents(
     headers: HeadersInit = {},
     interceptors?: ApiInterceptor[]
   ): Promise<ApiResponse<MetadataAgentApiModel[]>> {
-    const __finalUrl = `/api/metadata-scanners`
+    const __finalUrl = `/api/metadata-agents`
     return __request(__finalUrl, "GET", "json", headers, undefined, interceptors)
   },
   listBooks(
