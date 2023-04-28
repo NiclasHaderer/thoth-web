@@ -26,7 +26,7 @@ const wrapFetch = <K extends "author" | "series" | "book">(
     libraryId: UUID,
     offset?: number,
     limit?: number
-  ) => Promise<ApiResponse<PaginatedResponse<INITIAL_STATE[UUID][`${K}Map`][string]>>>
+  ) => Promise<ApiResponse<PaginatedResponse<INITIAL_STATE["content"][UUID][`${K}Map`][string]>>>
 ) => {
   return async (libraryId: UUID, offset: number) => {
     const limit = 30
@@ -35,14 +35,21 @@ const wrapFetch = <K extends "author" | "series" | "book">(
     if (!response.success) return
     mutate.setState(state => ({
       ...state,
-      [libraryId]: {
-        ...state[libraryId],
-        [`${key}Total`]: response.body.total,
-        [`${key}Map`]: {
-          ...state[libraryId][`${key}Map`],
-          ...toIdRecord(response.body.items),
+      content: {
+        ...state.content,
+        [libraryId]: {
+          ...state.content[libraryId],
+          [`${key}Total`]: response.body.total,
+          [`${key}Map`]: {
+            ...state.content[libraryId][`${key}Map`],
+            ...toIdRecord(response.body.items),
+          },
+          [`${key}Sorting`]: replaceRangeInList(
+            state.content[libraryId][`${key}Sorting`],
+            offsetCount,
+            response.body.items
+          ),
         },
-        [`${key}Sorting`]: replaceRangeInList(state[libraryId][`${key}Sorting`], offsetCount, response.body.items),
       },
     }))
   }
@@ -55,20 +62,23 @@ const wrapUpdate = <K extends "author" | "series" | "book", UPDATE_TYPE>(
     libraryId: UUID,
     authorId: UUID,
     data: UPDATE_TYPE
-  ) => Promise<ApiResponse<INITIAL_STATE[UUID][`${K}Map`][string]>>
+  ) => Promise<ApiResponse<INITIAL_STATE["content"][UUID][`${K}Map`][string]>>
 ) => {
   return async (libraryId: UUID, authorId: UUID, data: UPDATE_TYPE) => {
     const response = await updateFunction(libraryId, authorId, data)
     if (!response.success) return
     mutate.setState(state => ({
       ...state,
-      [libraryId]: {
-        ...state[libraryId],
-        [`${key}Map`]: {
-          ...state[libraryId][`${key}Map`],
-          [response.body.id]: {
-            ...state[libraryId][`${key}Map`][authorId],
-            ...response.body,
+      content: {
+        ...state.content,
+        [libraryId]: {
+          ...state.content[libraryId],
+          [`${key}Map`]: {
+            ...state.content[libraryId][`${key}Map`],
+            [response.body.id]: {
+              ...state.content[libraryId][`${key}Map`][authorId],
+              ...response.body,
+            },
           },
         },
       },
@@ -89,9 +99,13 @@ const wrapSorting = <K extends "author" | "series" | "book">(
 
     mutate.setState(state => ({
       ...state,
-      [libraryId]: {
-        ...state[libraryId],
-        [`${key}Sorting`]: replaceRangeInList(state[libraryId][`${key}Sorting`], offsetCount, response.body),
+      content: {
+        ...state.content,
+
+        [libraryId]: {
+          ...state.content[libraryId],
+          [`${key}Sorting`]: replaceRangeInList(state.content[libraryId][`${key}Sorting`], offsetCount, response.body),
+        },
       },
     }))
   }
@@ -100,18 +114,24 @@ const wrapSorting = <K extends "author" | "series" | "book">(
 const wrapDetails = <K extends "author" | "series" | "book">(
   mutate: Mutate<StoreApi<INITIAL_STATE>, [StoreMutatorIdentifier, unknown][]>,
   key: K,
-  detailsFunction: (libraryId: UUID, id: UUID) => Promise<ApiResponse<INITIAL_STATE[UUID][`${K}Map`][string]>>
+  detailsFunction: (
+    libraryId: UUID,
+    id: UUID
+  ) => Promise<ApiResponse<INITIAL_STATE["content"][UUID][`${K}Map`][string]>>
 ) => {
   return async (libraryId: UUID, id: UUID) => {
     const response = await detailsFunction(libraryId, id)
     if (!response.success) return
     mutate.setState(state => ({
       ...state,
-      [libraryId]: {
-        ...state[libraryId],
-        [`${key}Map`]: {
-          ...state[libraryId][`${key}Map`],
-          [id]: response.body,
+      content: {
+        ...state.content,
+        [libraryId]: {
+          ...state.content[libraryId],
+          [`${key}Map`]: {
+            ...state.content[libraryId][`${key}Map`],
+            [id]: response.body,
+          },
         },
       },
     }))
@@ -125,11 +145,14 @@ const wrapClear = <K extends "author" | "series" | "book">(
   return (libraryId: UUID) => {
     mutate.setState(state => ({
       ...state,
-      [libraryId]: {
-        ...state[libraryId],
-        [`${key}Map`]: {},
-        [`${key}Sorting`]: [],
-        [`${key}Total`]: 0,
+      content: {
+        ...state.content,
+        [libraryId]: {
+          ...state.content[libraryId],
+          [`${key}Map`]: {},
+          [`${key}Sorting`]: [],
+          [`${key}Total`]: 0,
+        },
       },
     }))
   }
@@ -145,9 +168,12 @@ const wrapSortingOf = <K extends "author" | "series" | "book">(
     if (!response.success) return
     mutate.setState(state => ({
       ...state,
-      [libraryId]: {
-        ...state[libraryId],
-        [`${key}Sorting`]: insertAtPosition(state[libraryId][`${key}Sorting`], id, response.body.sortIndex),
+      content: {
+        ...state.content,
+        [libraryId]: {
+          ...state.content[libraryId],
+          [`${key}Sorting`]: insertAtPosition(state.content[libraryId][`${key}Sorting`], id, response.body.sortIndex),
+        },
       },
     }))
   }
@@ -164,17 +190,21 @@ const wrapWs = <K extends "author" | "series" | "book">(
 
   const handleRemove = (libraryId: UUID, id: UUID) => {
     const state = mutate.getState()
-    if (!(id in state[libraryId][`${key}Map`]) && !state[libraryId][`${key}Sorting`].includes(id)) return
+    if (!(id in state.content[libraryId][`${key}Map`]) && !state.content[libraryId][`${key}Sorting`].includes(id))
+      return
 
-    const newMappingState = { ...state[libraryId][`${key}Map`] }
+    const newMappingState = { ...state.content[libraryId][`${key}Map`] }
     delete newMappingState[id]
 
     mutate.setState(state => ({
       ...state,
-      [libraryId]: {
-        ...state[libraryId],
-        [`${key}Mapping`]: newMappingState,
-        [`${key}Sorting`]: state[libraryId][`${key}Sorting`].filter(i => i !== id),
+      content: {
+        ...state.content,
+        [libraryId]: {
+          ...state.content[libraryId],
+          [`${key}Mapping`]: newMappingState,
+          [`${key}Sorting`]: state.content[libraryId][`${key}Sorting`].filter(i => i !== id),
+        },
       },
     }))
   }
@@ -197,22 +227,24 @@ const wrapWs = <K extends "author" | "series" | "book">(
 }
 
 const INITIAL_STATE = {
-  libraryMap: {},
-  selectedLibraryId: undefined,
+  libraryMap: {} as Record<UUID, LibraryModel>,
+  selectedLibraryId: undefined as UUID | undefined,
 } as {
+  content: {
+    [libraryId: UUID]: {
+      authorMap: Record<string, AuthorModel | DetailedAuthorModel>
+      authorSorting: string[]
+      authorTotal: number
+      seriesMap: Record<string, SeriesModel | DetailedSeriesModel>
+      seriesSorting: string[]
+      seriesTotal: number
+      bookMap: Record<string, BookModel | DetailedBookModel>
+      bookSorting: string[]
+      bookTotal: number
+    }
+  }
   libraryMap: Record<UUID, LibraryModel>
   selectedLibraryId?: UUID
-  [libraryId: UUID]: {
-    authorMap: Record<string, AuthorModel | DetailedAuthorModel>
-    authorSorting: string[]
-    authorTotal: number
-    seriesMap: Record<string, SeriesModel | DetailedSeriesModel>
-    seriesSorting: string[]
-    seriesTotal: number
-    bookMap: Record<string, BookModel | DetailedBookModel>
-    bookSorting: string[]
-    bookTotal: number
-  }
 }
 type INITIAL_STATE = typeof INITIAL_STATE
 

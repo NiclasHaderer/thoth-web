@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { ApiResponse } from "@thoth/models/api-models"
 
-type AsyncResponse<T> =
+type AsyncResponse<T, ARGS extends any[]> = (
   | {
       loading: true | null
       result: null
@@ -17,14 +17,13 @@ type AsyncResponse<T> =
       result: null
       error: true
     }
-
-type HttpInvocation<ARGS extends any[]> = {
+) & {
   invoke: (...args: ARGS) => void
 }
 
 export const useHttpRequest = <T, ARGS extends any[]>(
   apiCall: (...args: ARGS) => Promise<ApiResponse<T>>
-): HttpInvocation<ARGS> & AsyncResponse<T> => {
+): AsyncResponse<T, ARGS> => {
   const [loading, setLoading] = useState<boolean | null>(null)
   const [result, setResult] = useState<T | null>(null)
   const [error, setError] = useState<boolean | null>(null)
@@ -48,5 +47,5 @@ export const useHttpRequest = <T, ARGS extends any[]>(
     loading,
     result,
     error,
-  } as HttpInvocation<ARGS> & AsyncResponse<T>
+  } as AsyncResponse<T, ARGS>
 }
