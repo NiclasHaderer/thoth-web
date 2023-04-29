@@ -20,7 +20,9 @@ export interface FormContext<T extends Record<string, any>> {
     [K in keyof T]?: (value?: string | null) => T[K]
   }
   formValidators: {
-    [K in keyof T]?: ((value: T[K]) => string | undefined) | ((value: T[K]) => string | undefined)[]
+    [K in keyof T]?:
+      | ((value: T[K]) => string | undefined | null | true)
+      | ((value: T[K]) => string | undefined | null | true)[]
   }
 
   restoreInitial: () => void
@@ -80,17 +82,20 @@ export const useForm = <T extends Record<string, any>>(
   const [touched, setTouched] = useState(getFilledObject(Object.keys(initialState) as (keyof T)[], false))
   const [errors, setErrors] = useState(getFilledObject(Object.keys(initialState) as (keyof T)[], undefined))
 
-  const validateField = (key: keyof T): string[] | undefined => {
+  const validateField = (key: keyof T, value: T[keyof T]): string[] | undefined => {
     if (!touched[key]) return undefined
 
     const validator = options.validate && options.validate[key]
     if (validator) {
       if (Array.isArray(validator)) {
-        const errors = validator.map(v => v(fields[key])).filter(notNullIsh)
+        const errors = validator
+          .map(validator => validator(value))
+          .filter(notNullIsh)
+          .filter((e): e is string => typeof e !== "boolean")
         if (errors.length > 0) return errors
       } else {
-        const error = validator(fields[key])
-        if (error) return [error]
+        const error = validator(value)
+        if (error && typeof error !== "boolean") return [error]
       }
     }
   }
@@ -98,7 +103,7 @@ export const useForm = <T extends Record<string, any>>(
   const validateFields = (fieldsToValidate: Partial<T>) => {
     const newErrors = getFilledObject<keyof T, string[] | undefined>(Object.keys(fieldsToValidate), undefined)
     for (const key of Object.keys(fieldsToValidate) as (keyof T)[]) {
-      newErrors[key] = validateField(key)
+      newErrors[key] = validateField(key, fieldsToValidate[key]!)
     }
     setErrors(currErrors => ({ ...currErrors, ...newErrors }))
   }
@@ -145,7 +150,7 @@ export const useForm = <T extends Record<string, any>>(
 }
 
 export const useField = <T extends Record<string, any>>(name: keyof T) => {
-  const { fields, setFields, touched, setTouched, fromFormTransformers, toFormTransformers, contextType } =
+  const { fields, setFields, touched, setTouched, fromFormTransformers, toFormTransformers, contextType, errors } =
     useContext(CONTEXT)
   if (contextType === DEFAULT) {
     console.error("useField must be used inside a FormProvider")
@@ -159,6 +164,7 @@ export const useField = <T extends Record<string, any>>(name: keyof T) => {
         [name]: fromFormTransformers[name]?.(newValue) ?? newValue,
       })
     },
+    errors: errors[name],
     toForm: toFormTransformers[name],
     touched: touched[name],
     setTouched: (newValue: boolean) => {

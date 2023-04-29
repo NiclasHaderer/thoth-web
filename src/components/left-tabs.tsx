@@ -21,7 +21,7 @@ export const LeftTabs: FC<LeftTabsProps> = ({ leftClassname, tabs, className, ri
 
   return (
     <div className={`flex ${className ?? ""}`}>
-      <div className={`min-w-1/4 bg-elevate ${leftClassname ?? ""}`}>
+      <div className={`min-w-1/4 overflow-hidden rounded bg-elevate ${leftClassname ?? ""}`}>
         <ul className="flex flex-col">
           {tabs.map((tab, index) => (
             <li key={index}>

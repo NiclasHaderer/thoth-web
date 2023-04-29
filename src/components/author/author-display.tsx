@@ -18,7 +18,7 @@ export const AuthorDisplay: FC<AuthorProps> = ({ imageID, name, id, className })
           <img
             loading="lazy"
             className="h-52 w-52 cursor-pointer  rounded-full border-2 border-active-light object-cover transition-colors hover:border-primary"
-            src={`${environment.apiURL}/image/${imageID}`}
+            src={`(/api/image/${imageID}`}
             alt="Author"
           />
         ) : (
