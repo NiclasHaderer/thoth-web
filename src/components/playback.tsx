@@ -13,7 +13,7 @@ export const Playback: FC<{ className?: string }> = ({ className }) => {
   const playback = usePlaybackState()
   const track = playback.current
 
-  const [audio] = useAudio(track?.id ? `${environment.apiURL}/audio/${track!.id}` : undefined)
+  const [audio] = useAudio(track?.id ? `/api/audio/${track!.id}` : undefined)
   const [position] = usePosition(audio)
   const duration = useDuration(audio)
   const initialFocus = useRef<HTMLButtonElement | null>(null)
@@ -42,7 +42,7 @@ export const Playback: FC<{ className?: string }> = ({ className }) => {
               className="h-12 w-12 rounded-md md:h-20 md:w-20"
               alt={track.title}
               loading="lazy"
-              src={`${environment.apiURL}/image/${track.coverID}`}
+              src={`/api/image/${track.coverID}`}
             />
           ) : (
             <MdImageNotSupported className="h-10 w-10 rounded-md md:h-20 md:w-20" />

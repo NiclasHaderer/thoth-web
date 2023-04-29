@@ -1,7 +1,7 @@
 import { FC, Fragment, useEffect, useState } from "react"
 import { useHttpRequest } from "@thoth/hooks/async-response"
 import { Api } from "@thoth/client"
-import { MdAutorenew, MdHome } from "react-icons/md"
+import { MdHome } from "react-icons/md"
 import { ColoredButton } from "@thoth/components/colored-button"
 
 export const FolderManager: FC<{
@@ -43,15 +43,6 @@ export const FolderManager: FC<{
                 <span className="flex items-center">/</span>
               </Fragment>
             ))}
-        </div>
-        <div className="flex">
-          <button
-            onClick={() => setCurrentPath(currentPath)}
-            className="flex w-full items-center p-2 hover:bg-active focus:bg-active"
-          >
-            <MdAutorenew className="mr-2" />
-            Refresh
-          </button>
         </div>
       </div>
       <div className={`flex flex-col ${contentClassName ?? ""}`}>

@@ -9,15 +9,15 @@ export function ManagedSelect<T extends any, MULTIPLE extends boolean = false>({
 }: SelectProps<T, MULTIPLE> & {
   name: string
 }) {
-  const field = useField(name)
+  const { value, setValue, setTouched, errors } = useField(name)
 
   return (
     <Select
       {...props}
-      value={field.value}
+      value={value}
       onChange={v => {
-        field.setValue(v as any)
-        field.setTouched(true)
+        setValue(v as any)
+        setTouched(true)
         onChange?.(v)
       }}
     />
