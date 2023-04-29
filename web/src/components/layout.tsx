@@ -3,6 +3,7 @@ import { CHANGE_LAYOUT, useBreakpoint } from "@thoth/hooks/breakpoints"
 import { usePlaybackState } from "@thoth/state/playback.state"
 import { Playback } from "@thoth/components/playback"
 import { FC, PropsWithChildren } from "react"
+import { NoSsr } from "@thoth/components/no-ssr"
 
 export const TopBar = () => <SearchBar />
 
@@ -13,12 +14,15 @@ export const BottomBar = () => {
   const isPlaying = usePlaybackState(state => state.isPlaying)
 
   return (
-    <div>
-      {isPlaying ? (
-        <Playback className={isMD ? "border-b-2 border-solid border-primary border-opacity-25" : ""} />
-      ) : null}
-      {isMD ? <SmallMenu /> : null}
-    </div>
+    <NoSsr>
+      <div>
+        {isPlaying ? (
+          <Playback className={isMD ? "border-b-2 border-solid border-primary border-opacity-25" : ""} />
+        ) : null}
+
+        {isMD ? <SmallMenu /> : null}
+      </div>
+    </NoSsr>
   )
 }
 
