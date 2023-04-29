@@ -46,44 +46,49 @@ export const Input: FC<InputProps> = memo(
     }, [ref, cursor, value])
 
     return (
-      <label className={`flex items-center ${wrapperClassName ?? ""}`}>
-        {label ? <div className={`px-2 ${labelClassName ?? ""}`}>{label}</div> : null}
-        <div className="relative my-2 flex-grow">
-          {icon ? (
-            <div
-              className={`absolute top-1/2 -translate-y-1/2 p-2 ${
-                iconPosition === "left" && icon ? "left-0" : "right-0"
-              }`}
-            >
-              {icon}
-            </div>
-          ) : null}
-          <input
-            onKeyDown={event => {
-              if (event.key === "Enter") {
-                if (preventSubmit) event.preventDefault()
-                if (onEnter) onEnter(event)
-              }
-              if (onKeyDown) onKeyDown(event)
-            }}
-            onChange={event => {
-              if (onValue) onValue(event.target.value)
-              if (onChange) onChange(event)
-              setCursor(event.target.selectionStart)
-            }}
-            placeholder={placeholder}
-            defaultValue={defaultValue ?? undefined}
-            value={value ?? undefined}
-            {...props}
-            ref={instance => {
-              if (inputRef) inputRef.current = instance
-              ref.current = instance
-              return ref
-            }}
-            className={`box-border w-full rounded-md bg-elevate p-2 ${
-              iconPosition === "left" && icon ? "pl-8" : "pr-8"
-            } ${className ?? ""}`}
-          />
+      <>
+        <label className={`flex items-center ${wrapperClassName ?? ""}`}>
+          {label ? <div className={`mt-2 px-2 ${labelClassName ?? ""}`}>{label}</div> : null}
+          <div className="relative mt-2 flex-grow">
+            {icon ? (
+              <div
+                className={`absolute top-1/2 -translate-y-1/2 p-2 ${
+                  iconPosition === "left" && icon ? "left-0" : "right-0"
+                }`}
+              >
+                {icon}
+              </div>
+            ) : null}
+            <input
+              onKeyDown={event => {
+                if (event.key === "Enter") {
+                  if (preventSubmit) event.preventDefault()
+                  if (onEnter) onEnter(event)
+                }
+                if (onKeyDown) onKeyDown(event)
+              }}
+              onChange={event => {
+                if (onValue) onValue(event.target.value)
+                if (onChange) onChange(event)
+                setCursor(event.target.selectionStart)
+              }}
+              placeholder={placeholder}
+              defaultValue={defaultValue ?? undefined}
+              value={value ?? undefined}
+              {...props}
+              ref={instance => {
+                if (inputRef) inputRef.current = instance
+                ref.current = instance
+                return ref
+              }}
+              className={`box-border w-full rounded-md bg-elevate p-2 ${
+                iconPosition === "left" && icon ? "pl-8" : "pr-8"
+              } ${className ?? ""}`}
+            />
+          </div>
+        </label>
+        <div className="flex items-center">
+          <div className={labelClassName}> {"                 "} </div>
           {touched && errors ? (
             <div className="error">
               {errors.map((error, index) => (
@@ -92,7 +97,7 @@ export const Input: FC<InputProps> = memo(
             </div>
           ) : null}
         </div>
-      </label>
+      </>
     )
   }
 )

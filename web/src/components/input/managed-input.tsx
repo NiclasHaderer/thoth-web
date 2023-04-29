@@ -1,8 +1,9 @@
 import { FC } from "react"
 import { Input, InputProps } from "./input"
-import { useFieldUpdater } from "@thoth/hooks/form"
+import { useField, useFieldUpdater } from "@thoth/hooks/form"
 
 export const ManagedInput: FC<{ name: string } & InputProps> = ({ name, ...rest }) => {
   const updater = useFieldUpdater(name)
-  return <Input {...rest} {...updater} />
+  const { errors, touched } = useField(name)
+  return <Input {...rest} {...updater} errors={errors} touched={touched} />
 }

@@ -13,20 +13,25 @@ import { unique } from "@thoth/utils"
 import { MdScan } from "@thoth/components/icons/scan"
 import { FolderManager } from "@thoth/components/file-manager"
 
-export const LibraryDialog: FC<{
+export type LibraryFormValues = {
+  id: string | undefined
+  name: string
+  language: string
+  preferEmbeddedMetadata: boolean
+  folders: string[]
+  metadataScanners: MetadataAgent[]
+  fileScanners: FileScanner[]
+  mode: "create" | "edit"
+}
+
+interface LibraryDialogProps {
   isOpen: boolean
   setIsOpen: (open: boolean) => void
-  form: FormContext<{
-    id: string | undefined
-    name: string
-    language: string
-    preferEmbeddedMetadata: boolean
-    folders: string[]
-    metadataScanners: MetadataAgent[]
-    fileScanners: FileScanner[]
-    mode: "create" | "edit"
-  }>
-}> = ({ isOpen, setIsOpen, form }) => {
+  onSubmit: (values: LibraryFormValues) => void
+  form: FormContext<LibraryFormValues>
+}
+
+export const LibraryDialog: FC<LibraryDialogProps> = ({ isOpen, setIsOpen, form, onSubmit }) => {
   const metadataAgents = useHttpRequest(Api.listMetadataAgents)
   const fileScanners = useHttpRequest(Api.listFileScanners)
   useOnMount(() => {
@@ -40,7 +45,7 @@ export const LibraryDialog: FC<{
       title={form.fields.mode === "create" ? "Create new Library" : "Edit Library"}
       outerDialogClass="h-3/5 w-3/5 !max-w-3/5"
     >
-      <Form form={form}>
+      <Form form={form} onSubmit={onSubmit}>
         <DialogBody>
           <LeftTabs
             rightClassname="h-full"
@@ -63,7 +68,6 @@ export const LibraryDialog: FC<{
                 name="name"
                 icon={<MdLocalLibrary />}
                 placeholder="Enter a name for the library"
-                required
                 autoFocus
               />
 
