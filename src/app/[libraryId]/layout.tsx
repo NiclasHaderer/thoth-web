@@ -4,7 +4,7 @@ import { BottomBar, MainWindow, TopBar } from "@thoth/components/layout"
 import "../../styles/globals.css"
 import "../../styles/reset.css"
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function LibraryLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="h-full">
       <body className="dark-theme h-full bg-surface text-font">
