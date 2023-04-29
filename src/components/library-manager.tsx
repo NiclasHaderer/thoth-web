@@ -6,21 +6,45 @@ import { useHttpRequest } from "@thoth/hooks/async-response"
 import { Api } from "@thoth/client"
 import { useOnMount } from "@thoth/hooks/lifecycle"
 import { FileScanner, MetadataAgent } from "@thoth/models/api-models"
-import { LibraryDialog } from "@thoth/components/library-dialog"
+import { LibraryDialog, LibraryFormValues } from "@thoth/components/library-dialog"
 
 export const LibraryManager = () => {
   const { invoke, error, result: libraries, loading } = useHttpRequest(Api.listLibraries)
   const [isOpen, setIsOpen] = useState(false)
-  const form = useForm({
-    id: undefined as string | undefined,
-    name: "",
-    language: "",
-    preferEmbeddedMetadata: false,
-    folders: [] as string[],
-    metadataScanners: [] as MetadataAgent[],
-    fileScanners: [] as FileScanner[],
-    mode: "create" as "create" | "edit",
-  })
+
+  const onSubmit = async (values: LibraryFormValues) => {
+    setIsOpen(false)
+    if (values.mode === "create") {
+      await Api.createLibrary(values)
+    } else {
+      await Api.updateLibrary(values.id!, values)
+    }
+    invoke()
+  }
+
+  const form = useForm(
+    {
+      id: undefined as string | undefined,
+      name: "",
+      language: "",
+      preferEmbeddedMetadata: false,
+      folders: [] as string[],
+      metadataScanners: [] as MetadataAgent[],
+      fileScanners: [] as FileScanner[],
+      mode: "create" as "create" | "edit",
+    },
+    {
+      validate: {
+        name: (name: string) => name.length > 0 || "Name is required",
+        language: (language: string) => language.length > 0 || "Language is required",
+        folders: (folders: string[]) => folders.length > 0 || "At least one folder is required",
+        metadataScanners: (metadataScanners: MetadataAgent[]) =>
+          metadataScanners.length > 0 || "At least one metadata scanner is required",
+        fileScanners: (fileScanners: FileScanner[]) =>
+          fileScanners.length > 0 || "At least one file scanner is required",
+      },
+    }
+  )
   useOnMount(() => invoke())
 
   return (
@@ -109,7 +133,7 @@ export const LibraryManager = () => {
           Create new Library
         </ColoredButton>
       </div>
-      <LibraryDialog isOpen={isOpen} setIsOpen={setIsOpen} form={form} />
+      <LibraryDialog onSubmit={onSubmit} isOpen={isOpen} setIsOpen={setIsOpen} form={form} />
     </>
   )
 }
