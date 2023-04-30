@@ -25,7 +25,7 @@ export const UserDialog: FC<{
     >
       <Form form={form}>
         <DialogBody>
-          <ManagedInput required={true} name="username" labelClassName="w-28" label="Name" icon={<MdPerson />} />
+          <ManagedInput required={true} name="username" labelClassName="w-28" label="Name" leftIcon={<MdPerson />} />
           <SelectLine
             options={["viewer", "editor", "admin"]}
             title={"Permissions"}

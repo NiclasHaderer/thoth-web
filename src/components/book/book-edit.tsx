@@ -159,18 +159,18 @@ const BookForm = () => {
           </div>
         </div>
         <div>
-          <ManagedInput name="title" labelClassName="w-28" label="Title" icon={<MdSearch />} />
-          <ManagedInput name="author" labelClassName="w-28" label="Author" icon={<MdPerson />} />
-          <ManagedInput name="language" labelClassName="w-28" label="Language" icon={<MdLanguage />} />
-          <ManagedInput name="narrator" labelClassName="w-28" label="Narrator" icon={<MdPerson />} />
-          <ManagedInput name="series" labelClassName="w-28" label="Series" icon={<MdCollectionsBookmark />} />
-          <ManagedInput name="year" labelClassName="w-28" type="number" label="Year" icon={<MdEvent />} />
+          <ManagedInput name="title" labelClassName="w-28" label="Title" leftIcon={<MdSearch />} />
+          <ManagedInput name="author" labelClassName="w-28" label="Author" leftIcon={<MdPerson />} />
+          <ManagedInput name="language" labelClassName="w-28" label="Language" leftIcon={<MdLanguage />} />
+          <ManagedInput name="narrator" labelClassName="w-28" label="Narrator" leftIcon={<MdPerson />} />
+          <ManagedInput name="series" labelClassName="w-28" label="Series" leftIcon={<MdCollectionsBookmark />} />
+          <ManagedInput name="year" labelClassName="w-28" type="number" label="Year" leftIcon={<MdEvent />} />
           <ManagedInput
             name="seriesIndex"
             labelClassName="w-28"
             type="number"
             label="Series Index"
-            icon={<MdFormatListNumbered />}
+            leftIcon={<MdFormatListNumbered />}
           />
         </div>
       </div>

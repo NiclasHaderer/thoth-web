@@ -66,7 +66,7 @@ export const LibraryDialog: FC<LibraryDialogProps> = ({ isOpen, setIsOpen, form,
                 labelClassName="w-28"
                 label="Library name"
                 name="name"
-                icon={<MdLocalLibrary />}
+                leftIcon={<MdLocalLibrary />}
                 placeholder="Enter a name for the library"
                 autoFocus
               />

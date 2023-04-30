@@ -37,8 +37,6 @@ export interface JwtPair {
 }
 
 export interface RegisterUser {
-  admin: boolean
-  edit: boolean
   password: string
   username: string
 }
@@ -60,7 +58,7 @@ export interface JWK {
   use: string
 }
 
-export interface JWKsResponse {
+export interface JWKs {
   keys: Array<JWK>
 }
 
