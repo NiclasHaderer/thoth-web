@@ -56,10 +56,10 @@ export const AuthorForm = () => {
           </div>
         </div>
         <div>
-          <ManagedInput name="name" labelClassName="w-28" label="Name" icon={<MdPerson />} />
-          <ManagedInput name="birthDate" type="date" labelClassName="w-28" label="Born" icon={<MdCelebration />} />
-          <ManagedInput name="deathDate" type="date" labelClassName="w-28" label="Died" icon={<MdDeceased />} />
-          <ManagedInput name="website" labelClassName="w-28" label="Website" icon={<MdAddLink />} />
+          <ManagedInput name="name" labelClassName="w-28" label="Name" leftIcon={<MdPerson />} />
+          <ManagedInput name="birthDate" type="date" labelClassName="w-28" label="Born" leftIcon={<MdCelebration />} />
+          <ManagedInput name="deathDate" type="date" labelClassName="w-28" label="Died" leftIcon={<MdDeceased />} />
+          <ManagedInput name="website" labelClassName="w-28" label="Website" leftIcon={<MdAddLink />} />
         </div>
       </div>
       <label className="flex items-center">

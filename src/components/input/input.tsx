@@ -2,8 +2,8 @@ import React, { FC, KeyboardEvent, memo, MutableRefObject, ReactNode, useEffect,
 
 export type InputProps = Omit<Omit<React.ComponentProps<"input">, "defaultValue">, "value"> & {
   label?: string | undefined
-  icon?: ReactNode | undefined
-  iconPosition?: "left" | "right" | undefined
+  leftIcon?: ReactNode | undefined
+  rightIcon?: ReactNode | undefined
   labelClassName?: string | undefined
   defaultValue?: string | number | ReadonlyArray<string> | undefined | null
   value?: string | ReadonlyArray<string> | number | undefined | null
@@ -18,8 +18,8 @@ export type InputProps = Omit<Omit<React.ComponentProps<"input">, "defaultValue"
 
 export const Input: FC<InputProps> = memo(
   ({
-    iconPosition = "left",
-    icon,
+    leftIcon,
+    rightIcon,
     label,
     wrapperClassName,
     placeholder = label,
@@ -50,15 +50,8 @@ export const Input: FC<InputProps> = memo(
         <label className={`flex items-center ${wrapperClassName ?? ""}`}>
           {label ? <div className={`mt-2 px-2 ${labelClassName ?? ""}`}>{label}</div> : null}
           <div className="relative mt-2 flex-grow">
-            {icon ? (
-              <div
-                className={`absolute top-1/2 -translate-y-1/2 p-2 ${
-                  iconPosition === "left" && icon ? "left-0" : "right-0"
-                }`}
-              >
-                {icon}
-              </div>
-            ) : null}
+            {leftIcon ? <div className={`absolute left-0 top-1/2 -translate-y-1/2 p-2`}>{leftIcon}</div> : null}
+            {rightIcon ? <div className={`absolute right-0 top-1/2 -translate-y-1/2 p-2`}>{rightIcon}</div> : null}
             <input
               onKeyDown={event => {
                 if (event.key === "Enter") {
@@ -81,8 +74,8 @@ export const Input: FC<InputProps> = memo(
                 ref.current = instance
                 return ref
               }}
-              className={`box-border w-full rounded-md bg-elevate p-2 ${
-                iconPosition === "left" && icon ? "pl-8" : "pr-8"
+              className={`box-border w-full rounded-md bg-elevate p-2 ${leftIcon !== undefined && "pl-8"} ${
+                rightIcon !== undefined && "pr-8"
               } ${className ?? ""}`}
             />
           </div>

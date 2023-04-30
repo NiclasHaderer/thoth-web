@@ -112,8 +112,8 @@ const SeriesForm = () => {
 
   return (
     <>
-      <ManagedInput name="title" labelClassName="w-28" label="Title" icon={<MdSearch />} />
-      <ManagedInput name="authors" labelClassName="w-28" label="Author" icon={<MdPerson />} />
+      <ManagedInput name="title" labelClassName="w-28" label="Title" leftIcon={<MdSearch />} />
+      <ManagedInput name="authors" labelClassName="w-28" label="Author" leftIcon={<MdPerson />} />
 
       <label className="flex items-center">
         <HtmlEditor
