@@ -1,12 +1,13 @@
 "use client"
-import { MdLock, MdPerson } from "react-icons/md"
-import React, { FC } from "react"
+import { MdLock, MdPerson, MdVisibility, MdVisibilityOff } from "react-icons/md"
+import React, { FC, useState } from "react"
 import { ColoredButton } from "@thoth/components/colored-button"
 import Link from "next/link"
 import { Form, useForm } from "@thoth/hooks/form"
 import { Api } from "@thoth/client"
 import { Logo } from "@thoth/components/icons/logo"
 import { ManagedInput } from "@thoth/components/input/managed-input"
+import { IoMdEye } from "react-icons/all"
 
 export const LoginRegister: FC<{ type: "register" | "login" }> = ({ type }) => {
   const form = useForm(
@@ -21,6 +22,7 @@ export const LoginRegister: FC<{ type: "register" | "login" }> = ({ type }) => {
       },
     }
   )
+  const [passwordVisible, setPasswordVisible] = useState(false)
 
   const login = async (values: (typeof form)["fields"]) => {
     const jwt = await Api.loginUser(values)
@@ -30,8 +32,6 @@ export const LoginRegister: FC<{ type: "register" | "login" }> = ({ type }) => {
   const register = async (values: (typeof form)["fields"]) => {
     await Api.registerUser({
       ...values,
-      admin: false,
-      edit: false,
     })
     const jwt = await Api.loginUser(values)
     console.log(jwt)
@@ -62,15 +62,29 @@ export const LoginRegister: FC<{ type: "register" | "login" }> = ({ type }) => {
             labelClassName="w-28"
             className="bg-elevate-2"
             label="Username"
-            icon={<MdPerson />}
+            leftIcon={<MdPerson />}
             autoFocus={true}
           />
           <ManagedInput
             name="password"
+            type={passwordVisible ? "text" : "password"}
             labelClassName="w-28"
             className="bg-elevate-2"
             label="Password"
-            icon={<MdLock />}
+            leftIcon={<MdLock />}
+            rightIcon={
+              <button
+                type="button"
+                className="my-2 ml-2 block h-full"
+                onClick={e => {
+                  setPasswordVisible(prev => !prev)
+                  // This fixes the same event being picked up twice
+                  if (e.target === e.currentTarget) setPasswordVisible(prev => !prev)
+                }}
+              >
+                {passwordVisible ? <MdVisibilityOff /> : <MdVisibility />}
+              </button>
+            }
           />
           <div className="flex justify-between">
             <Link href={type === "login" ? "/register" : "/login"}>
