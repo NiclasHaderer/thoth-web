@@ -11,7 +11,7 @@ import type {
   DetailedSeriesModel,
   FileScanner,
   FileSystemItem,
-  JWKsResponse,
+  JWKs,
   JwtPair,
   LibraryApiModel,
   LibraryModel,
@@ -131,7 +131,7 @@ export const Api = {
     const __finalUrl = `/api/auth/register`
     return __request(__finalUrl, "POST", "json", headers, body, interceptors)
   },
-  retrieveJwks(headers: HeadersInit = {}, interceptors?: ApiInterceptor[]): Promise<ApiResponse<JWKsResponse>> {
+  retrieveJwks(headers: HeadersInit = {}, interceptors?: ApiInterceptor[]): Promise<ApiResponse<JWKs>> {
     const __finalUrl = `/api/auth/.well-known/jwks.json`
     return __request(__finalUrl, "GET", "json", headers, undefined, interceptors)
   },
@@ -170,10 +170,11 @@ export const Api = {
   },
   listFoldersAtACertainPath(
     path: string,
+    showHidden?: boolean,
     headers: HeadersInit = {},
     interceptors?: ApiInterceptor[]
   ): Promise<ApiResponse<FileSystemItem[]>> {
-    const __finalUrl = __createUrl(`/api/fs`, { path })
+    const __finalUrl = __createUrl(`/api/fs`, { path, showHidden })
     return __request(__finalUrl, "GET", "json", headers, undefined, interceptors)
   },
   listLibraries(headers: HeadersInit = {}, interceptors?: ApiInterceptor[]): Promise<ApiResponse<LibraryModel[]>> {
