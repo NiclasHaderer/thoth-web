@@ -10,14 +10,9 @@ import {
 } from "react-icons/md"
 
 const TextStyle: FC<{ editor: Editor }> = ({ editor }) => {
-  const textStyleOptions = [
-    { value: "Paragraph" },
-    { value: "Heading 1" },
-    { value: "Heading 2" },
-    { value: "Heading 3" },
-  ] as const
+  const textStyleOptions = ["Paragraph", "Heading 1", "Heading 2", "Heading 3"] as const
 
-  const applyTextStyle = (value: (typeof textStyleOptions)[number]["value"]) => {
+  const applyTextStyle = (value: (typeof textStyleOptions)[number]) => {
     switch (value) {
       case "Paragraph":
         editor.chain().focus().setParagraph().run()
@@ -34,7 +29,7 @@ const TextStyle: FC<{ editor: Editor }> = ({ editor }) => {
     }
   }
 
-  const getSelectedTextStyle = (): (typeof textStyleOptions)[number]["value"] => {
+  const getSelectedTextStyle = (): (typeof textStyleOptions)[number] => {
     const headingAttributes = editor.getAttributes("heading")
     if (headingAttributes.level) {
       if (headingAttributes.level === 1) {
