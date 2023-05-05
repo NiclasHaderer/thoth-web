@@ -8,6 +8,7 @@ import { Api } from "@thoth/client"
 import { Logo } from "@thoth/components/icons/logo"
 import { ManagedInput } from "@thoth/components/input/managed-input"
 import { useAuthState } from "@thoth/state/auth.state"
+import { useRouter } from "next/navigation"
 
 export const LoginRegister: FC<{ type: "register" | "login" }> = ({ type }) => {
   const form = useForm(
@@ -24,6 +25,7 @@ export const LoginRegister: FC<{ type: "register" | "login" }> = ({ type }) => {
   )
   const [passwordVisible, setPasswordVisible] = useState(false)
   const userState = useAuthState()
+  const router = useRouter()
 
   const login = async (values: (typeof form)["fields"]) => {
     const jwt = await Api.loginUser(values)
@@ -32,7 +34,7 @@ export const LoginRegister: FC<{ type: "register" | "login" }> = ({ type }) => {
       return
     }
     userState.login(jwt.body.access, jwt.body.refresh)
-    location.href = "/"
+    router.push("/")
   }
 
   const register = async (values: (typeof form)["fields"]) => {
@@ -51,7 +53,7 @@ export const LoginRegister: FC<{ type: "register" | "login" }> = ({ type }) => {
       return
     }
     userState.login(jwt.body.access, jwt.body.refresh)
-    location.href = "/"
+    router.push("/")
   }
 
   return (
