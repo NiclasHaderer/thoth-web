@@ -1,235 +1,26 @@
-import { create, Mutate, StoreApi, StoreMutatorIdentifier } from "zustand"
+import { create } from "zustand"
 import { combine } from "zustand/middleware"
-import { unstable_batchedUpdates } from "react-dom"
-import { insertAtPosition, replaceRangeInList, toIdRecord } from "../utils/utils"
 import {
-  ApiResponse,
+  Api,
   AuthorModel,
   BookModel,
   DetailedAuthorModel,
   DetailedBookModel,
   DetailedSeriesModel,
   LibraryModel,
-  PaginatedResponse,
-  Position,
   SeriesModel,
   UUID,
 } from "@thoth/client"
-import { WebsocketConnection } from "@thoth/websocket"
-import { ChangeEvent } from "@thoth/models/ws"
-import { Api } from "@thoth/client"
-
-const wrapFetch = <K extends "author" | "series" | "book">(
-  mutate: Mutate<StoreApi<INITIAL_STATE>, [StoreMutatorIdentifier, unknown][]>,
-  key: K,
-  fetchFunction: (
-    libraryId: UUID,
-    offset?: number,
-    limit?: number
-  ) => Promise<ApiResponse<PaginatedResponse<INITIAL_STATE["content"][UUID][`${K}Map`][string]>>>
-) => {
-  return async (libraryId: UUID, offset: number) => {
-    const limit = 30
-    const offsetCount = offset * limit
-    const response = await fetchFunction(libraryId, offsetCount, limit)
-    if (!response.success) return
-    mutate.setState(state => ({
-      ...state,
-      content: {
-        ...state.content,
-        [libraryId]: {
-          ...state.content[libraryId],
-          [`${key}Total`]: response.body.total,
-          [`${key}Map`]: {
-            ...state.content[libraryId][`${key}Map`],
-            ...toIdRecord(response.body.items),
-          },
-          [`${key}Sorting`]: replaceRangeInList(
-            state.content[libraryId][`${key}Sorting`],
-            offsetCount,
-            response.body.items
-          ),
-        },
-      },
-    }))
-  }
-}
-
-const wrapUpdate = <K extends "author" | "series" | "book", UPDATE_TYPE>(
-  mutate: Mutate<StoreApi<INITIAL_STATE>, [StoreMutatorIdentifier, unknown][]>,
-  key: K,
-  updateFunction: (
-    libraryId: UUID,
-    authorId: UUID,
-    data: UPDATE_TYPE
-  ) => Promise<ApiResponse<INITIAL_STATE["content"][UUID][`${K}Map`][string]>>
-) => {
-  return async (libraryId: UUID, authorId: UUID, data: UPDATE_TYPE) => {
-    const response = await updateFunction(libraryId, authorId, data)
-    if (!response.success) return
-    mutate.setState(state => ({
-      ...state,
-      content: {
-        ...state.content,
-        [libraryId]: {
-          ...state.content[libraryId],
-          [`${key}Map`]: {
-            ...state.content[libraryId][`${key}Map`],
-            [response.body.id]: {
-              ...state.content[libraryId][`${key}Map`][authorId],
-              ...response.body,
-            },
-          },
-        },
-      },
-    }))
-  }
-}
-
-const wrapSorting = <K extends "author" | "series" | "book">(
-  mutate: Mutate<StoreApi<INITIAL_STATE>, [StoreMutatorIdentifier, unknown][]>,
-  key: K,
-  sortingFunction: (libraryId: UUID, offset: number, limit: number) => Promise<ApiResponse<string[]>>
-) => {
-  return async (libraryId: UUID, offset: number) => {
-    const limit = 30
-    const offsetCount = offset * limit
-    const response = await sortingFunction(libraryId, offsetCount, limit)
-    if (!response.success) return
-
-    mutate.setState(state => ({
-      ...state,
-      content: {
-        ...state.content,
-
-        [libraryId]: {
-          ...state.content[libraryId],
-          [`${key}Sorting`]: replaceRangeInList(state.content[libraryId][`${key}Sorting`], offsetCount, response.body),
-        },
-      },
-    }))
-  }
-}
-
-const wrapDetails = <K extends "author" | "series" | "book">(
-  mutate: Mutate<StoreApi<INITIAL_STATE>, [StoreMutatorIdentifier, unknown][]>,
-  key: K,
-  detailsFunction: (
-    libraryId: UUID,
-    id: UUID
-  ) => Promise<ApiResponse<INITIAL_STATE["content"][UUID][`${K}Map`][string]>>
-) => {
-  return async (libraryId: UUID, id: UUID) => {
-    const response = await detailsFunction(libraryId, id)
-    if (!response.success) return
-    mutate.setState(state => ({
-      ...state,
-      content: {
-        ...state.content,
-        [libraryId]: {
-          ...state.content[libraryId],
-          [`${key}Map`]: {
-            ...state.content[libraryId][`${key}Map`],
-            [id]: response.body,
-          },
-        },
-      },
-    }))
-  }
-}
-
-const wrapClear = <K extends "author" | "series" | "book">(
-  mutate: Mutate<StoreApi<INITIAL_STATE>, [StoreMutatorIdentifier, unknown][]>,
-  key: K
-) => {
-  return (libraryId: UUID) => {
-    mutate.setState(state => ({
-      ...state,
-      content: {
-        ...state.content,
-        [libraryId]: {
-          ...state.content[libraryId],
-          [`${key}Map`]: {},
-          [`${key}Sorting`]: [],
-          [`${key}Total`]: 0,
-        },
-      },
-    }))
-  }
-}
-
-const wrapSortingOf = <K extends "author" | "series" | "book">(
-  mutate: Mutate<StoreApi<INITIAL_STATE>, [StoreMutatorIdentifier, unknown][]>,
-  key: K,
-  sortingFunction: (libraryId: UUID, id: UUID) => Promise<ApiResponse<Position>>
-) => {
-  return async (libraryId: UUID, id: UUID) => {
-    const response = await sortingFunction(libraryId, id)
-    if (!response.success) return
-    mutate.setState(state => ({
-      ...state,
-      content: {
-        ...state.content,
-        [libraryId]: {
-          ...state.content[libraryId],
-          [`${key}Sorting`]: insertAtPosition(state.content[libraryId][`${key}Sorting`], id, response.body.sortIndex),
-        },
-      },
-    }))
-  }
-}
-
-const wrapWs = <K extends "author" | "series" | "book">(
-  mutate: Mutate<StoreApi<INITIAL_STATE>, [StoreMutatorIdentifier, unknown][]>,
-  key: K,
-  updateDetails: (libraryId: UUID, id: UUID) => Promise<void>,
-  updateSorting: (libraryId: UUID, id: UUID) => Promise<void>,
-  ws?: WebsocketConnection<ChangeEvent>
-): undefined => {
-  if (!ws) return undefined
-
-  const handleRemove = (libraryId: UUID, id: UUID) => {
-    const state = mutate.getState()
-    if (!(id in state.content[libraryId][`${key}Map`]) && !state.content[libraryId][`${key}Sorting`].includes(id))
-      return
-
-    const newMappingState = { ...state.content[libraryId][`${key}Map`] }
-    delete newMappingState[id]
-
-    mutate.setState(state => ({
-      ...state,
-      content: {
-        ...state.content,
-        [libraryId]: {
-          ...state.content[libraryId],
-          [`${key}Mapping`]: newMappingState,
-          [`${key}Sorting`]: state.content[libraryId][`${key}Sorting`].filter(i => i !== id),
-        },
-      },
-    }))
-  }
-
-  const handleUpsert = async (libraryId: UUID, id: UUID) => {
-    await updateDetails(libraryId, id)
-    await updateSorting(libraryId, id)
-  }
-
-  ws.onMessage(m =>
-    unstable_batchedUpdates(async () => {
-      if (m.type === "Removed") {
-        handleRemove(m.libraryId, m.id)
-      } else {
-        await handleUpsert(m.libraryId, m.id)
-      }
-    })
-  )
-  return undefined
-}
-
-const INITIAL_STATE = {
-  libraryMap: {} as Record<UUID, LibraryModel>,
-  selectedLibraryId: undefined as UUID | undefined,
-} as {
+import {
+  wrapClear,
+  wrapDetails,
+  wrapFetch,
+  wrapSorting,
+  wrapSortingOf,
+  wrapUpdate,
+  wrapWs,
+} from "@thoth/state/audiobook.utils"
+export type AudiobookState = {
   content: {
     [libraryId: UUID]: {
       authorMap: Record<string, AuthorModel | DetailedAuthorModel>
@@ -243,10 +34,15 @@ const INITIAL_STATE = {
       bookTotal: number
     }
   }
-  libraryMap: Record<UUID, LibraryModel>
+  libraryMap: Record<string, LibraryModel>
+  librarySorting: string[]
+  libraryTotal: number
   selectedLibraryId?: UUID
 }
-type INITIAL_STATE = typeof INITIAL_STATE
+
+const INITIAL_STATE = {
+  selectedLibraryId: undefined as UUID | undefined,
+} as AudiobookState
 
 export const useAudiobookState = create(
   combine(INITIAL_STATE, (_, __, mutate) => ({
@@ -292,7 +88,12 @@ export const useAudiobookState = create(
       wrapSortingOf(mutate, "book", Api.getBookPosition),
       undefined
     ),
+    // TODO Library
+    // fetchLibraries: wrapFetch(mutate, "library", Api.listLibraries),
+    // updateLibrary: wrapUpdate(mutate, "library", Api.updateLibrary),
+    // fetchLibrarySorting: wrapSorting(mutate, "library", Api.listLibrarySorting),
+    // fetchLibraryDetails: wrapDetails(mutate, "library", Api.getLibrary),
+    // updateSortingOfLibrary: wrapSortingOf(mutate, "library", Api.getLibraryPosition),
+    // clearLibrary: wrapClear(mutate, "library"),
   }))
 )
-
-export type AudiobookState = ReturnType<(typeof useAudiobookState)["getState"]>

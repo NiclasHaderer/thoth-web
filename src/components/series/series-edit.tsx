@@ -37,7 +37,7 @@ export const SeriesEdit: React.FC<{ series: DetailedSeriesModel; seriesId: UUID 
   const [isOpen, setIsOpen] = useState(false)
   const [series, setSeries] = useState(toPatchSeries(_seriesProp))
   const [selectedTabIndex, setSelectedTabIndex] = useState(0)
-  const updateSeries = useAudiobookState(AudiobookSelectors.updateSeries)
+  const updateSeries = useAudiobookState(s => s.updateSeries)
   const libraryId = useAudiobookState(AudiobookSelectors.selectedLibraryId)!
   const form = useForm(series)
 

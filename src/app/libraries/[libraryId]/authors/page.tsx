@@ -1,30 +1,30 @@
 "use client"
 
+import { UUID } from "@thoth/client"
 import { useAudiobookState } from "@thoth/state/audiobook.state"
 import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
-import React, { useRef } from "react"
+import { useRef } from "react"
 import { useScrollTo } from "@thoth/hooks/scroll-to-top"
 import { useInfinityScroll } from "@thoth/hooks/infinity-scroll"
 import { ResponsiveGrid } from "@thoth/components/responsive-grid"
 import { CleanIfNotVisible } from "@thoth/components/clean-if-not-visible"
-import { BookDisplay } from "@thoth/components/book/book"
-import { UUID } from "@thoth/client"
+import { AuthorDisplay } from "@thoth/components/author/author-display"
 
-export default function BookListOutlet({ params: { libraryId } }: { params: { libraryId: UUID } }) {
-  const getBooks = useAudiobookState(AudiobookSelectors.fetchBooks)
+export default function AuthorListOutlet({ params: { libraryId } }: { params: { libraryId: UUID } }) {
+  const getAuthors = useAudiobookState(s => s.fetchAuthors)
   const loading = useRef<HTMLDivElement>(null)
   useScrollTo("main")
-  useInfinityScroll(loading.current, offset => getBooks(libraryId, offset))
-  const books = useAudiobookState(AudiobookSelectors.selectBooks(libraryId))
-  const bookCount = useAudiobookState(AudiobookSelectors.selectBookCount(libraryId))
+  useInfinityScroll(loading.current, index => getAuthors(libraryId, index))
 
+  const authors = useAudiobookState(AudiobookSelectors.selectAuthors(libraryId))
+  const authorCount = useAudiobookState(AudiobookSelectors.selectAuthorCount(libraryId))
   return (
     <>
-      {bookCount != null ? <h2 className="p-2 pb-6 text-2xl">{bookCount} Books</h2> : null}
+      {authorCount != null ? <h2 className="p-2 pb-6 text-2xl">{authorCount} Authors</h2> : null}
       <ResponsiveGrid>
-        {books.map((book, k) => (
+        {authors.map((author, k) => (
           <CleanIfNotVisible key={k}>
-            <BookDisplay {...book} />
+            <AuthorDisplay {...author} />
           </CleanIfNotVisible>
         ))}
         <div className="min-w-full text-center opacity-0" ref={loading}>

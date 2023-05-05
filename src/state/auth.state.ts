@@ -1,6 +1,6 @@
 import { ExtractAtKey } from "@thoth/models/types"
 import { create } from "zustand"
-import { combine } from "zustand/middleware"
+import { combine, createJSONStorage, persist } from "zustand/middleware"
 import { decodeJWT, Jwt } from "@thoth/utils/jwt"
 
 export type AuthState =
@@ -20,21 +20,26 @@ const INITIAL_USER_STATE: AuthState = {
 }
 
 export const useAuthState = create(
-  combine(INITIAL_USER_STATE as AuthState, (set, get) => ({
-    login: (accessToken: string, refreshToken: string) => {
-      const state = get()
-      const decodedAccessToken = decodeJWT(accessToken) as ExtractAtKey<Jwt, "payload", { type: "access" }>
-      const decodedRefreshToken = decodeJWT(refreshToken) as ExtractAtKey<Jwt, "payload", { type: "refresh" }>
-      set({
-        loggedIn: true,
-        accessToken,
-        refreshToken,
-        decodedAccessToken,
-        decodedRefreshToken,
-      })
-    },
-    logout: () => {
-      set(INITIAL_USER_STATE)
-    },
-  }))
+  persist(
+    combine(INITIAL_USER_STATE as AuthState, (set, get) => ({
+      login: (accessToken: string, refreshToken: string) => {
+        const state = get()
+        const decodedAccessToken = decodeJWT(accessToken) as ExtractAtKey<Jwt, "payload", { type: "access" }>
+        const decodedRefreshToken = decodeJWT(refreshToken) as ExtractAtKey<Jwt, "payload", { type: "refresh" }>
+        set({
+          loggedIn: true,
+          accessToken,
+          refreshToken,
+          decodedAccessToken,
+          decodedRefreshToken,
+        })
+      },
+      logout: () => {
+        set(INITIAL_USER_STATE)
+      },
+    })),
+    {
+      name: "auth",
+    }
+  )
 )

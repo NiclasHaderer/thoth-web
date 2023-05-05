@@ -1,7 +1,11 @@
+"use client"
+
+import { AuthState, useAuthState } from "@thoth/state/auth.state"
+import { useRouter } from "next/navigation"
+
 export default function IndexOutlet() {
-  return (
-    <div>
-      <h1>Index Outlet</h1>
-    </div>
-  )
+  const auth = useAuthState() as AuthState
+  const router = useRouter()
+  router.push("/libraries")
+  return <></>
 }

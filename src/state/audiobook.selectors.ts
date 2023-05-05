@@ -6,6 +6,7 @@ export const AudiobookSelectors = {
   selectedLibraryContent: (state: AudiobookState) => state.content[state.selectedLibraryId!],
   selectedLibrary: (state: AudiobookState) => state.libraryMap[state.selectedLibraryId!],
   selectedLibraryId: (state: AudiobookState) => state.selectedLibraryId,
+  libraries: (state: AudiobookState) => Object.values(state.libraryMap),
 
   // Books
   selectBooks: (libraryId: UUID | undefined) => {
@@ -27,10 +28,6 @@ export const AudiobookSelectors = {
       return state.content[libraryId!].bookMap[id!]
     }
   },
-  fetchBookDetails: (state: AudiobookState) => state.fetchBookDetails,
-  fetchBooks: (state: AudiobookState) => state.fetchBooks,
-  updateBook: (state: AudiobookState) => state.updateBook,
-  fetchBooksSorting: (state: AudiobookState) => state.fetchBookSorting,
 
   // Authors
   selectAuthors: (libraryId: UUID | undefined) => {
@@ -45,7 +42,6 @@ export const AudiobookSelectors = {
       return state.content[libraryId!].authorTotal
     }
   },
-  updateAuthor: (state: AudiobookState) => state.updateAuthor,
   selectAuthor: (libraryId: UUID | undefined, id: UUID | undefined) => {
     return (state: AudiobookState) => {
       if (!(libraryId! in state.libraryMap)) return null
@@ -53,9 +49,6 @@ export const AudiobookSelectors = {
       return state.content[libraryId!].authorMap[id!]
     }
   },
-  fetchAuthorDetails: (state: AudiobookState) => state.fetchAuthorDetails,
-  fetchAuthors: (state: AudiobookState) => state.fetchAuthors,
-  fetchAuthorSorting: (state: AudiobookState) => state.fetchAuthorSorting,
 
   // Series
   selectSeriesList: (libraryId: UUID | undefined) => {
@@ -70,7 +63,6 @@ export const AudiobookSelectors = {
       return state.content[libraryId!].seriesTotal
     }
   },
-  updateSeries: (state: AudiobookState) => state.updateSeries,
   selectSeries: (libraryId: UUID | undefined, id: UUID | undefined) => {
     return (state: AudiobookState) => {
       if (!(libraryId! in state.libraryMap)) return null
@@ -78,7 +70,4 @@ export const AudiobookSelectors = {
       return state.content[libraryId!].seriesMap[id!]
     }
   },
-  fetchSeriesDetails: (state: AudiobookState) => state.fetchSeriesDetails,
-  fetchSeries: (state: AudiobookState) => state.fetchSeries,
-  fetchSeriesSorting: (state: AudiobookState) => state.fetchSeriesSorting,
 }
