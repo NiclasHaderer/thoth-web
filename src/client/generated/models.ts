@@ -12,17 +12,13 @@ export type ApiSuccess<T> = {
 export type ApiResponse<T> = ApiError | ApiSuccess<T>
 
 export type ApiCallData = {
+  requiresAuth: boolean
   route: string
   method: string
   body?: object
   headers: Headers
   bodySerializer: (body?: object) => string | undefined
-  executor: (
-    route: string,
-    method: string,
-    headers: Headers,
-    body: string | undefined
-  ) => Promise<Response | ApiResponse<any>>
+  executor: (callData: ApiCallData) => Promise<Response | ApiResponse<any>>
 }
 
 export type ApiInterceptor = (param: ApiCallData) => ApiCallData

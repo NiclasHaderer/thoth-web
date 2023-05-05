@@ -1,6 +1,6 @@
 import { FC } from "react"
 import { Form, FormContext } from "@thoth/hooks/form"
-import { FileScanner, MetadataAgent } from "@thoth/models/api-models"
+import { FileScanner, MetadataAgent } from "@thoth/client"
 import { useHttpRequest } from "@thoth/hooks/async-response"
 import { Api } from "@thoth/client"
 import { useOnMount } from "@thoth/hooks/lifecycle"

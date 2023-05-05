@@ -1,12 +1,13 @@
 import React, { FC, useState } from "react"
 import { MdSearch } from "react-icons/md"
-import { MetadataAuthor } from "@thoth/models/api-models"
+import { Api, MetadataAuthor } from "@thoth/client"
 import { useHttpRequest } from "@thoth/hooks/async-response"
-import { Api } from "@thoth/client"
 import { Input } from "@thoth/components/input/input"
 import { ColoredButton } from "@thoth/components/colored-button"
 import { LoadingCards } from "@thoth/components/loading-card"
 import { ResponsiveImage } from "@thoth/components/responsive-image"
+import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
+import { useAudiobookState } from "@thoth/state/audiobook.state"
 
 export const AuthorSearch: FC<{
   author?: string | null | undefined
@@ -14,11 +15,12 @@ export const AuthorSearch: FC<{
 }> = ({ select, author: _author }) => {
   const [author, setAuthor] = useState(_author)
 
+  const library = useAudiobookState(AudiobookSelectors.selectedLibrary)
   const { result, loading, invoke } = useHttpRequest(Api.searchAuthorMetadata)
 
   const search = async () => {
     if (!author) return
-    invoke(author)
+    invoke(author, library.language)
   }
 
   return (

@@ -5,7 +5,7 @@ import {
   DetailedBookModel,
   DetailedSeriesModel,
   SeriesModel,
-} from "./api-models"
+} from "../client"
 
 export const isDetailedAuthor = (author: AuthorModel | DetailedAuthorModel): author is DetailedAuthorModel =>
   "books" in author

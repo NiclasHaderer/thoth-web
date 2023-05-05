@@ -7,7 +7,7 @@ import { useInfinityScroll } from "@thoth/hooks/infinity-scroll"
 import { ResponsiveGrid } from "@thoth/components/responsive-grid"
 import { CleanIfNotVisible } from "@thoth/components/clean-if-not-visible"
 import { SeriesDisplay } from "@thoth/components/series/series"
-import { UUID } from "@thoth/models/api-models"
+import { UUID } from "@thoth/client"
 
 export default function SeriesListOutlet({ params: { libraryId } }: { params: { libraryId: UUID } }) {
   const getSeries = useAudiobookState(AudiobookSelectors.fetchSeries)
