@@ -42,6 +42,10 @@ export type AudiobookState = {
 
 const INITIAL_STATE = {
   selectedLibraryId: undefined as UUID | undefined,
+  content: {},
+  libraryMap: {},
+  librarySorting: [],
+  libraryTotal: 0,
 } as AudiobookState
 
 export const useAudiobookState = create(

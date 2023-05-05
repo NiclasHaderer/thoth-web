@@ -1,25 +1,26 @@
 import { Listbox, Transition } from "@headlessui/react"
 import React, { Fragment, useEffect, useState } from "react"
 import { MdDone } from "react-icons/md"
+import { read } from "fs"
 
-type SelectValue<T> =
-  | {
-      value: T
-      label?: string
-      disabled?: boolean
-    }
-  | T
+type SelectValue<T> = {
+  value: T
+  label?: string
+  disabled?: boolean
+}
+
+type ExtractedSelectValue<T> = T extends SelectValue<infer U> ? SelectValue<U> : T
 
 export type SelectProps<T extends any, MULTIPLE extends boolean = false> = {
-  options: readonly SelectValue<T>[]
+  options: readonly SelectValue<T>[] | readonly T[]
   title: string
-  displayValue?: (v: SelectValue<T>) => string
+  displayValue?: (v: ExtractedSelectValue<T>) => string
   disabled?: boolean
   vDir?: "top" | "bottom"
   hDir?: "right" | "left"
-  value?: MULTIPLE extends true ? SelectValue<T>[] : SelectValue<T>
+  value?: MULTIPLE extends true ? SelectValue<T>[] | T[] : SelectValue<T> | T
   multiple?: MULTIPLE
-  onChange?: (v: MULTIPLE extends true ? SelectValue<T>[] : SelectValue<T>) => void
+  onChange?: (v: MULTIPLE extends true ? ExtractedSelectValue<T>[] : ExtractedSelectValue<T>) => void
   outerClassName?: string
   placeholderButtonClassName?: string
   placeholderClassName?: string
@@ -28,18 +29,18 @@ export type SelectProps<T extends any, MULTIPLE extends boolean = false> = {
 }
 
 const getSelectedValue = <T extends any>(
-  options: readonly SelectValue<T>[],
-  value: SelectValue<T> | undefined | SelectValue<T>[],
+  options: readonly (SelectValue<T> | T)[],
+  value: SelectValue<T> | T | undefined | (SelectValue<T> | T)[],
   multiple: boolean | undefined
 ) => {
-  const getValue = (value: SelectValue<T>) => {
+  const getValue = (value: SelectValue<T> | T) => {
     if (typeof value === "object" && value !== null && "value" in value) {
       return value.value
     }
     return value
   }
 
-  const areEqual = (a: SelectValue<T>, b: SelectValue<T>) => {
+  const areEqual = (a: SelectValue<T> | T, b: SelectValue<T> | T) => {
     return getValue(a) === getValue(b)
   }
 
@@ -72,13 +73,13 @@ export function Select<T extends any, MULTIPLE extends boolean = false>({
   outerClassName,
   onChange,
   multiple,
-  displayValue = (v: SelectValue<T>) => v?.toString() ?? "",
+  displayValue = (v: ExtractedSelectValue<T>) => v?.toString() ?? "",
 }: SelectProps<T, MULTIPLE>) {
-  const toDisplayValue = (value: SelectValue<T>): string => {
+  const toDisplayValue = (value: SelectValue<T> | T): string => {
     if (typeof value === "object" && value !== null && "label" in value && value.label) {
       return value.label
     } else {
-      return displayValue(value)
+      return displayValue(value as ExtractedSelectValue<T>)
     }
   }
 
@@ -94,7 +95,7 @@ export function Select<T extends any, MULTIPLE extends boolean = false>({
       value={selected ?? null}
       onChange={value => {
         setSelected(value)
-        onChange?.(value as MULTIPLE extends true ? T[] : T)
+        onChange?.(value as any)
       }}
       multiple={multiple}
       as="div"
