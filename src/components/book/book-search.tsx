@@ -22,7 +22,7 @@ export const BookSearch: React.FC<{
 
   const search = () => {
     if (!book) return
-    invoke(book, authors, library.language)
+    invoke(book, library.language, authors)
   }
 
   return (
