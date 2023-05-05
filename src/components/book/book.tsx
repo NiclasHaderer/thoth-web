@@ -1,6 +1,6 @@
 import React from "react"
 import { MdImageNotSupported } from "react-icons/md"
-import { NamedId } from "@thoth/models/api-models"
+import { NamedId } from "@thoth/client"
 import Link from "next/link"
 
 interface BookProps {

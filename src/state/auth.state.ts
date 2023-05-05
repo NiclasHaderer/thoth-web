@@ -3,7 +3,7 @@ import { create } from "zustand"
 import { combine } from "zustand/middleware"
 import { decodeJWT, Jwt } from "@thoth/utils/jwt"
 
-type UserState =
+export type AuthState =
   | {
       loggedIn: false
     }
@@ -15,12 +15,12 @@ type UserState =
       decodedRefreshToken: ExtractAtKey<Jwt, "payload", { type: "refresh" }>
     }
 
-const INITIAL_USER_STATE: UserState = {
+const INITIAL_USER_STATE: AuthState = {
   loggedIn: false,
 }
 
-export const useUserState = create(
-  combine(INITIAL_USER_STATE as UserState, (set, get) => ({
+export const useAuthState = create(
+  combine(INITIAL_USER_STATE as AuthState, (set, get) => ({
     login: (accessToken: string, refreshToken: string) => {
       const state = get()
       const decodedAccessToken = decodeJWT(accessToken) as ExtractAtKey<Jwt, "payload", { type: "access" }>

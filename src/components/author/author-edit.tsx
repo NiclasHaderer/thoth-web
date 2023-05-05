@@ -7,7 +7,7 @@ import { AuthorSearch } from "./author-search"
 import { AuthorForm } from "./author-form"
 import { Form, useForm } from "../../hooks/form"
 import { toFormDate } from "../../utils/utils"
-import { AuthorApiModel, MetadataAuthor, UUID } from "@thoth/models/api-models"
+import { AuthorApiModel, MetadataAuthor, UUID } from "@thoth/client"
 import { ColoredButton } from "@thoth/components/colored-button"
 import { Dialog, DialogActions, DialogBody, DialogButtons, DialogContent } from "@thoth/components/dialog"
 

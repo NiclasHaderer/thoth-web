@@ -1,11 +1,13 @@
 import React, { memo, useState } from "react"
 import { MdSearch } from "react-icons/md"
 import { useHttpRequest } from "../../hooks/async-response"
-import { MetadataBook } from "@thoth/models/api-models"
+import { MetadataBook } from "@thoth/client"
 import { Api } from "@thoth/client"
 import { Input } from "@thoth/components/input/input"
 import { ColoredButton } from "@thoth/components/colored-button"
 import { LoadingCards } from "@thoth/components/loading-card"
+import { useAudiobookState } from "@thoth/state/audiobook.state"
+import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
 
 export const BookSearch: React.FC<{
   authors?: string[] | null | undefined
@@ -14,12 +16,13 @@ export const BookSearch: React.FC<{
 }> = ({ book: _book, authors: _authors, select }) => {
   const [authors, setAuthors] = useState(_authors?.join(", "))
   const [book, setBook] = useState(_book)
+  const library = useAudiobookState(AudiobookSelectors.selectedLibrary)
 
   const { result, loading, invoke } = useHttpRequest(Api.searchBookMetadata)
 
   const search = () => {
     if (!book) return
-    invoke(book, authors)
+    invoke(book, authors, library.language)
   }
 
   return (

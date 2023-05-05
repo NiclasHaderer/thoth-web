@@ -10,7 +10,7 @@ import Link from "next/link"
 import { ColoredButton } from "@thoth/components/colored-button"
 import { HtmlViewer } from "@thoth/components/html-editor/html-viewer"
 import { isDetailedBook } from "@thoth/models/typeguards"
-import { DetailedBookModel, UUID } from "@thoth/models/api-models"
+import { DetailedBookModel, UUID } from "@thoth/client"
 
 export const BookDetails: FC<{ bookId: UUID }> = ({ bookId }) => {
   const getBookWithTracks = useAudiobookState(s => s.fetchBookDetails)

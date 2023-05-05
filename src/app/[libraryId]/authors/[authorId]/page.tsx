@@ -3,7 +3,7 @@
 import { useEffect } from "react"
 import { useAudiobookState } from "@thoth/state/audiobook.state"
 import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
-import { UUID } from "@thoth/models/api-models"
+import { UUID } from "@thoth/client"
 import { AuthorDisplay } from "@thoth/components/author/author-display"
 
 export default function AuthorOutlet({
