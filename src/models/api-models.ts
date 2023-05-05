@@ -32,7 +32,7 @@ export interface LoginUser {
 }
 
 export interface JwtPair {
-  bearer: string
+  access: string
   refresh: string
 }
 
@@ -71,7 +71,7 @@ export interface ModifyUser {
   username?: string
 }
 
-export interface Unit {}
+export type Empty = ""
 
 export interface UsernameChange {
   username: string
