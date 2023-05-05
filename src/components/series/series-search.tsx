@@ -1,11 +1,13 @@
 import React, { useState } from "react"
 import { MdSearch } from "react-icons/md"
 import { useHttpRequest } from "../../hooks/async-response"
-import { MetadataSeries } from "@thoth/models/api-models"
+import { MetadataSeries } from "@thoth/client"
 import { Api } from "@thoth/client"
 import { Input } from "@thoth/components/input/input"
 import { ColoredButton } from "@thoth/components/colored-button"
 import { LoadingCards } from "@thoth/components/loading-card"
+import { useAudiobookState } from "@thoth/state/audiobook.state"
+import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
 
 export const SeriesSearch: React.FC<{
   series?: string | null | undefined
@@ -14,12 +16,13 @@ export const SeriesSearch: React.FC<{
 }> = ({ series: _series, authors: _authors, select }) => {
   const [authors, setAuthors] = useState(_authors?.join(", "))
   const [series, setSeries] = useState(_series)
+  const library = useAudiobookState(AudiobookSelectors.selectedLibrary)
 
   const { result, loading, invoke } = useHttpRequest(Api.searchSeriesMetadata)
 
   const search = async () => {
     if (!series) return
-    invoke(series, authors)
+    invoke(series, library.language, authors)
   }
 
   return (

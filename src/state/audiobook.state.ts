@@ -14,7 +14,7 @@ import {
   Position,
   SeriesModel,
   UUID,
-} from "@thoth/models/api-models"
+} from "@thoth/client"
 import { WebsocketConnection } from "@thoth/websocket"
 import { ChangeEvent } from "@thoth/models/ws"
 import { Api } from "@thoth/client"

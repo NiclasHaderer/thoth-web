@@ -1,5 +1,5 @@
 import { create } from "zustand"
-import { NamedId, TrackModel } from "@thoth/models/api-models"
+import { NamedId, TrackModel } from "@thoth/client"
 
 export type PlaybackTrack = TrackModel & { authors: NamedId[] } & { coverID: string | null | undefined }
 

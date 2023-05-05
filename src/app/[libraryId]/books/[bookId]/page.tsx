@@ -1,5 +1,5 @@
 "use client"
-import { UUID } from "@thoth/models/api-models"
+import { UUID } from "@thoth/client"
 import { useAudiobookState } from "@thoth/state/audiobook.state"
 import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
 import { useEffect } from "react"

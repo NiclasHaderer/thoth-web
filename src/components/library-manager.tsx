@@ -5,7 +5,7 @@ import { ColoredButton } from "@thoth/components/colored-button"
 import { useHttpRequest } from "@thoth/hooks/async-response"
 import { Api } from "@thoth/client"
 import { useOnMount } from "@thoth/hooks/lifecycle"
-import { FileScanner, MetadataAgent } from "@thoth/models/api-models"
+import { FileScanner, MetadataAgent } from "@thoth/client"
 import { LibraryDialog, LibraryFormValues } from "@thoth/components/library-dialog"
 
 export const LibraryManager = () => {

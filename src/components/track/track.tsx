@@ -1,7 +1,7 @@
 import React from "react"
 import { MdImageNotSupported, MdPlayCircle } from "react-icons/md"
 import { toReadableTime } from "./helpers"
-import { NamedId } from "@thoth/models/api-models"
+import { NamedId } from "@thoth/client"
 import Link from "next/link"
 
 interface TrackProps {

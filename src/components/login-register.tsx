@@ -7,7 +7,7 @@ import { Form, useForm } from "@thoth/hooks/form"
 import { Api } from "@thoth/client"
 import { Logo } from "@thoth/components/icons/logo"
 import { ManagedInput } from "@thoth/components/input/managed-input"
-import { useUserState } from "@thoth/state/user.state"
+import { useAuthState } from "@thoth/state/auth.state"
 
 export const LoginRegister: FC<{ type: "register" | "login" }> = ({ type }) => {
   const form = useForm(
@@ -22,8 +22,12 @@ export const LoginRegister: FC<{ type: "register" | "login" }> = ({ type }) => {
       },
     }
   )
+<<<<<<< HEAD
   const [passwordVisible, setPasswordVisible] = useState(false)
   const userState = useUserState()
+=======
+  const userState = useAuthState()
+>>>>>>> d071fe7 (feat: added automatic auth header to the api)
 
   const login = async (values: (typeof form)["fields"]) => {
     const jwt = await Api.loginUser(values)
