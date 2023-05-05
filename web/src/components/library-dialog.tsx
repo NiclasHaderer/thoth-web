@@ -9,7 +9,7 @@ import { LeftTabs, TabContent } from "@thoth/components/left-tabs"
 import { MdAutoAwesome, MdClose, MdFolder, MdLanguage, MdLocalLibrary, MdRadar, MdSettings } from "react-icons/md"
 import { ManagedInput } from "@thoth/components/input/managed-input"
 import { SelectLine } from "@thoth/components/input/select-line"
-import { unique } from "@thoth/utils"
+import { unique } from "@thoth/utils/utils"
 import { MdScan } from "@thoth/components/icons/scan"
 import { FolderManager } from "@thoth/components/file-manager"
 

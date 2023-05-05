@@ -13,7 +13,7 @@ import {
 import { AudiobookSelectors } from "../../state/audiobook.selectors"
 import { useAudiobookState } from "../../state/audiobook.state"
 import { BookSearch } from "./book-search"
-import { toBase64 } from "../../utils"
+import { toBase64 } from "../../utils/utils"
 import { Form, useField, useForm } from "../../hooks/form"
 import { BookModel, MetadataBook, PartialBookApiModel, UUID } from "@thoth/models/api-models"
 import { ColoredButton } from "@thoth/components/colored-button"

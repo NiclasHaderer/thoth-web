@@ -1,7 +1,7 @@
 import { create, Mutate, StoreApi, StoreMutatorIdentifier } from "zustand"
 import { combine } from "zustand/middleware"
 import { unstable_batchedUpdates } from "react-dom"
-import { insertAtPosition, replaceRangeInList, toIdRecord } from "../utils"
+import { insertAtPosition, replaceRangeInList, toIdRecord } from "../utils/utils"
 import {
   ApiResponse,
   AuthorModel,
