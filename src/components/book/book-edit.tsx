@@ -44,7 +44,7 @@ export const BookEdit: React.FC<{ book: BookModel; bookId: UUID }> = ({ book: _b
   const [isOpen, setIsOpen] = useState(false)
   const [selectedTabIndex, setSelectedTabIndex] = useState(0)
   const [book, setBook] = useState(toPatchBook(_bookProp))
-  const updateBook = useAudiobookState(AudiobookSelectors.updateBook)
+  const updateBook = useAudiobookState(s => s.updateBook)
   const libraryId = useAudiobookState(AudiobookSelectors.selectedLibraryId)!
   const form = useForm(book)
 

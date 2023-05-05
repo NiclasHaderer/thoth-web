@@ -31,7 +31,7 @@ export const AuthorEdit: React.FC<{ author: EditAuthor; authorID: UUID }> = ({ a
   const [selectedTabIndex, setSelectedTabIndex] = useState(0)
   const libraryId = useAudiobookState(AudiobookSelectors.selectedLibraryId)!
 
-  const updateAuthor = useAudiobookState(AudiobookSelectors.updateAuthor)
+  const updateAuthor = useAudiobookState(s => s.updateAuthor)
   const form = useForm(author, {
     toForm: {
       birthDate: value => value && toFormDate(value),
