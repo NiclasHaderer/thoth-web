@@ -22,12 +22,8 @@ export const LoginRegister: FC<{ type: "register" | "login" }> = ({ type }) => {
       },
     }
   )
-<<<<<<< HEAD
   const [passwordVisible, setPasswordVisible] = useState(false)
-  const userState = useUserState()
-=======
   const userState = useAuthState()
->>>>>>> d071fe7 (feat: added automatic auth header to the api)
 
   const login = async (values: (typeof form)["fields"]) => {
     const jwt = await Api.loginUser(values)
