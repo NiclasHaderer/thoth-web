@@ -14,7 +14,7 @@ import { BookDisplay } from "@thoth/components/book/book"
 export const AuthorDetails: React.FC<{ authorId: UUID }> = ({ authorId }) => {
   const libraryId = useAudiobookState(AudiobookSelectors.selectedLibraryId)!
   const author = useAudiobookState(AudiobookSelectors.selectAuthor(libraryId, authorId))
-  const getAuthorDetails = useAudiobookState(AudiobookSelectors.fetchAuthorDetails)
+  const getAuthorDetails = useAudiobookState(s => s.fetchAuthorDetails)
   useEffect(() => void getAuthorDetails(libraryId, authorId), [authorId, libraryId, getAuthorDetails])
   if (!author) return <></>
 
