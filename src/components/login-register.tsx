@@ -7,7 +7,7 @@ import { Form, useForm } from "@thoth/hooks/form"
 import { Api } from "@thoth/client"
 import { Logo } from "@thoth/components/icons/logo"
 import { ManagedInput } from "@thoth/components/input/managed-input"
-import { IoMdEye } from "react-icons/all"
+import { useUserState } from "@thoth/state/user.state"
 
 export const LoginRegister: FC<{ type: "register" | "login" }> = ({ type }) => {
   const form = useForm(
@@ -23,18 +23,35 @@ export const LoginRegister: FC<{ type: "register" | "login" }> = ({ type }) => {
     }
   )
   const [passwordVisible, setPasswordVisible] = useState(false)
+  const userState = useUserState()
 
   const login = async (values: (typeof form)["fields"]) => {
     const jwt = await Api.loginUser(values)
-    console.log(jwt)
+    if (!jwt.success) {
+      console.error(jwt)
+      return
+    }
+    userState.login(jwt.body.access, jwt.body.refresh)
+    location.href = "/"
   }
 
   const register = async (values: (typeof form)["fields"]) => {
-    await Api.registerUser({
+    const registerResponse = await Api.registerUser({
       ...values,
     })
+
+    if (!registerResponse.success) {
+      console.error(registerResponse)
+      return
+    }
+
     const jwt = await Api.loginUser(values)
-    console.log(jwt)
+    if (!jwt.success) {
+      console.error(jwt)
+      return
+    }
+    userState.login(jwt.body.access, jwt.body.refresh)
+    location.href = "/"
   }
 
   return (
@@ -86,16 +103,17 @@ export const LoginRegister: FC<{ type: "register" | "login" }> = ({ type }) => {
               </button>
             }
           />
-          <div className="flex justify-between">
-            <Link href={type === "login" ? "/register" : "/login"}>
-              <ColoredButton type="button" className="mt-2 self-center">
-                {type === "login" ? "Register" : "Login"}
-              </ColoredButton>
-            </Link>
+          <div className="flex justify-end">
             <ColoredButton type="submit" className="mt-2 self-center">
               {type === "login" ? "Login" : "Register"}
             </ColoredButton>
           </div>
+          <p className="p-2">
+            {type === "login" ? "Don't have an account?" : "Already have an account?"}{" "}
+            <Link href={type === "login" ? "/register" : "/login"} className="underline">
+              {type === "login" ? "Register" : "Login"}
+            </Link>
+          </p>
         </div>
       </Form>
     </div>

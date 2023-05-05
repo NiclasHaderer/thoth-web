@@ -1,5 +1,5 @@
 import React, { useRef } from "react"
-import { isUUID, toBase64 } from "../../utils"
+import { isUUID, toBase64 } from "../../utils/utils"
 import { MdAddLink, MdCelebration, MdPerson } from "react-icons/md"
 import { MdDeceased } from "../icons/deceased"
 import { useField } from "../../hooks/form"

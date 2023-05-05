@@ -1,5 +1,5 @@
 import React, { createContext, ReactNode, useContext, useEffect, useState } from "react"
-import { notNullIsh } from "@thoth/utils"
+import { notNullIsh } from "@thoth/utils/utils"
 
 export interface FormContext<T extends Record<string, any>> {
   fields: T
