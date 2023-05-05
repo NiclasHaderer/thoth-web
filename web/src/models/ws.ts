@@ -1,4 +1,4 @@
-import { UUID } from "@thoth/models/api-models"
+import { UUID } from "@thoth/client"
 
 type EntityChangeType = "Created" | "Updated" | "Removed"
 

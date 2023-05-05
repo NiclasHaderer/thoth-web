@@ -7,7 +7,7 @@ import { ResponsiveImage } from "@thoth/components/responsive-image"
 import { ColoredButton } from "@thoth/components/colored-button"
 import { ManagedInput } from "@thoth/components/input/managed-input"
 import HtmlEditor from "../html-editor"
-import { PartialAuthorApiModel } from "@thoth/models/api-models"
+import { PartialAuthorApiModel } from "@thoth/client"
 
 export const AuthorForm = () => {
   const imageInputRef = useRef<HTMLInputElement>(null)

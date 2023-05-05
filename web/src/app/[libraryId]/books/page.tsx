@@ -8,7 +8,7 @@ import { useInfinityScroll } from "@thoth/hooks/infinity-scroll"
 import { ResponsiveGrid } from "@thoth/components/responsive-grid"
 import { CleanIfNotVisible } from "@thoth/components/clean-if-not-visible"
 import { BookDisplay } from "@thoth/components/book/book"
-import { UUID } from "@thoth/models/api-models"
+import { UUID } from "@thoth/client"
 
 export default function BookListOutlet({ params: { libraryId } }: { params: { libraryId: UUID } }) {
   const getBooks = useAudiobookState(AudiobookSelectors.fetchBooks)

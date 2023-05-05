@@ -1,9 +1,10 @@
 import { AudiobookState } from "./audiobook.state"
-import { UUID } from "@thoth/models/api-models"
+import { UUID } from "@thoth/client"
 
 export const AudiobookSelectors = {
   // Libraries
-  selectedLibrary: (state: AudiobookState) => state.content[state.selectedLibraryId!],
+  selectedLibraryContent: (state: AudiobookState) => state.content[state.selectedLibraryId!],
+  selectedLibrary: (state: AudiobookState) => state.libraryMap[state.selectedLibraryId!],
   selectedLibraryId: (state: AudiobookState) => state.selectedLibraryId,
 
   // Books

@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { ApiResponse } from "@thoth/models/api-models"
+import { ApiResponse } from "@thoth/client"
 
 type AsyncResponse<T, ARGS extends any[]> = (
   | {
