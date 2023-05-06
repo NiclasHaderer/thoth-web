@@ -1,7 +1,4 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-# Only execute the following command if the current branch is master/main
-if [ "$HUSKY_GIT_STDIN" = "refs/heads/master" ] || [ "$HUSKY_GIT_STDIN" = "refs/heads/main" ]; then
-  node_modules/.bin/next build
-fi
+node_modules/.bin/next build
