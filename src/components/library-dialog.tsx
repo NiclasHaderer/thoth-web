@@ -96,7 +96,13 @@ export const LibraryDialog: FC<LibraryDialogProps> = ({ isOpen, setIsOpen, form,
                 label="Metadata"
                 name="metadataScanners"
                 icon={<MdRadar />}
-                options={metadataAgents?.result?.map(a => a.name) ?? []}
+                multiple={true}
+                options={
+                  metadataAgents?.result?.map(a => ({
+                    value: a,
+                    label: a.name,
+                  })) ?? []
+                }
               />
               <SelectLine
                 labelClassName="w-28"
@@ -104,7 +110,13 @@ export const LibraryDialog: FC<LibraryDialogProps> = ({ isOpen, setIsOpen, form,
                 icon={<MdScan />}
                 name="fileScanners"
                 title={"File scanners"}
-                options={fileScanners?.result?.map(a => a.name) ?? []}
+                multiple={true}
+                options={
+                  fileScanners?.result?.map(a => ({
+                    value: a,
+                    label: a.name,
+                  })) ?? []
+                }
               />
             </TabContent>
             <TabContent>

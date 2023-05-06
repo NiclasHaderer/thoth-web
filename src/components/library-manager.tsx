@@ -1,25 +1,39 @@
 import React, { useState } from "react"
-import { MdEdit, MdFolder, MdGasMeter, MdPerson } from "react-icons/md"
+import {
+  MdAutoAwesome,
+  MdEdit,
+  MdFolder,
+  MdGasMeter,
+  MdLanguage,
+  MdLibraryBooks,
+  MdLocalLibrary,
+  MdPerson,
+  MdRadar,
+} from "react-icons/md"
 import { useForm } from "@thoth/hooks/form"
 import { ColoredButton } from "@thoth/components/colored-button"
-import { useHttpRequest } from "@thoth/hooks/async-response"
-import { Api } from "@thoth/client"
 import { useOnMount } from "@thoth/hooks/lifecycle"
 import { FileScanner, MetadataAgent } from "@thoth/client"
 import { LibraryDialog, LibraryFormValues } from "@thoth/components/library-dialog"
+import { useAudiobookState } from "@thoth/state/audiobook.state"
+import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
+import { MdScan } from "@thoth/components/icons/scan"
 
 export const LibraryManager = () => {
-  const { invoke, error, result: libraries, loading } = useHttpRequest(Api.listLibraries)
+  const libraries = useAudiobookState(AudiobookSelectors.libraries)
   const [isOpen, setIsOpen] = useState(false)
+  const createLibrary = useAudiobookState(s => s.createLibrary)
+  const updateLibrary = useAudiobookState(s => s.updateLibrary)
+  const fetchLibraries = useAudiobookState(s => s.fetchLibraries)
+  useOnMount(() => void fetchLibraries())
 
   const onSubmit = async (values: LibraryFormValues) => {
     setIsOpen(false)
     if (values.mode === "create") {
-      await Api.createLibrary(values)
+      await createLibrary(values)
     } else {
-      await Api.updateLibrary(values.id!, values)
+      await updateLibrary(values.id!, values)
     }
-    invoke()
   }
 
   const form = useForm(
@@ -38,14 +52,17 @@ export const LibraryManager = () => {
         name: (name: string) => name.length > 0 || "Name is required",
         language: (language: string) => language.length > 0 || "Language is required",
         folders: (folders: string[]) => folders.length > 0 || "At least one folder is required",
-        metadataScanners: (metadataScanners: MetadataAgent[]) =>
-          metadataScanners.length > 0 || "At least one metadata scanner is required",
-        fileScanners: (fileScanners: FileScanner[]) =>
-          fileScanners.length > 0 || "At least one file scanner is required",
+        metadataScanners: (metadataScanners: MetadataAgent[]) => {
+          console.log(metadataScanners)
+          return metadataScanners.length > 0 || "At least one metadata scanner is required"
+        },
+        fileScanners: (fileScanners: FileScanner[]) => {
+          console.log(fileScanners)
+          return fileScanners.length > 0 || "At least one file scanner is required"
+        },
       },
     }
   )
-  useOnMount(() => invoke())
 
   return (
     <>
@@ -78,32 +95,46 @@ export const LibraryManager = () => {
                     setIsOpen(true)
                   }}
                 >
-                  <td className="flex items-center pl-2">
-                    <MdPerson className="mr-4 h-8 w-8" />
-                    {library.name}
+                  <td className="pl-2">
+                    <div className="flex items-center">
+                      <MdLocalLibrary className="mr-4 h-8 w-8" />
+                      {library.name}
+                    </div>
                   </td>
-                  <td className="flex items-center pl-2">
-                    <MdGasMeter className="mr-4 h-8 w-8" />
-                    {library.preferEmbeddedMetadata ? "Embedded" : "External"}
+                  <td className="pl-2">
+                    <div className="flex items-center">
+                      <MdAutoAwesome className="mr-4 h-8 w-8" />
+                      {library.preferEmbeddedMetadata ? "Embedded" : "External"}
+                    </div>
                   </td>
-                  <td className="flex items-center pl-2">
-                    <MdFolder className="mr-4 h-8 w-8" />
-                    {library.folders.join(", ")}
+                  <td className="pl-2">
+                    <div className="flex items-center">
+                      <MdFolder className="mr-4 h-8 w-8" />
+                      {library.folders.join(", ")}
+                    </div>
                   </td>
-                  <td className="flex items-center pl-2">
-                    <MdFolder className="mr-4 h-8 w-8" />
-                    {library.metadataScanners.join(", ")}
+                  <td className="pl-2">
+                    <div className="flex items-center">
+                      <MdRadar className="mr-4 h-8 w-8" />
+                      {library.metadataScanners.map(s => s.name).join(", ")}
+                    </div>
                   </td>
-                  <td className="flex items-center pl-2">
-                    <MdFolder className="mr-4 h-8 w-8" />
-                    {library.fileScanners.join(", ")}
+                  <td className="pl-2">
+                    <div className="flex items-center">
+                      <MdScan className="mr-4 h-8 w-8" />
+                      {library.fileScanners.map(s => s.name).join(", ")}
+                    </div>
                   </td>
-                  <td className="flex items-center pl-2">
-                    <MdFolder className="mr-4 h-8 w-8" />
-                    {library.language}
+                  <td className="pl-2">
+                    <div className="flex items-center">
+                      <MdLanguage className="mr-4 h-8 w-8" />
+                      {library.language}
+                    </div>
                   </td>
                   <td className="pr-2">
-                    <MdEdit className="h-4 w-4 opacity-0 transition-opacity group-hover:opacity-100" />
+                    <div className="flex items-center">
+                      <MdEdit className="h-4 w-4 opacity-0 transition-opacity group-hover:opacity-100" />
+                    </div>
                   </td>
                 </tr>
               ))}
