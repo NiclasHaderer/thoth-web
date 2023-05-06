@@ -36,14 +36,20 @@ export function SelectLine<T extends any, MULTIPLE extends boolean = false>({
             outerClassName="w-full"
             optionListClassName="w-full border-solid border-active border-1"
             onChange={v => {
-              setValue(v as any)
+              let value
+              if (Array.isArray(v)) {
+                value = v.map(val => (typeof val === "object" && val !== null && "value" in val ? val.value : v))
+              } else {
+                value = typeof v === "object" && v !== null && "value" in v ? v.value : v
+              }
+              setValue(value as any)
               setTouched(true)
             }}
           />
         </div>
       </label>
       <div className="flex items-center">
-        <div className={labelClassName}> {"                 "} </div>
+        <div className={labelClassName} />
         {touched && errors ? (
           <div className="error">
             {errors.map((error, index) => (

@@ -31,6 +31,3 @@ body.dark-theme {
   --elevate-1: rgb(35, 43, 53);
   --elevate-2: rgb(30, 37, 45);
 }
-.\!max-w-3\/5 {
-  max-width: 60% !important;
-}
