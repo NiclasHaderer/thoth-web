@@ -19,6 +19,7 @@ export const FolderManager: FC<{
       <div className="flex max-w-full justify-between overflow-hidden">
         <div className="flex">
           <button
+            type="button"
             onClick={() => {
               setCurrentPath("/")
             }}
@@ -32,6 +33,7 @@ export const FolderManager: FC<{
             .map((path, index, array) => (
               <Fragment key={index}>
                 <button
+                  type="button"
                   onClick={() => {
                     const newPath = "/" + array.slice(0, index + 1).join("/")
                     setCurrentPath(newPath)
@@ -48,6 +50,7 @@ export const FolderManager: FC<{
       <div className={`flex flex-col ${contentClassName ?? ""}`}>
         {folders.result?.map((folder, index) => (
           <button
+            type="button"
             onClick={() => setCurrentPath(folder.path)}
             className="w-full p-2 text-left hover:bg-active focus:bg-active"
             key={folder.path}

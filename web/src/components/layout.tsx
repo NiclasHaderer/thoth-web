@@ -14,15 +14,13 @@ export const BottomBar = () => {
   const isPlaying = usePlaybackState(state => state.isPlaying)
 
   return (
-    <NoSsr>
-      <div>
-        {isPlaying ? (
-          <Playback className={isMD ? "border-b-2 border-solid border-primary border-opacity-25" : ""} />
-        ) : null}
+    <div>
+      {isPlaying ? (
+        <Playback className={isMD ? "border-b-2 border-solid border-primary border-opacity-25" : ""} />
+      ) : null}
 
-        {isMD ? <SmallMenu /> : null}
-      </div>
-    </NoSsr>
+      {isMD ? <SmallMenu /> : null}
+    </div>
   )
 }
 
