@@ -43,7 +43,7 @@ export const LibraryDialog: FC<LibraryDialogProps> = ({ isOpen, setIsOpen, form,
       isOpen={isOpen}
       closeModal={() => setIsOpen(false)}
       title={form.fields.mode === "create" ? "Create new Library" : "Edit Library"}
-      outerDialogClass="h-3/5 w-3/5 !max-w-3/5"
+      outerDialogClass="h-3/5 w-3/5 lg:!max-w-[75%] xl:!max-w-[50%] !max-w-[95%]"
     >
       <Form form={form} onSubmit={onSubmit}>
         <DialogBody>

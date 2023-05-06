@@ -26,6 +26,7 @@ export const LeftTabs: FC<LeftTabsProps> = ({ leftClassname, tabs, className, ri
           {tabs.map((tab, index) => (
             <li key={index}>
               <button
+                type="button"
                 onClick={() => setActiveTab(index)}
                 className={`w-full p-2 hover:bg-active-light focus:bg-active ${
                   activeTab === index ? "bg-active text-primary" : ""
