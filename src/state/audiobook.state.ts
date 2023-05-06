@@ -7,7 +7,9 @@ import {
   DetailedAuthorModel,
   DetailedBookModel,
   DetailedSeriesModel,
+  LibraryApiModel,
   LibraryModel,
+  PartialLibraryApiModel,
   SeriesModel,
   UUID,
 } from "@thoth/client"
@@ -20,6 +22,8 @@ import {
   wrapUpdate,
   wrapWs,
 } from "@thoth/state/audiobook.utils"
+import { toIdRecord } from "@thoth/utils/utils"
+
 export type AudiobookState = {
   content: {
     [libraryId: UUID]: {
@@ -49,7 +53,7 @@ const INITIAL_STATE = {
 } as AudiobookState
 
 export const useAudiobookState = create(
-  combine(INITIAL_STATE, (_, __, mutate) => ({
+  combine(INITIAL_STATE, (get, set, mutate) => ({
     // Author
     fetchAuthors: wrapFetch(mutate, "author", Api.listAuthors),
     updateAuthor: wrapUpdate(mutate, "author", Api.updateAuthor),
@@ -93,11 +97,41 @@ export const useAudiobookState = create(
       undefined
     ),
     // TODO Library
-    // fetchLibraries: wrapFetch(mutate, "library", Api.listLibraries),
-    // updateLibrary: wrapUpdate(mutate, "library", Api.updateLibrary),
-    // fetchLibrarySorting: wrapSorting(mutate, "library", Api.listLibrarySorting),
-    // fetchLibraryDetails: wrapDetails(mutate, "library", Api.getLibrary),
-    // updateSortingOfLibrary: wrapSortingOf(mutate, "library", Api.getLibraryPosition),
-    // clearLibrary: wrapClear(mutate, "library"),
+    fetchLibraries: async () => {
+      const libs = await Api.listLibraries()
+      if (!libs.success) return
+      mutate.setState(state => ({
+        ...state,
+        libraryMap: toIdRecord(libs.body),
+      }))
+    },
+    updateLibrary: async (id: UUID, library: PartialLibraryApiModel) => {
+      const res = await Api.updateLibrary(id, library)
+      if (!res.success) return
+      mutate.setState(state => ({
+        ...state,
+        libraryMap: {
+          ...state.libraryMap,
+          [id]: res.body,
+        },
+      }))
+    },
+    createLibrary: async (library: LibraryApiModel) => {
+      const res = await Api.createLibrary(library)
+      if (!res.success) return
+      mutate.setState(state => ({
+        ...state,
+        libraryMap: {
+          ...state.libraryMap,
+          [res.body.id]: res.body,
+        },
+      }))
+    },
+    clearLibrary: () => {
+      mutate.setState(state => ({
+        ...state,
+        libraryMap: {},
+      }))
+    },
   }))
 )

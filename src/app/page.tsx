@@ -7,6 +7,6 @@ import { useEffect } from "react"
 export default function IndexOutlet() {
   const auth = useAuthState() as AuthState
   const router = useRouter()
-  useEffect(() => router.push("/libraries"))
+  useEffect(() => router.replace("/libraries"))
   return <></>
 }
