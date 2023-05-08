@@ -1,5 +1,10 @@
+"use client"
 import React from "react"
 
 export default function AccountOutlet() {
-  return <div>AccountOutlet</div>
+  return (
+    <>
+      <h1>Account</h1>
+    </>
+  )
 }
