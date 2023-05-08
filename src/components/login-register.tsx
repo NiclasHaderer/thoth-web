@@ -34,7 +34,8 @@ export const LoginRegister: FC<{ type: "register" | "login" }> = ({ type }) => {
       return
     }
     userState.login(jwt.body.access, jwt.body.refresh)
-    router.push("/")
+    const origin = new URLSearchParams(location.search).get("origin") ?? "/"
+    router.push(`/${origin}`.replaceAll("//", "/"))
   }
 
   const register = async (values: (typeof form)["fields"]) => {
@@ -112,7 +113,10 @@ export const LoginRegister: FC<{ type: "register" | "login" }> = ({ type }) => {
           </div>
           <p className="p-2">
             {type === "login" ? "Don't have an account?" : "Already have an account?"}{" "}
-            <Link href={type === "login" ? "/register" : "/login"} className="underline">
+            <Link
+              href={type === "login" ? `/register?${location.search.slice(1)}` : "/login?${location.search.slice(1)}"}
+              className="underline"
+            >
               {type === "login" ? "Register" : "Login"}
             </Link>
           </p>

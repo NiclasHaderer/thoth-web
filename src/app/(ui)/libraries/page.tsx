@@ -2,6 +2,8 @@
 import { useAudiobookState } from "@thoth/state/audiobook.state"
 import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
 import { useOnMount } from "@thoth/hooks/lifecycle"
+import { RequireLogin } from "@thoth/components/require-login"
+import { SearchBar } from "@thoth/components/menu/menu"
 
 export default function LibrariesOutlet() {
   const libraries = useAudiobookState(AudiobookSelectors.libraries)

@@ -1,16 +1,17 @@
 import React from "react"
-import { MdAccountCircle, MdBook, MdCollectionsBookmark, MdPerson } from "react-icons/md"
+import { MdAccountCircle, MdBook, MdCollectionsBookmark, MdLogout, MdPerson, MdSettings, MdTune } from "react-icons/md"
 import { Search } from "./search"
 import { ActiveLink } from "@thoth/components/active-link"
 import { Ripple } from "@thoth/components/ripple"
 import Link from "next/link"
 import { Menu } from "@headlessui/react"
+import { Logo } from "@thoth/components/icons/logo"
 
 const MenuImage: React.FC = () => {
   return (
-    <Link href="/" className="flex overflow-hidden rounded-l-xl" aria-label={"HOME"}>
+    <Link href="/libraries" className="flex overflow-hidden rounded-l-xl" aria-label={"HOME"}>
       <div className="inline-flex cursor-pointer items-center pr-2 no-touch:group-focus:bg-active-light">
-        <img className="h-20 p-3" src="/logo.svg" loading="lazy" alt="Logo" />
+        <Logo className="h-20 w-auto p-3" />
         <h1 className="font-serif text-3xl font-extrabold">THOTH</h1>
       </div>
     </Link>
@@ -27,7 +28,7 @@ export const SearchBar: React.FC = () => {
           <MdAccountCircle className="h-full w-full" />
         </Menu.Button>
 
-        <Menu.Items className="absolute right-0 w-56 origin-top-right divide-y rounded-md bg-elevate-2 shadow-lg focus:outline-none">
+        <Menu.Items className="absolute right-0 w-56 origin-top-right divide-y rounded-md border-1 border-solid border-active bg-elevate-2 shadow-lg focus:outline-none">
           <div className="px-1 py-1 ">
             <Menu.Item>
               {({ active }) => (
@@ -45,12 +46,25 @@ export const SearchBar: React.FC = () => {
             <Menu.Item>
               {({ active }) => (
                 <ActiveLink
-                  href="/server-settings"
+                  href="/logout"
                   className={`${
                     active ? "bg-active-light" : "text-gray-900"
                   } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
                 >
-                  <MdCollectionsBookmark className="mr-3 h-6 w-6" />
+                  <MdLogout className="mr-3 h-6 w-6" />
+                  Logout
+                </ActiveLink>
+              )}
+            </Menu.Item>
+            <Menu.Item>
+              {({ active }) => (
+                <ActiveLink
+                  href="/settings"
+                  className={`${
+                    active ? "bg-active-light" : "text-gray-900"
+                  } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                >
+                  <MdTune className="mr-3 h-6 w-6" />
                   Server Settings
                 </ActiveLink>
               )}
@@ -62,7 +76,7 @@ export const SearchBar: React.FC = () => {
   )
 }
 
-export const LargeMenu: React.FC = () => (
+export const LeftResourceMenu: React.FC = () => (
   <>
     <aside className="my-10 ml-10 inline-block min-w-80 max-w-80 overflow-hidden rounded-xl bg-elevate">
       <MenuItems />
@@ -70,7 +84,7 @@ export const LargeMenu: React.FC = () => (
   </>
 )
 
-export const SmallMenu: React.FC = () => (
+export const BottomResourceMenu: React.FC = () => (
   <aside className="bg-surface">
     <BottomToolbar className="bg-elevate" />
   </aside>

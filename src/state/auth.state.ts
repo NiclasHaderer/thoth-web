@@ -6,6 +6,9 @@ import { decodeJWT, Jwt } from "@thoth/utils/jwt"
 export type AuthState =
   | {
       loggedIn: false
+      accessToken: undefined
+      refreshToken: undefined
+      decodedAccessToken: undefined
     }
   | {
       loggedIn: true
@@ -17,11 +20,14 @@ export type AuthState =
 
 const INITIAL_USER_STATE: AuthState = {
   loggedIn: false,
+  refreshToken: undefined,
+  accessToken: undefined,
+  decodedAccessToken: undefined,
 }
 
 export const useAuthState = create(
   persist(
-    combine(INITIAL_USER_STATE as AuthState, (set, get) => ({
+    combine(INITIAL_USER_STATE as AuthState, (set, get, modify) => ({
       login: (accessToken: string, refreshToken: string) => {
         const state = get()
         const decodedAccessToken = decodeJWT(accessToken) as ExtractAtKey<Jwt, "payload", { type: "access" }>
@@ -35,7 +41,7 @@ export const useAuthState = create(
         })
       },
       logout: () => {
-        set(INITIAL_USER_STATE)
+        modify.setState(INITIAL_USER_STATE)
       },
     })),
     {
