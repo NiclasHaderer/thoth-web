@@ -13,16 +13,32 @@ export const wrapFetch = <K extends AssetsToUpdate>(
   key: K,
   fetchFunction: (
     libraryId: UUID,
-    offset?: number,
-    limit?: number
+    limit?: number,
+    offset?: number
   ) => Promise<ApiResponse<PaginatedResponse<AudiobookState["content"][UUID][`${K}Map`][string]>>>
 ) => {
   return async (libraryId: UUID, offset: number) => {
     const limit = 30
     const offsetCount = offset * limit
-    const response = await fetchFunction(libraryId, offsetCount, limit)
+    const response = await fetchFunction(libraryId, limit, offsetCount)
     if (!response.success) return
-    mutate.setState(state => ({
+
+    const state = { ...mutate.getState() }
+    if (!state.content[libraryId]) {
+      state.content[libraryId] = {
+        authorMap: {},
+        authorSorting: [],
+        authorTotal: 0,
+        bookMap: {},
+        bookSorting: [],
+        bookTotal: 0,
+        seriesMap: {},
+        seriesSorting: [],
+        seriesTotal: 0,
+      }
+    }
+
+    mutate.setState({
       ...state,
       content: {
         ...state.content,
@@ -40,7 +56,7 @@ export const wrapFetch = <K extends AssetsToUpdate>(
           ),
         },
       },
-    }))
+    })
   }
 }
 

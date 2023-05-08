@@ -6,6 +6,8 @@ import { Ripple } from "@thoth/components/ripple"
 import Link from "next/link"
 import { Menu } from "@headlessui/react"
 import { Logo } from "@thoth/components/icons/logo"
+import { useAudiobookState } from "@thoth/state/audiobook.state"
+import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
 
 const MenuImage: React.FC = () => {
   return (
@@ -90,45 +92,63 @@ export const BottomResourceMenu: React.FC = () => (
   </aside>
 )
 
-const MenuItems: React.FC = () => (
-  <ul>
-    <ActiveLink href="/books" withSubroutes={true}>
-      <li className="flex w-full items-center px-3 transition-colors duration-300 hover:bg-active-light group-focus:bg-active-light">
-        <MdBook className="ml-3" />
-        <span className="m-3 inline-block">Books</span>
-      </li>
-    </ActiveLink>
-    <ActiveLink href="/series" withSubroutes={true}>
-      <li className="flex w-full items-center px-3 transition-colors duration-300 hover:bg-active-light group-focus:bg-active-light">
-        <MdCollectionsBookmark className="ml-3" />
-        <span className="m-3 inline-block">Series</span>
-      </li>
-    </ActiveLink>
-    <ActiveLink href="/authors" withSubroutes={true}>
-      <li className="flex w-full items-center px-3 transition-colors duration-300 hover:bg-active-light group-focus:bg-active-light">
-        <MdPerson className="ml-3" />
-        <span className="m-3 inline-block">Authors</span>
-      </li>
-    </ActiveLink>
-  </ul>
-)
+const MenuItems: React.FC = () => {
+  const currentLib = useAudiobookState(AudiobookSelectors.selectedLibraryId)
+  return (
+    <ul>
+      <ActiveLink href={`/libraries/${currentLib}/books`} withSubroutes={true}>
+        <li className="flex w-full items-center px-3 transition-colors duration-300 hover:bg-active-light group-focus:bg-active-light">
+          <MdBook className="ml-3" />
+          <span className="m-3 inline-block">Books</span>
+        </li>
+      </ActiveLink>
+      <ActiveLink href={`/libraries/${currentLib}/series`} withSubroutes={true}>
+        <li className="flex w-full items-center px-3 transition-colors duration-300 hover:bg-active-light group-focus:bg-active-light">
+          <MdCollectionsBookmark className="ml-3" />
+          <span className="m-3 inline-block">Series</span>
+        </li>
+      </ActiveLink>
+      <ActiveLink href={`/libraries/${currentLib}/authors`} withSubroutes={true}>
+        <li className="flex w-full items-center px-3 transition-colors duration-300 hover:bg-active-light group-focus:bg-active-light">
+          <MdPerson className="ml-3" />
+          <span className="m-3 inline-block">Authors</span>
+        </li>
+      </ActiveLink>
+    </ul>
+  )
+}
 
-const BottomToolbar: React.FC<{ className?: string }> = ({ className = "" }) => (
-  <div className={`relative flex h-16 items-center justify-between px-4 ${className}`}>
-    <Ripple className="h-full flex-grow cursor-pointer bg-opacity-30" rippleClasses={"bg-primary bg-opacity-80"}>
-      <ActiveLink href="/authors" withSubroutes={true} className="flex h-full items-center justify-center">
-        <MdPerson className="aspect-square h-3/5 w-auto" />
-      </ActiveLink>
-    </Ripple>
-    <Ripple className="h-full flex-grow cursor-pointer" rippleClasses={"bg-primary bg-opacity-80"}>
-      <ActiveLink href="/books" withSubroutes={true} className="flex h-full items-center justify-center">
-        <MdBook className="aspect-square h-3/5 w-auto" />
-      </ActiveLink>
-    </Ripple>
-    <Ripple className="h-full flex-grow cursor-pointer" rippleClasses={"bg-primary bg-opacity-80"}>
-      <ActiveLink href="/series" withSubroutes={true} className="flex h-full items-center justify-center">
-        <MdCollectionsBookmark className="aspect-square h-3/5 w-auto" />
-      </ActiveLink>
-    </Ripple>
-  </div>
-)
+const BottomToolbar: React.FC<{ className?: string }> = ({ className = "" }) => {
+  const currentLib = useAudiobookState(AudiobookSelectors.selectedLibraryId)
+  return (
+    <div className={`relative flex h-16 items-center justify-between px-4 ${className}`}>
+      <Ripple className="h-full flex-grow cursor-pointer bg-opacity-30" rippleClasses={"bg-primary bg-opacity-80"}>
+        <ActiveLink
+          href={`/libraries/${currentLib}/books`}
+          withSubroutes={true}
+          className="flex h-full items-center justify-center"
+        >
+          <MdPerson className="aspect-square h-3/5 w-auto" />
+        </ActiveLink>
+      </Ripple>
+      <Ripple className="h-full flex-grow cursor-pointer" rippleClasses={"bg-primary bg-opacity-80"}>
+        <ActiveLink
+          href={`/libraries/${currentLib}/books`}
+          withSubroutes={true}
+          className="flex h-full items-center justify-center"
+        >
+          <MdBook className="aspect-square h-3/5 w-auto" />
+        </ActiveLink>
+      </Ripple>
+      <Ripple className="h-full flex-grow cursor-pointer" rippleClasses={"bg-primary bg-opacity-80"}>
+        <ActiveLink
+          href={`/libraries/${currentLib}/books`}
+          withSubroutes={true}
+          className="flex h-full items-center justify-center"
+        >
+          <MdCollectionsBookmark className="aspect-square h-3/5 w-auto" />
+        </ActiveLink>
+      </Ripple>
+    </div>
+  )
+}

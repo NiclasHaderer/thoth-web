@@ -9,6 +9,7 @@ import { Logo } from "@thoth/components/icons/logo"
 import { ManagedInput } from "@thoth/components/input/managed-input"
 import { useAuthState } from "@thoth/state/auth.state"
 import { useRouter } from "next/navigation"
+import { NoSSR } from "next/dist/shared/lib/lazy-dynamic/dynamic-no-ssr"
 
 export const LoginRegister: FC<{ type: "register" | "login" }> = ({ type }) => {
   const form = useForm(
@@ -113,12 +114,14 @@ export const LoginRegister: FC<{ type: "register" | "login" }> = ({ type }) => {
           </div>
           <p className="p-2">
             {type === "login" ? "Don't have an account?" : "Already have an account?"}{" "}
-            <Link
-              href={type === "login" ? `/register?${location.search.slice(1)}` : "/login?${location.search.slice(1)}"}
-              className="underline"
-            >
-              {type === "login" ? "Register" : "Login"}
-            </Link>
+            <NoSSR>
+              <Link
+                href={type === "login" ? `/register?${location.search.slice(1)}` : "/login?${location.search.slice(1)}"}
+                className="underline"
+              >
+                {type === "login" ? "Register" : "Login"}
+              </Link>
+            </NoSSR>
           </p>
         </div>
       </Form>

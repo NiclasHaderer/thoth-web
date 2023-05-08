@@ -14,96 +14,19 @@ export default function BookListOutlet({ params: { libraryId } }: { params: { li
   const getBooks = useAudiobookState(s => s.fetchBooks)
   const loading = useRef<HTMLDivElement>(null)
   useScrollTo("main")
-  useInfinityScroll(loading.current, offset => {
-    getBooks(libraryId, offset)
-  })
+  useInfinityScroll(loading.current, offset => getBooks(libraryId, offset))
   const books = useAudiobookState(AudiobookSelectors.selectBooks(libraryId))
   const bookCount = useAudiobookState(AudiobookSelectors.selectBookCount(libraryId))
 
   return (
     <>
-      {bookCount != null ? <h2 className="p-2 pb-6 text-2xl">{bookCount} Books</h2> : null}
+      {<h2 className="p-2 pb-6 text-2xl">{bookCount} Books</h2>}
       <ResponsiveGrid>
         {books.map((book, k) => (
           <CleanIfNotVisible key={k}>
             <BookDisplay {...book} />
           </CleanIfNotVisible>
         ))}
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
-        <div>hello</div>
         <div className="min-w-full text-center opacity-0" ref={loading}>
           Loading ...
         </div>
