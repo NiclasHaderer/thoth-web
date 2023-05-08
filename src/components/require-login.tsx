@@ -10,7 +10,11 @@ export const RequireLogin: FC<PropsWithChildren> = ({ children }) => {
   useEffect(() => {
     if (typeof window === "undefined") return
     if (isLoggedIn) return
-    router.push("/login")
+
+    const currentPath = location.href.split(location.host)[1]
+    const afterLoginRedirect = new URLSearchParams({ origin: currentPath })
+    const loginUrl = `/login?${afterLoginRedirect}`
+    router.push(loginUrl)
   })
   if (!isLoggedIn) {
     return <NoSsr></NoSsr>

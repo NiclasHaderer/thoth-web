@@ -3,32 +3,15 @@ import { useForm } from "@thoth/hooks/form"
 import { MdEdit, MdPerson } from "react-icons/md"
 import { ColoredButton } from "@thoth/components/colored-button"
 import { UserDialog } from "@thoth/components/user-dialog"
-
-const USERS = [
-  {
-    id: "1",
-    username: "Test",
-    permissions: "admin",
-    libraries: ["Audiobooks", "Audiobooks(en)"],
-  },
-  {
-    id: "2",
-    username: "Test",
-    permissions: "admin",
-    libraries: ["Audiobooks", "Audiobooks(en)"],
-  },
-]
+import { useHttpRequest } from "@thoth/hooks/async-response"
+import { Api, UserModel } from "@thoth/client"
+import { useOnMount } from "@thoth/hooks/lifecycle"
 
 export const UserManager = () => {
   const [isOpen, setIsOpen] = useState(false)
-  const [users, setUsers] = useState(USERS)
-  const form = useForm({
-    username: "",
-    permissions: "",
-    libraries: [] as string[],
-    mode: "create" as "create" | "edit",
-    id: "",
-  })
+  const { result: users, invoke } = useHttpRequest(Api.listUsers)
+  const [userToEdit, setUserToEdit] = useState<UserModel>()
+  useOnMount(() => invoke())
 
   return (
     <>
@@ -49,27 +32,30 @@ export const UserManager = () => {
         <tbody>
           {
             <>
-              {users.map(user => (
+              {users?.map(user => (
                 <tr
                   className="group cursor-pointer odd:bg-active-light hover:bg-active"
                   key={user.id}
                   onClick={() => {
-                    form.setFields({ ...user, mode: "edit" })
                     setIsOpen(true)
+                    setUserToEdit(user)
                   }}
                 >
                   <td className="flex items-center pl-2">
                     <MdPerson className="mr-4 h-8 w-8" />
                     {user.username}
                   </td>
-                  <td>{user.permissions}</td>
-                  <td className="pr-2">{user.libraries.join(", ")}</td>
+                  <td>
+                    {user.admin ? "Admin" : "User"}
+                    {user.edit ? "(Editor)" : ""}
+                  </td>
+                  <td>{user.libraries.map(l => l.name).join(", ")}</td>
                   <td className="pr-2">
                     <MdEdit className="h-4 w-4 opacity-0 transition-opacity group-hover:opacity-100" />
                   </td>
                 </tr>
               ))}
-              {users.length === 0 && (
+              {users?.length === 0 && (
                 <tr className="odd:bg-active-light">
                   <td className="pl-2">No users yet</td>
                   <td></td>
@@ -81,18 +67,7 @@ export const UserManager = () => {
           }
         </tbody>
       </table>
-      <div className="flex justify-end pt-2">
-        <ColoredButton
-          onClick={() => {
-            form.restoreInitial()
-            setIsOpen(true)
-          }}
-          innerClassName="!p-.5"
-        >
-          Create new User
-        </ColoredButton>
-      </div>
-      <UserDialog isOpen={isOpen} setIsOpen={setIsOpen} form={form} />
+      {userToEdit && <UserDialog isOpen={isOpen} user={userToEdit} setIsOpen={setIsOpen} onModifyUser={console.log} />}
     </>
   )
 }

@@ -4,7 +4,7 @@ import React from "react"
 import { UserManager } from "@thoth/components/user-manager"
 import { LibraryManager } from "@thoth/components/library-manager"
 
-export default function ServerSettingsOutlet() {
+export default function SettingsOutlet() {
   return (
     <>
       <h1 className="mb-4  text-2xl">Settings</h1>

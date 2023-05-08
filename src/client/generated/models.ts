@@ -39,10 +39,16 @@ export interface RegisterUser {
 
 export type UUID = `${string}-${string}-${string}-${string}-${string}` | string
 
+export interface NamedId {
+  id: UUID
+  name: string
+}
+
 export interface UserModel {
   admin: boolean
   edit: boolean
   id: UUID
+  libraries: Array<NamedId>
   username: string
 }
 
@@ -60,9 +66,7 @@ export interface JWKs {
 
 export interface ModifyUser {
   admin?: boolean
-  changePassword?: boolean
   edit?: boolean
-  enabled?: boolean
   password?: string
   username?: string
 }
@@ -134,11 +138,6 @@ export interface AuthorModel {
   provider?: string
   providerID?: string
   website?: string
-}
-
-export interface NamedId {
-  id: UUID
-  name: string
 }
 
 export interface TitledId {
