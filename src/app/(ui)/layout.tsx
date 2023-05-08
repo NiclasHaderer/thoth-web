@@ -8,7 +8,7 @@ export default function SettingsLayout({ children }: { children: React.ReactNode
   return (
     <>
       <SearchBar />
-      <div className="flex flex-grow flex-col">
+      <div className="flex flex-grow flex-col overflow-y-auto">
         <RequireLogin>{children}</RequireLogin>
       </div>
     </>
