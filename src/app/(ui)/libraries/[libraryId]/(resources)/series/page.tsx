@@ -1,4 +1,5 @@
 "use client"
+
 import React, { useRef } from "react"
 import { useAudiobookState } from "@thoth/state/audiobook.state"
 import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
@@ -11,16 +12,15 @@ import { UUID } from "@thoth/client"
 
 export default function SeriesListOutlet({ params: { libraryId } }: { params: { libraryId: UUID } }) {
   const getSeries = useAudiobookState(s => s.fetchSeries)
-  const series = useAudiobookState(AudiobookSelectors.selectSeriesList(libraryId))
-  const seriesCount = useAudiobookState(AudiobookSelectors.selectSeriesCount(libraryId))
   const loading = useRef<HTMLDivElement>(null)
   useScrollTo("main")
   useInfinityScroll(loading.current, offset => getSeries(libraryId, offset))
+  const series = useAudiobookState(AudiobookSelectors.selectSeriesList(libraryId))
+  const seriesCount = useAudiobookState(AudiobookSelectors.selectSeriesCount(libraryId))
 
   return (
     <>
-      {seriesCount != null ? <h2 className="p-2 pb-6 text-2xl">{seriesCount} Series</h2> : null}
-
+      {<h2 className="p-2 pb-6 text-2xl">{seriesCount} Series</h2>}
       <ResponsiveGrid>
         {series.map((series, k) => (
           <CleanIfNotVisible key={k}>

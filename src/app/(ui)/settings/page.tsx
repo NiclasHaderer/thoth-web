@@ -9,11 +9,11 @@ export default function SettingsOutlet() {
     <>
       <h1 className="mb-4  text-2xl">Settings</h1>
 
-      <h2 className="mb-2 text-xl">Manage Users</h2>
-      <UserManager />
-
       <h2 className="mb-2 mt-4 text-xl">Manage Libraries</h2>
       <LibraryManager />
+
+      <h2 className="mb-2 text-xl">Manage Users</h2>
+      <UserManager />
     </>
   )
 }

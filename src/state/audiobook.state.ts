@@ -96,7 +96,6 @@ export const useAudiobookState = create(
       wrapSortingOf(mutate, "book", Api.getBookPosition),
       undefined
     ),
-    // TODO Library
     fetchLibraries: async () => {
       const libs = await Api.listLibraries()
       if (!libs.success) return
@@ -135,3 +134,24 @@ export const useAudiobookState = create(
     },
   }))
 )
+;(() => {
+  // If on server, do not initialize state
+  if (typeof window === "undefined") return
+  const extractLibId = /libraries\/([a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12})\//
+
+  // Subscribe to url changes using the history API
+  // and update the selectedLibraryId accordingly
+  const updateSelectedLibraryId = () => {
+    const path = window.location.pathname
+    const libraryId = extractLibId.exec(path)?.[1]
+    if (libraryId) {
+      useAudiobookState.setState({ selectedLibraryId: libraryId })
+    } else {
+      useAudiobookState.setState({ selectedLibraryId: undefined })
+    }
+  }
+  window.addEventListener("popstate", updateSelectedLibraryId)
+  window.addEventListener("pushstate", updateSelectedLibraryId)
+  window.addEventListener("replacestate", updateSelectedLibraryId)
+  updateSelectedLibraryId()
+})()
