@@ -1,7 +1,4 @@
 import type {
-  ApiCallData,
-  ApiInterceptor,
-  ApiResponse,
   AuthorApiModel,
   AuthorModel,
   BookApiModel,
@@ -12,15 +9,20 @@ import type {
   Empty,
   FileScanner,
   FileSystemItem,
+  JWK,
   JWKs,
   JwtPair,
   LibraryApiModel,
   LibraryModel,
   LoginUser,
+  MetadataAgent,
   MetadataAgentApiModel,
   MetadataAuthor,
   MetadataBook,
+  MetadataBookSeries,
   MetadataLanguage,
+  MetadataProviderWithID,
+  MetadataSearchAuthor,
   MetadataSearchBook,
   MetadataSearchCount,
   MetadataSeries,
@@ -39,11 +41,15 @@ import type {
   SeriesApiModel,
   SeriesModel,
   TitledId,
+  TrackModel,
+  UUID,
   UserModel,
   UsernameChange,
-  UUID,
+  YearRange,
+  ApiResponse,
+  ApiInterceptor,
+  ApiCallData,
 } from "./models"
-
 type ArrayIsch<T> = T | T[]
 const __createUrl = (
   route: string,
@@ -134,7 +140,16 @@ export const createApi = (
     ): Promise<ApiResponse<JwtPair>> {
       const headersImpl = new Headers(headers)
       defaultHeadersImpl.forEach((value, key) => headersImpl.append(key, value))
-      return __request(`/api/auth/login`, "POST", "json", headersImpl, body, interceptors, executor, false)
+      return __request(
+        `/api/auth/login`,
+        "POST",
+        "json",
+        headersImpl,
+        body,
+        [...defaultInterceptors, ...interceptors],
+        executor,
+        false
+      )
     },
     registerUser(
       body: RegisterUser,
@@ -143,7 +158,16 @@ export const createApi = (
     ): Promise<ApiResponse<UserModel>> {
       const headersImpl = new Headers(headers)
       defaultHeadersImpl.forEach((value, key) => headersImpl.append(key, value))
-      return __request(`/api/auth/register`, "POST", "json", headersImpl, body, interceptors, executor, false)
+      return __request(
+        `/api/auth/register`,
+        "POST",
+        "json",
+        headersImpl,
+        body,
+        [...defaultInterceptors, ...interceptors],
+        executor,
+        false
+      )
     },
     retrieveJwks(headers: HeadersInit = {}, interceptors: ApiInterceptor[] = []): Promise<ApiResponse<JWKs>> {
       const headersImpl = new Headers(headers)
@@ -154,7 +178,7 @@ export const createApi = (
         "json",
         headersImpl,
         undefined,
-        interceptors,
+        [...defaultInterceptors, ...interceptors],
         executor,
         false
       )
@@ -173,20 +197,52 @@ export const createApi = (
         "json",
         headersImpl,
         body,
-        interceptors,
+        [...defaultInterceptors, ...interceptors],
         executor,
         true
       )
     },
-    listUsers(headers: HeadersInit = {}, interceptors: ApiInterceptor[] = []): Promise<ApiResponse<UserModel>> {
+    getCurrentUser(headers: HeadersInit = {}, interceptors: ApiInterceptor[] = []): Promise<ApiResponse<UserModel>> {
       const headersImpl = new Headers(headers)
       defaultHeadersImpl.forEach((value, key) => headersImpl.append(key, value))
-      return __request(`/api/auth/user`, "GET", "json", headersImpl, undefined, interceptors, executor, true)
+      return __request(
+        `/api/auth/user`,
+        "GET",
+        "json",
+        headersImpl,
+        undefined,
+        [...defaultInterceptors, ...interceptors],
+        executor,
+        true
+      )
     },
     deleteUser(headers: HeadersInit = {}, interceptors: ApiInterceptor[] = []): Promise<ApiResponse<Empty>> {
       const headersImpl = new Headers(headers)
       defaultHeadersImpl.forEach((value, key) => headersImpl.append(key, value))
-      return __request(`/api/auth/user`, "DELETE", "text", headersImpl, undefined, interceptors, executor, true)
+      return __request(
+        `/api/auth/user`,
+        "DELETE",
+        "text",
+        headersImpl,
+        undefined,
+        [...defaultInterceptors, ...interceptors],
+        executor,
+        true
+      )
+    },
+    listUsers(headers: HeadersInit = {}, interceptors: ApiInterceptor[] = []): Promise<ApiResponse<UserModel[]>> {
+      const headersImpl = new Headers(headers)
+      defaultHeadersImpl.forEach((value, key) => headersImpl.append(key, value))
+      return __request(
+        `/api/auth/user/all`,
+        "GET",
+        "json",
+        headersImpl,
+        undefined,
+        [...defaultInterceptors, ...interceptors],
+        executor,
+        true
+      )
     },
     updateUsername(
       body: UsernameChange,
@@ -195,7 +251,16 @@ export const createApi = (
     ): Promise<ApiResponse<UserModel>> {
       const headersImpl = new Headers(headers)
       defaultHeadersImpl.forEach((value, key) => headersImpl.append(key, value))
-      return __request(`/api/auth/user/username`, "POST", "json", headersImpl, body, interceptors, executor, true)
+      return __request(
+        `/api/auth/user/username`,
+        "POST",
+        "json",
+        headersImpl,
+        body,
+        [...defaultInterceptors, ...interceptors],
+        executor,
+        true
+      )
     },
     updatePassword(
       body: PasswordChange,
@@ -204,7 +269,16 @@ export const createApi = (
     ): Promise<ApiResponse<Empty>> {
       const headersImpl = new Headers(headers)
       defaultHeadersImpl.forEach((value, key) => headersImpl.append(key, value))
-      return __request(`/api/auth/user/password`, "POST", "text", headersImpl, body, interceptors, executor, true)
+      return __request(
+        `/api/auth/user/password`,
+        "POST",
+        "text",
+        headersImpl,
+        body,
+        [...defaultInterceptors, ...interceptors],
+        executor,
+        true
+      )
     },
     listFoldersAtACertainPath(
       path: string,
@@ -220,7 +294,7 @@ export const createApi = (
         "json",
         headersImpl,
         undefined,
-        interceptors,
+        [...defaultInterceptors, ...interceptors],
         executor,
         false
       )
@@ -231,7 +305,16 @@ export const createApi = (
     ): Promise<ApiResponse<LibraryModel[]>> {
       const headersImpl = new Headers(headers)
       defaultHeadersImpl.forEach((value, key) => headersImpl.append(key, value))
-      return __request(`/api/libraries`, "GET", "json", headersImpl, undefined, interceptors, executor, false)
+      return __request(
+        `/api/libraries`,
+        "GET",
+        "json",
+        headersImpl,
+        undefined,
+        [...defaultInterceptors, ...interceptors],
+        executor,
+        false
+      )
     },
     createLibrary(
       body: LibraryApiModel,
@@ -240,7 +323,16 @@ export const createApi = (
     ): Promise<ApiResponse<LibraryModel>> {
       const headersImpl = new Headers(headers)
       defaultHeadersImpl.forEach((value, key) => headersImpl.append(key, value))
-      return __request(`/api/libraries`, "POST", "json", headersImpl, body, interceptors, executor, false)
+      return __request(
+        `/api/libraries`,
+        "POST",
+        "json",
+        headersImpl,
+        body,
+        [...defaultInterceptors, ...interceptors],
+        executor,
+        false
+      )
     },
     getLibrary(
       libraryId: UUID,
@@ -255,7 +347,7 @@ export const createApi = (
         "json",
         headersImpl,
         undefined,
-        interceptors,
+        [...defaultInterceptors, ...interceptors],
         executor,
         false
       )
@@ -268,7 +360,16 @@ export const createApi = (
     ): Promise<ApiResponse<LibraryModel>> {
       const headersImpl = new Headers(headers)
       defaultHeadersImpl.forEach((value, key) => headersImpl.append(key, value))
-      return __request(`/api/libraries/${libraryId}`, "PUT", "json", headersImpl, body, interceptors, executor, false)
+      return __request(
+        `/api/libraries/${libraryId}`,
+        "PUT",
+        "json",
+        headersImpl,
+        body,
+        [...defaultInterceptors, ...interceptors],
+        executor,
+        false
+      )
     },
     updateLibrary(
       libraryId: UUID,
@@ -278,7 +379,16 @@ export const createApi = (
     ): Promise<ApiResponse<LibraryModel>> {
       const headersImpl = new Headers(headers)
       defaultHeadersImpl.forEach((value, key) => headersImpl.append(key, value))
-      return __request(`/api/libraries/${libraryId}`, "PATCH", "json", headersImpl, body, interceptors, executor, false)
+      return __request(
+        `/api/libraries/${libraryId}`,
+        "PATCH",
+        "json",
+        headersImpl,
+        body,
+        [...defaultInterceptors, ...interceptors],
+        executor,
+        false
+      )
     },
     rescanLibrary(
       libraryId: UUID,
@@ -293,7 +403,7 @@ export const createApi = (
         "text",
         headersImpl,
         undefined,
-        interceptors,
+        [...defaultInterceptors, ...interceptors],
         executor,
         false
       )
@@ -301,7 +411,16 @@ export const createApi = (
     rescanAllLibraries(headers: HeadersInit = {}, interceptors: ApiInterceptor[] = []): Promise<ApiResponse<Empty>> {
       const headersImpl = new Headers(headers)
       defaultHeadersImpl.forEach((value, key) => headersImpl.append(key, value))
-      return __request(`/api/libraries/rescan`, "POST", "text", headersImpl, undefined, interceptors, executor, false)
+      return __request(
+        `/api/libraries/rescan`,
+        "POST",
+        "text",
+        headersImpl,
+        undefined,
+        [...defaultInterceptors, ...interceptors],
+        executor,
+        false
+      )
     },
     searchInAllLibraries(
       author?: string,
@@ -319,7 +438,7 @@ export const createApi = (
         "json",
         headersImpl,
         undefined,
-        interceptors,
+        [...defaultInterceptors, ...interceptors],
         executor,
         false
       )
@@ -330,7 +449,16 @@ export const createApi = (
     ): Promise<ApiResponse<FileScanner[]>> {
       const headersImpl = new Headers(headers)
       defaultHeadersImpl.forEach((value, key) => headersImpl.append(key, value))
-      return __request(`/api/scanners`, "GET", "json", headersImpl, undefined, interceptors, executor, false)
+      return __request(
+        `/api/scanners`,
+        "GET",
+        "json",
+        headersImpl,
+        undefined,
+        [...defaultInterceptors, ...interceptors],
+        executor,
+        false
+      )
     },
     listMetadataAgents(
       headers: HeadersInit = {},
@@ -338,7 +466,16 @@ export const createApi = (
     ): Promise<ApiResponse<MetadataAgentApiModel[]>> {
       const headersImpl = new Headers(headers)
       defaultHeadersImpl.forEach((value, key) => headersImpl.append(key, value))
-      return __request(`/api/metadata-agents`, "GET", "json", headersImpl, undefined, interceptors, executor, false)
+      return __request(
+        `/api/metadata-agents`,
+        "GET",
+        "json",
+        headersImpl,
+        undefined,
+        [...defaultInterceptors, ...interceptors],
+        executor,
+        false
+      )
     },
     listBooks(
       libraryId: UUID,
@@ -355,7 +492,7 @@ export const createApi = (
         "json",
         headersImpl,
         undefined,
-        interceptors,
+        [...defaultInterceptors, ...interceptors],
         executor,
         false
       )
@@ -375,7 +512,7 @@ export const createApi = (
         "json",
         headersImpl,
         undefined,
-        interceptors,
+        [...defaultInterceptors, ...interceptors],
         executor,
         false
       )
@@ -394,7 +531,7 @@ export const createApi = (
         "json",
         headersImpl,
         undefined,
-        interceptors,
+        [...defaultInterceptors, ...interceptors],
         executor,
         false
       )
@@ -413,7 +550,7 @@ export const createApi = (
         "json",
         headersImpl,
         undefined,
-        interceptors,
+        [...defaultInterceptors, ...interceptors],
         executor,
         false
       )
@@ -433,7 +570,7 @@ export const createApi = (
         "json",
         headersImpl,
         body,
-        interceptors,
+        [...defaultInterceptors, ...interceptors],
         executor,
         false
       )
@@ -453,7 +590,7 @@ export const createApi = (
         "json",
         headersImpl,
         body,
-        interceptors,
+        [...defaultInterceptors, ...interceptors],
         executor,
         false
       )
@@ -472,7 +609,7 @@ export const createApi = (
         "json",
         headersImpl,
         undefined,
-        interceptors,
+        [...defaultInterceptors, ...interceptors],
         executor,
         false
       )
@@ -492,7 +629,7 @@ export const createApi = (
         "json",
         headersImpl,
         undefined,
-        interceptors,
+        [...defaultInterceptors, ...interceptors],
         executor,
         false
       )
@@ -513,7 +650,7 @@ export const createApi = (
         "json",
         headersImpl,
         undefined,
-        interceptors,
+        [...defaultInterceptors, ...interceptors],
         executor,
         false
       )
@@ -533,7 +670,7 @@ export const createApi = (
         "json",
         headersImpl,
         undefined,
-        interceptors,
+        [...defaultInterceptors, ...interceptors],
         executor,
         false
       )
@@ -552,7 +689,7 @@ export const createApi = (
         "json",
         headersImpl,
         undefined,
-        interceptors,
+        [...defaultInterceptors, ...interceptors],
         executor,
         false
       )
@@ -572,7 +709,7 @@ export const createApi = (
         "json",
         headersImpl,
         body,
-        interceptors,
+        [...defaultInterceptors, ...interceptors],
         executor,
         false
       )
@@ -592,7 +729,7 @@ export const createApi = (
         "json",
         headersImpl,
         body,
-        interceptors,
+        [...defaultInterceptors, ...interceptors],
         executor,
         false
       )
@@ -611,7 +748,7 @@ export const createApi = (
         "json",
         headersImpl,
         undefined,
-        interceptors,
+        [...defaultInterceptors, ...interceptors],
         executor,
         false
       )
@@ -632,7 +769,7 @@ export const createApi = (
         "json",
         headersImpl,
         undefined,
-        interceptors,
+        [...defaultInterceptors, ...interceptors],
         executor,
         false
       )
@@ -653,7 +790,7 @@ export const createApi = (
         "json",
         headersImpl,
         undefined,
-        interceptors,
+        [...defaultInterceptors, ...interceptors],
         executor,
         false
       )
@@ -673,7 +810,7 @@ export const createApi = (
         "json",
         headersImpl,
         undefined,
-        interceptors,
+        [...defaultInterceptors, ...interceptors],
         executor,
         false
       )
@@ -692,7 +829,7 @@ export const createApi = (
         "json",
         headersImpl,
         undefined,
-        interceptors,
+        [...defaultInterceptors, ...interceptors],
         executor,
         false
       )
@@ -712,7 +849,7 @@ export const createApi = (
         "json",
         headersImpl,
         body,
-        interceptors,
+        [...defaultInterceptors, ...interceptors],
         executor,
         false
       )
@@ -732,7 +869,7 @@ export const createApi = (
         "json",
         headersImpl,
         body,
-        interceptors,
+        [...defaultInterceptors, ...interceptors],
         executor,
         false
       )
@@ -751,7 +888,7 @@ export const createApi = (
         "json",
         headersImpl,
         undefined,
-        interceptors,
+        [...defaultInterceptors, ...interceptors],
         executor,
         false
       )
@@ -775,7 +912,7 @@ export const createApi = (
         "json",
         headersImpl,
         undefined,
-        interceptors,
+        [...defaultInterceptors, ...interceptors],
         executor,
         false
       )
@@ -795,7 +932,7 @@ export const createApi = (
         "json",
         headersImpl,
         undefined,
-        interceptors,
+        [...defaultInterceptors, ...interceptors],
         executor,
         false
       )
@@ -814,7 +951,7 @@ export const createApi = (
         "json",
         headersImpl,
         undefined,
-        interceptors,
+        [...defaultInterceptors, ...interceptors],
         executor,
         false
       )
@@ -834,7 +971,7 @@ export const createApi = (
         "json",
         headersImpl,
         undefined,
-        interceptors,
+        [...defaultInterceptors, ...interceptors],
         executor,
         false
       )
@@ -854,7 +991,7 @@ export const createApi = (
         "json",
         headersImpl,
         undefined,
-        interceptors,
+        [...defaultInterceptors, ...interceptors],
         executor,
         false
       )
@@ -874,7 +1011,7 @@ export const createApi = (
         "json",
         headersImpl,
         undefined,
-        interceptors,
+        [...defaultInterceptors, ...interceptors],
         executor,
         false
       )
@@ -894,7 +1031,7 @@ export const createApi = (
         "json",
         headersImpl,
         undefined,
-        interceptors,
+        [...defaultInterceptors, ...interceptors],
         executor,
         false
       )
@@ -902,17 +1039,44 @@ export const createApi = (
     getAudioFile(id: UUID, headers: HeadersInit = {}, interceptors: ApiInterceptor[] = []): Promise<ApiResponse<Blob>> {
       const headersImpl = new Headers(headers)
       defaultHeadersImpl.forEach((value, key) => headersImpl.append(key, value))
-      return __request(`/api/stream/audio/${id}`, "GET", "blob", headersImpl, undefined, interceptors, executor, false)
+      return __request(
+        `/api/stream/audio/${id}`,
+        "GET",
+        "blob",
+        headersImpl,
+        undefined,
+        [...defaultInterceptors, ...interceptors],
+        executor,
+        false
+      )
     },
     getImageFile(id: UUID, headers: HeadersInit = {}, interceptors: ApiInterceptor[] = []): Promise<ApiResponse<Blob>> {
       const headersImpl = new Headers(headers)
       defaultHeadersImpl.forEach((value, key) => headersImpl.append(key, value))
-      return __request(`/api/stream/images/${id}`, "GET", "blob", headersImpl, undefined, interceptors, executor, false)
+      return __request(
+        `/api/stream/images/${id}`,
+        "GET",
+        "blob",
+        headersImpl,
+        undefined,
+        [...defaultInterceptors, ...interceptors],
+        executor,
+        false
+      )
     },
     pingServer(headers: HeadersInit = {}, interceptors: ApiInterceptor[] = []): Promise<ApiResponse<Empty>> {
       const headersImpl = new Headers(headers)
       defaultHeadersImpl.forEach((value, key) => headersImpl.append(key, value))
-      return __request(`/api/ping`, "GET", "text", headersImpl, undefined, interceptors, executor, false)
+      return __request(
+        `/api/ping`,
+        "GET",
+        "text",
+        headersImpl,
+        undefined,
+        [...defaultInterceptors, ...interceptors],
+        executor,
+        false
+      )
     },
   } as const
 }
