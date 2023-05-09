@@ -21,15 +21,14 @@ export type ApiCallData = {
   executor: (callData: ApiCallData) => Promise<Response | ApiResponse<any>>
 }
 
-export type ApiInterceptor = (param: ApiCallData) => ApiCallData
+export type ApiInterceptor = (param: ApiCallData) => ApiCallData | Promise<ApiCallData>
 export interface LoginUser {
   password: string
   username: string
 }
 
-export interface JwtPair {
-  access: string
-  refresh: string
+export interface AccessToken {
+  accessToken: string
 }
 
 export interface RegisterUser {

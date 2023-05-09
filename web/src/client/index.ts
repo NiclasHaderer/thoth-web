@@ -1,14 +1,20 @@
 import { createApi } from "./generated/client"
 import { ApiCallData, ApiInterceptor, ApiResponse } from "./generated/models"
 import { AuthState, useAuthState } from "@thoth/state/auth.state"
+import { isExpired } from "@thoth/utils/jwt"
+import { useAudiobookState } from "@thoth/state/audiobook.state"
+import { unstable_batchedUpdates } from "react-dom"
 export * from "./generated/models"
 
-const authInterceptor: ApiInterceptor = (data: ApiCallData): ApiCallData => {
+const authInterceptor: ApiInterceptor = async (data: ApiCallData): Promise<ApiCallData> => {
   const authState = useAuthState.getState() as AuthState
   let executor: (callData: ApiCallData) => Promise<Response | ApiResponse<any>> = data.executor
   if (data.requiresAuth) {
     if (authState.loggedIn) {
-      data.headers.set("Authorization", `Bearer ${authState.accessToken}`)
+      if (isExpired(authState.accessToken)) {
+        await unstable_batchedUpdates(async () => await useAuthState.getState().refreshAccessToken())
+      }
+      data.headers.set("Authorization", `Bearer ${useAuthState.getState().accessTokenStr}`)
     } else {
       executor = () => Promise.resolve({ success: false, error: "Not logged in" })
     }
