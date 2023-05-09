@@ -15,7 +15,7 @@ export const AuthorDetails: React.FC<{ authorId: UUID }> = ({ authorId }) => {
   const libraryId = useAudiobookState(AudiobookSelectors.selectedLibraryId)!
   const author = useAudiobookState(AudiobookSelectors.selectAuthor(libraryId, authorId))
   const getAuthorDetails = useAudiobookState(s => s.fetchAuthorDetails)
-  useEffect(() => void getAuthorDetails(libraryId, authorId), [authorId, libraryId, getAuthorDetails])
+  useEffect(() => void getAuthorDetails({ libraryId, id: authorId }), [authorId, libraryId, getAuthorDetails])
   if (!author) return <></>
 
   return (

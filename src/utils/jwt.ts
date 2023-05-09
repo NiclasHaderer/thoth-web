@@ -4,22 +4,15 @@ export interface JwtHeader {
   kid: string
 }
 
-export type JwtPayload =
-  | {
-      iss: string
-      username: string
-      edit: boolean
-      admin: boolean
-      sub: string
-      type: "access"
-      exp: number
-    }
-  | {
-      iss: string
-      sub: string
-      type: "refresh"
-      exp: number
-    }
+export type JwtPayload = {
+  iss: string
+  username: string
+  edit: boolean
+  admin: boolean
+  sub: string
+  type: "access"
+  exp: number
+}
 
 export interface Jwt {
   header: JwtHeader
@@ -32,4 +25,8 @@ export const decodeJWT = (jwt: string): Jwt => {
     header: JSON.parse(window.atob(header)),
     payload: JSON.parse(window.atob(payload)),
   }
+}
+
+export const isExpired = (jwt: Jwt): boolean => {
+  return jwt.payload.exp * 1000 < Date.now()
 }

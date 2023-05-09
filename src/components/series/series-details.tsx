@@ -18,7 +18,7 @@ export const SeriesDetails: React.FC<{ seriesId: UUID }> = ({ seriesId }) => {
   //eslint-disable-next-line react-hooks/exhaustive-deps
   const series = useAudiobookState(AudiobookSelectors.selectSeries(libraryId, seriesId))
 
-  useEffect(() => void getSeriesWithBooks(libraryId, seriesId), [seriesId, libraryId, getSeriesWithBooks])
+  useEffect(() => void getSeriesWithBooks({ libraryId, id: seriesId }), [seriesId, libraryId, getSeriesWithBooks])
   if (!series) return <></>
 
   return (
