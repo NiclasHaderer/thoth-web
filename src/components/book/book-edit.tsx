@@ -62,7 +62,7 @@ export const BookEdit: React.FC<{ book: BookModel; bookId: UUID }> = ({ book: _b
         <Form
           form={form}
           onSubmit={values => {
-            updateBook(libraryId, bookId, values)
+            updateBook({ libraryId, id: bookId }, values)
             closeModal()
           }}
         >

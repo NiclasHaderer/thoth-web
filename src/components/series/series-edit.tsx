@@ -55,7 +55,7 @@ export const SeriesEdit: React.FC<{ series: DetailedSeriesModel; seriesId: UUID 
         <Form
           form={form}
           onSubmit={values => {
-            updateSeries(libraryId, seriesId, values)
+            updateSeries({ libraryId, id: seriesId }, values)
             closeModal()
           }}
         >

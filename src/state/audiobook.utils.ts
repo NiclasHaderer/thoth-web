@@ -11,16 +11,16 @@ type AssetsToUpdate = "book" | "series" | "author"
 export const wrapFetch = <K extends AssetsToUpdate>(
   mutate: Mutate<StoreApi<AudiobookState>, [StoreMutatorIdentifier, unknown][]>,
   key: K,
-  fetchFunction: (
-    libraryId: UUID,
-    limit?: number,
+  fetchFunction: (params: {
+    libraryId: UUID
+    limit?: number
     offset?: number
-  ) => Promise<ApiResponse<PaginatedResponse<AudiobookState["content"][UUID][`${K}Map`][string]>>>
+  }) => Promise<ApiResponse<PaginatedResponse<AudiobookState["content"][UUID][`${K}Map`][string]>>>
 ) => {
-  return async (libraryId: UUID, offset: number) => {
+  return async ({ libraryId, offset }: { libraryId: UUID; offset: number }) => {
     const limit = 30
     const offsetCount = offset * limit
-    const response = await fetchFunction(libraryId, limit, offsetCount)
+    const response = await fetchFunction({ libraryId, limit, offset: offsetCount })
     if (!response.success) return
 
     const state = { ...mutate.getState() }
@@ -64,13 +64,15 @@ export const wrapUpdate = <K extends AssetsToUpdate, UPDATE_TYPE>(
   mutate: Mutate<StoreApi<AudiobookState>, [StoreMutatorIdentifier, unknown][]>,
   key: K,
   updateFunction: (
-    libraryId: UUID,
-    authorId: UUID,
+    params: {
+      libraryId: UUID
+      id: UUID
+    },
     data: UPDATE_TYPE
   ) => Promise<ApiResponse<AudiobookState["content"][UUID][`${K}Map`][string]>>
 ) => {
-  return async (libraryId: UUID, authorId: UUID, data: UPDATE_TYPE) => {
-    const response = await updateFunction(libraryId, authorId, data)
+  return async ({ libraryId, id }: { libraryId: UUID; id: UUID }, data: UPDATE_TYPE) => {
+    const response = await updateFunction({ libraryId, id }, data)
     if (!response.success) return
     mutate.setState(state => ({
       ...state,
@@ -81,7 +83,7 @@ export const wrapUpdate = <K extends AssetsToUpdate, UPDATE_TYPE>(
           [`${key}Map`]: {
             ...state.content[libraryId][`${key}Map`],
             [response.body.id]: {
-              ...state.content[libraryId][`${key}Map`][authorId],
+              ...state.content[libraryId][`${key}Map`][id],
               ...response.body,
             },
           },
@@ -94,12 +96,12 @@ export const wrapUpdate = <K extends AssetsToUpdate, UPDATE_TYPE>(
 export const wrapSorting = <K extends AssetsToUpdate>(
   mutate: Mutate<StoreApi<AudiobookState>, [StoreMutatorIdentifier, unknown][]>,
   key: K,
-  sortingFunction: (libraryId: UUID, offset: number, limit: number) => Promise<ApiResponse<string[]>>
+  sortingFunction: (params: { libraryId: UUID; limit?: number; offset?: number }) => Promise<ApiResponse<string[]>>
 ) => {
-  return async (libraryId: UUID, offset: number) => {
+  return async ({ libraryId, offset }: { libraryId: UUID; offset: number }) => {
     const limit = 30
     const offsetCount = offset * limit
-    const response = await sortingFunction(libraryId, offsetCount, limit)
+    const response = await sortingFunction({ libraryId, offset: offsetCount, limit })
     if (!response.success) return
 
     mutate.setState(state => ({
@@ -119,13 +121,13 @@ export const wrapSorting = <K extends AssetsToUpdate>(
 export const wrapDetails = <K extends AssetsToUpdate>(
   mutate: Mutate<StoreApi<AudiobookState>, [StoreMutatorIdentifier, unknown][]>,
   key: K,
-  detailsFunction: (
-    libraryId: UUID,
+  detailsFunction: (params: {
+    libraryId: UUID
     id: UUID
-  ) => Promise<ApiResponse<AudiobookState["content"][UUID][`${K}Map`][string]>>
+  }) => Promise<ApiResponse<AudiobookState["content"][UUID][`${K}Map`][string]>>
 ) => {
-  return async (libraryId: UUID, id: UUID) => {
-    const response = await detailsFunction(libraryId, id)
+  return async ({ libraryId, id }: { libraryId: UUID; id: UUID }) => {
+    const response = await detailsFunction({ libraryId, id })
     if (!response.success) return
     mutate.setState(state => ({
       ...state,
@@ -166,10 +168,10 @@ export const wrapClear = <K extends AssetsToUpdate>(
 export const wrapSortingOf = <K extends AssetsToUpdate>(
   mutate: Mutate<StoreApi<AudiobookState>, [StoreMutatorIdentifier, unknown][]>,
   key: K,
-  sortingFunction: (libraryId: UUID, id: UUID) => Promise<ApiResponse<Position>>
+  sortingFunction: (params: { libraryId: UUID; id: UUID }) => Promise<ApiResponse<Position>>
 ) => {
-  return async (libraryId: UUID, id: UUID) => {
-    const response = await sortingFunction(libraryId, id)
+  return async ({ id, libraryId }: { libraryId: UUID; id: UUID }) => {
+    const response = await sortingFunction({ libraryId, id })
     if (!response.success) return
     mutate.setState(state => ({
       ...state,
@@ -187,8 +189,8 @@ export const wrapSortingOf = <K extends AssetsToUpdate>(
 export const wrapWs = <K extends AssetsToUpdate>(
   mutate: Mutate<StoreApi<AudiobookState>, [StoreMutatorIdentifier, unknown][]>,
   key: K,
-  updateDetails: (libraryId: UUID, id: UUID) => Promise<void>,
-  updateSorting: (libraryId: UUID, id: UUID) => Promise<void>,
+  updateDetails: (params: { libraryId: UUID; id: UUID }) => Promise<void>,
+  updateSorting: (params: { libraryId: UUID; id: UUID }) => Promise<void>,
   ws?: WebsocketConnection<ChangeEvent>
 ): undefined => {
   if (!ws) return undefined
@@ -215,8 +217,8 @@ export const wrapWs = <K extends AssetsToUpdate>(
   }
 
   const handleUpsert = async (libraryId: UUID, id: UUID) => {
-    await updateDetails(libraryId, id)
-    await updateSorting(libraryId, id)
+    await updateDetails({ libraryId, id })
+    await updateSorting({ libraryId, id })
   }
 
   ws.onMessage(m =>

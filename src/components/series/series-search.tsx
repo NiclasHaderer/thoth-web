@@ -22,7 +22,7 @@ export const SeriesSearch: React.FC<{
 
   const search = async () => {
     if (!series) return
-    invoke(series, library.language, authors)
+    invoke({ q: series, region: library.language, authorName: authors })
   }
 
   return (
