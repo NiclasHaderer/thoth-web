@@ -42,7 +42,7 @@ export const Playback: FC<{ className?: string }> = ({ className }) => {
               className="h-12 w-12 rounded-md md:h-20 md:w-20"
               alt={track.title}
               loading="lazy"
-              src={`/api/image/${track.coverID}`}
+              src={`/api/stream/images/${track.coverID}`}
             />
           ) : (
             <MdImageNotSupported className="h-10 w-10 rounded-md md:h-20 md:w-20" />

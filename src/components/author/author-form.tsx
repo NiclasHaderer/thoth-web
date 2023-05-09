@@ -25,7 +25,7 @@ export const AuthorForm = () => {
             {imageValue ? (
               <ResponsiveImage
                 className="h-52 min-h-52 w-52 cursor-pointer rounded-full bg-cover"
-                src={isUUID(imageValue) ? `/api/image/${imageValue}` : imageValue}
+                src={isUUID(imageValue) ? `/api/stream/images/${imageValue}` : imageValue}
                 alt="author"
                 onClick={() => imageInputRef.current && imageInputRef.current.click()}
               />

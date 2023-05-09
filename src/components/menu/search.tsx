@@ -129,7 +129,12 @@ const AuthorSearchResult: React.FC<{ authors: SearchModel["authors"]; onClose: (
       >
         <div className="flex items-center p-2">
           {author.imageID ? (
-            <img className="h-8 w-8 rounded-full" src={`/api/image/${author.imageID}`} alt="Author" loading="lazy" />
+            <img
+              className="h-8 w-8 rounded-full"
+              src={`/api/stream/images/${author.imageID}`}
+              alt="Author"
+              loading="lazy"
+            />
           ) : (
             <MdPerson className="h-8 w-8 rounded-full" />
           )}
@@ -154,7 +159,7 @@ const BookSearchResult: React.FC<{ books: SearchModel["books"]; onClose: () => v
           {book.coverID ? (
             <img
               className="h-8 w-8 rounded-md object-cover"
-              src={`/api/image/${book.coverID}`}
+              src={`/api/stream/images/${book.coverID}`}
               alt={book.title}
               loading="lazy"
             />

@@ -22,7 +22,12 @@ export const Track: React.FC<TrackProps> = ({ coverID, title, duration, trackNr,
       onKeyUp={e => e.key === "Enter" && startPlayback(index)}
     >
       {coverID ? (
-        <img className="h-16 w-16 rounded-md object-contain" src={`/api/image/${coverID}`} alt={title} loading="lazy" />
+        <img
+          className="h-16 w-16 rounded-md object-contain"
+          src={`/api/stream/images/${coverID}`}
+          alt={title}
+          loading="lazy"
+        />
       ) : (
         <MdImageNotSupported className="h-16 w-16 rounded-md" />
       )}
