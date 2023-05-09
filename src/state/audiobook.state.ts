@@ -105,7 +105,7 @@ export const useAudiobookState = create(
       }))
     },
     updateLibrary: async (id: UUID, library: PartialLibraryApiModel) => {
-      const res = await Api.updateLibrary(id, library)
+      const res = await Api.updateLibrary({ libraryId: id }, library)
       if (!res.success) return
       mutate.setState(state => ({
         ...state,

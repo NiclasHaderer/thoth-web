@@ -13,7 +13,7 @@ export default function SeriesOutlet({
   const fetchSeries = useAudiobookState(s => s.fetchSeriesDetails)
   const series = useAudiobookState(AudiobookSelectors.selectSeries(libraryId, seriesId))
   useEffect(() => {
-    fetchSeries(libraryId, seriesId)
+    fetchSeries({ libraryId, id: seriesId })
   })
   return series && <SeriesDisplay {...series} />
 }

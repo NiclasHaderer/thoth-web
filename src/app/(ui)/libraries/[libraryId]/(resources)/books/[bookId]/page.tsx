@@ -9,7 +9,7 @@ export default function BookOutlet({ params: { bookId, libraryId } }: { params: 
   const fetchBook = useAudiobookState(s => s.fetchBookDetails)
   const book = useAudiobookState(AudiobookSelectors.selectBook(libraryId, bookId))
   useEffect(() => {
-    fetchBook(libraryId, bookId)
+    fetchBook({ libraryId, id: bookId })
   })
   return book && <BookDisplay {...book} />
 }

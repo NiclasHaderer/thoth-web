@@ -1,47 +1,57 @@
 import { ExtractAtKey } from "@thoth/models/types"
 import { create } from "zustand"
-import { combine, createJSONStorage, persist } from "zustand/middleware"
+import { combine, persist } from "zustand/middleware"
 import { decodeJWT, Jwt } from "@thoth/utils/jwt"
+import { Api, LoginUser } from "@thoth/client"
 
 export type AuthState =
   | {
       loggedIn: false
+      accessTokenStr: undefined
       accessToken: undefined
-      refreshToken: undefined
-      decodedAccessToken: undefined
     }
   | {
       loggedIn: true
-      accessToken: string
-      refreshToken: string
-      decodedAccessToken: ExtractAtKey<Jwt, "payload", { type: "access" }>
-      decodedRefreshToken: ExtractAtKey<Jwt, "payload", { type: "refresh" }>
+      accessToken: Jwt
+      accessTokenStr: string
     }
 
 const INITIAL_USER_STATE: AuthState = {
   loggedIn: false,
-  refreshToken: undefined,
+  accessTokenStr: undefined,
   accessToken: undefined,
-  decodedAccessToken: undefined,
 }
 
 export const useAuthState = create(
   persist(
     combine(INITIAL_USER_STATE as AuthState, (set, get, modify) => ({
-      login: (accessToken: string, refreshToken: string) => {
-        const state = get()
-        const decodedAccessToken = decodeJWT(accessToken) as ExtractAtKey<Jwt, "payload", { type: "access" }>
-        const decodedRefreshToken = decodeJWT(refreshToken) as ExtractAtKey<Jwt, "payload", { type: "refresh" }>
+      async login(userPw: LoginUser) {
+        const jwt = await Api.loginUser(userPw)
+        if (!jwt.success) return
+        const { accessToken } = jwt.body
+        const decodedAccessToken = decodeJWT(accessToken)
         set({
           loggedIn: true,
-          accessToken,
-          refreshToken,
-          decodedAccessToken,
-          decodedRefreshToken,
+          accessTokenStr: accessToken,
+          accessToken: decodedAccessToken,
         })
       },
-      logout: () => {
+      async register(userPw: LoginUser) {
+        const user = await Api.registerUser(userPw)
+        if (!user.success) return
+        await this.login(userPw)
+      },
+      logout() {
         modify.setState(INITIAL_USER_STATE)
+      },
+      async refreshAccessToken() {
+        const newAccessToken = await Api.refreshAccessToken()
+        if (!newAccessToken.success) return
+        set({
+          loggedIn: true,
+          accessTokenStr: newAccessToken.body.accessToken,
+          accessToken: decodeJWT(newAccessToken.body.accessToken),
+        })
       },
     })),
     {

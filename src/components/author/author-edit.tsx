@@ -52,7 +52,7 @@ export const AuthorEdit: React.FC<{ author: EditAuthor; authorID: UUID }> = ({ a
         <Form
           form={form}
           onSubmit={values => {
-            updateAuthor(libraryId, authorID, values)
+            updateAuthor({ libraryId, id: authorID }, values)
             closeModal()
           }}
         >

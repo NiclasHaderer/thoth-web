@@ -50,7 +50,7 @@ export const Search: FC = () => {
     setResultVisible(true)
     clearTimeout(timeout.current)
     timeout.current = setTimeout(async () => {
-      const result = await Api.searchInAllLibraries(input)
+      const result = await Api.searchInAllLibraries({ q: input })
       result.success && setSearchResult(result.body)
     }, 100) as unknown as number
 

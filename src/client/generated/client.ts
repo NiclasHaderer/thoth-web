@@ -1,4 +1,5 @@
 import type {
+  AccessToken,
   AuthorApiModel,
   AuthorModel,
   BookApiModel,
@@ -11,7 +12,6 @@ import type {
   FileSystemItem,
   JWK,
   JWKs,
-  JwtPair,
   LibraryApiModel,
   LibraryModel,
   LoginUser,
@@ -68,7 +68,7 @@ const __createUrl = (
   }
   return finalUrlParams ? `${route}?${finalUrlParams.toString()}` : route
 }
-const __request = <T>(
+const __request = async <T>(
   route: string,
   method: string,
   bodyParseMethod: "text" | "json" | "blob",
@@ -92,7 +92,7 @@ const __request = <T>(
   }
   if (interceptors.length > 0) {
     for (const interceptor of interceptors) {
-      apiCallData = interceptor(apiCallData)
+      apiCallData = await interceptor(apiCallData)
     }
   }
 
@@ -137,7 +137,7 @@ export const createApi = (
       body: LoginUser,
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
-    ): Promise<ApiResponse<JwtPair>> {
+    ): Promise<ApiResponse<AccessToken>> {
       const headersImpl = new Headers(headers)
       defaultHeadersImpl.forEach((value, key) => headersImpl.append(key, value))
       return __request(
@@ -184,7 +184,7 @@ export const createApi = (
       )
     },
     updateUser(
-      id: UUID,
+      { id }: { id: UUID },
       body: ModifyUser,
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
@@ -280,9 +280,25 @@ export const createApi = (
         true
       )
     },
+    refreshAccessToken(
+      headers: HeadersInit = {},
+      interceptors: ApiInterceptor[] = []
+    ): Promise<ApiResponse<AccessToken>> {
+      const headersImpl = new Headers(headers)
+      defaultHeadersImpl.forEach((value, key) => headersImpl.append(key, value))
+      return __request(
+        `/api/auth/user/refresh`,
+        "POST",
+        "json",
+        headersImpl,
+        undefined,
+        [...defaultInterceptors, ...interceptors],
+        executor,
+        false
+      )
+    },
     listFoldersAtACertainPath(
-      path: string,
-      showHidden?: boolean,
+      { path, showHidden }: { path: string; showHidden?: boolean },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<FileSystemItem[]>> {
@@ -335,7 +351,7 @@ export const createApi = (
       )
     },
     getLibrary(
-      libraryId: UUID,
+      { libraryId }: { libraryId: UUID },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<LibraryModel>> {
@@ -353,7 +369,7 @@ export const createApi = (
       )
     },
     replaceLibrary(
-      libraryId: UUID,
+      { libraryId }: { libraryId: UUID },
       body: LibraryApiModel,
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
@@ -372,7 +388,7 @@ export const createApi = (
       )
     },
     updateLibrary(
-      libraryId: UUID,
+      { libraryId }: { libraryId: UUID },
       body: PartialLibraryApiModel,
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
@@ -391,7 +407,7 @@ export const createApi = (
       )
     },
     rescanLibrary(
-      libraryId: UUID,
+      { libraryId }: { libraryId: UUID },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<Empty>> {
@@ -423,10 +439,7 @@ export const createApi = (
       )
     },
     searchInAllLibraries(
-      author?: string,
-      book?: string,
-      q?: string,
-      series?: string,
+      { author, book, q, series }: { author?: string; book?: string; q?: string; series?: string },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<SearchModel>> {
@@ -478,9 +491,7 @@ export const createApi = (
       )
     },
     listBooks(
-      libraryId: UUID,
-      limit?: number,
-      offset?: number,
+      { limit, offset, libraryId }: { limit?: number; offset?: number; libraryId: UUID },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<PaginatedResponse<BookModel>>> {
@@ -498,9 +509,7 @@ export const createApi = (
       )
     },
     listBookSorting(
-      libraryId: UUID,
-      limit?: number,
-      offset?: number,
+      { limit, offset, libraryId }: { limit?: number; offset?: number; libraryId: UUID },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<UUID[]>> {
@@ -518,15 +527,14 @@ export const createApi = (
       )
     },
     getBookPosition(
-      bookId: UUID,
-      libraryId: UUID,
+      { id, libraryId }: { id: UUID; libraryId: UUID },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<Position>> {
       const headersImpl = new Headers(headers)
       defaultHeadersImpl.forEach((value, key) => headersImpl.append(key, value))
       return __request(
-        `/api/libraries/${libraryId}/books/${bookId}/position`,
+        `/api/libraries/${libraryId}/books/${id}/position`,
         "GET",
         "json",
         headersImpl,
@@ -537,15 +545,14 @@ export const createApi = (
       )
     },
     getBook(
-      bookId: UUID,
-      libraryId: UUID,
+      { id, libraryId }: { id: UUID; libraryId: UUID },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<DetailedBookModel>> {
       const headersImpl = new Headers(headers)
       defaultHeadersImpl.forEach((value, key) => headersImpl.append(key, value))
       return __request(
-        `/api/libraries/${libraryId}/books/${bookId}`,
+        `/api/libraries/${libraryId}/books/${id}`,
         "GET",
         "json",
         headersImpl,
@@ -556,8 +563,7 @@ export const createApi = (
       )
     },
     updateBook(
-      bookId: UUID,
-      libraryId: UUID,
+      { id, libraryId }: { id: UUID; libraryId: UUID },
       body: PartialBookApiModel,
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
@@ -565,7 +571,7 @@ export const createApi = (
       const headersImpl = new Headers(headers)
       defaultHeadersImpl.forEach((value, key) => headersImpl.append(key, value))
       return __request(
-        `/api/libraries/${libraryId}/books/${bookId}`,
+        `/api/libraries/${libraryId}/books/${id}`,
         "PATCH",
         "json",
         headersImpl,
@@ -576,8 +582,7 @@ export const createApi = (
       )
     },
     replaceBook(
-      bookId: UUID,
-      libraryId: UUID,
+      { id, libraryId }: { id: UUID; libraryId: UUID },
       body: BookApiModel,
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
@@ -585,7 +590,7 @@ export const createApi = (
       const headersImpl = new Headers(headers)
       defaultHeadersImpl.forEach((value, key) => headersImpl.append(key, value))
       return __request(
-        `/api/libraries/${libraryId}/books/${bookId}`,
+        `/api/libraries/${libraryId}/books/${id}`,
         "PUT",
         "json",
         headersImpl,
@@ -596,8 +601,7 @@ export const createApi = (
       )
     },
     getBookAutocomplete(
-      libraryId: UUID,
-      q: string,
+      { q, libraryId }: { q: string; libraryId: UUID },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<TitledId[]>> {
@@ -615,9 +619,7 @@ export const createApi = (
       )
     },
     listSeries(
-      libraryId: UUID,
-      limit?: number,
-      offset?: number,
+      { limit, offset, libraryId }: { limit?: number; offset?: number; libraryId: UUID },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<PaginatedResponse<SeriesModel>>> {
@@ -635,10 +637,7 @@ export const createApi = (
       )
     },
     listSeriesSorting(
-      libraryId: UUID,
-      limit?: number,
-      offset?: number,
-      order?: Order,
+      { limit, offset, order, libraryId }: { limit?: number; offset?: number; order?: Order; libraryId: UUID },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<UUID[]>> {
@@ -656,16 +655,14 @@ export const createApi = (
       )
     },
     getSeriesPosition(
-      seriesId: UUID,
-      libraryId: UUID,
-      order?: Order,
+      { order, id, libraryId }: { order?: Order; id: UUID; libraryId: UUID },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<Position>> {
       const headersImpl = new Headers(headers)
       defaultHeadersImpl.forEach((value, key) => headersImpl.append(key, value))
       return __request(
-        __createUrl(`/api/libraries/${libraryId}/series/${seriesId}/position`, { order }),
+        __createUrl(`/api/libraries/${libraryId}/series/${id}/position`, { order }),
         "GET",
         "json",
         headersImpl,
@@ -676,15 +673,14 @@ export const createApi = (
       )
     },
     getSeries(
-      seriesId: UUID,
-      libraryId: UUID,
+      { id, libraryId }: { id: UUID; libraryId: UUID },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<DetailedSeriesModel>> {
       const headersImpl = new Headers(headers)
       defaultHeadersImpl.forEach((value, key) => headersImpl.append(key, value))
       return __request(
-        `/api/libraries/${libraryId}/series/${seriesId}`,
+        `/api/libraries/${libraryId}/series/${id}`,
         "GET",
         "json",
         headersImpl,
@@ -695,8 +691,7 @@ export const createApi = (
       )
     },
     updateSeries(
-      seriesId: UUID,
-      libraryId: UUID,
+      { id, libraryId }: { id: UUID; libraryId: UUID },
       body: PartialSeriesApiModel,
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
@@ -704,7 +699,7 @@ export const createApi = (
       const headersImpl = new Headers(headers)
       defaultHeadersImpl.forEach((value, key) => headersImpl.append(key, value))
       return __request(
-        `/api/libraries/${libraryId}/series/${seriesId}`,
+        `/api/libraries/${libraryId}/series/${id}`,
         "PATCH",
         "json",
         headersImpl,
@@ -715,8 +710,7 @@ export const createApi = (
       )
     },
     replaceSeries(
-      seriesId: UUID,
-      libraryId: UUID,
+      { id, libraryId }: { id: UUID; libraryId: UUID },
       body: SeriesApiModel,
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
@@ -724,7 +718,7 @@ export const createApi = (
       const headersImpl = new Headers(headers)
       defaultHeadersImpl.forEach((value, key) => headersImpl.append(key, value))
       return __request(
-        `/api/libraries/${libraryId}/series/${seriesId}`,
+        `/api/libraries/${libraryId}/series/${id}`,
         "PUT",
         "json",
         headersImpl,
@@ -735,8 +729,7 @@ export const createApi = (
       )
     },
     getSeriesAutocomplete(
-      libraryId: UUID,
-      q: string,
+      { q, libraryId }: { q: string; libraryId: UUID },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<TitledId[]>> {
@@ -754,10 +747,7 @@ export const createApi = (
       )
     },
     listAuthors(
-      libraryId: UUID,
-      limit?: number,
-      offset?: number,
-      order?: Order,
+      { limit, offset, order, libraryId }: { limit?: number; offset?: number; order?: Order; libraryId: UUID },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<PaginatedResponse<AuthorModel>>> {
@@ -775,10 +765,7 @@ export const createApi = (
       )
     },
     listAuthorSorting(
-      libraryId: UUID,
-      limit?: number,
-      offset?: number,
-      order?: Order,
+      { limit, offset, order, libraryId }: { limit?: number; offset?: number; order?: Order; libraryId: UUID },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<UUID[]>> {
@@ -796,16 +783,14 @@ export const createApi = (
       )
     },
     getAuthorPosition(
-      authorId: UUID,
-      libraryId: UUID,
-      order?: Order,
+      { order, id, libraryId }: { order?: Order; id: UUID; libraryId: UUID },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<Position>> {
       const headersImpl = new Headers(headers)
       defaultHeadersImpl.forEach((value, key) => headersImpl.append(key, value))
       return __request(
-        __createUrl(`/api/libraries/${libraryId}/authors/${authorId}/position`, { order }),
+        __createUrl(`/api/libraries/${libraryId}/authors/${id}/position`, { order }),
         "GET",
         "json",
         headersImpl,
@@ -816,15 +801,14 @@ export const createApi = (
       )
     },
     getAuthor(
-      authorId: UUID,
-      libraryId: UUID,
+      { id, libraryId }: { id: UUID; libraryId: UUID },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<DetailedAuthorModel>> {
       const headersImpl = new Headers(headers)
       defaultHeadersImpl.forEach((value, key) => headersImpl.append(key, value))
       return __request(
-        `/api/libraries/${libraryId}/authors/${authorId}`,
+        `/api/libraries/${libraryId}/authors/${id}`,
         "GET",
         "json",
         headersImpl,
@@ -835,8 +819,7 @@ export const createApi = (
       )
     },
     updateAuthor(
-      authorId: UUID,
-      libraryId: UUID,
+      { id, libraryId }: { id: UUID; libraryId: UUID },
       body: PartialAuthorApiModel,
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
@@ -844,7 +827,7 @@ export const createApi = (
       const headersImpl = new Headers(headers)
       defaultHeadersImpl.forEach((value, key) => headersImpl.append(key, value))
       return __request(
-        `/api/libraries/${libraryId}/authors/${authorId}`,
+        `/api/libraries/${libraryId}/authors/${id}`,
         "PATCH",
         "json",
         headersImpl,
@@ -855,8 +838,7 @@ export const createApi = (
       )
     },
     replaceAuthor(
-      authorId: UUID,
-      libraryId: UUID,
+      { id, libraryId }: { id: UUID; libraryId: UUID },
       body: AuthorApiModel,
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
@@ -864,7 +846,7 @@ export const createApi = (
       const headersImpl = new Headers(headers)
       defaultHeadersImpl.forEach((value, key) => headersImpl.append(key, value))
       return __request(
-        `/api/libraries/${libraryId}/authors/${authorId}`,
+        `/api/libraries/${libraryId}/authors/${id}`,
         "PUT",
         "json",
         headersImpl,
@@ -875,8 +857,7 @@ export const createApi = (
       )
     },
     getAuthorAutocomplete(
-      libraryId: UUID,
-      q: string,
+      { q, libraryId }: { q: string; libraryId: UUID },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<NamedId[]>> {
@@ -894,13 +875,23 @@ export const createApi = (
       )
     },
     searchMetadata(
-      region: string,
-      author?: string,
-      keywords?: string,
-      language?: MetadataLanguage,
-      narrator?: string,
-      pageSize?: MetadataSearchCount,
-      title?: string,
+      {
+        author,
+        keywords,
+        language,
+        narrator,
+        pageSize,
+        region,
+        title,
+      }: {
+        author?: string
+        keywords?: string
+        language?: MetadataLanguage
+        narrator?: string
+        pageSize?: MetadataSearchCount
+        region: string
+        title?: string
+      },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<MetadataSearchBook[]>> {
@@ -918,9 +909,7 @@ export const createApi = (
       )
     },
     getAuthorMetadata(
-      id: string,
-      provider: string,
-      region: string,
+      { provider, region, id }: { provider: string; region: string; id: string },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<MetadataAuthor>> {
@@ -938,8 +927,7 @@ export const createApi = (
       )
     },
     searchAuthorMetadata(
-      q: string,
-      region: string,
+      { q, region }: { q: string; region: string },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<MetadataAuthor[]>> {
@@ -957,9 +945,7 @@ export const createApi = (
       )
     },
     getBookMetadata(
-      id: string,
-      provider: string,
-      region: string,
+      { provider, region, id }: { provider: string; region: string; id: string },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<MetadataBook>> {
@@ -977,9 +963,7 @@ export const createApi = (
       )
     },
     searchBookMetadata(
-      q: string,
-      region: string,
-      authorName?: string,
+      { authorName, q, region }: { authorName?: string; q: string; region: string },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<MetadataBook[]>> {
@@ -997,9 +981,7 @@ export const createApi = (
       )
     },
     getSeriesMetadata(
-      id: string,
-      provider: string,
-      region: string,
+      { provider, region, id }: { provider: string; region: string; id: string },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<MetadataSeries>> {
@@ -1017,9 +999,7 @@ export const createApi = (
       )
     },
     searchSeriesMetadata(
-      q: string,
-      region: string,
-      authorName?: string,
+      { authorName, q, region }: { authorName?: string; q: string; region: string },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<MetadataSeries[]>> {
@@ -1036,7 +1016,11 @@ export const createApi = (
         false
       )
     },
-    getAudioFile(id: UUID, headers: HeadersInit = {}, interceptors: ApiInterceptor[] = []): Promise<ApiResponse<Blob>> {
+    getAudioFile(
+      { id }: { id: UUID },
+      headers: HeadersInit = {},
+      interceptors: ApiInterceptor[] = []
+    ): Promise<ApiResponse<Blob>> {
       const headersImpl = new Headers(headers)
       defaultHeadersImpl.forEach((value, key) => headersImpl.append(key, value))
       return __request(
@@ -1050,7 +1034,11 @@ export const createApi = (
         false
       )
     },
-    getImageFile(id: UUID, headers: HeadersInit = {}, interceptors: ApiInterceptor[] = []): Promise<ApiResponse<Blob>> {
+    getImageFile(
+      { id }: { id: UUID },
+      headers: HeadersInit = {},
+      interceptors: ApiInterceptor[] = []
+    ): Promise<ApiResponse<Blob>> {
       const headersImpl = new Headers(headers)
       defaultHeadersImpl.forEach((value, key) => headersImpl.append(key, value))
       return __request(
