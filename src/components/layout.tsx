@@ -1,9 +1,7 @@
-import { LeftResourceMenu, SearchBar, BottomResourceMenu } from "@thoth/components/menu/menu"
 import { CHANGE_LAYOUT, useBreakpoint } from "@thoth/hooks/breakpoints"
-import { usePlaybackState } from "@thoth/state/playback.state"
-import { Playback } from "@thoth/components/playback"
 import { FC, PropsWithChildren } from "react"
-import { NoSsr } from "@thoth/components/no-ssr"
+import { LeftResourceMenu } from "@thoth/components/menu/left-menu"
+import { BottomResourceMenu } from "@thoth/components/menu/bottom-menu"
 
 export const LibraryResourceView: FC<PropsWithChildren> = ({ children }) => {
   const breakPoint = useBreakpoint()
