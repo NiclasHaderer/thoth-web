@@ -60,7 +60,7 @@ export const Search: FC = () => {
   return (
     <div className="relative flex-grow px-3 shadow-none" onKeyDown={modifyFocus} ref={setSearchOverlay}>
       <Input
-        className="rounded-3xl bg-elevate-2 pl-11"
+        className="rounded-3xl bg-elevate-2 !pl-11"
         leftIcon={<MdSearch className="mx-1 h-6 w-6" />}
         placeholder="Search ..."
         inputRef={inputElement}
