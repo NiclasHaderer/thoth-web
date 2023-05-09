@@ -24,6 +24,7 @@ module.exports = {
       "elevate-2": "var(--elevate-2)",
       // Basic colors
       transparent: "transparent",
+      inherit: "inherit",
     },
     extend: {
       screens: {

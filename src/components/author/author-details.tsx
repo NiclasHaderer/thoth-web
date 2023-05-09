@@ -25,7 +25,7 @@ export const AuthorDetails: React.FC<{ authorId: UUID }> = ({ authorId }) => {
           <img
             className="h-40 w-40 rounded-full border-2 border-active-light object-contain md:h-80 md:w-80"
             alt={author.name}
-            src={`/api/image/${author.imageID}`}
+            src={`/api/stream/images/${author.imageID}`}
             loading="lazy"
           />
         ) : (

@@ -98,11 +98,12 @@ export const useAudiobookState = create(
     ),
     fetchLibraries: async () => {
       const libs = await Api.listLibraries()
-      if (!libs.success) return
+      if (!libs.success) return libs
       mutate.setState(state => ({
         ...state,
         libraryMap: toIdRecord(libs.body),
       }))
+      return libs
     },
     updateLibrary: async (id: UUID, library: PartialLibraryApiModel) => {
       const res = await Api.updateLibrary({ libraryId: id }, library)
