@@ -3,7 +3,7 @@ import { useAudiobookState } from "@thoth/state/audiobook.state"
 import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
 import { useOnMount } from "@thoth/hooks/lifecycle"
 import { useRouter } from "next/navigation"
-import React, { FC } from "react"
+import React, { FC, useState } from "react"
 import { LibraryModel } from "@thoth/client"
 import { MdImageNotSupported, MdPerson } from "react-icons/md"
 import Link from "next/link"
@@ -47,13 +47,20 @@ const LibraryPreview: FC<{ library: LibraryModel }> = ({ library }) => {
   const librarySeriesCount = useAudiobookState(AudiobookSelectors.selectSeriesCount(library.id))
   const libraryAuthors = useAudiobookState(AudiobookSelectors.selectAuthors(library.id))
   const libraryAuthorsCount = useAudiobookState(AudiobookSelectors.selectAuthorCount(library.id))
+  const [hovered, setHovered] = useState(false)
+
   return (
-    <div>
-      <Link className="hover:underline" href={`/libraries/${library.id}`}>
-        <h1 className="mb-2 text-2xl font-medium">{library.name}</h1>
+    <div className={`${hovered ? "bg-active" : ""} rounded-xl p-2`}>
+      <Link
+        className="block"
+        href={`/libraries/${library.id}`}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+      >
+        <h1 className="py-2 text-2xl font-medium">{library.name}</h1>
       </Link>
 
-      <Link className="block" href={`/libraries/${library.id}/books`}>
+      <Link className="mt-4 block rounded-xl pb-4 pl-2 pt-2 hover:bg-active" href={`/libraries/${library.id}/books`}>
         <h2 className="mb-2 text-xl">{libraryBookCount} Books</h2>
         <div className="relative h-36">
           {libraryBooks.slice(0, 6).map((book, index) => (
@@ -79,7 +86,7 @@ const LibraryPreview: FC<{ library: LibraryModel }> = ({ library }) => {
         </div>
       </Link>
 
-      <Link className="mt-4 block" href={`/libraries/${library.id}/series`}>
+      <Link className="mt-4 block rounded-xl pb-4 pl-2 pt-2 hover:bg-active" href={`/libraries/${library.id}/series`}>
         <h2 className="mb-2 text-xl">{librarySeriesCount} Series</h2>
         <div className="relative h-36">
           {librarySeries.slice(0, 6).map((series, index) => (
@@ -105,7 +112,7 @@ const LibraryPreview: FC<{ library: LibraryModel }> = ({ library }) => {
         </div>
       </Link>
 
-      <Link className="mt-4 block" href={`/libraries/${library.id}/authors`}>
+      <Link className="mt-4 block rounded-xl pb-4 pl-2 pt-2 hover:bg-active" href={`/libraries/${library.id}/authors`}>
         <h2 className="mb-2 text-xl">{libraryAuthorsCount} Authors</h2>
         <div className="relative h-36">
           {libraryAuthors.slice(0, 6).map((author, index) => (
