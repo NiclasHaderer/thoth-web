@@ -71,88 +71,82 @@ export const LibraryManager = () => {
         admin, you have the ability to create separate audiobook libraries for different languages, allowing users to
         easily find and listen to audiobooks in their preferred language.
       </p>
-      <table className="w-full table-auto overflow-hidden rounded">
-        <thead>
-          <tr className="bg-elevate">
-            <th className="pl-2 text-left">Library</th>
-            <th className="pl-2 text-left">Metadata preference</th>
-            <th className="pl-2 text-left">Folders</th>
-            <th className="pl-2 text-left">Metadata scanners</th>
-            <th className="pl-2 text-left">File scanners</th>
-            <th className="pl-2 text-left">Language</th>
-            <th className="w-0 pr-2 text-left"></th>
-          </tr>
-        </thead>
-        <tbody>
-          {
-            <>
-              {libraries?.map(library => (
-                <tr
-                  className="group cursor-pointer odd:bg-active-light hover:bg-active"
-                  key={library.id}
-                  onClick={() => {
-                    form.setFields({ ...library, mode: "edit" })
-                    setIsOpen(true)
-                  }}
-                >
-                  <td className="pl-2">
-                    <div className="flex items-center">
-                      <MdLocalLibrary className="mr-4 h-8 w-8" />
-                      {library.name}
-                    </div>
-                  </td>
-                  <td className="pl-2">
-                    <div className="flex items-center">
-                      <MdAutoAwesome className="mr-4 h-8 w-8" />
-                      {library.preferEmbeddedMetadata ? "Embedded" : "External"}
-                    </div>
-                  </td>
-                  <td className="pl-2">
-                    <div className="flex items-center">
-                      <MdFolder className="mr-4 h-8 w-8" />
-                      {library.folders.join(", ")}
-                    </div>
-                  </td>
-                  <td className="pl-2">
-                    <div className="flex items-center">
-                      <MdRadar className="mr-4 h-8 w-8" />
-                      {library.metadataScanners.map(s => s.name).join(", ")}
-                    </div>
-                  </td>
-                  <td className="pl-2">
-                    <div className="flex items-center">
-                      <MdScan className="mr-4 h-8 w-8" />
-                      {library.fileScanners.map(s => s.name).join(", ")}
-                    </div>
-                  </td>
-                  <td className="pl-2">
-                    <div className="flex items-center">
-                      <MdLanguage className="mr-4 h-8 w-8" />
-                      {library.language}
-                    </div>
-                  </td>
-                  <td className="pr-2">
-                    <div className="flex items-center">
-                      <MdEdit className="h-4 w-4 opacity-0 transition-opacity group-hover:opacity-100" />
-                    </div>
-                  </td>
-                </tr>
-              ))}
-              {(!libraries || libraries.length === 0) && (
-                <tr className="odd:bg-active-light">
-                  <td className="pl-2">No library yet</td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                </tr>
-              )}
-            </>
-          }
-        </tbody>
-      </table>
+      <div className="mt-4 w-full overflow-y-auto">
+        <table className="w-full table-auto overflow-hidden rounded">
+          <thead>
+            <tr className="bg-elevate p-2 [&>*]:py-2">
+              <th className="pl-2 text-left">
+                <div className="flex items-center">
+                  <MdLocalLibrary className="mr-4 h-6 w-6" />
+                  Library
+                </div>
+              </th>
+              <th className="pl-2 text-left">
+                <div className="flex items-center">
+                  <MdAutoAwesome className="mr-4 h-6 w-6" />
+                  Metadata preference
+                </div>
+              </th>
+              <th className="pl-2 text-left">
+                <div className="flex items-center">
+                  <MdRadar className="mr-4 h-6 w-6" />
+                  Metadata scanners
+                </div>
+              </th>
+              <th className="pl-2 text-left">
+                <div className="flex items-center">
+                  <MdScan className="mr-4 h-6 w-6" />
+                  File scanners
+                </div>
+              </th>
+              <th className="pl-2 text-left">
+                <div className="flex items-center">
+                  <MdLanguage className="mr-4 h-6 w-6" />
+                  Language
+                </div>
+              </th>
+              <th className="w-0"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              <>
+                {libraries?.map(library => (
+                  <tr
+                    className="group cursor-pointer odd:bg-active-light hover:bg-active"
+                    key={library.id}
+                    onClick={() => {
+                      form.setFields({ ...library, mode: "edit" })
+                      setIsOpen(true)
+                    }}
+                  >
+                    <td className="pl-2">{library.name}</td>
+                    <td className="pl-2">{library.preferEmbeddedMetadata ? "Embedded" : "External"}</td>
+                    <td className="pl-2">{library.metadataScanners.map(s => s.name).join(", ")}</td>
+                    <td className="pl-2">{library.fileScanners.map(s => s.name).join(", ")}</td>
+                    <td className="pl-2">{library.language}</td>
+                    <td className="pr-2">
+                      <div className="flex items-center">
+                        <MdEdit className="h-4 w-4 opacity-0 transition-opacity group-hover:opacity-100" />
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+                {(!libraries || libraries.length === 0) && (
+                  <tr className="odd:bg-active-light">
+                    <td className="pl-2">No library yet</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                )}
+              </>
+            }
+          </tbody>
+        </table>
+      </div>
       <div className="flex justify-end pt-2">
         <ColoredButton
           onClick={() => {
