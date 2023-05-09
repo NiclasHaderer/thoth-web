@@ -7,8 +7,6 @@ import { LibraryManager } from "@thoth/components/library-manager"
 export default function SettingsOutlet() {
   return (
     <>
-      <h1 className="mb-4  text-2xl">Settings</h1>
-
       <h2 className="mb-2 mt-4 text-xl">Manage Libraries</h2>
       <LibraryManager />
 
