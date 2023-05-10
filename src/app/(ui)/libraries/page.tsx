@@ -3,11 +3,7 @@ import { useAudiobookState } from "@thoth/state/audiobook.state"
 import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
 import { useOnMount } from "@thoth/hooks/lifecycle"
 import { useRouter } from "next/navigation"
-import React, { FC, useState } from "react"
-import { LibraryModel } from "@thoth/client"
-import { MdImageNotSupported, MdPerson } from "react-icons/md"
-import Link from "next/link"
-import Image from "next/image"
+import React from "react"
 import { LibraryPreview } from "@thoth/components/library/library-preview"
 
 export default function LibrariesOutlet() {
