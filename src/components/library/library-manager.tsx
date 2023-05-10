@@ -13,8 +13,8 @@ import {
 import { useForm } from "@thoth/hooks/form"
 import { ColoredButton } from "@thoth/components/colored-button"
 import { useOnMount } from "@thoth/hooks/lifecycle"
-import { FileScanner, MetadataAgent } from "@thoth/client"
-import { LibraryDialog, LibraryFormValues } from "@thoth/components/library-dialog"
+import { FileScanner, MetadataAgent, UUID } from "@thoth/client"
+import { LibraryDialog, LibraryFormValues } from "@thoth/components/library/library-dialog"
 import { useAudiobookState } from "@thoth/state/audiobook.state"
 import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
 import { MdScan } from "@thoth/components/icons/scan"
@@ -38,7 +38,7 @@ export const LibraryManager = () => {
 
   const form = useForm(
     {
-      id: undefined as string | undefined,
+      id: undefined as UUID | undefined,
       name: "",
       language: "",
       preferEmbeddedMetadata: false,
@@ -53,11 +53,9 @@ export const LibraryManager = () => {
         language: (language: string) => language.length > 0 || "Language is required",
         folders: (folders: string[]) => folders.length > 0 || "At least one folder is required",
         metadataScanners: (metadataScanners: MetadataAgent[]) => {
-          console.log(metadataScanners)
           return metadataScanners.length > 0 || "At least one metadata scanner is required"
         },
         fileScanners: (fileScanners: FileScanner[]) => {
-          console.log(fileScanners)
           return fileScanners.length > 0 || "At least one file scanner is required"
         },
       },

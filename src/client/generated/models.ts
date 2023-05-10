@@ -36,7 +36,7 @@ export interface RegisterUser {
   username: string
 }
 
-export type UUID = `${string}-${string}-${string}-${string}-${string}` | string
+export type UUID = `${string}-${string}-${string}-${string}-${string}`
 
 export interface NamedId {
   id: UUID
@@ -126,6 +126,11 @@ export interface PartialLibraryApiModel {
   preferEmbeddedMetadata?: boolean
 }
 
+export interface TitledId {
+  id: UUID
+  title: string
+}
+
 export interface AuthorModel {
   biography?: string
   birthDate?: string
@@ -133,15 +138,11 @@ export interface AuthorModel {
   deathDate?: string
   id: UUID
   imageID?: UUID
+  library: TitledId
   name: string
   provider?: string
   providerID?: string
   website?: string
-}
-
-export interface TitledId {
-  id: UUID
-  title: string
 }
 
 export interface BookModel {
@@ -152,6 +153,7 @@ export interface BookModel {
   id: UUID
   isbn?: string
   language?: string
+  library: TitledId
   narrator?: string
   provider?: string
   providerID?: string
@@ -168,6 +170,7 @@ export interface SeriesModel {
   description?: string
   genres: Array<NamedId>
   id: UUID
+  library: TitledId
   primaryWorks?: number
   provider?: string
   providerID?: string

@@ -105,6 +105,18 @@ export const useAudiobookState = create(
       }))
       return libs
     },
+    fetchLibrary: async (id: UUID) => {
+      const lib = await Api.getLibrary({ libraryId: id })
+      if (!lib.success) return lib
+      mutate.setState(state => ({
+        ...state,
+        libraryMap: {
+          ...state.libraryMap,
+          [id]: lib.body,
+        },
+      }))
+      return lib
+    },
     updateLibrary: async (id: UUID, library: PartialLibraryApiModel) => {
       const res = await Api.updateLibrary({ libraryId: id }, library)
       if (!res.success) return
@@ -138,18 +150,15 @@ export const useAudiobookState = create(
 ;(() => {
   // If on server, do not initialize state
   if (typeof window === "undefined") return
-  const extractLibId = /libraries\/([a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12})\//
+  const extractLibId =
+    /^\/libraries\/([a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12})($|\/)/
 
   // Subscribe to url changes using the history API
   // and update the selectedLibraryId accordingly
   const updateSelectedLibraryId = () => {
     const path = window.location.pathname
-    const libraryId = extractLibId.exec(path)?.[1]
-    if (libraryId) {
-      useAudiobookState.setState({ selectedLibraryId: libraryId })
-    } else {
-      useAudiobookState.setState({ selectedLibraryId: undefined })
-    }
+    const libraryId = extractLibId.exec(path)?.[1] as UUID | undefined
+    useAudiobookState.setState({ selectedLibraryId: libraryId })
   }
   window.addEventListener("popstate", updateSelectedLibraryId)
   window.addEventListener("pushstate", updateSelectedLibraryId)

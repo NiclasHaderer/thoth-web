@@ -2,7 +2,7 @@
 
 import React from "react"
 import { UserManager } from "@thoth/components/user-manager"
-import { LibraryManager } from "@thoth/components/library-manager"
+import { LibraryManager } from "@thoth/components/library/library-manager"
 
 export default function SettingsOutlet() {
   return (
