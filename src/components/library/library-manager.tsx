@@ -1,15 +1,5 @@
 import React, { useState } from "react"
-import {
-  MdAutoAwesome,
-  MdEdit,
-  MdFolder,
-  MdGasMeter,
-  MdLanguage,
-  MdLibraryBooks,
-  MdLocalLibrary,
-  MdPerson,
-  MdRadar,
-} from "react-icons/md"
+import { MdAutoAwesome, MdEdit, MdLanguage, MdLocalLibrary, MdRadar } from "react-icons/md"
 import { useForm } from "@thoth/hooks/form"
 import { ColoredButton } from "@thoth/components/colored-button"
 import { useOnMount } from "@thoth/hooks/lifecycle"
