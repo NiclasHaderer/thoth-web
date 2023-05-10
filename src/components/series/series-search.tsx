@@ -16,7 +16,7 @@ export const SeriesSearch: React.FC<{
 }> = ({ series: _series, authors: _authors, select }) => {
   const [authors, setAuthors] = useState(_authors?.join(", "))
   const [series, setSeries] = useState(_series)
-  const library = useAudiobookState(AudiobookSelectors.selectedLibrary)
+  const library = useAudiobookState(AudiobookSelectors.selectedLibrary)!
 
   const { result, loading, invoke } = useHttpRequest(Api.searchSeriesMetadata)
 

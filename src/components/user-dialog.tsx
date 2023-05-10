@@ -8,12 +8,13 @@ import { MdFolderManaged } from "@thoth/components/icons/managed"
 import { ModifyUser, UserModel } from "@thoth/client"
 import { useAudiobookState } from "@thoth/state/audiobook.state"
 import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
+import { UUID } from "crypto"
 
 export const UserDialog: FC<{
   isOpen: boolean
   setIsOpen: (open: boolean) => void
   user: UserModel
-  onModifyUser: (user: ModifyUser) => void
+  onModifyUser: (id: UUID, user: ModifyUser) => void
 }> = ({ isOpen, setIsOpen, onModifyUser, user }) => {
   const _libraries = useAudiobookState(AudiobookSelectors.libraries)
   const libraries = useMemo(() => _libraries.map(l => ({ label: l.name, value: l.id })), [_libraries])
@@ -30,7 +31,7 @@ export const UserDialog: FC<{
       <Form
         form={form}
         onSubmit={values => {
-          onModifyUser({
+          onModifyUser(user.id, {
             username: values.username,
             admin: values.permissions === "admin",
             edit: values.permissions === "editor" || values.permissions === "admin",
