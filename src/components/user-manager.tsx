@@ -1,7 +1,5 @@
 import React, { useState } from "react"
-import { useForm } from "@thoth/hooks/form"
 import { MdEdit, MdPerson } from "react-icons/md"
-import { ColoredButton } from "@thoth/components/colored-button"
 import { UserDialog } from "@thoth/components/user-dialog"
 import { useHttpRequest } from "@thoth/hooks/async-response"
 import { Api, UserModel } from "@thoth/client"
@@ -9,9 +7,10 @@ import { useOnMount } from "@thoth/hooks/lifecycle"
 
 export const UserManager = () => {
   const [isOpen, setIsOpen] = useState(false)
-  const { result: users, invoke } = useHttpRequest(Api.listUsers)
+  const { result: users, invoke: listUsers } = useHttpRequest(Api.listUsers)
+  const { invoke: updateUser } = useHttpRequest(Api.updateUser)
   const [userToEdit, setUserToEdit] = useState<UserModel>()
-  useOnMount(() => invoke())
+  useOnMount(() => listUsers())
 
   return (
     <>
@@ -71,7 +70,16 @@ export const UserManager = () => {
           </tbody>
         </table>
       </div>
-      {userToEdit && <UserDialog isOpen={isOpen} user={userToEdit} setIsOpen={setIsOpen} onModifyUser={console.log} />}
+      {userToEdit && (
+        <UserDialog
+          isOpen={isOpen}
+          user={userToEdit}
+          setIsOpen={setIsOpen}
+          onModifyUser={(id, values) => {
+            updateUser({ id }, values)
+          }}
+        />
+      )}
     </>
   )
 }

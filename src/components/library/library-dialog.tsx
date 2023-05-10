@@ -1,6 +1,6 @@
 import { FC } from "react"
 import { Form, FormContext } from "@thoth/hooks/form"
-import { FileScanner, MetadataAgent } from "@thoth/client"
+import { FileScanner, MetadataAgent, UUID } from "@thoth/client"
 import { useHttpRequest } from "@thoth/hooks/async-response"
 import { Api } from "@thoth/client"
 import { useOnMount } from "@thoth/hooks/lifecycle"
@@ -14,7 +14,7 @@ import { MdScan } from "@thoth/components/icons/scan"
 import { FolderManager } from "@thoth/components/file-manager"
 
 export type LibraryFormValues = {
-  id: string | undefined
+  id: UUID | undefined
   name: string
   language: string
   preferEmbeddedMetadata: boolean

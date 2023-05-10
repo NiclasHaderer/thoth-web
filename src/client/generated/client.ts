@@ -312,7 +312,7 @@ export const createApi = (
         undefined,
         [...defaultInterceptors, ...interceptors],
         executor,
-        false
+        true
       )
     },
     listLibraries(
@@ -329,7 +329,7 @@ export const createApi = (
         undefined,
         [...defaultInterceptors, ...interceptors],
         executor,
-        false
+        true
       )
     },
     createLibrary(
@@ -347,7 +347,7 @@ export const createApi = (
         body,
         [...defaultInterceptors, ...interceptors],
         executor,
-        false
+        true
       )
     },
     getLibrary(
@@ -365,7 +365,7 @@ export const createApi = (
         undefined,
         [...defaultInterceptors, ...interceptors],
         executor,
-        false
+        true
       )
     },
     replaceLibrary(
@@ -384,7 +384,7 @@ export const createApi = (
         body,
         [...defaultInterceptors, ...interceptors],
         executor,
-        false
+        true
       )
     },
     updateLibrary(
@@ -403,7 +403,7 @@ export const createApi = (
         body,
         [...defaultInterceptors, ...interceptors],
         executor,
-        false
+        true
       )
     },
     rescanLibrary(
@@ -421,7 +421,7 @@ export const createApi = (
         undefined,
         [...defaultInterceptors, ...interceptors],
         executor,
-        false
+        true
       )
     },
     rescanAllLibraries(headers: HeadersInit = {}, interceptors: ApiInterceptor[] = []): Promise<ApiResponse<Empty>> {
@@ -435,7 +435,7 @@ export const createApi = (
         undefined,
         [...defaultInterceptors, ...interceptors],
         executor,
-        false
+        true
       )
     },
     searchInAllLibraries(
@@ -453,7 +453,7 @@ export const createApi = (
         undefined,
         [...defaultInterceptors, ...interceptors],
         executor,
-        false
+        true
       )
     },
     listFileScanners(
@@ -470,7 +470,7 @@ export const createApi = (
         undefined,
         [...defaultInterceptors, ...interceptors],
         executor,
-        false
+        true
       )
     },
     listMetadataAgents(
@@ -487,7 +487,7 @@ export const createApi = (
         undefined,
         [...defaultInterceptors, ...interceptors],
         executor,
-        false
+        true
       )
     },
     listBooks(
@@ -505,7 +505,7 @@ export const createApi = (
         undefined,
         [...defaultInterceptors, ...interceptors],
         executor,
-        false
+        true
       )
     },
     listBookSorting(
@@ -523,7 +523,7 @@ export const createApi = (
         undefined,
         [...defaultInterceptors, ...interceptors],
         executor,
-        false
+        true
       )
     },
     getBookPosition(
@@ -541,7 +541,7 @@ export const createApi = (
         undefined,
         [...defaultInterceptors, ...interceptors],
         executor,
-        false
+        true
       )
     },
     getBook(
@@ -559,7 +559,7 @@ export const createApi = (
         undefined,
         [...defaultInterceptors, ...interceptors],
         executor,
-        false
+        true
       )
     },
     updateBook(
@@ -578,7 +578,7 @@ export const createApi = (
         body,
         [...defaultInterceptors, ...interceptors],
         executor,
-        false
+        true
       )
     },
     replaceBook(
@@ -597,7 +597,7 @@ export const createApi = (
         body,
         [...defaultInterceptors, ...interceptors],
         executor,
-        false
+        true
       )
     },
     getBookAutocomplete(
@@ -615,7 +615,7 @@ export const createApi = (
         undefined,
         [...defaultInterceptors, ...interceptors],
         executor,
-        false
+        true
       )
     },
     listSeries(
@@ -633,7 +633,7 @@ export const createApi = (
         undefined,
         [...defaultInterceptors, ...interceptors],
         executor,
-        false
+        true
       )
     },
     listSeriesSorting(
@@ -651,7 +651,7 @@ export const createApi = (
         undefined,
         [...defaultInterceptors, ...interceptors],
         executor,
-        false
+        true
       )
     },
     getSeriesPosition(
@@ -669,7 +669,7 @@ export const createApi = (
         undefined,
         [...defaultInterceptors, ...interceptors],
         executor,
-        false
+        true
       )
     },
     getSeries(
@@ -687,7 +687,7 @@ export const createApi = (
         undefined,
         [...defaultInterceptors, ...interceptors],
         executor,
-        false
+        true
       )
     },
     updateSeries(
@@ -706,7 +706,7 @@ export const createApi = (
         body,
         [...defaultInterceptors, ...interceptors],
         executor,
-        false
+        true
       )
     },
     replaceSeries(
@@ -725,7 +725,7 @@ export const createApi = (
         body,
         [...defaultInterceptors, ...interceptors],
         executor,
-        false
+        true
       )
     },
     getSeriesAutocomplete(
@@ -743,7 +743,7 @@ export const createApi = (
         undefined,
         [...defaultInterceptors, ...interceptors],
         executor,
-        false
+        true
       )
     },
     listAuthors(
@@ -761,7 +761,7 @@ export const createApi = (
         undefined,
         [...defaultInterceptors, ...interceptors],
         executor,
-        false
+        true
       )
     },
     listAuthorSorting(
@@ -779,7 +779,7 @@ export const createApi = (
         undefined,
         [...defaultInterceptors, ...interceptors],
         executor,
-        false
+        true
       )
     },
     getAuthorPosition(
@@ -797,7 +797,7 @@ export const createApi = (
         undefined,
         [...defaultInterceptors, ...interceptors],
         executor,
-        false
+        true
       )
     },
     getAuthor(
@@ -815,7 +815,7 @@ export const createApi = (
         undefined,
         [...defaultInterceptors, ...interceptors],
         executor,
-        false
+        true
       )
     },
     updateAuthor(
@@ -834,7 +834,7 @@ export const createApi = (
         body,
         [...defaultInterceptors, ...interceptors],
         executor,
-        false
+        true
       )
     },
     replaceAuthor(
@@ -853,7 +853,7 @@ export const createApi = (
         body,
         [...defaultInterceptors, ...interceptors],
         executor,
-        false
+        true
       )
     },
     getAuthorAutocomplete(
@@ -871,7 +871,7 @@ export const createApi = (
         undefined,
         [...defaultInterceptors, ...interceptors],
         executor,
-        false
+        true
       )
     },
     searchMetadata(
@@ -905,7 +905,7 @@ export const createApi = (
         undefined,
         [...defaultInterceptors, ...interceptors],
         executor,
-        false
+        true
       )
     },
     getAuthorMetadata(
@@ -923,7 +923,7 @@ export const createApi = (
         undefined,
         [...defaultInterceptors, ...interceptors],
         executor,
-        false
+        true
       )
     },
     searchAuthorMetadata(
@@ -941,7 +941,7 @@ export const createApi = (
         undefined,
         [...defaultInterceptors, ...interceptors],
         executor,
-        false
+        true
       )
     },
     getBookMetadata(
@@ -959,7 +959,7 @@ export const createApi = (
         undefined,
         [...defaultInterceptors, ...interceptors],
         executor,
-        false
+        true
       )
     },
     searchBookMetadata(
@@ -977,7 +977,7 @@ export const createApi = (
         undefined,
         [...defaultInterceptors, ...interceptors],
         executor,
-        false
+        true
       )
     },
     getSeriesMetadata(
@@ -995,7 +995,7 @@ export const createApi = (
         undefined,
         [...defaultInterceptors, ...interceptors],
         executor,
-        false
+        true
       )
     },
     searchSeriesMetadata(
@@ -1013,7 +1013,7 @@ export const createApi = (
         undefined,
         [...defaultInterceptors, ...interceptors],
         executor,
-        false
+        true
       )
     },
     getAudioFile(
@@ -1063,7 +1063,7 @@ export const createApi = (
         undefined,
         [...defaultInterceptors, ...interceptors],
         executor,
-        false
+        true
       )
     },
   } as const
