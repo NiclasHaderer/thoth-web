@@ -15,7 +15,7 @@ export const AuthorSearch: FC<{
 }> = ({ select, author: _author }) => {
   const [author, setAuthor] = useState(_author)
 
-  const library = useAudiobookState(AudiobookSelectors.selectedLibrary)
+  const library = useAudiobookState(AudiobookSelectors.selectedLibrary)!
   const { result, loading, invoke } = useHttpRequest(Api.searchAuthorMetadata)
 
   const search = async () => {
