@@ -26,6 +26,7 @@ export const _HtmlEditor: FC<{
 
   useEffect(() => {
     editor?.commands?.setContent(value ?? "")
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value])
 
   useEffect(() => {
@@ -37,6 +38,7 @@ export const _HtmlEditor: FC<{
     return () => {
       editor?.off("update", update)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editor])
 
   return (
