@@ -39,7 +39,7 @@ export const useAuthState = create(
       async register(userPw: LoginUser) {
         const user = await Api.registerUser(userPw)
         if (!user.success) return
-        await this.login(userPw)
+        await useAuthState.getState().login(userPw)
       },
       logout() {
         modify.setState(INITIAL_USER_STATE)

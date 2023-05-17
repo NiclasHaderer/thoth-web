@@ -8,6 +8,22 @@ import { AudiobookState } from "@thoth/state/audiobook.state"
 
 type AssetsToUpdate = "book" | "series" | "author"
 
+const addLibIfNotPresent = (state: AudiobookState, libraryId: UUID) => {
+  if (!state.content[libraryId]) {
+    state.content[libraryId] = {
+      authorMap: {},
+      authorSorting: [],
+      authorTotal: 0,
+      bookMap: {},
+      bookSorting: [],
+      bookTotal: 0,
+      seriesMap: {},
+      seriesSorting: [],
+      seriesTotal: 0,
+    }
+  }
+}
+
 export const wrapFetch = <K extends AssetsToUpdate>(
   mutate: Mutate<StoreApi<AudiobookState>, [StoreMutatorIdentifier, unknown][]>,
   key: K,
@@ -24,20 +40,7 @@ export const wrapFetch = <K extends AssetsToUpdate>(
     if (!response.success) return
 
     const state = { ...mutate.getState() }
-    if (!state.content[libraryId]) {
-      state.content[libraryId] = {
-        authorMap: {},
-        authorSorting: [],
-        authorTotal: 0,
-        bookMap: {},
-        bookSorting: [],
-        bookTotal: 0,
-        seriesMap: {},
-        seriesSorting: [],
-        seriesTotal: 0,
-      }
-    }
-
+    addLibIfNotPresent(state, libraryId)
     mutate.setState({
       ...state,
       content: {
@@ -129,7 +132,9 @@ export const wrapDetails = <K extends AssetsToUpdate>(
   return async ({ libraryId, id }: { libraryId: UUID; id: UUID }) => {
     const response = await detailsFunction({ libraryId, id })
     if (!response.success) return
-    mutate.setState(state => ({
+    const state = mutate.getState()
+    addLibIfNotPresent(state, libraryId)
+    mutate.setState({
       ...state,
       content: {
         ...state.content,
@@ -141,7 +146,7 @@ export const wrapDetails = <K extends AssetsToUpdate>(
           },
         },
       },
-    }))
+    })
   }
 }
 
