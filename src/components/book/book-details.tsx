@@ -11,6 +11,8 @@ import { ColoredButton } from "@thoth/components/colored-button"
 import { HtmlViewer } from "@thoth/components/html-editor/html-viewer"
 import { isDetailedBook } from "@thoth/models/typeguards"
 import { DetailedBookModel, UUID } from "@thoth/client"
+import { Dropdown } from "@thoth/components/dropdown"
+import { GoKebabVertical } from "react-icons/go"
 
 export const BookDetails: FC<{ bookId: UUID }> = ({ bookId }) => {
   const getBookWithTracks = useAudiobookState(s => s.fetchBookDetails)
@@ -101,6 +103,10 @@ export const BookDetails: FC<{ bookId: UUID }> = ({ bookId }) => {
           <div className="mt-2">
             <ColoredButton className="mr-3" onClick={() => startPlayback(0)}>
               <MdPlayCircle className="mr-2" /> Play
+            </ColoredButton>
+
+            <ColoredButton color="secondary">
+              <GoKebabVertical />
             </ColoredButton>
 
             <ColoredButton color="secondary" className="mr-3">

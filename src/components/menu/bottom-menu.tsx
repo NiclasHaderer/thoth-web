@@ -12,7 +12,7 @@ export const BottomResourceMenu: React.FC<{ className?: string }> = ({ className
       <div className={`relative flex h-16 items-center justify-between px-4 ${className}`}>
         <Ripple className="h-full flex-grow cursor-pointer bg-opacity-30" rippleClasses={"bg-primary bg-opacity-80"}>
           <ActiveLink
-            href={`/libraries/${currentLib}/books`}
+            href={`/libraries/${currentLib}/authors`}
             withSubroutes={true}
             className="flex h-full items-center justify-center"
           >
@@ -30,7 +30,7 @@ export const BottomResourceMenu: React.FC<{ className?: string }> = ({ className
         </Ripple>
         <Ripple className="h-full flex-grow cursor-pointer" rippleClasses={"bg-primary bg-opacity-80"}>
           <ActiveLink
-            href={`/libraries/${currentLib}/books`}
+            href={`/libraries/${currentLib}/series`}
             withSubroutes={true}
             className="flex h-full items-center justify-center"
           >

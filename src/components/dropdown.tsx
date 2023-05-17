@@ -1,12 +1,12 @@
 import { Menu, Transition } from "@headlessui/react"
-import React, { Fragment } from "react"
+import React, { Fragment, ReactNode } from "react"
 
 type DropdownProps<T extends any> = {
   options: {
     value: T
     disabled?: boolean
   }[]
-  title: string
+  title: ReactNode
   vDir?: "top" | "bottom"
   hDir?: "right" | "left"
   onChange?: (v: T) => void
