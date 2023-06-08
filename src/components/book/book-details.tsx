@@ -63,7 +63,7 @@ export const BookDetails: FC<{ bookId: UUID }> = ({ bookId }) => {
               </div>
             ) : null}
             <div className="flex pb-3">
-              <h3 className="min-w-40 pr-3 uppercase text-font-secondary">Author</h3>
+              <h3 className="min-w-40 pr-3 uppercase text-font-secondary">Authors</h3>
               {book.authors.map(author => (
                 <Link href={`/authors/${author.id}`} key={author.id}>
                   <h3 className="hover:underline focus:underline group-focus:underline">{author.name}</h3>
