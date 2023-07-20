@@ -1,7 +1,7 @@
 import { Listbox, Transition } from "@headlessui/react"
 import React, { Fragment, useEffect, useState } from "react"
 import { MdDone } from "react-icons/md"
-import { read } from "fs"
+import { deepEquals } from "@thoth/utils/equals"
 
 type SelectValue<T> = {
   value: T
@@ -41,18 +41,17 @@ const getSelectedValue = <T extends any>(
   }
 
   const areEqual = (a: SelectValue<T> | T, b: SelectValue<T> | T) => {
-    return getValue(a) === getValue(b)
+    return deepEquals(getValue(a), getValue(b), { allowAdditionalKeysInB: true })
   }
 
   if (value === undefined) return null
   const selectedValue = options.filter(option => {
     if (Array.isArray(value)) {
-      return value.find(v => areEqual(v, option))
+      return value.find(value => areEqual(value, option))
     } else {
-      return areEqual(option, value)
+      return areEqual(value, option)
     }
   })
-
   if (multiple) {
     return selectedValue
   }
