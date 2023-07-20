@@ -22,6 +22,7 @@ export type ApiCallData = {
 }
 
 export type ApiInterceptor = (param: ApiCallData) => ApiCallData | Promise<ApiCallData>
+
 export interface LoginUser {
   password: string
   username: string
@@ -362,7 +363,7 @@ export interface MetadataBookSeries {
 }
 
 export interface MetadataSearchBook {
-  author?: MetadataSearchAuthor
+  authors?: Array<MetadataSearchAuthor>
   coverURL?: string
   id: MetadataProviderWithID
   language?: string
@@ -390,7 +391,7 @@ export interface MetadataBook extends MetadataSearchBook {
 }
 
 export interface MetadataSeries {
-  author?: string
+  authors?: Array<string>
   books?: Array<MetadataSearchBook>
   coverURL?: string
   description?: string
