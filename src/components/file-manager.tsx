@@ -12,7 +12,7 @@ export const FolderManager: FC<{
   const [currentPath, setCurrentPath] = useState("/")
   const folders = useHttpRequest(Api.listFoldersAtACertainPath)
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => folders.invoke({ path: currentPath }), [currentPath])
+  useEffect(() => void folders.invoke({ path: currentPath }), [currentPath])
 
   return (
     <div className={`flex flex-col ${className ?? ""}`}>
