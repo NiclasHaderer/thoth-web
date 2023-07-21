@@ -10,7 +10,10 @@ export const UserManager = () => {
   const { result: users, invoke: listUsers } = useHttpRequest(Api.listUsers)
   const { invoke: updateUser } = useHttpRequest(Api.updateUser)
   const [userToEdit, setUserToEdit] = useState<UserModel>()
-  useOnMount(() => listUsers())
+  useOnMount(() => {
+    console.log("listUsers")
+    listUsers()
+  })
 
   return (
     <>

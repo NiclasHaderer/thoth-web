@@ -5,8 +5,10 @@ import { Search } from "@thoth/components/menu/search"
 import { Menu } from "@headlessui/react"
 import { MdAccountCircle, MdLogout, MdPerson, MdTune } from "react-icons/md"
 import { ActiveLink } from "@thoth/components/active-link"
+import { useAuthState } from "@thoth/state/auth.state"
 
 export const SearchBar: React.FC = () => {
+  const jwt = useAuthState(s => s.accessToken)
   return (
     <div className="m-3 flex h-20 min-h-20 items-center rounded-xl bg-elevate pr-3">
       <Link href="/libraries" className="flex overflow-hidden rounded-l-xl" aria-label={"HOME"}>
@@ -21,7 +23,7 @@ export const SearchBar: React.FC = () => {
           <MdAccountCircle className="h-full w-full" />
         </Menu.Button>
 
-        <Menu.Items className="absolute right-0 w-56 origin-top-right divide-y rounded-md border-1 border-solid border-active bg-elevate-2 shadow-lg focus:outline-none">
+        <Menu.Items className="absolute right-0 z-10 w-56 origin-top-right divide-y rounded-md border-1 border-solid border-active bg-elevate-2 shadow-lg focus:outline-none">
           <div className="px-1 py-1 ">
             <Menu.Item>
               {({ active }) => (
@@ -49,19 +51,21 @@ export const SearchBar: React.FC = () => {
                 </ActiveLink>
               )}
             </Menu.Item>
-            <Menu.Item>
-              {({ active }) => (
-                <ActiveLink
-                  href="/settings"
-                  className={`${
-                    active ? "bg-active-light" : "text-gray-900"
-                  } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-                >
-                  <MdTune className="mr-3 h-6 w-6" />
-                  Server Settings
-                </ActiveLink>
-              )}
-            </Menu.Item>
+            {jwt?.payload.admin && (
+              <Menu.Item>
+                {({ active }) => (
+                  <ActiveLink
+                    href="/settings"
+                    className={`${
+                      active ? "bg-active-light" : "text-gray-900"
+                    } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                  >
+                    <MdTune className="mr-3 h-6 w-6" />
+                    Server Settings
+                  </ActiveLink>
+                )}
+              </Menu.Item>
+            )}
           </div>
         </Menu.Items>
       </Menu>
