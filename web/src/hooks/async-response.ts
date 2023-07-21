@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useCallback, useMemo, useState } from "react"
 import { ApiResponse } from "@thoth/client"
 
 type AsyncResponse<T, ARGS extends any[]> = (
@@ -18,7 +18,7 @@ type AsyncResponse<T, ARGS extends any[]> = (
       error: true
     }
 ) & {
-  invoke: (...args: ARGS) => void
+  invoke: (...args: ARGS) => Promise<ApiResponse<T>>
 }
 
 export const useHttpRequest = <T, ARGS extends any[]>(
@@ -28,22 +28,21 @@ export const useHttpRequest = <T, ARGS extends any[]>(
   const [result, setResult] = useState<T | null>(null)
   const [error, setError] = useState<boolean | null>(null)
 
-  return {
-    invoke: (...args: ARGS): void => {
+  const invoke = useMemo(() => {
+    return ((...args: ARGS) => {
       setLoading(true)
       setResult(null)
-      apiCall(...args)
-        .then(result => {
-          setLoading(false)
-          setError(!result.success)
-          setResult(result.success ? result.body : null)
-        })
-        .catch(() => {
-          setLoading(false)
-          setError(true)
-          setResult(null)
-        })
-    },
+      return apiCall(...args).then(result => {
+        setLoading(false)
+        setError(!result.success)
+        setResult(result.success ? result.body : null)
+        return result
+      })
+    }) satisfies AsyncResponse<T, ARGS>[`invoke`]
+  }, [apiCall])
+
+  return {
+    invoke,
     loading,
     result,
     error,
