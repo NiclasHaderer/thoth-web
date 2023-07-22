@@ -19,10 +19,12 @@ export const SearchBar: React.FC = () => {
       </Link>
       <Search />
       <Menu as="div" className="relative">
-        <Menu.Button className="h-12 w-12 cursor-pointer rounded-full p-2 focus:bg-active-light no-touch:focus:bg-active-light">
+        <Menu.Button
+          id="user-account-menu"
+          className="h-12 w-12 cursor-pointer rounded-full p-2 focus:bg-active-light no-touch:focus:bg-active-light"
+        >
           <MdAccountCircle className="h-full w-full" />
         </Menu.Button>
-
         <Menu.Items className="absolute right-0 z-10 w-56 origin-top-right divide-y rounded-md border-1 border-solid border-active bg-elevate-2 shadow-lg focus:outline-none">
           <div className="px-1 py-1 ">
             <Menu.Item>

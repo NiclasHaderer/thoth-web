@@ -7,8 +7,8 @@ import { useRouter } from "next/navigation"
 export default function LogoutOutlet() {
   const auth = useAuthState()
   const router = useRouter()
-  useOnMount(() => {
-    auth.logout()
+  useOnMount(async () => {
+    await auth.logout()
     router.push("/login")
   })
 

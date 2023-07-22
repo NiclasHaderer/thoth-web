@@ -11,8 +11,7 @@ import { ColoredButton } from "@thoth/components/colored-button"
 import { HtmlViewer } from "@thoth/components/html-editor/html-viewer"
 import { isDetailedBook } from "@thoth/models/typeguards"
 import { DetailedBookModel, UUID } from "@thoth/client"
-import { Dropdown } from "@thoth/components/dropdown"
-import { GoKebabVertical } from "react-icons/go"
+import { BiDotsVerticalRounded } from "react-icons/bi"
 
 export const BookDetails: FC<{ bookId: UUID }> = ({ bookId }) => {
   const getBookWithTracks = useAudiobookState(s => s.fetchBookDetails)
@@ -106,7 +105,7 @@ export const BookDetails: FC<{ bookId: UUID }> = ({ bookId }) => {
             </ColoredButton>
 
             <ColoredButton color="secondary">
-              <GoKebabVertical />
+              <BiDotsVerticalRounded />
             </ColoredButton>
 
             <ColoredButton color="secondary" className="mr-3">

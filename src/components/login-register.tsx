@@ -29,8 +29,8 @@ export const LoginRegister: FC<{ type: "register" | "login" }> = ({ type }) => {
 
   const loginOrRegister = async (values: (typeof form)["fields"]) => {
     const cb = type === "login" ? userState.login : userState.register
-    await cb(values)
-    if (!userState.loggedIn) return
+    const result = await cb(values)
+    if (!result.success) return
     const origin = new URLSearchParams(location().search).get("origin") ?? "/"
     router.push(`/${origin}`.replaceAll("//", "/"))
   }
@@ -85,7 +85,7 @@ export const LoginRegister: FC<{ type: "register" | "login" }> = ({ type }) => {
             <NoSSR>
               <Link
                 href={
-                  type === "login" ? `/register?${location().search.slice(1)}` : "/login?${location().search.slice(1)}"
+                  type === "login" ? `/register?${location().search.slice(1)}` : `/login?${location().search.slice(1)}`
                 }
                 className="underline"
               >
