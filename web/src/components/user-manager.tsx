@@ -1,18 +1,19 @@
 import React, { useState } from "react"
-import { MdEdit, MdPerson } from "react-icons/md"
+import { MdDelete, MdEdit, MdPerson } from "react-icons/md"
 import { UserDialog } from "@thoth/components/user-dialog"
 import { useHttpRequest } from "@thoth/hooks/async-response"
 import { Api, UserModel } from "@thoth/client"
 import { useOnMount } from "@thoth/hooks/lifecycle"
+import { useAuthState } from "@thoth/state/auth.state"
 
 export const UserManager = () => {
+  const loggedInUserId = useAuthState(s => s.accessToken?.payload.sub)
   const [isOpen, setIsOpen] = useState(false)
   const { result: users, invoke: listUsers } = useHttpRequest(Api.listUsers)
   const { invoke: updateUser } = useHttpRequest(Api.updateUser)
   const [userToEdit, setUserToEdit] = useState<UserModel>()
-  useOnMount(() => {
-    console.log("listUsers")
-    listUsers()
+  useOnMount(async () => {
+    await listUsers()
   })
 
   return (
@@ -34,6 +35,7 @@ export const UserManager = () => {
               </th>
               <th className="pl-2 text-left">Role</th>
               <th className="pl-2 text-left">Libraries</th>
+              <th className="w-0"></th>
               <th className="w-0"></th>
             </tr>
           </thead>
@@ -58,16 +60,20 @@ export const UserManager = () => {
                     <td className="pr-2">
                       <MdEdit className="h-4 w-4 opacity-0 transition-opacity group-hover:opacity-100" />
                     </td>
+                    <td className="pr-2">
+                      {loggedInUserId !== user.id && (
+                        <MdDelete
+                          onClick={async e => {
+                            e.stopPropagation()
+                            await Api.deleteUser({ id: user.id })
+                            await listUsers()
+                          }}
+                          className="h-4 w-4 opacity-0 transition-opacity group-hover:opacity-100"
+                        />
+                      )}
+                    </td>
                   </tr>
                 ))}
-                {users?.length === 0 && (
-                  <tr className="odd:bg-active-light">
-                    <td className="pl-2">No users yet</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                  </tr>
-                )}
               </>
             }
           </tbody>

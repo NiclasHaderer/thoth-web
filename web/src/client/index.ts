@@ -10,6 +10,7 @@ const authInterceptor: ApiInterceptor = async (data: ApiCallData): Promise<ApiCa
   const authState = useAuthState.getState() as AuthState
   let executor: (callData: ApiCallData) => Promise<Response | ApiResponse<any>> = data.executor
   if (data.requiresAuth) {
+    console.warn(authState)
     if (authState.loggedIn) {
       if (isExpired(authState.accessToken)) {
         await unstable_batchedUpdates(async () => await useAuthState.getState().refreshAccessToken())

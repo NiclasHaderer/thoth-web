@@ -1,8 +1,10 @@
-import { EffectCallback, useEffect } from "react"
+import { useEffect } from "react"
 
-export const useOnMount = (effect: EffectCallback) => {
+export const useOnMount = (effect: () => (void | (() => void)) | Promise<void>) => {
   useEffect(() => {
-    effect()
+    const result = effect()
+    if (result instanceof Promise) return
+    return result
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 }

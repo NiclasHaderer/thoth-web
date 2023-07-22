@@ -27,7 +27,7 @@ export const useAuthState = create(
     combine(INITIAL_USER_STATE as AuthState, (set, get, modify) => ({
       async login(userPw: LoginUser) {
         const jwt = await Api.loginUser(userPw)
-        if (!jwt.success) return
+        if (!jwt.success) return jwt
         const { accessToken } = jwt.body
         const decodedAccessToken = decodeJWT(accessToken)
         set({
@@ -35,14 +35,16 @@ export const useAuthState = create(
           accessTokenStr: accessToken,
           accessToken: decodedAccessToken,
         })
+        return jwt
       },
       async register(userPw: LoginUser) {
         const user = await Api.registerUser(userPw)
-        if (!user.success) return
-        await useAuthState.getState().login(userPw)
+        if (!user.success) return user
+        return await useAuthState.getState().login(userPw)
       },
-      logout() {
+      async logout() {
         modify.setState(INITIAL_USER_STATE)
+        await Api.logoutUser()
       },
       async refreshAccessToken() {
         const newAccessToken = await Api.refreshAccessToken()
