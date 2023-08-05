@@ -38,8 +38,8 @@ afterEvaluate {
             // publish to jitpack
             create<MavenPublication>("maven") {
                 groupId = "com.github.niclashaderer"
-                artifactId = "ktor"
-                version = tsGeneratorVersion
+                artifactId = "openapi"
+                version = "0.0.1"
 
                 from(components["java"])
             }
