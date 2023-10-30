@@ -13,7 +13,7 @@ class PairTsGenerator : TsGenerator() {
         generateSubType: (classType: ClassType) -> TypeGenerator.Type
     ): String {
         if (classType.genericArguments.size != 2) {
-            log.warn { "Pari type without insufficient arguments" }
+            log.warn { "Pair type without insufficient arguments" }
             return "[unknown, unknown]"
         }
 
@@ -41,7 +41,7 @@ class PairTsGenerator : TsGenerator() {
 
     override fun insertionMode(classType: ClassType) = InsertionMode.INLINE
 
-    override fun generateName(classType: ClassType, generateSubType: GenerateType): String = "pair"
+    override fun generateIdentifier(classType: ClassType, generateSubType: GenerateType): String? = null
 
     override fun canGenerate(classType: ClassType): Boolean {
         return classType.isSubclassOf(

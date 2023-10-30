@@ -15,7 +15,7 @@ class DateTsGenerator : TsGenerator() {
 
     override fun insertionMode(classType: ClassType) = InsertionMode.INLINE
 
-    override fun generateName(classType: ClassType, generateSubType: GenerateType): String = "string"
+    override fun generateIdentifier(classType: ClassType, generateSubType: GenerateType): String? = null
 
     override fun canGenerate(classType: ClassType): Boolean {
         return classType.isSubclassOf(

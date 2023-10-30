@@ -2,7 +2,6 @@ package io.thoth.openapi.client.typescript.types
 
 import io.thoth.openapi.client.common.GenerateType
 import io.thoth.openapi.common.ClassType
-import java.util.function.Predicate.not
 import kotlin.reflect.KClass
 import kotlin.reflect.KTypeParameter
 
@@ -33,12 +32,12 @@ class InterfaceTsGenerator : TsGenerator() {
                             if (argClassifier is KTypeParameter) {
                                 argClassifier.name
                             } else {
-                                generateSubType(ClassType.create(it.type!!)).name
+                                generateSubType(ClassType.create(it.type!!)).reference()
                             }
                         }
                         val parameterizedType = generateSubType(classType.forMember(property))
 
-                        "${parameterizedType.name}<${typeArgs.joinToString(", ")}>"
+                        "${parameterizedType.reference()}<${typeArgs.joinToString(", ")}>"
                     } else {
                         generateSubType(classType.forMember(property)).reference()
                     }
@@ -48,7 +47,7 @@ class InterfaceTsGenerator : TsGenerator() {
         val interfaceStart =
             "interface ${generateName(classType, false, generateSubType)} ${
                 if (superClasses.isNotEmpty()) {
-                    "extends ${superClasses.joinToString(", ") { it.name }} "
+                    "extends ${superClasses.joinToString(", ") { it.reference() }} "
                 } else {
                     ""
                 }
@@ -117,7 +116,7 @@ class InterfaceTsGenerator : TsGenerator() {
         }"
     }
 
-    override fun generateName(classType: ClassType, generateSubType: GenerateType): String {
+    override fun generateIdentifier(classType: ClassType, generateSubType: GenerateType): String {
         return generateName(classType, true, generateSubType)
     }
 
