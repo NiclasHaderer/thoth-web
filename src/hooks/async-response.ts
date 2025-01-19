@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react"
+import { useMemo, useState } from "react"
 import { ApiResponse } from "@thoth/client"
 
 type AsyncResponse<T, ARGS extends any[]> = (

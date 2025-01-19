@@ -1,8 +1,7 @@
-import { ExtractAtKey } from "@thoth/models/types"
 import { create } from "zustand"
 import { combine, persist } from "zustand/middleware"
 import { decodeJWT, Jwt } from "@thoth/utils/jwt"
-import { Api, LoginUser } from "@thoth/client"
+import { Api, ThothLoginUser } from "@thoth/client"
 
 export type AuthState =
   | {
@@ -25,7 +24,7 @@ const INITIAL_USER_STATE: AuthState = {
 export const useAuthState = create(
   persist(
     combine(INITIAL_USER_STATE as AuthState, (set, get, modify) => ({
-      async login(userPw: LoginUser) {
+      async login(userPw: ThothLoginUser) {
         const jwt = await Api.loginUser(userPw)
         if (!jwt.success) return jwt
         const { accessToken } = jwt.body
@@ -37,7 +36,7 @@ export const useAuthState = create(
         })
         return jwt
       },
-      async register(userPw: LoginUser) {
+      async register(userPw: ThothLoginUser) {
         const user = await Api.registerUser(userPw)
         if (!user.success) return user
         return await useAuthState.getState().login(userPw)

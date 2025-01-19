@@ -1,54 +1,40 @@
-export type ApiError = {
-  success: false
-  error: string | object
-  status?: number
-}
+import type { Pair } from "./utility-types"
 
-export type ApiSuccess<T> = {
-  success: true
-  body: T
-}
-
-export type ApiResponse<T> = ApiError | ApiSuccess<T>
-
-export type ApiCallData = {
-  requiresAuth: boolean
-  route: string
-  method: string
-  body?: object
-  headers: Headers
-  bodySerializer: (body?: object) => string | undefined
-  executor: (callData: ApiCallData) => Promise<Response | ApiResponse<any>>
-}
-
-export type ApiInterceptor = (param: ApiCallData) => ApiCallData | Promise<ApiCallData>
-
-export interface LoginUser {
-  password: string
-  username: string
-}
-
-export interface AccessToken {
+export interface ThothAccessToken {
   accessToken: string
 }
 
-export interface RegisterUser {
+export interface ThothLoginUser {
   password: string
   username: string
 }
 
+export type Empty = ""
+
 export type UUID = `${string}-${string}-${string}-${string}-${string}`
 
-export interface NamedId {
+export interface ThothUserPermissions {
+  isAdmin: boolean
+}
+
+export interface LibraryPermissionsModel {
+  canEdit: boolean
   id: UUID
   name: string
 }
 
-export interface UserModel {
-  admin: boolean
-  edit: boolean
-  id: UUID
-  libraries: Array<NamedId>
+export interface UserPermissionsModel extends ThothUserPermissions {
+  libraries: Array<LibraryPermissionsModel>
+}
+
+export interface ThothUser<ID extends NonNullable<any>, PERMISSIONS extends ThothUserPermissions> {
+  id: ID
+  permissions: PERMISSIONS
+  username: string
+}
+
+export interface ThothRegisterUser {
+  password: string
   username: string
 }
 
@@ -64,27 +50,22 @@ export interface JWKs {
   keys: Array<JWK>
 }
 
-export interface ModifyUser {
-  admin?: boolean
-  edit?: boolean
-  password?: string
-  username?: string
+export interface ThothModifyPermissions<PERMISSIONS extends ThothUserPermissions> {
+  permissions: PERMISSIONS
 }
 
-export type Empty = ""
-
-export interface UsernameChange {
+export interface ThothRenameUser {
   username: string
 }
 
-export interface PasswordChange {
+export interface ThothChangePassword {
   currentPassword: string
   newPassword: string
 }
 
 export interface FileSystemItem {
   name: string
-  parent?: string
+  parent: string | undefined
   path: string
 }
 
@@ -99,7 +80,7 @@ export interface MetadataAgent {
 export interface LibraryModel {
   fileScanners: Array<FileScanner>
   folders: Array<string>
-  icon?: string
+  icon: string | undefined
   id: UUID
   language: string
   metadataScanners: Array<MetadataAgent>
@@ -111,7 +92,7 @@ export interface LibraryModel {
 export interface LibraryApiModel {
   fileScanners: Array<FileScanner>
   folders: Array<string>
-  icon?: string
+  icon: string | undefined
   language: string
   metadataScanners: Array<MetadataAgent>
   name: string
@@ -119,12 +100,13 @@ export interface LibraryApiModel {
 }
 
 export interface PartialLibraryApiModel {
-  fileScanners?: Array<FileScanner>
-  folders?: Array<string>
-  icon?: string
-  metadataScanners?: Array<MetadataAgent>
-  name?: string
-  preferEmbeddedMetadata?: boolean
+  fileScanners: Array<FileScanner> | undefined
+  folders: Array<string> | undefined
+  icon: string | undefined
+  language: string | undefined
+  metadataScanners: Array<MetadataAgent> | undefined
+  name: string | undefined
+  preferEmbeddedMetadata: boolean | undefined
 }
 
 export interface TitledId {
@@ -133,50 +115,55 @@ export interface TitledId {
 }
 
 export interface AuthorModel {
-  biography?: string
-  birthDate?: string
-  bornIn?: string
-  deathDate?: string
+  biography: string | undefined
+  birthDate: string | undefined
+  bornIn: string | undefined
+  deathDate: string | undefined
   id: UUID
-  imageID?: UUID
+  imageID: UUID | undefined
   library: TitledId
   name: string
-  provider?: string
-  providerID?: string
-  website?: string
+  provider: string | undefined
+  providerID: string | undefined
+  website: string | undefined
+}
+
+export interface NamedId {
+  id: UUID
+  name: string
 }
 
 export interface BookModel {
   authors: Array<NamedId>
-  coverID?: UUID
-  description?: string
+  coverID: UUID | undefined
+  description: string | undefined
   genres: Array<NamedId>
   id: UUID
-  isbn?: string
-  language?: string
+  isbn: string | undefined
+  language: string | undefined
   library: TitledId
-  narrator?: string
-  provider?: string
-  providerID?: string
-  providerRating?: number
-  publisher?: string
-  releaseDate?: string
+  narrator: string | undefined
+  provider: string | undefined
+  providerID: string | undefined
+  providerRating: number | undefined
+  publisher: string | undefined
+  releaseDate: string | undefined
   series: Array<TitledId>
   title: string
 }
 
 export interface SeriesModel {
   authors: Array<NamedId>
-  coverID?: UUID
-  description?: string
+  coverID: UUID | undefined
+  description: string | undefined
   genres: Array<NamedId>
   id: UUID
   library: TitledId
-  primaryWorks?: number
-  provider?: string
-  providerID?: string
+  primaryWorks: number | undefined
+  provider: string | undefined
+  providerID: string | undefined
   title: string
-  totalBooks?: number
+  totalBooks: number | undefined
 }
 
 export interface SearchModel {
@@ -212,7 +199,7 @@ export interface TrackModel {
   id: UUID
   path: string
   title: string
-  trackNr?: number
+  trackNr: number | undefined
   updateTime: string
 }
 
@@ -221,42 +208,35 @@ export interface DetailedBookModel extends BookModel {
 }
 
 export interface PartialBookApiModel {
-  authors?: Array<UUID>
-  cover?: string
-  description?: string
-  isbn?: string
-  language?: string
-  narrator?: string
-  provider?: string
-  providerID?: string
-  providerRating?: number
-  publisher?: string
-  releaseDate?: string
-  series?: Array<UUID>
-  title?: string
+  authors: Array<UUID> | undefined
+  cover: string | undefined
+  description: string | undefined
+  isbn: string | undefined
+  language: string | undefined
+  narrator: string | undefined
+  provider: string | undefined
+  providerID: string | undefined
+  providerRating: number | undefined
+  publisher: string | undefined
+  releaseDate: string | undefined
+  series: Array<UUID> | undefined
+  title: string | undefined
 }
 
 export interface BookApiModel {
   authors: Array<UUID>
-  cover?: string
-  description?: string
-  isbn?: string
-  language?: string
-  narrator?: string
-  provider?: string
-  providerID?: string
-  providerRating?: number
-  publisher?: string
-  releaseDate?: string
-  series?: Array<UUID>
+  cover: string | undefined
+  description: string | undefined
+  isbn: string | undefined
+  language: string | undefined
+  narrator: string | undefined
+  provider: string | undefined
+  providerID: string | undefined
+  providerRating: number | undefined
+  publisher: string | undefined
+  releaseDate: string | undefined
+  series: Array<UUID> | undefined
   title: string
-}
-
-export interface PaginatedResponse<T> {
-  items: Array<T>
-  limit: number
-  offset: number
-  total: number
 }
 
 export interface YearRange {
@@ -267,38 +247,31 @@ export interface YearRange {
 export interface DetailedSeriesModel extends SeriesModel {
   books: Array<BookModel>
   narrators: Array<string>
-  yearRange?: YearRange
+  yearRange: YearRange | undefined
 }
 
 export interface PartialSeriesApiModel {
-  authors?: Array<UUID>
-  books?: Array<UUID>
-  cover?: string
-  description?: string
-  primaryWorks?: number
-  provider?: string
-  providerID?: string
-  title?: string
-  totalBooks?: number
+  authors: Array<UUID> | undefined
+  books: Array<UUID> | undefined
+  cover: string | undefined
+  description: string | undefined
+  primaryWorks: number | undefined
+  provider: string | undefined
+  providerID: string | undefined
+  title: string | undefined
+  totalBooks: number | undefined
 }
 
 export interface SeriesApiModel {
   authors: Array<UUID>
   books: Array<UUID>
-  cover?: string
-  description?: string
-  primaryWorks?: number
-  provider?: string
-  providerID?: string
+  cover: string | undefined
+  description: string | undefined
+  primaryWorks: number | undefined
+  provider: string | undefined
+  providerID: string | undefined
   title: string
-  totalBooks?: number
-}
-
-export interface PaginatedResponse<T> {
-  items: Array<T>
-  limit: number
-  offset: number
-  total: number
+  totalBooks: number | undefined
 }
 
 export interface DetailedAuthorModel extends AuthorModel {
@@ -307,27 +280,57 @@ export interface DetailedAuthorModel extends AuthorModel {
 }
 
 export interface PartialAuthorApiModel {
-  biography?: string
-  birthDate?: string
-  bornIn?: string
-  deathDate?: string
-  image?: string
-  name?: string
-  provider?: string
-  providerID?: string
-  website?: string
+  biography: string | undefined
+  birthDate: string | undefined
+  bornIn: string | undefined
+  deathDate: string | undefined
+  image: string | undefined
+  name: string | undefined
+  provider: string | undefined
+  providerID: string | undefined
+  website: string | undefined
 }
 
 export interface AuthorApiModel {
-  biography?: string
-  birthDate?: string
-  bornIn?: string
-  deathDate?: string
-  image?: string
+  biography: string | undefined
+  birthDate: string | undefined
+  bornIn: string | undefined
+  deathDate: string | undefined
+  image: string | undefined
   name: string
-  provider?: string
-  providerID?: string
-  website?: string
+  provider: string | undefined
+  providerID: string | undefined
+  website: string | undefined
+}
+
+export interface MetadataProviderWithID {
+  itemID: string
+  provider: string
+}
+
+export interface MetadataSearchAuthor {
+  id: MetadataProviderWithID
+  link: string
+  name: string | undefined
+}
+
+export interface MetadataBookSeries {
+  id: MetadataProviderWithID
+  index: number | undefined
+  link: string
+  title: string | undefined
+}
+
+export interface MetadataSearchBook {
+  authors: Array<MetadataSearchAuthor> | undefined
+  coverURL: string | undefined
+  id: MetadataProviderWithID
+  language: string | undefined
+  link: string | undefined
+  narrator: string | undefined
+  releaseDate: string | undefined
+  series: Array<MetadataBookSeries>
+  title: string | undefined
 }
 
 export type MetadataLanguage =
@@ -344,60 +347,30 @@ export type MetadataLanguage =
 
 export type MetadataSearchCount = "Small" | "Medium" | "Large" | "ExtraLarge"
 
-export interface MetadataProviderWithID {
-  itemID: string
-  provider: string
-}
-
-export interface MetadataSearchAuthor {
-  id: MetadataProviderWithID
-  link: string
-  name?: string
-}
-
-export interface MetadataBookSeries {
-  id: MetadataProviderWithID
-  index?: number
-  link: string
-  title?: string
-}
-
-export interface MetadataSearchBook {
-  authors?: Array<MetadataSearchAuthor>
-  coverURL?: string
-  id: MetadataProviderWithID
-  language?: string
-  link?: string
-  narrator?: string
-  releaseDate?: string
-  series: Array<MetadataBookSeries>
-  title?: string
-}
-
 export interface MetadataAuthor extends MetadataSearchAuthor {
-  biography?: string
-  birthDate?: string
-  bornIn?: string
-  deathDate?: string
-  imageURL?: string
-  website?: string
+  biography: string | undefined
+  birthDate: string | undefined
+  bornIn: string | undefined
+  deathDate: string | undefined
+  imageURL: string | undefined
+  website: string | undefined
 }
 
 export interface MetadataBook extends MetadataSearchBook {
-  description?: string
-  isbn?: string
-  providerRating?: number
-  publisher?: string
+  description: string | undefined
+  isbn: string | undefined
+  providerRating: number | undefined
+  publisher: string | undefined
 }
 
 export interface MetadataSeries {
-  authors?: Array<string>
-  books?: Array<MetadataSearchBook>
-  coverURL?: string
-  description?: string
+  authors: Array<string> | undefined
+  books: Array<MetadataSearchBook> | undefined
+  coverURL: string | undefined
+  description: string | undefined
   id: MetadataProviderWithID
   link: string
-  primaryWorks?: number
-  title?: string
-  totalBooks?: number
+  primaryWorks: number | undefined
+  title: string | undefined
+  totalBooks: number | undefined
 }
