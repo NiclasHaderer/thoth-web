@@ -22,6 +22,7 @@ export type LibraryFormValues = {
   metadataScanners: MetadataAgent[]
   fileScanners: FileScanner[]
   mode: "create" | "edit"
+  icon: string | undefined
 }
 
 interface LibraryDialogProps {

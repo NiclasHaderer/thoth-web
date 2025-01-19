@@ -2,7 +2,7 @@ import React, { useState } from "react"
 import { MdDelete, MdEdit, MdPerson } from "react-icons/md"
 import { UserDialog } from "@thoth/components/user-dialog"
 import { useHttpRequest } from "@thoth/hooks/async-response"
-import { Api, UserModel } from "@thoth/client"
+import { Api, ThothUser, UserPermissionsModel, UUID } from "@thoth/client"
 import { useOnMount } from "@thoth/hooks/lifecycle"
 import { useAuthState } from "@thoth/state/auth.state"
 
@@ -10,8 +10,10 @@ export const UserManager = () => {
   const loggedInUserId = useAuthState(s => s.accessToken?.payload.sub)
   const [isOpen, setIsOpen] = useState(false)
   const { result: users, invoke: listUsers } = useHttpRequest(Api.listUsers)
-  const { invoke: updateUser } = useHttpRequest(Api.updateUser)
-  const [userToEdit, setUserToEdit] = useState<UserModel>()
+  const updateUser = () => {
+    throw new Error("Not implemented yet")
+  }
+  const [userToEdit, setUserToEdit] = useState<ThothUser<UUID, UserPermissionsModel>>()
   useOnMount(async () => {
     await listUsers()
   })
@@ -52,11 +54,14 @@ export const UserManager = () => {
                     }}
                   >
                     <td className="pl-2">{user.username}</td>
+                    <td className="pl-2">{user.permissions.isAdmin ? "Admin" : "User"}</td>
                     <td className="pl-2">
-                      {user.admin ? "Admin" : "User"}
-                      {user.edit ? "(Editor)" : ""}
+                      {user.permissions.libraries
+                        .map(l => {
+                          return `${l.name} (${l.canEdit ? "Edit" : "Read"})`
+                        })
+                        .join(", ")}
                     </td>
-                    <td className="pl-2">{user.libraries.map(l => l.name).join(", ")}</td>
                     <td className="pr-2">
                       <MdEdit className="h-4 w-4 opacity-0 transition-opacity group-hover:opacity-100" />
                     </td>
@@ -84,8 +89,8 @@ export const UserManager = () => {
           isOpen={isOpen}
           user={userToEdit}
           setIsOpen={setIsOpen}
-          onModifyUser={(id, values) => {
-            updateUser({ id }, values)
+          onModifyUser={() => {
+            updateUser()
           }}
         />
       )}
