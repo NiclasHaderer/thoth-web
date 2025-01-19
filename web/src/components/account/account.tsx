@@ -1,9 +1,9 @@
 import { FC, useState } from "react"
-import { UserModel } from "@thoth/client"
+import { type ThothUser, type UserPermissionsModel, type UUID } from "@thoth/client"
 import { Input } from "@thoth/components/input/input"
 import { MdBadge } from "react-icons/md"
 
-export const Author: FC<{ user: UserModel }> = ({ user }) => {
+export const User: FC<{ user: ThothUser<UUID, UserPermissionsModel> }> = ({ user }) => {
   const [username, setUsername] = useState(user.username)
 
   return (
@@ -26,20 +26,15 @@ export const Author: FC<{ user: UserModel }> = ({ user }) => {
 
       <div className="mb-4">
         <b className="inline-block w-28 px-2 font-bold">Admin</b>
-        <span>{user.admin ? "Yes" : "No"}</span>
-      </div>
-
-      <div className="mb-4">
-        <b className="inline-block w-28 px-2 font-bold">Can Edit</b>
-        <span>{user.edit ? "Yes" : "No"}</span>
+        <span>{user.permissions.isAdmin ? "Yes" : "No"}</span>
       </div>
 
       <div className="mb-4">
         <b className="inline-block w-28 px-2 font-bold">Libraries</b>
         <span>
-          {user.libraries.map(library => (
+          {user.permissions.libraries.map(library => (
             <span key={library.id} className="mr-2">
-              {library.name}
+              {library.name} ({library.canEdit ? "Edit" : "Read"})
             </span>
           ))}
         </span>
