@@ -5,7 +5,7 @@ import { Dialog, DialogActions, DialogBody, DialogButtons } from "@thoth/compone
 import { ManagedInput } from "@thoth/components/input/managed-input"
 import { SelectLine } from "@thoth/components/input/select-line"
 import { MdFolderManaged } from "@thoth/components/icons/managed"
-import { ModifyUser, UserModel } from "@thoth/client"
+import { ThothUser, UserPermissionsModel } from "@thoth/client"
 import { useAudiobookState } from "@thoth/state/audiobook.state"
 import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
 import { UUID } from "crypto"
@@ -13,16 +13,18 @@ import { UUID } from "crypto"
 export const UserDialog: FC<{
   isOpen: boolean
   setIsOpen: (open: boolean) => void
-  user: UserModel
-  onModifyUser: (id: UUID, user: ModifyUser) => void
+  user: ThothUser<UUID, UserPermissionsModel>
+  onModifyUser: (id: UUID, user: "no-proper-type-defined") => void
 }> = ({ isOpen, setIsOpen, onModifyUser, user }) => {
+  /* TODO this has to be implemented correctly */
+
   const _libraries = useAudiobookState(AudiobookSelectors.libraries)
   const libraries = useMemo(() => _libraries.map(l => ({ label: l.name, value: l.id })), [_libraries])
 
   const form = useForm({
     username: user.username,
-    permissions: user.admin ? "admin" : user.edit ? "editor" : "viewer",
-    libraries: user.libraries.map(l => l.id),
+    isAdmin: user.permissions.isAdmin,
+    libraries: user.permissions.libraries.map(l => l.id),
     id: user.id,
   })
 
@@ -30,22 +32,18 @@ export const UserDialog: FC<{
     <Dialog isOpen={isOpen} closeModal={() => setIsOpen(false)} title={"Edit User"}>
       <Form
         form={form}
-        onSubmit={values => {
-          onModifyUser(user.id, {
-            username: values.username,
-            admin: values.permissions === "admin",
-            edit: values.permissions === "editor" || values.permissions === "admin",
-          })
+        onSubmit={() => {
+          onModifyUser(user.id, "no-proper-type-defined")
         }}
       >
         <DialogBody>
           <ManagedInput required={true} name="username" labelClassName="w-28" label="Name" leftIcon={<MdPerson />} />
           <SelectLine
-            options={["viewer", "editor", "admin"]}
-            title={"Permissions"}
-            name="permissions"
+            options={[true, false]}
+            title="Is Admin"
+            name="admin"
             labelClassName="w-28"
-            label="Permissions"
+            label="admin"
             icon={<MdFolderManaged />}
           />
           <SelectLine

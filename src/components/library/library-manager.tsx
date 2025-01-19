@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import { MdAutoAwesome, MdEdit, MdLanguage, MdLocalLibrary, MdRadar } from "react-icons/md"
-import { useForm } from "@thoth/hooks/form"
+import { FormContext, useForm } from "@thoth/hooks/form"
 import { ColoredButton } from "@thoth/components/colored-button"
 import { useOnMount } from "@thoth/hooks/lifecycle"
 import { FileScanner, MetadataAgent, UUID } from "@thoth/client"
@@ -26,17 +26,18 @@ export const LibraryManager = () => {
     }
   }
 
-  const form = useForm(
+  const form: FormContext<LibraryFormValues> = useForm(
     {
-      id: undefined as UUID | undefined,
+      id: undefined as undefined | UUID,
       name: "",
       language: "",
-      preferEmbeddedMetadata: false,
+      preferEmbeddedMetadata: false as boolean,
       folders: [] as string[],
       metadataScanners: [] as MetadataAgent[],
       fileScanners: [] as FileScanner[],
       mode: "create" as "create" | "edit",
-    },
+      icon: undefined as string | undefined,
+    } satisfies LibraryFormValues,
     {
       validate: {
         name: (name: string) => name.length > 0 || "Name is required",
