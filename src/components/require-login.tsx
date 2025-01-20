@@ -1,7 +1,7 @@
 import { FC, PropsWithChildren, useEffect } from "react"
 import { useAuthState } from "@thoth/state/auth.state"
 import { useRouter } from "next/navigation"
-import { NoSsr } from "@thoth/components/no-ssr"
+import { NoSSR } from "@thoth/components/no-ssr"
 
 export const RequireLogin: FC<PropsWithChildren> = ({ children }) => {
   const isLoggedIn = useAuthState(s => s.loggedIn)
@@ -16,8 +16,5 @@ export const RequireLogin: FC<PropsWithChildren> = ({ children }) => {
     const loginUrl = `/login?${afterLoginRedirect}`
     router.push(loginUrl)
   })
-  if (!isLoggedIn) {
-    return <NoSsr></NoSsr>
-  }
-  return <NoSsr>{children}</NoSsr>
+  return <NoSSR>{isLoggedIn ? children : null}</NoSSR>
 }

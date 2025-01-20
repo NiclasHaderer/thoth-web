@@ -1,4 +1,4 @@
-import { Tab } from "@headlessui/react"
+import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react"
 import React, { Fragment, useEffect, useRef, useState } from "react"
 import {
   MdCollectionsBookmark,
@@ -61,13 +61,13 @@ export const BookEdit: React.FC<{ book: BookModel; bookId: UUID }> = ({ book: _b
       <Dialog closeModal={closeModal} isOpen={isOpen} dialogClass="min-h-[510px]" title="Edit Book">
         <Form
           form={form}
-          onSubmit={values => {
-            updateBook({ libraryId, id: bookId }, values)
+          onSubmit={async values => {
+            await updateBook({ libraryId, id: bookId }, values)
             closeModal()
           }}
         >
-          <Tab.Group selectedIndex={selectedTabIndex} onChange={index => setSelectedTabIndex(index)}>
-            <Tab.List className="p-2-solid w-full rounded-md border-2 border-primary border-opacity-50">
+          <TabGroup selectedIndex={selectedTabIndex} onChange={index => setSelectedTabIndex(index)}>
+            <TabList className="p-2-solid w-full rounded-md border-2 border-primary border-opacity-50">
               <Tab as={Fragment}>
                 {({ selected }) => (
                   <button
@@ -88,12 +88,12 @@ export const BookEdit: React.FC<{ book: BookModel; bookId: UUID }> = ({ book: _b
                   </button>
                 )}
               </Tab>
-            </Tab.List>
-            <Tab.Panels className="mt-2">
-              <Tab.Panel className="rounded-md border-2 border-primary border-opacity-0 focus:border-opacity-20">
+            </TabList>
+            <TabPanels className="mt-2">
+              <TabPanel className="rounded-md border-2 border-primary border-opacity-0 focus:border-opacity-20">
                 <BookForm />
-              </Tab.Panel>
-              <Tab.Panel>
+              </TabPanel>
+              <TabPanel>
                 <BookSearch
                   book={book.title}
                   authors={book.authors}
@@ -102,9 +102,9 @@ export const BookEdit: React.FC<{ book: BookModel; bookId: UUID }> = ({ book: _b
                     setSelectedTabIndex(0)
                   }}
                 />
-              </Tab.Panel>
-            </Tab.Panels>
-          </Tab.Group>
+              </TabPanel>
+            </TabPanels>
+          </TabGroup>
           <DialogButtons closeModal={closeModal} />
         </Form>
       </Dialog>
@@ -115,10 +115,10 @@ export const BookEdit: React.FC<{ book: BookModel; bookId: UUID }> = ({ book: _b
 const BookForm = () => {
   const imageRef = useRef<HTMLInputElement>(null)
 
-  const { value: descriptionValue, formSetValue: setDescriptionValue } = useField(
-    "description" satisfies keyof PartialBookApiModel
+  const { value: descriptionValue, formSetValue: setDescriptionValue } = useField<PartialBookApiModel, "description">(
+    "description"
   )
-  const { value: imageValue, formSetValue: setImageValue } = useField("cover" as keyof PartialBookApiModel)
+  const { value: imageValue, formSetValue: setImageValue } = useField<PartialBookApiModel, "cover">("cover")
 
   return (
     <>
@@ -134,7 +134,7 @@ const BookForm = () => {
               />
             ) : (
               <MdImageNotSupported
-                className="h-52 w-52 cursor-pointer  rounded-md"
+                className="h-52 w-52 cursor-pointer rounded-md"
                 onClick={() => imageRef.current && imageRef.current.click()}
               />
             )}
@@ -144,7 +144,7 @@ const BookForm = () => {
               type="file"
               accept="image/*"
               onChange={async () => {
-                const file = await imageRef.current!.files![0]
+                const file = imageRef.current!.files![0]
                 const base64 = await toBase64(file)
                 setImageValue(base64)
               }}

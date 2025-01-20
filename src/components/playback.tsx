@@ -1,7 +1,5 @@
 import React, { FC, useEffect, useRef } from "react"
 import { MdImageNotSupported, MdPauseCircle, MdPlayCircle, MdSkipNext, MdSkipPrevious, MdStop } from "react-icons/md"
-
-import { environment } from "../environment"
 import { useAudio, useDuration, useOnEnded, usePercentage, usePlayState, usePosition } from "../hooks/playback"
 import { usePlaybackState } from "../state/playback.state"
 import { toReadableTime } from "./track/helpers"
@@ -13,7 +11,7 @@ export const Playback: FC<{ className?: string }> = ({ className }) => {
   const playback = usePlaybackState()
   const track = playback.current
 
-  const [audio] = useAudio(track?.id ? `/api/audio/${track!.id}` : undefined)
+  const [audio] = useAudio(track?.id ? `/api/audio/${track.id}` : undefined)
   const [position] = usePosition(audio)
   const duration = useDuration(audio)
   const initialFocus = useRef<HTMLButtonElement | null>(null)

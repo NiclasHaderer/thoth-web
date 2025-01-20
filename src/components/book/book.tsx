@@ -1,6 +1,6 @@
 import React from "react"
 import { MdImageNotSupported } from "react-icons/md"
-import { BookModel, NamedId } from "@thoth/client"
+import { BookModel } from "@thoth/client"
 import Link from "next/link"
 import { useAudiobookState } from "@thoth/state/audiobook.state"
 import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
@@ -25,11 +25,11 @@ export const BookDisplay: React.FC<BookModel> = ({ coverID, title, authors, id }
 
       <div className="relative p-2 text-center">
         <Link href={`/libraries/${libraryId}/books/${id}`}>
-          <span className="line-clamp-2 cursor-pointer hover:underline group-focus:underline ">{title}</span>
+          <span className="line-clamp-2 cursor-pointer hover:underline group-focus:underline">{title}</span>
         </Link>
         {authors.map(author => (
           <Link href={`/libraries/${libraryId}/authors/${author.id}`} key={author.id}>
-            <span className="cursor-pointer text-font-secondary  hover:underline group-focus:underline">
+            <span className="cursor-pointer text-font-secondary hover:underline group-focus:underline">
               {author.name}
             </span>
           </Link>

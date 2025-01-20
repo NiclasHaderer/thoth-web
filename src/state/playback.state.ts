@@ -9,13 +9,13 @@ interface PlaybackState {
   queue: PlaybackTrack[]
   current: PlaybackTrack | null | undefined
 
-  start(track: PlaybackTrack, queue?: PlaybackTrack[], history?: PlaybackTrack[]): void
+  start: (track: PlaybackTrack, queue?: PlaybackTrack[], history?: PlaybackTrack[]) => void
 
-  stop(): void
+  stop: () => void
 
-  next(): void
+  next: () => void
 
-  previous(): void
+  previous: () => void
 }
 
 export const usePlaybackState = create<PlaybackState>((set, get) => ({

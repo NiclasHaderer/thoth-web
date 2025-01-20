@@ -1,8 +1,8 @@
-import { ReactNode, useEffect, useState } from "react"
+import dynamic from "next/dynamic"
+import React from "react"
 
-export const NoSsr = ({ children }: { children?: ReactNode }) => {
-  const [mounted, setMounted] = useState(false)
-  useEffect(() => setMounted(true), [])
+const NoSSR_ = ({ children }: { children?: React.ReactNode }) => <>{children}</>
 
-  return mounted ? <>{children}</> : null
-}
+export const NoSSR = dynamic(() => Promise.resolve(NoSSR_), {
+  ssr: false,
+})

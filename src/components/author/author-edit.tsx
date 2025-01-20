@@ -1,4 +1,4 @@
-import { Tab } from "@headlessui/react"
+import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react"
 import React, { Fragment, useState } from "react"
 import { MdEdit } from "react-icons/md"
 import { AudiobookSelectors } from "../../state/audiobook.selectors"
@@ -51,15 +51,15 @@ export const AuthorEdit: React.FC<{ author: EditAuthor; authorID: UUID }> = ({ a
       <Dialog closeModal={closeModal} isOpen={isOpen} dialogClass="min-h-[510px]" title="Edit Author">
         <Form
           form={form}
-          onSubmit={values => {
-            updateAuthor({ libraryId, id: authorID }, values)
+          onSubmit={async values => {
+            await updateAuthor({ libraryId, id: authorID }, values)
             closeModal()
           }}
         >
           <DialogBody>
             <DialogContent>
-              <Tab.Group selectedIndex={selectedTabIndex} onChange={index => setSelectedTabIndex(index)}>
-                <Tab.List className="p-2-solid w-full rounded-md border-2 border-primary border-opacity-50">
+              <TabGroup selectedIndex={selectedTabIndex} onChange={index => setSelectedTabIndex(index)}>
+                <TabList className="p-2-solid w-full rounded-md border-2 border-primary border-opacity-50">
                   <Tab as={Fragment}>
                     {({ selected }) => (
                       <button
@@ -80,12 +80,12 @@ export const AuthorEdit: React.FC<{ author: EditAuthor; authorID: UUID }> = ({ a
                       </button>
                     )}
                   </Tab>
-                </Tab.List>
-                <Tab.Panels className="mt-2">
-                  <Tab.Panel className="rounded-md border-2 border-primary border-opacity-0 focus:border-opacity-20">
+                </TabList>
+                <TabPanels className="mt-2">
+                  <TabPanel className="rounded-md border-2 border-primary border-opacity-0 focus:border-opacity-20">
                     <AuthorForm />
-                  </Tab.Panel>
-                  <Tab.Panel>
+                  </TabPanel>
+                  <TabPanel>
                     <AuthorSearch
                       author={form.fields.name}
                       select={authorMeta => {
@@ -93,9 +93,9 @@ export const AuthorEdit: React.FC<{ author: EditAuthor; authorID: UUID }> = ({ a
                         setSelectedTabIndex(0)
                       }}
                     />
-                  </Tab.Panel>
-                </Tab.Panels>
-              </Tab.Group>
+                  </TabPanel>
+                </TabPanels>
+              </TabGroup>
             </DialogContent>
             <DialogActions>
               <DialogButtons closeModal={closeModal} />
