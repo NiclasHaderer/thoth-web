@@ -15,9 +15,6 @@ const devOptions = {
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  experimental: {
-    appDir: true,
-  },
   output: isProduction ? "export" : "standalone",
   ...(!isProduction && devOptions),
   distDir: "dist",

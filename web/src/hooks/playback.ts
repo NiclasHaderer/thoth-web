@@ -11,7 +11,7 @@ export const useAudio = (
     const audioElement = document.createElement("audio")
     audioElement.setAttribute("controls", "true")
     audioElement.src = url
-    autoplay && audioElement.play()
+    autoplay && void audioElement.play()
     setAudio(audioElement)
     return () => {
       audioElement.pause()
@@ -90,7 +90,7 @@ export const usePercentage = (
     (percentage: number) => {
       if (!audio) return
       audio.currentTime = Math.floor(audio.duration * percentage)
-      audio.play().then()
+      void audio.play()
     },
   ]
 }
@@ -118,7 +118,7 @@ export const usePlayState = (audio: HTMLAudioElement | undefined | null): [boole
     (shouldPlay: boolean) => {
       if (!audio) return
       if (shouldPlay) {
-        audio.play()
+        void audio.play()
       } else {
         audio.pause()
       }

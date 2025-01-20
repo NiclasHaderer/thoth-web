@@ -2,7 +2,7 @@ import { useEffect } from "react"
 
 export function useGlobalEvent<T extends keyof WindowEventMap>(
   type: T,
-  listener: (event: WindowEventMap[T]) => any,
+  listener: (event: WindowEventMap[T]) => unknown,
   filter?: (event: WindowEventMap[T]) => boolean,
   options?: boolean | AddEventListenerOptions
 ) {

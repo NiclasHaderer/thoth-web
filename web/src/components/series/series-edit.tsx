@@ -1,4 +1,4 @@
-import { Tab } from "@headlessui/react"
+import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react"
 import React, { Fragment, useEffect, useState } from "react"
 import { MdEdit, MdPerson, MdSearch } from "react-icons/md"
 import { AudiobookSelectors } from "../../state/audiobook.selectors"
@@ -11,12 +11,12 @@ import { Dialog, DialogButtons } from "@thoth/components/dialog"
 import { ManagedInput } from "@thoth/components/input/managed-input"
 import HtmlEditor from "../html-editor"
 
-const mergeMetaIntoSeries = ({ ...series }: PartialSeriesApiModel, meta: MetadataSeries): PartialSeriesApiModel => {
+const mergeMetaIntoSeries = ({ ...series }: PartialSeriesApiModel, _: MetadataSeries): PartialSeriesApiModel => {
   // TODO fix
   return series
 }
 
-const toPatchSeries = ({ id, ...rest }: DetailedSeriesModel): PartialSeriesApiModel => {
+const toPatchSeries = ({ id: _, ...rest }: DetailedSeriesModel): PartialSeriesApiModel => {
   return {
     authors: rest.authors.flatMap(author => [author.id, author.id]),
     cover: rest.coverID,
@@ -54,13 +54,13 @@ export const SeriesEdit: React.FC<{ series: DetailedSeriesModel; seriesId: UUID 
       <Dialog closeModal={closeModal} isOpen={isOpen} dialogClass="min-h-[510px]" title="Edit Series">
         <Form
           form={form}
-          onSubmit={values => {
-            updateSeries({ libraryId, id: seriesId }, values)
+          onSubmit={async values => {
+            await updateSeries({ libraryId, id: seriesId }, values)
             closeModal()
           }}
         >
-          <Tab.Group selectedIndex={selectedTabIndex} onChange={index => setSelectedTabIndex(index)}>
-            <Tab.List className="p-2-solid w-full rounded-md border-2 border-primary border-opacity-50">
+          <TabGroup selectedIndex={selectedTabIndex} onChange={index => setSelectedTabIndex(index)}>
+            <TabList className="p-2-solid w-full rounded-md border-2 border-primary border-opacity-50">
               <Tab as={Fragment}>
                 {({ selected }) => (
                   <button
@@ -81,12 +81,12 @@ export const SeriesEdit: React.FC<{ series: DetailedSeriesModel; seriesId: UUID 
                   </button>
                 )}
               </Tab>
-            </Tab.List>
-            <Tab.Panels className="mt-2">
-              <Tab.Panel className="rounded-md border-2 border-primary border-opacity-0 focus:border-opacity-20">
+            </TabList>
+            <TabPanels className="mt-2">
+              <TabPanel className="rounded-md border-2 border-primary border-opacity-0 focus:border-opacity-20">
                 <SeriesForm />
-              </Tab.Panel>
-              <Tab.Panel>
+              </TabPanel>
+              <TabPanel>
                 <SeriesSearch
                   series={series.title}
                   authors={series.authors}
@@ -95,9 +95,9 @@ export const SeriesEdit: React.FC<{ series: DetailedSeriesModel; seriesId: UUID 
                     setSelectedTabIndex(0)
                   }}
                 />
-              </Tab.Panel>
-            </Tab.Panels>
-          </Tab.Group>
+              </TabPanel>
+            </TabPanels>
+          </TabGroup>
           <DialogButtons closeModal={closeModal} />
         </Form>
       </Dialog>
@@ -106,8 +106,8 @@ export const SeriesEdit: React.FC<{ series: DetailedSeriesModel; seriesId: UUID 
 }
 
 const SeriesForm = () => {
-  const { value: descriptionValue, formSetValue: setDescriptionValue } = useField(
-    "description" satisfies keyof PartialSeriesApiModel
+  const { value: descriptionValue, formSetValue: setDescriptionValue } = useField<PartialSeriesApiModel, "description">(
+    "description"
   )
 
   return (

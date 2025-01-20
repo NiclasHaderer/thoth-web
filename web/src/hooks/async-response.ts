@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react"
 import { ApiResponse } from "@thoth/client"
 
-type AsyncResponse<T, ARGS extends any[]> = (
+type AsyncResponse<T, ARGS extends unknown[]> = (
   | {
       loading: true | null
       result: null
@@ -21,7 +21,7 @@ type AsyncResponse<T, ARGS extends any[]> = (
   invoke: (...args: ARGS) => Promise<ApiResponse<T>>
 }
 
-export const useHttpRequest = <T, ARGS extends any[]>(
+export const useHttpRequest = <T, ARGS extends unknown[]>(
   apiCall: (...args: ARGS) => Promise<ApiResponse<T>>
 ): AsyncResponse<T, ARGS> => {
   const [loading, setLoading] = useState<boolean | null>(null)

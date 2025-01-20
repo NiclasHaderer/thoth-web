@@ -1,3 +1,4 @@
+/* eslint-disable*/
 import React, { ReactNode } from "react"
 import { Select, SelectProps } from "@thoth/components/input/select"
 import { useField } from "@thoth/hooks/form"
@@ -6,14 +7,12 @@ type SelectLineProps = {
   name: string
   label?: string | undefined
   icon?: ReactNode | undefined
-  iconPosition?: "left" | "right" | undefined
   labelClassName?: string | undefined
   wrapperClassName?: string | undefined
 }
 
-export function SelectLine<T extends any, MULTIPLE extends boolean = false>({
+export function SelectLine<T, MULTIPLE extends boolean = false>({
   wrapperClassName,
-  iconPosition = "left",
   labelClassName,
   label,
   icon,

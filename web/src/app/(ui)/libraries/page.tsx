@@ -1,4 +1,5 @@
 "use client"
+
 import { useAudiobookState } from "@thoth/state/audiobook.state"
 import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
 import { useOnMount } from "@thoth/hooks/lifecycle"
@@ -12,17 +13,16 @@ export default function LibrariesOutlet() {
   const fetchBooks = useAudiobookState(s => s.fetchBooks)
   const fetchSeries = useAudiobookState(s => s.fetchSeries)
   const fetchAuthors = useAudiobookState(s => s.fetchAuthors)
-  const audiobookState = useAudiobookState()
 
   const router = useRouter()
   useOnMount(() => {
-    fetchLibraries().then(libs => {
+    void fetchLibraries().then(libs => {
       if (!libs.success) return console.error(libs.error)
       if (libs.body.length === 0) router.push("/settings")
       libs.body.forEach(lib => {
-        fetchBooks({ libraryId: lib.id, offset: 0 })
-        fetchSeries({ libraryId: lib.id, offset: 0 })
-        fetchAuthors({ libraryId: lib.id, offset: 0 })
+        void fetchBooks({ libraryId: lib.id, offset: 0 })
+        void fetchSeries({ libraryId: lib.id, offset: 0 })
+        void fetchAuthors({ libraryId: lib.id, offset: 0 })
       })
     })
   })

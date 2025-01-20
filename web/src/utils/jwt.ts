@@ -22,8 +22,8 @@ export interface Jwt {
 export const decodeJWT = (jwt: string): Jwt => {
   const [header, payload] = jwt.split(".")
   return {
-    header: JSON.parse(window.atob(header)),
-    payload: JSON.parse(window.atob(payload)),
+    header: JSON.parse(window.atob(header)) as JwtHeader,
+    payload: JSON.parse(window.atob(payload)) as JwtPayload,
   }
 }
 

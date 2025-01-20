@@ -1,8 +1,11 @@
 export const toIdRecord = <T extends { id: string }>(itemList: T[]) => {
-  return itemList.reduce((previousValue, currentValue) => {
-    previousValue[currentValue.id] = currentValue
-    return previousValue
-  }, {} as Record<string, T>)
+  return itemList.reduce(
+    (previousValue, currentValue) => {
+      previousValue[currentValue.id] = currentValue
+      return previousValue
+    },
+    {} as Record<string, T>
+  )
 }
 
 export const replaceRangeInList = <T extends string, R extends T | { id: T }>(
@@ -32,6 +35,7 @@ export const toBase64 = (file: File) =>
   new Promise<string>((resolve, reject) => {
     const reader = new FileReader()
     reader.readAsDataURL(file)
+    // eslint-disable-next-line @typescript-eslint/no-base-to-string
     reader.onload = () => resolve(reader.result!.toString())
     reader.onerror = reject
   })
