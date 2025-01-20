@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment */
 import React, { createContext, ReactNode, useContext, useEffect, useState } from "react"
 import { notNullIsh } from "@thoth/utils/utils"
 
@@ -35,12 +36,12 @@ export interface FormContext<T extends Record<string, any>> {
 const DEFAULT = Symbol("DEFAULT_FORM_CONTEXT")
 export const CONTEXT = createContext<FormContext<Record<any, any>>>({
   fields: {},
-  setFields: _ => {},
+  setFields: () => {},
   errors: {},
-  setErrors: _ => {},
+  setErrors: () => {},
   touched: {},
   hasErrors: () => false,
-  setTouched: _ => {},
+  setTouched: () => {},
   toFormTransformers: {},
   fromFormTransformers: {},
   markAllAsTouched: () => {},
@@ -103,7 +104,7 @@ export const useForm = <T extends Record<string, any>>(
   const validateFields = (fieldsToValidate: Partial<T>) => {
     const newErrors = getFilledObject<keyof T, string[] | undefined>(Object.keys(fieldsToValidate), undefined)
     for (const key of Object.keys(fieldsToValidate) as (keyof T)[]) {
-      newErrors[key] = validateField(key, fieldsToValidate[key]!)
+      newErrors[key] = validateField(key, fieldsToValidate[key] as T[keyof T])
     }
     setErrors(currErrors => ({ ...currErrors, ...newErrors }))
   }
@@ -149,7 +150,17 @@ export const useForm = <T extends Record<string, any>>(
   }
 }
 
-export const useField = <T extends Record<string, any>>(name: keyof T) => {
+export const useField = <T extends Record<string, any>, K extends keyof T>(
+  name: K
+): {
+  value: T[K]
+  setValue: (newValue: T[K]) => void
+  formSetValue: (newValue?: string | null) => void
+  errors: string[] | undefined
+  toForm: ((value: T[K]) => any) | undefined
+  touched: boolean
+  setTouched: (newValue: boolean) => void
+} => {
   const { fields, setFields, touched, setTouched, fromFormTransformers, toFormTransformers, contextType, errors } =
     useContext(CONTEXT)
   if (contextType === DEFAULT) {
@@ -158,7 +169,7 @@ export const useField = <T extends Record<string, any>>(name: keyof T) => {
 
   return {
     value: fields[name],
-    setValue: (newValue: T[keyof T]) => setFields({ [name]: newValue }),
+    setValue: (newValue: T[K]) => setFields({ [name]: newValue }),
     formSetValue: (newValue?: string | null) => {
       setFields({
         [name]: fromFormTransformers[name]?.(newValue) ?? newValue,
@@ -173,10 +184,10 @@ export const useField = <T extends Record<string, any>>(name: keyof T) => {
   }
 }
 
-export const useFieldUpdater = <T extends Record<string, any>>(
-  field: keyof T
+export const useFieldUpdater = <T extends Record<string, any>, K extends keyof T>(
+  field: K
 ): React.InputHTMLAttributes<HTMLInputElement> => {
-  const { value, formSetValue, setTouched, toForm } = useField(field)
+  const { value, formSetValue, setTouched, toForm } = useField<T, K>(field)
   const [transformedValue, setTransformedValue] = useState(toForm?.(value) ?? value)
 
   useEffect(() => setTransformedValue(toForm?.(value) ?? value), [value, toForm])

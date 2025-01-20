@@ -1,4 +1,4 @@
-import React, { FC, KeyboardEvent, memo, MutableRefObject, ReactNode, useEffect, useRef, useState } from "react"
+import React, { FC, KeyboardEvent, memo, ReactNode, RefObject, useEffect, useRef, useState } from "react"
 
 export type InputProps = Omit<Omit<React.ComponentProps<"input">, "defaultValue">, "value"> & {
   label?: string | undefined
@@ -10,7 +10,7 @@ export type InputProps = Omit<Omit<React.ComponentProps<"input">, "defaultValue"
   wrapperClassName?: string | undefined
   touched?: boolean | undefined
   errors?: string[] | undefined
-  inputRef?: MutableRefObject<HTMLInputElement | null> | undefined
+  inputRef?: RefObject<HTMLInputElement | null> | undefined
   preventSubmit?: boolean
   onValue?: (value: string) => void
   onEnter?: (event: KeyboardEvent<HTMLInputElement>) => void
@@ -72,7 +72,6 @@ export const Input: FC<InputProps> = memo(
               ref={instance => {
                 if (inputRef) inputRef.current = instance
                 ref.current = instance
-                return ref
               }}
               className={`box-border w-full rounded-md bg-elevate p-2 ${leftIcon !== undefined && "pl-8"} ${
                 rightIcon !== undefined && "pr-8"

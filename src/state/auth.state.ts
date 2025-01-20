@@ -24,7 +24,7 @@ const INITIAL_USER_STATE: AuthState = {
 export const useAuthState = create(
   persist(
     combine(INITIAL_USER_STATE as AuthState, (set, get, modify) => ({
-      async login(userPw: ThothLoginUser) {
+      login: async (userPw: ThothLoginUser) => {
         const jwt = await Api.loginUser(userPw)
         if (!jwt.success) return jwt
         const { accessToken } = jwt.body
@@ -36,16 +36,16 @@ export const useAuthState = create(
         })
         return jwt
       },
-      async register(userPw: ThothLoginUser) {
+      register: async (userPw: ThothLoginUser) => {
         const user = await Api.registerUser(userPw)
         if (!user.success) return user
         return await useAuthState.getState().login(userPw)
       },
-      async logout() {
+      logout: async () => {
         modify.setState(INITIAL_USER_STATE)
         await Api.logoutUser()
       },
-      async refreshAccessToken() {
+      refreshAccessToken: async () => {
         const newAccessToken = await Api.refreshAccessToken()
         if (!newAccessToken.success) return
         set({

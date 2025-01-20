@@ -2,14 +2,14 @@ import { useField } from "@thoth/hooks/form"
 import React from "react"
 import { Select, SelectProps } from "./select"
 
-export function ManagedSelect<T extends any, MULTIPLE extends boolean = false>({
+export function ManagedSelect<T, MULTIPLE extends boolean = false>({
   onChange,
   name,
   ...props
 }: SelectProps<T, MULTIPLE> & {
   name: string
 }) {
-  const { value, setValue, setTouched, errors } = useField(name)
+  const { value, setValue, setTouched } = useField(name)
 
   return (
     <Select

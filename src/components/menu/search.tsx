@@ -15,7 +15,7 @@ export const Search: FC = () => {
   const [searchOverlay, setSearchOverlay] = useState<HTMLDivElement | null>(null)
   const inputElement = useRef<HTMLInputElement | null>(null)
   const { focusPrevious, focusNext } = useFocusTrap(searchOverlay, () => !resultVisible)
-  const timeout = useRef<number>()
+  const timeout = useRef<number>(undefined)
 
   useGlobalEvent(
     "keyup",

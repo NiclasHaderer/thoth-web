@@ -14,7 +14,7 @@ export default function AuthorOutlet({
   const fetchAuthor = useAudiobookState(s => s.fetchAuthorDetails)
   const author = useAudiobookState(AudiobookSelectors.selectAuthor(libraryId, authorId))
   useEffect(() => {
-    fetchAuthor({ libraryId, id: authorId })
+    void fetchAuthor({ libraryId, id: authorId })
   }, [libraryId, authorId, fetchAuthor])
 
   return author && <AuthorDisplay {...author} />

@@ -1,4 +1,4 @@
-import { Param } from "@thoth/models/types"
+import { Param } from "@thoth/models/utility-types"
 
 export interface Unsubscribe {
   unsubscribe: () => void
@@ -70,7 +70,7 @@ export const getWebsocket = <T>(url: string): WebsocketConnection<T> => {
     onError: callback => addWithUnsubscribe(errorCallbacks, callback),
   }
 
-  socket.addEventListener("message", e => {
+  socket.addEventListener("message", (e: MessageEvent<string>) => {
     rawMessageCallbacks.forEach(c => c(e))
     const data = JSON.parse(e.data) as T
     messageCallbacks.forEach(c => c(data))

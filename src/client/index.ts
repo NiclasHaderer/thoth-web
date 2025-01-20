@@ -9,7 +9,7 @@ export type { ApiResponse } from "./generated/client"
 
 const authInterceptor: ApiInterceptor = async (data: ApiCallData): Promise<ApiCallData> => {
   const authState = useAuthState.getState() as AuthState
-  let executor: (callData: ApiCallData) => Promise<Response | ApiResponse<any>> = data.executor
+  let executor: (callData: ApiCallData) => Promise<Response | ApiResponse<unknown>> = data.executor
   if (data.requiresAuth) {
     if (authState.loggedIn) {
       if (isExpired(authState.accessToken)) {
@@ -18,7 +18,7 @@ const authInterceptor: ApiInterceptor = async (data: ApiCallData): Promise<ApiCa
       executor = (...args) =>
         data.executor(...args).then(e => {
           if (e instanceof Response && e.status === 401) {
-            unstable_batchedUpdates(() => useAuthState.getState().logout())
+            return unstable_batchedUpdates(() => useAuthState.getState().logout()).then(() => e)
           }
           return e
         })

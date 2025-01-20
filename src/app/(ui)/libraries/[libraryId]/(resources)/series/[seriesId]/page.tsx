@@ -1,4 +1,5 @@
 "use client"
+
 import { UUID } from "@thoth/client"
 import { useAudiobookState } from "@thoth/state/audiobook.state"
 import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
@@ -13,7 +14,7 @@ export default function SeriesOutlet({
   const fetchSeries = useAudiobookState(s => s.fetchSeriesDetails)
   const series = useAudiobookState(AudiobookSelectors.selectSeries(libraryId, seriesId))
   useEffect(() => {
-    fetchSeries({ libraryId, id: seriesId })
+    void fetchSeries({ libraryId, id: seriesId })
   })
   return series && <SeriesDisplay {...series} />
 }

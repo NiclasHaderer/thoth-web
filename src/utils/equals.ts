@@ -1,7 +1,8 @@
-export const shallowEquals = (a: any, b: any) => a === b
-export const containsPrimitives = (...objects: any[]) => objects.some(o => !(o instanceof Object))
+/* eslint-disable @typescript-eslint/no-explicit-any,@typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-argument,@typescript-eslint/no-unsafe-member-access */
+export const shallowEquals = (a: unknown, b: unknown) => a === b
+export const containsPrimitives = (...objects: unknown[]) => objects.some(o => !(o instanceof Object))
 
-const comparator = (a: any, b: any): boolean | null => {
+const comparator = (a: unknown, b: unknown): boolean | null => {
   // First check if the objects are shallow equal. If this is true, we can skip the whole other part
   if (shallowEquals(a, b)) return true
 

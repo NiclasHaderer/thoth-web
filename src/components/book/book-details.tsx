@@ -18,7 +18,6 @@ export const BookDetails: FC<{ bookId: UUID }> = ({ bookId }) => {
   const libraryId = useAudiobookState(AudiobookSelectors.selectedLibraryId)!
   const play = usePlaybackState(state => state.start)
 
-  //eslint-disable-next-line react-hooks/exhaustive-deps
   const book = useAudiobookState(AudiobookSelectors.selectBook(libraryId, bookId))
 
   useEffect(() => void getBookWithTracks({ libraryId, id: bookId }), [bookId, libraryId, getBookWithTracks])

@@ -19,9 +19,9 @@ export const BookSearch: React.FC<{
 
   const { result, loading, invoke } = useHttpRequest(Api.searchBookMetadata)
 
-  const search = () => {
+  const search = async () => {
     if (!book) return
-    invoke({ q: book, region: library.language, authorName: authors })
+    await invoke({ q: book, region: library.language, authorName: authors })
   }
 
   return (

@@ -2,7 +2,6 @@ import React, { useRef } from "react"
 
 interface ResponsiveImageProps
   extends React.DetailedHTMLProps<React.ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement> {
-  callback?: Function
   src: string
 }
 

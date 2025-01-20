@@ -12,10 +12,10 @@ import { PartialAuthorApiModel } from "@thoth/client"
 export const AuthorForm = () => {
   const imageInputRef = useRef<HTMLInputElement>(null)
 
-  const { value: descriptionValue, formSetValue: setDescriptionValue } = useField(
-    "biography" satisfies keyof PartialAuthorApiModel
+  const { value: descriptionValue, formSetValue: setDescriptionValue } = useField<PartialAuthorApiModel, "biography">(
+    "biography"
   )
-  const { value: imageValue, formSetValue: setImageValue } = useField("image" satisfies keyof PartialAuthorApiModel)
+  const { value: imageValue, formSetValue: setImageValue } = useField<PartialAuthorApiModel, "image">("image")
 
   return (
     <>
@@ -41,7 +41,7 @@ export const AuthorForm = () => {
               type="file"
               accept="image/*"
               onChange={async () => {
-                const file = await imageInputRef.current!.files![0]
+                const file = imageInputRef.current!.files![0]
                 const base64 = await toBase64(file)
                 setImageValue(base64)
               }}

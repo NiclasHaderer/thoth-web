@@ -1,6 +1,5 @@
 import { FC } from "react"
 import Link from "next/link"
-import { environment } from "@thoth/environment"
 import { MdPerson } from "react-icons/md"
 import { useAudiobookState } from "@thoth/state/audiobook.state"
 import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
@@ -20,7 +19,7 @@ export const AuthorDisplay: FC<AuthorProps> = ({ imageID, name, id, className })
         {imageID ? (
           <img
             loading="lazy"
-            className="h-52 w-52 cursor-pointer  rounded-full border-2 border-active-light object-cover transition-colors hover:border-primary"
+            className="h-52 w-52 cursor-pointer rounded-full border-2 border-active-light object-cover transition-colors hover:border-primary"
             src={`(/api/stream/images/${imageID}`}
             alt="Author"
           />
