@@ -6,7 +6,7 @@ import { useOnMount } from "@thoth/hooks/lifecycle"
  * Move to own component to prevent re-rendering of the dom every time a new snackbar gets displayed
  */
 export const ErrorSnackbar: React.FC = () => {
-  const snackbar = useSnackbar()
+  const _snackbar = useSnackbar()
 
   useOnMount(() => {
     // TODO fix

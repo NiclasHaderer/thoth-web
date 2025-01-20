@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useRef } from "react"
+import React, { use, useRef } from "react"
 import { useAudiobookState } from "@thoth/state/audiobook.state"
 import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
 import { useScrollTo } from "@thoth/hooks/scroll-to-top"
@@ -10,7 +10,8 @@ import { CleanIfNotVisible } from "@thoth/components/clean-if-not-visible"
 import { SeriesDisplay } from "@thoth/components/series/series"
 import { UUID } from "@thoth/client"
 
-export default function SeriesListOutlet({ params: { libraryId } }: { params: { libraryId: UUID } }) {
+export default function SeriesListOutlet({ params }: { params: Promise<{ libraryId: UUID }> }) {
+  const { libraryId } = use(params)
   const getSeries = useAudiobookState(s => s.fetchSeries)
   const loading = useRef<HTMLDivElement>(null)
   useScrollTo("main")
