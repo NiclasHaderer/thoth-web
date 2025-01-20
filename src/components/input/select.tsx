@@ -1,4 +1,4 @@
-import { Listbox, Transition } from "@headlessui/react"
+import { Listbox, ListboxButton, ListboxOption, ListboxOptions, Transition } from "@headlessui/react"
 import React, { Fragment, useEffect, useState } from "react"
 import { MdDone } from "react-icons/md"
 import { deepEquals } from "@thoth/utils/equals"
@@ -11,7 +11,7 @@ type SelectValue<T> = {
 
 type ExtractedSelectValue<T> = T extends SelectValue<infer U> ? SelectValue<U> : T
 
-export type SelectProps<T extends any, MULTIPLE extends boolean = false> = {
+export type SelectProps<T, MULTIPLE extends boolean = false> = {
   options: readonly SelectValue<T>[] | readonly T[]
   title: string
   displayValue?: (v: ExtractedSelectValue<T>) => string
@@ -28,11 +28,11 @@ export type SelectProps<T extends any, MULTIPLE extends boolean = false> = {
   optionListClassName?: string
 }
 
-const getSelectedValue = <T extends any>(
+function getSelectedValue<T>(
   options: readonly (SelectValue<T> | T)[],
   value: SelectValue<T> | T | undefined | (SelectValue<T> | T)[],
   multiple: boolean | undefined
-) => {
+) {
   const getValue = (value: SelectValue<T> | T) => {
     if (typeof value === "object" && value !== null && "value" in value) {
       return value.value
@@ -58,7 +58,7 @@ const getSelectedValue = <T extends any>(
   return selectedValue?.[0]
 }
 
-export function Select<T extends any, MULTIPLE extends boolean = false>({
+export function Select<T, MULTIPLE extends boolean = false>({
   options,
   disabled,
   title,
@@ -94,13 +94,14 @@ export function Select<T extends any, MULTIPLE extends boolean = false>({
       value={selected ?? null}
       onChange={value => {
         setSelected(value)
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument,@typescript-eslint/no-explicit-any
         onChange?.(value as any)
       }}
       multiple={multiple}
       as="div"
       className={`relative inline-block h-fit ${outerClassName ?? ""}`}
     >
-      <Listbox.Button
+      <ListboxButton
         className={`flex min-w-32 cursor-pointer items-center overflow-hidden rounded bg-elevate p-1 text-left hover:bg-active-light focus:bg-active-light ${
           placeholderButtonClassName ?? ""
         }`}
@@ -109,11 +110,11 @@ export function Select<T extends any, MULTIPLE extends boolean = false>({
           {selected === undefined || (Array.isArray(selected) && selected.length === 0)
             ? title
             : multiple
-            ? (selected as SelectValue<T>[]).map(toDisplayValue).join(", ")
-            : toDisplayValue(selected as SelectValue<T>)}
+              ? (selected as SelectValue<T>[]).map(toDisplayValue).join(", ")
+              : toDisplayValue(selected as SelectValue<T>)}
         </span>
         <SelectIcon />
-      </Listbox.Button>
+      </ListboxButton>
       <Transition
         as={Fragment}
         enter="transition ease-out duration-100"
@@ -123,7 +124,7 @@ export function Select<T extends any, MULTIPLE extends boolean = false>({
         leaveFrom="transform opacity-100"
         leaveTo="transform opacity-0"
       >
-        <Listbox.Options
+        <ListboxOptions
           className={`${hDir === "right" ? "right-0" : "left-0"} ${
             vDir === "top" ? "top-0 mb-2 -translate-y-full" : "mt-2"
           } absolute z-20 w-56 origin-top-right overflow-hidden rounded-md bg-surface ${optionListClassName ?? ""}`}
@@ -132,12 +133,12 @@ export function Select<T extends any, MULTIPLE extends boolean = false>({
             <div className="px-1 py-1">
               {options.map((value, i) => {
                 return (
-                  <Listbox.Option
+                  <ListboxOption
                     key={i}
                     disabled={disabled}
                     value={value}
-                    className={({ active }) =>
-                      `relative flex overflow-hidden rounded pl-7 ${active ? "bg-active-light" : ""} ${
+                    className={({ focus }) =>
+                      `relative flex overflow-hidden rounded pl-7 ${focus ? "bg-active-light" : ""} ${
                         optionClassName ?? ""
                       }`
                     }
@@ -154,12 +155,12 @@ export function Select<T extends any, MULTIPLE extends boolean = false>({
                         </button>
                       </>
                     )}
-                  </Listbox.Option>
+                  </ListboxOption>
                 )
               })}
             </div>
           </div>
-        </Listbox.Options>
+        </ListboxOptions>
       </Transition>
     </Listbox>
   )

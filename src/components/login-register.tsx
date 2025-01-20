@@ -8,7 +8,7 @@ import { Logo } from "@thoth/components/icons/logo"
 import { ManagedInput } from "@thoth/components/input/managed-input"
 import { useAuthState } from "@thoth/state/auth.state"
 import { useRouter } from "next/navigation"
-import { NoSSR } from "next/dist/shared/lib/lazy-dynamic/dynamic-no-ssr"
+import { NoSSR } from "@thoth/components/no-ssr"
 
 export const LoginRegister: FC<{ type: "register" | "login" }> = ({ type }) => {
   const form = useForm(

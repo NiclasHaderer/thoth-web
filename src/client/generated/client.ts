@@ -1,3 +1,4 @@
+/* eslint-disable */
 export type ApiError = {
   success: false
   error: string | object
@@ -94,7 +95,7 @@ export const _request = async <T>(
         } as const
       }
     })
-    .catch(error => ({ success: false, error: error?.toString() } as const))
+    .catch(error => ({ success: false, error: error?.toString() }) as const)
 }
 
 export const _mergeHeaders = (headers: Headers, newHeaders: HeadersInit): Headers => {

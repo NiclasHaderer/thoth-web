@@ -20,7 +20,7 @@ export const AuthorSearch: FC<{
 
   const search = async () => {
     if (!author) return
-    invoke({ q: author, region: library.language })
+    await invoke({ q: author, region: library.language })
   }
 
   return (

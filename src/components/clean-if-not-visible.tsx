@@ -7,6 +7,7 @@ export const CleanIfNotVisible: React.FC<{ children: ReactElement }> = ({ childr
   const [placeHolderStyle, setPlaceHolderStyle] = useState<CSSProperties | undefined>(undefined)
 
   useEffect(() => {
+    // eslint-disable-next-line
     const childElement: HTMLElement = (children as any).__e
     if (!childElement) return
 

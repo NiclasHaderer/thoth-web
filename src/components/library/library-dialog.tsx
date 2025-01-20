@@ -36,8 +36,8 @@ export const LibraryDialog: FC<LibraryDialogProps> = ({ isOpen, setIsOpen, form,
   const metadataAgents = useHttpRequest(Api.listMetadataAgents)
   const fileScanners = useHttpRequest(Api.listFileScanners)
   useOnMount(() => {
-    metadataAgents.invoke()
-    fileScanners.invoke()
+    void metadataAgents.invoke()
+    void fileScanners.invoke()
   })
   return (
     <Dialog
@@ -121,7 +121,7 @@ export const LibraryDialog: FC<LibraryDialogProps> = ({ isOpen, setIsOpen, form,
               />
             </TabContent>
             <TabContent>
-              <div className="flex h-full ">
+              <div className="flex h-full">
                 <div className="h-full min-w-1/2 overflow-auto">
                   <h3 className="mb-3 text-xl">Library folders</h3>
                   {form.fields.folders.map((folder, index) => (
