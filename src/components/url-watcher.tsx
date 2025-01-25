@@ -1,7 +1,7 @@
 import { FC, ReactNode, useEffect } from "react"
-import { usePathname } from "next/navigation"
 import { UUID } from "@thoth/client"
 import { useAudiobookState } from "@thoth/state/audiobook.state"
+import { usePathname } from "wouter/use-browser-location"
 
 const LIB_ID_EXTRACTION =
   /^\/libraries\/([a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12})($|\/)/

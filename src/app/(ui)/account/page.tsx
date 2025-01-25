@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect } from "react"
+import { useEffect } from "react"
 import { User } from "@thoth/components/account/account"
 import { useAuthState } from "@thoth/state/auth.state"
 import { useHttpRequest } from "@thoth/hooks/async-response"

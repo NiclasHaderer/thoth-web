@@ -1,6 +1,5 @@
 "use client"
 
-import React from "react"
 import { LoginRegister } from "@thoth/components/login-register"
 import { useAuthState } from "@thoth/state/auth.state"
 import { useOnMount } from "@thoth/hooks/lifecycle"

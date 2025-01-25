@@ -53,7 +53,7 @@ const INITIAL_STATE = {
 } as AudiobookState
 
 export const useAudiobookState = create(
-  combine(INITIAL_STATE, (get, set, mutate) => ({
+  combine(INITIAL_STATE, (_get, _set, mutate) => ({
     // Author
     fetchAuthors: wrapFetch(mutate, "author", Api.listAuthors),
     updateAuthor: wrapUpdate(mutate, "author", Api.updateAuthor),

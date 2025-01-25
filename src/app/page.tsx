@@ -1,10 +1,7 @@
 "use client"
 
-import { useRouter } from "next/navigation"
-import { useEffect } from "react"
+import { Redirect } from "wouter"
 
 export default function IndexOutlet() {
-  const router = useRouter()
-  useEffect(() => router.replace("/libraries"))
-  return <></>
+  return <Redirect to="/navigate"></Redirect>
 }

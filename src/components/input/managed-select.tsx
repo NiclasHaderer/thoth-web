@@ -1,6 +1,5 @@
 /* eslint-disable */
 import { useField } from "@thoth/hooks/form"
-import React from "react"
 import { Select, SelectProps } from "./select"
 
 export function ManagedSelect<T, MULTIPLE extends boolean = false>({

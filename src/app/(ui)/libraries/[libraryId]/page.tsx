@@ -1,13 +1,8 @@
 "use client"
 
-import { useEffect } from "react"
-import { useRouter } from "next/navigation"
 import { UUID } from "@thoth/client"
+import { Redirect } from "wouter"
 
 export default function LibraryIdOutlet({ params: { libraryId } }: { params: { libraryId: UUID } }) {
-  const router = useRouter()
-  useEffect(() => {
-    router.push(`/libraries/${libraryId}/books`)
-  })
-  return null
+  return <Redirect to={`/libraries/${libraryId}/books`} />
 }
