@@ -1,5 +1,5 @@
 import { Listbox, ListboxButton, ListboxOption, ListboxOptions, Transition } from "@headlessui/react"
-import React, { Fragment, useEffect, useState } from "react"
+import { Fragment, useEffect, useState } from "react"
 import { MdDone } from "react-icons/md"
 import { deepEquals } from "@thoth/utils/equals"
 

@@ -1,21 +1,22 @@
-import React, { FC, forwardRef } from "react"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { forwardRef, ReactNode } from "react"
+import { usePathname } from "wouter/use-browser-location"
+import { Link } from "wouter"
 
-type ActiveLinkProps = Parameters<typeof Link>[0] & {
-  withSubroutes?: boolean
+type ActiveLinkProps = {
+  withSubRoutes?: boolean
   href: string
+  className?: string
+  children: ReactNode
 }
 
-export const ActiveLink: FC<ActiveLinkProps> = forwardRef(
-  ({ href, children, className, withSubroutes, ...props }, ref) => {
+export const ActiveLink = forwardRef<HTMLAnchorElement, ActiveLinkProps>(
+  ({ href, children, className, withSubRoutes }, ref) => {
     const pathname = usePathname()
-    const isActive = withSubroutes ? pathname.startsWith(href) : pathname === href
+    const isActive = withSubRoutes ? pathname.startsWith(href) : pathname === href
     return (
       <Link
         href={href}
         className={`group cursor-pointer transition-colors ${isActive ? "text-primary" : ""} ${className ?? ""}`}
-        {...props}
         ref={ref}
       >
         {children}

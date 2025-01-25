@@ -1,6 +1,7 @@
 /* eslint-disable */
 // noinspection JSUnusedGlobalSymbols,ES6UnusedImports
 // noinspection ES6UnusedImports
+// @ts-nocheck
 import { ApiCallData, ApiInterceptor, ApiResponse, _request, _createUrl, _mergeHeaders } from "./client"
 import type {
   AuthorApiModel,

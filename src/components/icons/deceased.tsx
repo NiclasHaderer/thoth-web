@@ -1,4 +1,3 @@
-import * as React from "react"
 import { SVGAttributes } from "react"
 
 export const MdDeceased = (props: SVGAttributes<SVGElement>) => {

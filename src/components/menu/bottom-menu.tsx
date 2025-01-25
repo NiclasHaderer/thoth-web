@@ -13,7 +13,7 @@ export const BottomResourceMenu: React.FC<{ className?: string }> = ({ className
         <Ripple className="h-full flex-grow cursor-pointer bg-opacity-30" rippleClasses={"bg-primary bg-opacity-80"}>
           <ActiveLink
             href={`/libraries/${currentLib}/authors`}
-            withSubroutes={true}
+            withSubRoutes={true}
             className="flex h-full items-center justify-center"
           >
             <MdPerson className="aspect-square h-3/5 w-auto" />
@@ -22,7 +22,7 @@ export const BottomResourceMenu: React.FC<{ className?: string }> = ({ className
         <Ripple className="h-full flex-grow cursor-pointer" rippleClasses={"bg-primary bg-opacity-80"}>
           <ActiveLink
             href={`/libraries/${currentLib}/books`}
-            withSubroutes={true}
+            withSubRoutes={true}
             className="flex h-full items-center justify-center"
           >
             <MdBook className="aspect-square h-3/5 w-auto" />
@@ -31,7 +31,7 @@ export const BottomResourceMenu: React.FC<{ className?: string }> = ({ className
         <Ripple className="h-full flex-grow cursor-pointer" rippleClasses={"bg-primary bg-opacity-80"}>
           <ActiveLink
             href={`/libraries/${currentLib}/series`}
-            withSubroutes={true}
+            withSubRoutes={true}
             className="flex h-full items-center justify-center"
           >
             <MdCollectionsBookmark className="aspect-square h-3/5 w-auto" />

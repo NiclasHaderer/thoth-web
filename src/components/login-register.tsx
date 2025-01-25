@@ -1,14 +1,13 @@
 "use client"
 import { MdLock, MdPerson, MdVisibility, MdVisibilityOff } from "react-icons/md"
-import React, { FC, useState } from "react"
+import { FC, useState } from "react"
 import { ColoredButton } from "@thoth/components/colored-button"
-import Link from "next/link"
+import { Link } from "wouter"
 import { Form, useForm } from "@thoth/hooks/form"
 import { Logo } from "@thoth/components/icons/logo"
 import { ManagedInput } from "@thoth/components/input/managed-input"
 import { useAuthState } from "@thoth/state/auth.state"
-import { useRouter } from "next/navigation"
-import { NoSSR } from "@thoth/components/no-ssr"
+import { navigate } from "wouter/use-browser-location"
 
 export const LoginRegister: FC<{ type: "register" | "login" }> = ({ type }) => {
   const form = useForm(
@@ -25,14 +24,13 @@ export const LoginRegister: FC<{ type: "register" | "login" }> = ({ type }) => {
   )
   const [passwordVisible, setPasswordVisible] = useState(false)
   const userState = useAuthState()
-  const router = useRouter()
 
   const loginOrRegister = async (values: (typeof form)["fields"]) => {
     const cb = type === "login" ? userState.login : userState.register
     const result = await cb(values)
     if (!result.success) return
     const origin = new URLSearchParams(location().search).get("origin") ?? "/"
-    router.push(`/${origin}`.replaceAll("//", "/"))
+    navigate(`/${origin}`.replaceAll("//", "/"))
   }
 
   return (
@@ -82,16 +80,14 @@ export const LoginRegister: FC<{ type: "register" | "login" }> = ({ type }) => {
           </div>
           <p className="p-2">
             {type === "login" ? "Don't have an account?" : "Already have an account?"}{" "}
-            <NoSSR>
-              <Link
-                href={
-                  type === "login" ? `/register?${location().search.slice(1)}` : `/login?${location().search.slice(1)}`
-                }
-                className="underline"
-              >
-                {type === "login" ? "Register" : "Login"}
-              </Link>
-            </NoSSR>
+            <Link
+              href={
+                type === "login" ? `/register?${location().search.slice(1)}` : `/login?${location().search.slice(1)}`
+              }
+              className="underline"
+            >
+              {type === "login" ? "Register" : "Login"}
+            </Link>
           </p>
         </div>
       </Form>
