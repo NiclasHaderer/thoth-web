@@ -1,18 +1,10 @@
-import { use, useEffect } from "react"
+import { useEffect } from "react"
 import { useAudiobookState } from "@thoth/state/audiobook.state"
 import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
 import { UUID } from "@thoth/client"
 import { AuthorDisplay } from "@thoth/components/author/author-display"
 
-export const AuthorOutlet = ({
-  params,
-}: {
-  params: Promise<{
-    libraryId: UUID
-    authorId: UUID
-  }>
-}) => {
-  const { authorId, libraryId } = use(params)
+export const AuthorOutlet = ({ libraryId, authorId }: { libraryId: UUID; authorId: UUID }) => {
   const fetchAuthor = useAudiobookState(s => s.fetchAuthorDetails)
   const author = useAudiobookState(AudiobookSelectors.selectAuthor(libraryId, authorId))
   useEffect(() => {

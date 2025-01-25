@@ -1,6 +1,6 @@
 import { useAudiobookState } from "@thoth/state/audiobook.state"
 import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
-import { use, useRef } from "react"
+import { useRef } from "react"
 import { useScrollTo } from "@thoth/hooks/scroll-to-top"
 import { useInfinityScroll } from "@thoth/hooks/infinity-scroll"
 import { ResponsiveGrid } from "@thoth/components/responsive-grid"
@@ -8,8 +8,7 @@ import { CleanIfNotVisible } from "@thoth/components/clean-if-not-visible"
 import { BookDisplay } from "@thoth/components/book/book"
 import { UUID } from "@thoth/client"
 
-export const BookListOutlet = ({ params }: { params: Promise<{ libraryId: UUID }> }) => {
-  const { libraryId } = use(params)
+export const BookListOutlet = ({ libraryId }: { libraryId: UUID }) => {
   const getBooks = useAudiobookState(s => s.fetchBooks)
   const loading = useRef<HTMLDivElement>(null)
   useScrollTo("main")

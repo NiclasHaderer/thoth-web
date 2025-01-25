@@ -13,7 +13,8 @@ import { isDetailedBook } from "@thoth/models/typeguards"
 import { DetailedBookModel, UUID } from "@thoth/client"
 import { BiDotsVerticalRounded } from "react-icons/bi"
 
-export const BookDetails: FC<{ bookId: UUID }> = ({ bookId }) => {
+export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId }) => {
+  // TODO library ID
   const getBookWithTracks = useAudiobookState(s => s.fetchBookDetails)
   const libraryId = useAudiobookState(AudiobookSelectors.selectedLibraryId)!
   const play = usePlaybackState(state => state.start)

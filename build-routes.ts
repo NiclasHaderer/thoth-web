@@ -1,5 +1,6 @@
 import fs from "node:fs"
 import path from "node:path"
+import { KEEP_INDENT, trimIndent } from "./src/utils/trim-inden"
 
 const listFolderContent = async (folderPath: string): Promise<{ files: string[]; directories: string[] }> => {
   const content = await fs.promises.readdir(folderPath, { withFileTypes: true })
@@ -89,25 +90,106 @@ const resolvePaths = async (root: string) => {
 }
 
 const writeRoutes = async () => {
-  const imports = ['import { Router, Switch } from "wouter"']
-
-  const writeImports = (path: Path, folderPath: string) => {
+  const writeImports = (path: Path, folderPath: string, imports: string[] = []): string[] => {
     if (path.layout) {
-      imports.push(`import { ${path.layout} } from '${folderPath}/layout'`)
+      imports.push(`import { ${path.layout} } from '${folderPath}/layout.tsx'`)
     }
     if (path.page) {
-      imports.push(`import { ${path.page} } from '${folderPath}/page'`)
+      imports.push(`import { ${path.page} } from '${folderPath}/page.tsx'`)
     }
     for (const child in path.children) {
-      writeImports(path.children[child], `${folderPath}/${child}`)
+      imports.push(...writeImports(path.children[child], `${folderPath}/${child}`))
     }
+    return imports
   }
-  writeImports(paths, "./app")
+  const imports = writeImports(paths, "@thoth/app", [
+    'import { Route, Router, Switch } from "wouter"',
+    'import { UUID } from "@thoth/client"',
+  ])
 
-  const router = `
+  const writeRoutes = (
+    path: Path,
+    folderPath: string,
+    parentLayoutsOpen: string[],
+    parentsLayoutClose: string[]
+  ): string => {
+    let content = ""
+    if (path.layout) {
+      parentLayoutsOpen = [...parentLayoutsOpen, `<${path.layout}>`]
+      parentsLayoutClose = [`</${path.layout}>`, ...parentsLayoutClose]
+    }
+
+    const joinIndenting = (arr: string[], reversed): string => {
+      let final = ""
+      for (let idx = 0; idx < arr.length; idx++) {
+        const item = arr[idx]
+        const indexCalc = reversed ? arr.length - idx - 1 : idx
+        const indent = "  ".repeat(indexCalc)
+        final += `${indent}${item}`
+        if (idx < arr.length - 1) {
+          final += "\n"
+        }
+      }
+      return final
+    }
+
+    const resolveParamsAndTypes = (path: string) => {
+      let final = `{`
+      for (const segment of path.split("/")) {
+        if (segment.startsWith(":")) {
+          if (segment.toLowerCase().includes("id")) {
+            final += `${segment.replace(":", "")}: UUID,`
+          } else {
+            final += `${segment.replace(":", "")}: string,`
+          }
+        }
+      }
+      final += `}`
+      return final
+    }
+
+    if (path.page) {
+      const parentLayoutStr = joinIndenting(parentLayoutsOpen, false)
+      const parentsLayoutCloseStr = joinIndenting(parentsLayoutClose, true)
+      const contentStr = `${KEEP_INDENT}  `.repeat(parentLayoutsOpen.length) + `<${path.page} {...params}/>`
+
+      content += trimIndent`
+        <Route path="${folderPath || "/"}">
+          { (params: ${resolveParamsAndTypes(folderPath)}) => {
+            return (
+              ${parentLayoutStr}
+              ${contentStr}
+              ${parentsLayoutCloseStr}
+            )
+          }}
+
+        </Route>\n
+      `
+    }
+
+    const toParamPath = (path: string) => {
+      if (path.startsWith("[") && path.endsWith("]")) {
+        return path.replace("[", ":").replace("]", "")
+      }
+      return path
+    }
+
+    for (const child in path.children) {
+      const childPath =
+        child.startsWith("(") && child.endsWith(")") ? folderPath : `${folderPath}/${toParamPath(child)}`
+      content += writeRoutes(path.children[child], childPath, parentLayoutsOpen, parentsLayoutClose)
+    }
+
+    return content
+  }
+
+  const routes = writeRoutes(paths, "", [], [])
+
+  const router = trimIndent`
   export const Routes = () => {
     return <Router>
       <Switch>
+        ${routes}
       </Switch>
     </Router>
   }
