@@ -1,10 +1,8 @@
-"use client"
-
 import { UUID } from "@thoth/client"
 import BookDetails from "@thoth/components/book/book-details"
 import { use } from "react"
 
-export default function BookOutlet({ params }: { params: Promise<{ libraryId: UUID; bookId: UUID }> }) {
+export const BookOutlet = ({ params }: { params: Promise<{ libraryId: UUID; bookId: UUID }> }) => {
   const { bookId } = use(params)
   return <BookDetails bookId={bookId} />
 }

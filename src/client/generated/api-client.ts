@@ -1,8 +1,8 @@
 /* eslint-disable */
+// @ts-nocheck
 // noinspection JSUnusedGlobalSymbols,ES6UnusedImports
 // noinspection ES6UnusedImports
-// @ts-nocheck
-import { ApiCallData, ApiInterceptor, ApiResponse, _request, _createUrl, _mergeHeaders } from "./client"
+import { _createUrl, _mergeHeaders, _request, ApiCallData, ApiInterceptor, ApiResponse } from "./client"
 import type {
   AuthorApiModel,
   AuthorModel,
@@ -51,8 +51,8 @@ import type {
   ThothUserPermissions,
   TitledId,
   TrackModel,
-  UUID,
   UserPermissionsModel,
+  UUID,
   YearRange,
 } from "./models"
 

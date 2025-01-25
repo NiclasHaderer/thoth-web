@@ -1,4 +1,3 @@
-"use client"
 import { MdLock, MdPerson, MdVisibility, MdVisibilityOff } from "react-icons/md"
 import { FC, useState } from "react"
 import { ColoredButton } from "@thoth/components/colored-button"

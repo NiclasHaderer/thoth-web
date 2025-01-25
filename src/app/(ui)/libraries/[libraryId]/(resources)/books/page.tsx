@@ -1,5 +1,3 @@
-"use client"
-
 import { useAudiobookState } from "@thoth/state/audiobook.state"
 import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
 import { use, useRef } from "react"
@@ -10,7 +8,7 @@ import { CleanIfNotVisible } from "@thoth/components/clean-if-not-visible"
 import { BookDisplay } from "@thoth/components/book/book"
 import { UUID } from "@thoth/client"
 
-export default function BookListOutlet({ params }: { params: Promise<{ libraryId: UUID }> }) {
+export const BookListOutlet = ({ params }: { params: Promise<{ libraryId: UUID }> }) => {
   const { libraryId } = use(params)
   const getBooks = useAudiobookState(s => s.fetchBooks)
   const loading = useRef<HTMLDivElement>(null)
