@@ -8,7 +8,8 @@
     "build": "npm run build-routes && tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "build-routes": "node esbuild.js && node ./build-routes.cjs"
+    "build-routes": "node esbuild.js && node ./build-routes.cjs",
+    "prepare": "husky"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.0",
