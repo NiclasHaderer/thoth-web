@@ -1,6 +1,6 @@
 import { Content, EditorContent, useEditor } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
-import React, { FC, useEffect } from "react"
+import { FC, useEffect } from "react"
 import { TextAlign } from "@tiptap/extension-text-align"
 import { Placeholder } from "@tiptap/extension-placeholder"
 import { Underline } from "@tiptap/extension-underline"

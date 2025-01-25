@@ -1,4 +1,4 @@
-import { sanitize } from "dompurify"
+import dompurify from "dompurify"
 import React from "react"
 
 export const HtmlViewer: React.FC<{
@@ -12,7 +12,7 @@ export const HtmlViewer: React.FC<{
       <h2 className="text-xl">{title}</h2>
       <div
         className={`prose prose-invert ${className ?? ""}`}
-        dangerouslySetInnerHTML={{ __html: sanitize(content ?? "") }}
+        dangerouslySetInnerHTML={{ __html: dompurify.sanitize(content ?? "") }}
       />
     </>
   )

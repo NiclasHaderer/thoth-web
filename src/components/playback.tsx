@@ -1,11 +1,11 @@
-import React, { FC, useEffect, useRef } from "react"
+import { FC, useEffect, useRef } from "react"
 import { MdImageNotSupported, MdPauseCircle, MdPlayCircle, MdSkipNext, MdSkipPrevious, MdStop } from "react-icons/md"
 import { useAudio, useDuration, useOnEnded, usePercentage, usePlayState, usePosition } from "../hooks/playback"
 import { usePlaybackState } from "../state/playback.state"
 import { toReadableTime } from "./track/helpers"
 import { ProgressBar } from "@thoth/components/progress-bar"
 import { Ripple } from "@thoth/components/ripple"
-import Link from "next/link"
+import { Link } from "wouter"
 
 export const Playback: FC<{ className?: string }> = ({ className }) => {
   const playback = usePlaybackState()

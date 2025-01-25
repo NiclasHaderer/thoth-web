@@ -2,15 +2,14 @@
 
 import { useAuthState } from "@thoth/state/auth.state"
 import { useOnMount } from "@thoth/hooks/lifecycle"
-import { useRouter } from "next/navigation"
+import { navigate } from "wouter/use-browser-location"
 
 export default function LogoutOutlet() {
   const auth = useAuthState()
-  const router = useRouter()
   useOnMount(async () => {
     await auth.logout()
-    router.push("/login")
+    navigate("/login")
   })
 
-  return <div></div>
+  return <></>
 }

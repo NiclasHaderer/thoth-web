@@ -1,9 +1,9 @@
 import React from "react"
 import { MdImageNotSupported } from "react-icons/md"
 import { BookModel } from "@thoth/client"
-import Link from "next/link"
 import { useAudiobookState } from "@thoth/state/audiobook.state"
 import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
+import { Link } from "wouter"
 
 export const BookDisplay: React.FC<BookModel> = ({ coverID, title, authors, id }) => {
   const libraryId = useAudiobookState(AudiobookSelectors.selectedLibraryId)

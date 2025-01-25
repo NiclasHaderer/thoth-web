@@ -23,7 +23,7 @@ const INITIAL_USER_STATE: AuthState = {
 
 export const useAuthState = create(
   persist(
-    combine(INITIAL_USER_STATE as AuthState, (set, get, modify) => ({
+    combine(INITIAL_USER_STATE as AuthState, (set, _get, modify) => ({
       login: async (userPw: ThothLoginUser) => {
         const jwt = await Api.loginUser(userPw)
         if (!jwt.success) return jwt

@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import { useState } from "react"
 import { MdDelete, MdEdit, MdPerson } from "react-icons/md"
 import { UserDialog } from "@thoth/components/user-dialog"
 import { useHttpRequest } from "@thoth/hooks/async-response"

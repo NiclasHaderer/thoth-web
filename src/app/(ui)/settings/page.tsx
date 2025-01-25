@@ -1,6 +1,5 @@
 "use client"
 
-import React from "react"
 import { UserManager } from "@thoth/components/user-manager"
 import { LibraryManager } from "@thoth/components/library/library-manager"
 

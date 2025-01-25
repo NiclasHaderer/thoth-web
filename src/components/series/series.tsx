@@ -1,14 +1,14 @@
 import React from "react"
 import { MdImageNotSupported } from "react-icons/md"
-import Link from "next/link"
 import { useAudiobookState } from "@thoth/state/audiobook.state"
 import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
 import { SeriesModel } from "@thoth/client"
+import { Link } from "wouter"
 
 export const SeriesDisplay: React.FC<SeriesModel> = ({ id, title, coverID }) => {
   const seriesId = useAudiobookState(AudiobookSelectors.selectedLibraryId)
   return (
-    <span className="mx-6 mb-6 inline-block w-52 ">
+    <span className="mx-6 mb-6 inline-block w-52">
       <Link href={`/libraries/${seriesId}/series/${id}`} aria-label={title} tabIndex={-1}>
         {coverID ? (
           <img
@@ -24,7 +24,7 @@ export const SeriesDisplay: React.FC<SeriesModel> = ({ id, title, coverID }) => 
 
       <div className="relative p-2 text-center">
         <Link href={`/libraries/${seriesId}/series/${id}`}>
-          <span className="line-clamp-2 cursor-pointer hover:underline  no-touch:group-focus:underline">{title}</span>
+          <span className="line-clamp-2 cursor-pointer hover:underline no-touch:group-focus:underline">{title}</span>
         </Link>
         {/*TODO amount*/}
         {/*<span className="text-font-secondary">{amount} Audiobooks</span>*/}

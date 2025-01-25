@@ -1,4 +1,5 @@
 /* eslint-disable */
+// @ts-nocheck
 import type { Pair } from "./utility-types"
 
 export interface ThothAccessToken {

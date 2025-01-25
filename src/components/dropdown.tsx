@@ -1,5 +1,5 @@
 import { Menu, MenuButton, MenuItem, MenuItems, Transition } from "@headlessui/react"
-import React, { Fragment, ReactNode } from "react"
+import { Fragment, ReactNode } from "react"
 
 type DropdownProps<T> = {
   options: {

@@ -1,11 +1,11 @@
 import React from "react"
-import Link from "next/link"
 import { Logo } from "@thoth/components/icons/logo"
 import { Search } from "@thoth/components/menu/search"
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react"
 import { MdAccountCircle, MdLogout, MdPerson, MdTune } from "react-icons/md"
 import { ActiveLink } from "@thoth/components/active-link"
 import { useAuthState } from "@thoth/state/auth.state"
+import { Link } from "wouter"
 
 export const SearchBar: React.FC = () => {
   const jwt = useAuthState(s => s.accessToken)

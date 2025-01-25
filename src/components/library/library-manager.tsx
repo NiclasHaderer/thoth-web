@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import { useState } from "react"
 import { MdAutoAwesome, MdEdit, MdLanguage, MdLocalLibrary, MdRadar } from "react-icons/md"
 import { FormContext, useForm } from "@thoth/hooks/form"
 import { ColoredButton } from "@thoth/components/colored-button"
