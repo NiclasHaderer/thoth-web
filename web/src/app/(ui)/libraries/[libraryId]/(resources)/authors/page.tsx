@@ -1,15 +1,14 @@
 import { UUID } from "@thoth/client"
 import { useAudiobookState } from "@thoth/state/audiobook.state"
 import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
-import { use, useRef } from "react"
+import { useRef } from "react"
 import { useScrollTo } from "@thoth/hooks/scroll-to-top"
 import { useInfinityScroll } from "@thoth/hooks/infinity-scroll"
 import { ResponsiveGrid } from "@thoth/components/responsive-grid"
 import { CleanIfNotVisible } from "@thoth/components/clean-if-not-visible"
 import { AuthorDisplay } from "@thoth/components/author/author-display"
 
-export const AuthorListOutlet = ({ params }: { params: Promise<{ libraryId: UUID }> }) => {
-  const { libraryId } = use(params)
+export const AuthorListOutlet = ({ libraryId }: { libraryId: UUID }) => {
   const getAuthors = useAudiobookState(s => s.fetchAuthors)
   const loading = useRef<HTMLDivElement>(null)
   useScrollTo("main")
