@@ -1,9 +1,7 @@
-"use client"
-
 import { UserManager } from "@thoth/components/user-manager"
 import { LibraryManager } from "@thoth/components/library/library-manager"
 
-export default function SettingsOutlet() {
+export const SettingsOutlet = () => {
   return (
     <>
       <h2 className="mb-2 mt-4 text-xl">Manage Libraries</h2>

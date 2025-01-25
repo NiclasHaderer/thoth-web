@@ -3,9 +3,8 @@ import { MdImageNotSupported, MdPerson, MdSearch } from "react-icons/md"
 
 import { useFocusTrap } from "../../hooks/trap-focus"
 import { useGlobalEvent } from "../../hooks/global-events"
-import { SearchModel } from "@thoth/client"
+import { Api, SearchModel } from "@thoth/client"
 import { Input } from "@thoth/components/input/input"
-import { Api } from "@thoth/client"
 import { Link } from "wouter"
 
 export const Search: FC = () => {

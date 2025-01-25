@@ -1,7 +1,5 @@
-"use client"
-
 import { Redirect } from "wouter"
 
-export default function IndexOutlet() {
+export const RootOutlet = () => {
   return <Redirect to="/navigate"></Redirect>
 }

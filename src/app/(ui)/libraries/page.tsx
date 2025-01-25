@@ -1,12 +1,10 @@
-"use client"
-
 import { useAudiobookState } from "@thoth/state/audiobook.state"
 import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
 import { useOnMount } from "@thoth/hooks/lifecycle"
 import { LibraryPreview } from "@thoth/components/library/library-preview"
 import { navigate } from "wouter/use-browser-location"
 
-export default function LibrariesOutlet() {
+export const LibrariesOutlet = () => {
   const libraries = useAudiobookState(AudiobookSelectors.libraries)
   const fetchLibraries = useAudiobookState(s => s.fetchLibraries)
   const fetchBooks = useAudiobookState(s => s.fetchBooks)
