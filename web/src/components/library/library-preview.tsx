@@ -1,9 +1,9 @@
-import React, { FC, useState } from "react"
+import { FC, useState } from "react"
 import { LibraryModel } from "@thoth/client"
 import { useAudiobookState } from "@thoth/state/audiobook.state"
 import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
-import Link from "next/link"
 import { MdImageNotSupported, MdPerson } from "react-icons/md"
+import { Link } from "wouter"
 
 export const LibraryPreview: FC<{ library: LibraryModel; showHeading?: boolean }> = ({
   library,

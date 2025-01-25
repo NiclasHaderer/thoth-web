@@ -2,7 +2,7 @@ import React from "react"
 import { MdImageNotSupported, MdPlayCircle } from "react-icons/md"
 import { toReadableTime } from "./helpers"
 import { NamedId } from "@thoth/client"
-import Link from "next/link"
+import { Link } from "wouter"
 
 interface TrackProps {
   coverID?: string | null

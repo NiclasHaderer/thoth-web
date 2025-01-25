@@ -1,6 +1,6 @@
 "use client"
 
-import React, { use, useRef } from "react"
+import { use, useRef } from "react"
 import { useAudiobookState } from "@thoth/state/audiobook.state"
 import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
 import { useScrollTo } from "@thoth/hooks/scroll-to-top"

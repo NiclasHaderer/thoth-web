@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from "react"
+import { FC, useMemo } from "react"
 import { Form, useForm } from "@thoth/hooks/form"
 import { MdLocalLibrary, MdPerson } from "react-icons/md"
 import { Dialog, DialogActions, DialogBody, DialogButtons } from "@thoth/components/dialog"

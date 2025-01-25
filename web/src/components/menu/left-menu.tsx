@@ -9,19 +9,19 @@ export const LeftResourceMenu: React.FC = () => {
   return (
     <aside className="my-10 ml-10 inline-block min-w-80 max-w-80 overflow-hidden rounded-xl bg-elevate">
       <ul>
-        <ActiveLink href={`/libraries/${currentLib}/books`} withSubroutes={true}>
+        <ActiveLink href={`/libraries/${currentLib}/books`} withSubRoutes={true}>
           <li className="flex w-full items-center px-3 transition-colors duration-300 hover:bg-active-light group-focus:bg-active-light">
             <MdBook className="ml-3" />
             <span className="m-3 inline-block">Books</span>
           </li>
         </ActiveLink>
-        <ActiveLink href={`/libraries/${currentLib}/series`} withSubroutes={true}>
+        <ActiveLink href={`/libraries/${currentLib}/series`} withSubRoutes={true}>
           <li className="flex w-full items-center px-3 transition-colors duration-300 hover:bg-active-light group-focus:bg-active-light">
             <MdCollectionsBookmark className="ml-3" />
             <span className="m-3 inline-block">Series</span>
           </li>
         </ActiveLink>
-        <ActiveLink href={`/libraries/${currentLib}/authors`} withSubroutes={true}>
+        <ActiveLink href={`/libraries/${currentLib}/authors`} withSubRoutes={true}>
           <li className="flex w-full items-center px-3 transition-colors duration-300 hover:bg-active-light group-focus:bg-active-light">
             <MdPerson className="ml-3" />
             <span className="m-3 inline-block">Authors</span>

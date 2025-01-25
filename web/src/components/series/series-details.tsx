@@ -6,10 +6,10 @@ import { useAudiobookState } from "../../state/audiobook.state"
 import SeriesEdit from "./series-edit"
 import { UUID } from "@thoth/client"
 import { isDetailedSeries } from "@thoth/models/typeguards"
-import Link from "next/link"
 import { HtmlViewer } from "@thoth/components/html-editor/html-viewer"
 import { ResponsiveGrid } from "@thoth/components/responsive-grid"
 import { BookDisplay } from "@thoth/components/book/book"
+import { Link } from "wouter"
 
 export const SeriesDetails: React.FC<{ seriesId: UUID }> = ({ seriesId }) => {
   const libraryId = useAudiobookState(AudiobookSelectors.selectedLibraryId)!

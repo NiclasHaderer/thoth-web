@@ -1,8 +1,8 @@
 import { FC } from "react"
-import Link from "next/link"
 import { MdPerson } from "react-icons/md"
 import { useAudiobookState } from "@thoth/state/audiobook.state"
 import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
+import { Link } from "wouter"
 
 interface AuthorProps {
   id: string
