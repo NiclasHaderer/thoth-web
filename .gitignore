@@ -37,3 +37,7 @@ yarn.lock
 .idea
 dist
 .vscode
+
+/build-routes.cjs
+/build-routes.cjs.map
+/src/routes.tsx

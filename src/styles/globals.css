@@ -12,8 +12,7 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply rounded-full
-    bg-active-light transition-colors hover:bg-active;
+  @apply rounded-full bg-active-light transition-colors hover:bg-active;
 }
 
 input {
