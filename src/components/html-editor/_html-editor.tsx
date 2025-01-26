@@ -4,10 +4,10 @@ import { FC, useEffect } from "react"
 import { TextAlign } from "@tiptap/extension-text-align"
 import { Placeholder } from "@tiptap/extension-placeholder"
 import { Underline } from "@tiptap/extension-underline"
-import "./html-editor.scss"
-import { EditorControls } from "./controls"
+import "./_html-editor.scss"
+import { EditorControls } from "./_controls.tsx"
 
-export const HtmlEditor_: FC<{
+export const _HtmlEditor: FC<{
   value?: Content
   placeholder?: string
   className?: string | undefined
@@ -53,5 +53,3 @@ export const HtmlEditor_: FC<{
     </div>
   )
 }
-
-export default HtmlEditor_
