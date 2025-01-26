@@ -167,7 +167,7 @@ const segmentToPath = (segment: string) => {
 const getComponent = (page: Page) => {
   if (page.lazy) {
     return trimIndent`
-    <Suspense fallback={"Loading..."}>
+    <Suspense fallback={<Loading count={16}/> }>
       <${page.export} {...params}/>
     </Suspense>
     `
@@ -198,6 +198,7 @@ const writeRoutes = async () => {
     'import { Suspense, lazy } from "react"',
     'import { Route, Router, Redirect } from "wouter"',
     'import { UUID } from "@thoth/client"',
+    'import { Loading } from "@thoth/components/loading.tsx"',
   ])
 
   const resolveAllPossibleChildPaths = (baseUrl: string, p: Path, topLevel = true): string[] => {
