@@ -1,5 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment */
-import React, { createContext, ReactNode, useContext, useEffect, useState } from "react"
+import {
+  ChangeEvent,
+  createContext,
+  FormHTMLAttributes,
+  InputHTMLAttributes,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react"
 import { notNullIsh } from "@thoth/utils/utils"
 
 export interface FormContext<T extends Record<string, any>> {
@@ -186,7 +195,7 @@ export const useField = <T extends Record<string, any>, K extends keyof T>(
 
 export const useFieldUpdater = <T extends Record<string, any>, K extends keyof T>(
   field: K
-): React.InputHTMLAttributes<HTMLInputElement> => {
+): InputHTMLAttributes<HTMLInputElement> => {
   const { value, formSetValue, setTouched, toForm } = useField<T, K>(field)
   const [transformedValue, setTransformedValue] = useState(toForm?.(value) ?? value)
 
@@ -194,7 +203,7 @@ export const useFieldUpdater = <T extends Record<string, any>, K extends keyof T
 
   return {
     value: transformedValue,
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+    onChange: (e: ChangeEvent<HTMLInputElement>) => {
       formSetValue(e.target.value)
     },
     onBlur: () => {
@@ -212,7 +221,7 @@ export const Form = <T extends Record<string, any>>({
   form: FormContext<T>
   children?: ReactNode | undefined
   onSubmit?: (values: T) => void
-} & Omit<React.FormHTMLAttributes<HTMLFormElement>, "onSubmit">) => (
+} & Omit<FormHTMLAttributes<HTMLFormElement>, "onSubmit">) => (
   <form
     {...props}
     onSubmit={e => {

@@ -1,5 +1,5 @@
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react"
-import React, { Fragment, useState } from "react"
+import { FC, Fragment, useState } from "react"
 import { MdEdit } from "react-icons/md"
 import { AudiobookSelectors } from "../../state/audiobook.selectors"
 import { useAudiobookState } from "../../state/audiobook.state"
@@ -26,7 +26,7 @@ const mergeMetaIntoAuthor = ({ ...author }: EditAuthor, meta: MetadataAuthor): E
   return author
 }
 
-export const AuthorEdit: React.FC<{ author: EditAuthor; authorID: UUID }> = ({ author, authorID }) => {
+export const AuthorEdit: FC<{ author: EditAuthor; authorID: UUID }> = ({ author, authorID }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [selectedTabIndex, setSelectedTabIndex] = useState(0)
   const libraryId = useAudiobookState(AudiobookSelectors.selectedLibraryId)!

@@ -1,6 +1,6 @@
-import React, { FC, KeyboardEvent, memo, ReactNode, RefObject, useEffect, useRef, useState } from "react"
+import { ComponentProps, FC, KeyboardEvent, memo, ReactNode, RefObject, useEffect, useRef, useState } from "react"
 
-export type InputProps = Omit<Omit<React.ComponentProps<"input">, "defaultValue">, "value"> & {
+export type InputProps = Omit<Omit<ComponentProps<"input">, "defaultValue">, "value"> & {
   label?: string | undefined
   leftIcon?: ReactNode | undefined
   rightIcon?: ReactNode | undefined

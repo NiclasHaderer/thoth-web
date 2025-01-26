@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import { FC, Fragment, useState } from "react"
 import { MdSearch } from "react-icons/md"
 import { useHttpRequest } from "../../hooks/async-response"
 import { Api, MetadataBook } from "@thoth/client"
@@ -8,7 +8,7 @@ import { LoadingCards } from "@thoth/components/loading-card"
 import { useAudiobookState } from "@thoth/state/audiobook.state"
 import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
 
-export const BookSearch: React.FC<{
+export const BookSearch: FC<{
   authors?: string[] | null | undefined
   book?: string | null | undefined
   select: (result: MetadataBook) => void
@@ -54,7 +54,7 @@ export const BookSearch: React.FC<{
   )
 }
 
-const BookSearchResult: React.FC<{ results: MetadataBook[]; select: (result: MetadataBook) => void }> = ({
+const BookSearchResult: FC<{ results: MetadataBook[]; select: (result: MetadataBook) => void }> = ({
   results,
   select,
 }) => {
@@ -62,7 +62,7 @@ const BookSearchResult: React.FC<{ results: MetadataBook[]; select: (result: Met
     <>
       {results.length === 0 ? <div>Nothing was found</div> : null}
       {results.map((book, i) => (
-        <React.Fragment key={i}>
+        <Fragment key={i}>
           <div
             onClick={() => select(book)}
             className="flex cursor-pointer items-stretch justify-between rounded-md p-2 transition-colors hover:bg-active-light focus:bg-active-light"
@@ -75,7 +75,7 @@ const BookSearchResult: React.FC<{ results: MetadataBook[]; select: (result: Met
             {book.coverURL ? <img className="h-28 w-28" alt={book.title ?? "Cover"} src={book.coverURL} /> : null}
           </div>
           {results.length - 1 !== i ? <hr className="my-4 border-elevate" /> : null}
-        </React.Fragment>
+        </Fragment>
       ))}
     </>
   )

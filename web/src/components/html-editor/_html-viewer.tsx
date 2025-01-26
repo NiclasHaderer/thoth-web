@@ -1,7 +1,7 @@
 import dompurify from "dompurify"
-import React from "react"
+import { FC } from "react"
 
-export const _HtmlViewer: React.FC<{
+export const _HtmlViewer: FC<{
   content: string | null | undefined
   className?: string | undefined
   title: string

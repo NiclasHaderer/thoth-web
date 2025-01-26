@@ -4,7 +4,7 @@ import { useRef } from "react"
 import { useScrollTo } from "@thoth/hooks/scroll-to-top"
 import { useInfinityScroll } from "@thoth/hooks/infinity-scroll"
 import { ResponsiveGrid } from "@thoth/components/responsive-grid"
-import { CleanIfNotVisible } from "@thoth/components/clean-if-not-visible"
+import { ClearIfNotVisible } from "@thoth/components/clear-if-not-visible.tsx"
 import { BookDisplay } from "@thoth/components/book/book"
 import { UUID } from "@thoth/client"
 
@@ -21,9 +21,7 @@ export const BookListOutlet = ({ libraryId }: { libraryId: UUID }) => {
       {<h2 className="p-2 pb-6 text-2xl">{bookCount} Books</h2>}
       <ResponsiveGrid>
         {books.map((book, k) => (
-          <CleanIfNotVisible key={k}>
-            <BookDisplay {...book} />
-          </CleanIfNotVisible>
+          <ClearIfNotVisible key={k} component={BookDisplay} childProps={book} />
         ))}
         <div className="min-w-full text-center opacity-0" ref={loading}>
           Loading ...

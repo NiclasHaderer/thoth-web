@@ -1,4 +1,4 @@
-import React, { FC, KeyboardEvent, useEffect, useRef, useState } from "react"
+import { FC, KeyboardEvent, useEffect, useRef, useState } from "react"
 import { MdImageNotSupported, MdPerson, MdSearch } from "react-icons/md"
 
 import { useFocusTrap } from "../../hooks/trap-focus"
@@ -84,7 +84,7 @@ export const Search: FC = () => {
   )
 }
 
-const SearchResults: React.FC<{ search: SearchModel; onClose: () => void }> = ({ search, onClose }) => (
+const SearchResults: FC<{ search: SearchModel; onClose: () => void }> = ({ search, onClose }) => (
   <>
     {search.books.length || search.authors.length || search.series.length ? (
       <>
@@ -113,10 +113,7 @@ const SearchResults: React.FC<{ search: SearchModel; onClose: () => void }> = ({
   </>
 )
 
-const AuthorSearchResult: React.FC<{ authors: SearchModel["authors"]; onClose: () => void }> = ({
-  authors,
-  onClose,
-}) => (
+const AuthorSearchResult: FC<{ authors: SearchModel["authors"]; onClose: () => void }> = ({ authors, onClose }) => (
   <>
     {authors.map((author, i) => (
       <Link
@@ -144,7 +141,7 @@ const AuthorSearchResult: React.FC<{ authors: SearchModel["authors"]; onClose: (
   </>
 )
 
-const BookSearchResult: React.FC<{ books: SearchModel["books"]; onClose: () => void }> = ({ books, onClose }) => (
+const BookSearchResult: FC<{ books: SearchModel["books"]; onClose: () => void }> = ({ books, onClose }) => (
   <>
     {books.map((book, i) => (
       <Link
@@ -172,7 +169,7 @@ const BookSearchResult: React.FC<{ books: SearchModel["books"]; onClose: () => v
   </>
 )
 
-const SeriesSearchResult: React.FC<{ series: SearchModel["series"]; onClose: () => void }> = ({ series, onClose }) => (
+const SeriesSearchResult: FC<{ series: SearchModel["series"]; onClose: () => void }> = ({ series, onClose }) => (
   <>
     {series.map((series, i) => (
       <Link

@@ -1,12 +1,12 @@
-import React from "react"
+import { ButtonHTMLAttributes, DetailedHTMLProps, FC } from "react"
 
 export interface ColoredButtonProps
-  extends React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement> {
+  extends DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement> {
   innerClassName?: string | undefined
   color?: "primary" | "secondary" | undefined
 }
 
-export const ColoredButton: React.FC<ColoredButtonProps> = ({
+export const ColoredButton: FC<ColoredButtonProps> = ({
   children,
   type = "button",
   innerClassName,
