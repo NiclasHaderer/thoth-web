@@ -5,11 +5,11 @@ import { FC, ReactNode } from "react"
 
 export const UiLayout: FC<{ children: ReactNode }> = ({ children }) => {
   return (
-    <UrlWatcher>
-      <SearchBar />
-      <div className="flex flex-grow flex-col overflow-y-auto">
-        <RequireLogin>{children}</RequireLogin>
-      </div>
-    </UrlWatcher>
+    <RequireLogin>
+      <UrlWatcher>
+        <SearchBar />
+        <div className="flex flex-grow flex-col overflow-y-auto">{children}</div>
+      </UrlWatcher>
+    </RequireLogin>
   )
 }

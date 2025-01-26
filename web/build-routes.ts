@@ -1,25 +1,28 @@
-import * as fs from "node:fs"
-import * as path from "node:path"
+import * as nodeFs from "node:fs"
+import * as nodePath from "node:path"
 import { keepIndent, trimIndent } from "./src/utils/trim-inden"
 
 const listFolderContent = async (folderPath: string): Promise<{ files: string[]; directories: string[] }> => {
-  const content = await fs.promises.readdir(folderPath, { withFileTypes: true })
+  const content = await nodeFs.promises.readdir(folderPath, { withFileTypes: true })
   const files = content.filter(item => item.isFile()).map(item => item.name)
   const directories = content.filter(item => item.isDirectory()).map(item => item.name)
   return { files, directories }
 }
 
 const rootDir = __dirname
-const routesDir = path.join(rootDir, "src", "app")
+const routesDir = nodePath.join(rootDir, "src", "app")
+
+type Layout = { export: string; importPath: string; lazy: false }
+type Page = { export: string; importPath: string; lazy: boolean }
+
+type Path = {
+  layout: Layout | null
+  page: Page | null
+  children: Paths
+}
 
 type Paths = {
   [folderPath: string]: Path
-}
-
-type Path = {
-  layout: { export: string; importPath: string; lazy: false } | null
-  page: { export: string; importPath: string; lazy: boolean } | null
-  children: Paths
 }
 
 const paths: Path = {
@@ -29,7 +32,7 @@ const paths: Path = {
 }
 
 const resolveExport = async (file: string): Promise<string> => {
-  const fileContent = await fs.promises.readFile(file, "utf-8")
+  const fileContent = await nodeFs.promises.readFile(file, "utf-8")
   const exportMatch = fileContent.match(/export const ((?:\w|\d)+)/)
   if (!exportMatch) {
     throw new Error("Could not resolve export for " + file)
@@ -77,8 +80,8 @@ const insertPath = (folderPath: string, layout: Path["layout"], page: Path["page
 const resolvePaths = async (root: string) => {
   const { files, directories } = await listFolderContent(root)
   for (const file of files) {
-    const importPath = path.join(root.replace(rootDir, ""), file).replace("/src", ".")
-    const exportSymbol = await resolveExport(path.join(root, file))
+    const importPath = nodePath.join(root.replace(rootDir, ""), file).replace("/src", ".")
+    const exportSymbol = await resolveExport(nodePath.join(root, file))
 
     if (file === "layout.tsx") {
       insertPath(
@@ -108,7 +111,7 @@ const resolvePaths = async (root: string) => {
   }
 
   for (const directory of directories) {
-    await resolvePaths(path.join(root, directory))
+    await resolvePaths(nodePath.join(root, directory))
   }
 }
 
@@ -136,13 +139,13 @@ const padStart = (str: string, paddingCount: number): string => {
 
 const resolveParamsAndTypes = (path: string) => {
   let final = `{`
-  for (const segment of path.split("/")) {
-    if (segment.startsWith(":")) {
-      if (segment.toLowerCase().includes("id")) {
-        final += `${segment.replace(":", "")}: UUID,`
-      } else {
-        final += `${segment.replace(":", "")}: string,`
-      }
+
+  const finds = path.matchAll(/\?<(\w+)>/g)
+  for (const find of finds) {
+    if (find[1].toLowerCase().includes("id")) {
+      final += `${find[1]}: UUID,`
+    } else {
+      final += `${find[1]}: string,`
     }
   }
   final += `}`
@@ -155,12 +158,13 @@ const segmentShouldBeIgnored = (segment: string) => {
 
 const segmentToPath = (segment: string) => {
   if (segment.startsWith("[") && segment.endsWith("]")) {
-    return segment.replace("[", ":").replace("]", "")
+    const segmentName = segment.replace("[", "").replace("]", "")
+    return `(?<${segmentName}>(\\w+|\\d|-|_))`
   }
   return segment
 }
 
-const getPageComponent = (page: Exclude<Path["page"], null>) => {
+const getComponent = (page: Page) => {
   if (page.lazy) {
     return trimIndent`
     <Suspense fallback={"Loading..."}>
@@ -192,64 +196,87 @@ const writeRoutes = async () => {
   }
   const imports = writeImports(paths, "@thoth/app", [
     'import { Suspense, lazy } from "react"',
-    'import { Route, Router, Switch } from "wouter"',
+    'import { Route, Router, Redirect } from "wouter"',
     'import { UUID } from "@thoth/client"',
   ])
 
-  const writeRoutes = (
-    path: Path,
-    urlPath: string,
-    parentLayoutsOpen: string[],
-    parentsLayoutClose: string[]
-  ): string => {
-    let content = ""
+  const resolveAllPossibleChildPaths = (baseUrl: string, p: Path, topLevel = true): string[] => {
+    let possibleUrls: string[] = []
+
+    for (const [childDir, child] of Object.entries(p.children)) {
+      const childPath = segmentShouldBeIgnored(childDir) ? baseUrl : nodePath.join(baseUrl, segmentToPath(childDir))
+      if (child.layout || child.page) {
+        possibleUrls.push(`(${childPath})`)
+      }
+      possibleUrls.push(...resolveAllPossibleChildPaths(childPath, child, false))
+    }
+
+    if (topLevel) {
+      if (possibleUrls.length === 0) {
+        possibleUrls.push(baseUrl)
+      }
+      possibleUrls = possibleUrls
+        .map(u => u.replaceAll("/", "\\/"))
+        .map(u => u.replaceAll(/\?<\w+>/g, ""))
+        .map(u => u.replaceAll("((", "("))
+        .map(u => u.replaceAll("))", ")"))
+      possibleUrls = [...new Set(possibleUrls)]
+    }
+
+    return possibleUrls
+  }
+
+  const writeRoutes = (path: Path, baseUrl: string): string[] => {
+    const content = []
+    let parentsLayoutClose: string[] = []
     if (path.layout) {
-      parentLayoutsOpen = [...parentLayoutsOpen, `<${path.layout.export}>`]
-      parentsLayoutClose = [`</${path.layout.export}>`, ...parentsLayoutClose]
+      content.push(
+        `<Route path={/^${resolveAllPossibleChildPaths(baseUrl, path).join("|")}\\/?$/}>`,
+        `<${path.layout.export}>`
+      )
+      parentsLayoutClose = [`</${path.layout.export}>`, `</Route>`, ...parentsLayoutClose]
     }
 
     if (path.page) {
-      const parentLayoutStr = joinIndenting(parentLayoutsOpen, false)
-      const parentsLayoutCloseStr = joinIndenting(parentsLayoutClose, true)
-      const contentStr = padStart(getPageComponent(path.page), (parentLayoutsOpen.length - 1) * 2)
-
-      content += trimIndent`
-        <Route path="${urlPath || "/"}">
-          { (params: ${resolveParamsAndTypes(urlPath)}) => {
-            return (
-              ${parentLayoutStr}
-              ${keepIndent(contentStr)}
-              ${parentsLayoutCloseStr}
-            )
-          }}
-
-        </Route>\n
+      const contentStr = getComponent(path.page)
+      const out = trimIndent`
+          <Route path="${baseUrl}">
+            { (params: ${resolveParamsAndTypes(baseUrl)}) => {
+              return (
+                ${keepIndent(contentStr)}
+              )
+            }}
+          </Route>
       `
+      content.push(out)
     }
 
-    for (const child in path.children) {
-      const childPath = segmentShouldBeIgnored(child) ? urlPath : `${urlPath}/${segmentToPath(child)}`
-      content += writeRoutes(path.children[child], childPath, parentLayoutsOpen, parentsLayoutClose)
+    for (const [childDir, child] of Object.entries(path.children)) {
+      const childPath = segmentShouldBeIgnored(childDir) ? baseUrl : nodePath.join(baseUrl, segmentToPath(childDir))
+      content.push(...writeRoutes(child, childPath))
     }
 
-    return content
+    return [...content, ...parentsLayoutClose]
   }
 
-  const routes = writeRoutes(paths, "", [], [])
+  const routes = writeRoutes(paths, "/")
+  routes.push(trimIndent`
+  <Route>
+    <Redirect to="/" />
+  </Route>
+  `)
 
   const router = trimIndent`
   export const Routes = () => {
     return <Router>
-      <Switch>
-        ${routes}
-      </Switch>
+      ${routes.join("\n")}
     </Router>
   }
   `
 
   let content = imports.join("\n") + "\n" + router
 
-  await fs.promises.writeFile(path.join(rootDir, "src", "routes.tsx"), content)
+  await nodeFs.promises.writeFile(nodePath.join(rootDir, "src", "routes.tsx"), content)
 }
 
 const main = async () => {
