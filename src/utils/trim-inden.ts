@@ -7,7 +7,11 @@ export function trimIndent(strings: TemplateStringsArray | string, ...args: any[
   return trimString(strings as string)
 }
 
-export const KEEP_INDENT = "__NO_REMOVE__"
+const KEEP_INDENT = "__NO_REMOVE__"
+
+export const keepIndent = (str: string): string => {
+  return `${KEEP_INDENT}${str}`
+}
 
 const trimTemplate = (strings: string[], args: any[]): string => {
   // Check if the template string hast the right format (empty line break at the beginning and the end)
@@ -48,7 +52,7 @@ const trimTemplate = (strings: string[], args: any[]): string => {
 
     if (index < args.length) {
       // Remove the common indent from the string
-      const normalizedString = trimString(args[index].toString()).replaceAll(KEEP_INDENT, "")
+      const normalizedString = trimString(args[index].toString()).replace(KEEP_INDENT, "")
       // Pad the string with the remaining indent from the last
       const stringWithIndent = normalizedString
         .split("\n")
