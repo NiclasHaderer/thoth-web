@@ -1,14 +1,14 @@
-import React from "react"
+import { forwardRef } from "react"
 import { MdImageNotSupported } from "react-icons/md"
 import { useAudiobookState } from "@thoth/state/audiobook.state"
 import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
 import { SeriesModel } from "@thoth/client"
 import { Link } from "wouter"
 
-export const SeriesDisplay: React.FC<SeriesModel> = ({ id, title, coverID }) => {
+export const SeriesDisplay = forwardRef<HTMLSpanElement, SeriesModel>(({ id, title, coverID }, ref) => {
   const seriesId = useAudiobookState(AudiobookSelectors.selectedLibraryId)
   return (
-    <span className="mx-6 mb-6 inline-block w-52">
+    <span className="mx-6 mb-6 inline-block w-52" ref={ref}>
       <Link href={`/libraries/${seriesId}/series/${id}`} aria-label={title} tabIndex={-1}>
         {coverID ? (
           <img
@@ -31,4 +31,4 @@ export const SeriesDisplay: React.FC<SeriesModel> = ({ id, title, coverID }) => 
       </div>
     </span>
   )
-}
+})

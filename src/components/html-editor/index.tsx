@@ -1,4 +1,4 @@
-import React, { FC, lazy, Suspense } from "react"
+import { FC, lazy, Suspense } from "react"
 import { Content } from "@tiptap/react"
 
 const _HtmlEditor = lazy(() => import("./_html-editor.tsx").then(i => ({ default: i._HtmlEditor })))
@@ -11,9 +11,9 @@ export const HtmlEditor: FC<{
   onChange?: (newValue: string | null) => void
 }> = props => {
   return (
-    <React.Suspense fallback={"Loading..."}>
+    <Suspense fallback={"Loading..."}>
       <_HtmlEditor {...props} />
-    </React.Suspense>
+    </Suspense>
   )
 }
 

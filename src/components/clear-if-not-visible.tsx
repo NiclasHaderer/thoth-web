@@ -1,14 +1,22 @@
-import React, { CSSProperties, ReactElement, useEffect, useRef, useState } from "react"
+import { ComponentType, CSSProperties, Ref, useEffect, useRef, useState } from "react"
 import { useIntersectionObserver } from "@thoth/hooks/intersection-observer"
 
-export const CleanIfNotVisible: React.FC<{ children: ReactElement }> = ({ children }) => {
+export const ClearIfNotVisible = <T extends object, REF extends HTMLElement>({
+  component: Component,
+  childProps,
+}: {
+  component: ComponentType<{ ref: Ref<REF> } & T>
+  childProps: T
+}) => {
+  // TODO make sure this really works (perhaps we need to save the elements on resize or more often)
   const wrapperRef = useRef<HTMLDivElement>(null)
+  const childRef = useRef<REF>(null)
   const visible = useIntersectionObserver(wrapperRef.current)
   const [placeHolderStyle, setPlaceHolderStyle] = useState<CSSProperties | undefined>(undefined)
 
-  useEffect(() => {
-    // eslint-disable-next-line
-    const childElement: HTMLElement = (children as any).__e
+  const setPlaceholderStyles = () => {
+    if (!childRef.current) return
+    const childElement = childRef.current
     if (!childElement) return
 
     const newState = {
@@ -22,11 +30,13 @@ export const CleanIfNotVisible: React.FC<{ children: ReactElement }> = ({ childr
       }
       return newState
     })
-  }, [children])
+  }
+
+  useEffect(setPlaceholderStyles, [childRef.current])
 
   return (
     <div className="inline-block" style={visible ? undefined : placeHolderStyle} ref={wrapperRef}>
-      {visible ? children : null}
+      {visible ? <Component {...childProps} ref={childRef} /> : null}
     </div>
   )
 }

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any,@typescript-eslint/no-unsafe-argument,@typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access */
 export function trimIndent(strings: TemplateStringsArray, ...args: any[]): string
 export function trimIndent(string: string): string
 export function trimIndent(strings: TemplateStringsArray | string, ...args: any[]): string {

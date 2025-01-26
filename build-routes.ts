@@ -1,5 +1,5 @@
-import fs from "node:fs"
-import path from "node:path"
+import * as fs from "node:fs"
+import * as path from "node:path"
 import { keepIndent, trimIndent } from "./src/utils/trim-inden"
 
 const listFolderContent = async (folderPath: string): Promise<{ files: string[]; directories: string[] }> => {
@@ -28,10 +28,12 @@ const paths: Path = {
   children: {},
 }
 
-const resolveExport = async (file: string): Promise<string | null> => {
+const resolveExport = async (file: string): Promise<string> => {
   const fileContent = await fs.promises.readFile(file, "utf-8")
-  const exportMatch = fileContent.match(/export const (.+) = /)
-  if (!exportMatch) return null
+  const exportMatch = fileContent.match(/export const ((?:\w|\d)+)/)
+  if (!exportMatch) {
+    throw new Error("Could not resolve export for " + file)
+  }
   return exportMatch[1]
 }
 
@@ -84,6 +86,7 @@ const resolvePaths = async (root: string) => {
         {
           export: exportSymbol,
           importPath,
+          lazy: false,
         },
         null
       )
@@ -109,7 +112,7 @@ const resolvePaths = async (root: string) => {
   }
 }
 
-const joinIndenting = (arr: string[], reversed): string => {
+const joinIndenting = (arr: string[], reversed: boolean): string => {
   let final = ""
   for (let idx = 0; idx < arr.length; idx++) {
     const item = arr[idx]
@@ -157,7 +160,7 @@ const segmentToPath = (segment: string) => {
   return segment
 }
 
-const getPageComponent = (page: Path["page"]) => {
+const getPageComponent = (page: Exclude<Path["page"], null>) => {
   if (page.lazy) {
     return trimIndent`
     <Suspense fallback={"Loading..."}>

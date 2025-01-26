@@ -4,7 +4,7 @@ import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
 import { useScrollTo } from "@thoth/hooks/scroll-to-top"
 import { useInfinityScroll } from "@thoth/hooks/infinity-scroll"
 import { ResponsiveGrid } from "@thoth/components/responsive-grid"
-import { CleanIfNotVisible } from "@thoth/components/clean-if-not-visible"
+import { ClearIfNotVisible } from "@thoth/components/clear-if-not-visible.tsx"
 import { SeriesDisplay } from "@thoth/components/series/series"
 import { UUID } from "@thoth/client"
 
@@ -21,9 +21,7 @@ export const SeriesListOutlet = ({ libraryId }: { libraryId: UUID }) => {
       {<h2 className="p-2 pb-6 text-2xl">{seriesCount} Series</h2>}
       <ResponsiveGrid>
         {series.map((series, k) => (
-          <CleanIfNotVisible key={k}>
-            <SeriesDisplay {...series} />
-          </CleanIfNotVisible>
+          <ClearIfNotVisible key={k} component={SeriesDisplay} childProps={series} />
         ))}
         <div className="min-w-full text-center opacity-0" ref={loading}>
           Loading ...

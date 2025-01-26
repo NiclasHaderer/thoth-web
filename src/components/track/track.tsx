@@ -1,4 +1,4 @@
-import React from "react"
+import { FC } from "react"
 import { MdImageNotSupported, MdPlayCircle } from "react-icons/md"
 import { toReadableTime } from "./helpers"
 import { NamedId } from "@thoth/client"
@@ -14,7 +14,7 @@ interface TrackProps {
   startPlayback: (index: number) => void
 }
 
-export const Track: React.FC<TrackProps> = ({ coverID, title, duration, trackNr, index, authors, startPlayback }) => (
+export const Track: FC<TrackProps> = ({ coverID, title, duration, trackNr, index, authors, startPlayback }) => (
   <div className="mr-3 flex rounded-md p-2 even:bg-active-light">
     <div
       className="group relative cursor-pointer"

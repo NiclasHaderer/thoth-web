@@ -1,5 +1,5 @@
-import React from "react"
+import { FC, ReactNode } from "react"
 
-export const SettingsLayout = ({ children }: { children: React.ReactNode }) => {
+export const SettingsLayout: FC<{ children: ReactNode }> = ({ children }) => {
   return <div className="mx-auto w-full p-2 sm:max-w-4/5 sm:p-0 lg:max-w-3/5 xl:max-w-1/2">{children}</div>
 }

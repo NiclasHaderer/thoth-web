@@ -1,13 +1,13 @@
-import React from "react"
+import { FC } from "react"
 
-export const LoadingCards: React.FC<{ amount: number }> = ({ amount }) => (
+export const LoadingCards: FC<{ amount: number }> = ({ amount }) => (
   <>
     {new Array(amount).fill(null).map((_, i) => (
       <LoadingCard key={i} />
     ))}
   </>
 )
-export const LoadingCard: React.FC = () => (
+export const LoadingCard: FC = () => (
   <div className="mx-auto w-full rounded-md p-4">
     <div className="flex animate-pulse space-x-4">
       <div className="h-10 w-10 rounded-full bg-active" />
