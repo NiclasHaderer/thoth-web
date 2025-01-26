@@ -89,6 +89,46 @@ const resolvePaths = async (root: string) => {
   }
 }
 
+const joinIndenting = (arr: string[], reversed): string => {
+  let final = ""
+  for (let idx = 0; idx < arr.length; idx++) {
+    const item = arr[idx]
+    const indexCalc = reversed ? arr.length - idx - 1 : idx
+    const indent = "  ".repeat(indexCalc)
+    final += `${indent}${item}`
+    if (idx < arr.length - 1) {
+      final += "\n"
+    }
+  }
+  return final
+}
+
+const resolveParamsAndTypes = (path: string) => {
+  let final = `{`
+  for (const segment of path.split("/")) {
+    if (segment.startsWith(":")) {
+      if (segment.toLowerCase().includes("id")) {
+        final += `${segment.replace(":", "")}: UUID,`
+      } else {
+        final += `${segment.replace(":", "")}: string,`
+      }
+    }
+  }
+  final += `}`
+  return final
+}
+
+const segmentShouldBeIgnored = (segment: string) => {
+  return segment.startsWith("(") && segment.endsWith(")")
+}
+
+const segmentToPath = (segment: string) => {
+  if (segment.startsWith("[") && segment.endsWith("]")) {
+    return segment.replace("[", ":").replace("]", "")
+  }
+  return segment
+}
+
 const writeRoutes = async () => {
   const writeImports = (path: Path, folderPath: string, imports: string[] = []): string[] => {
     if (path.layout) {
@@ -109,7 +149,7 @@ const writeRoutes = async () => {
 
   const writeRoutes = (
     path: Path,
-    folderPath: string,
+    urlPath: string,
     parentLayoutsOpen: string[],
     parentsLayoutClose: string[]
   ): string => {
@@ -119,43 +159,14 @@ const writeRoutes = async () => {
       parentsLayoutClose = [`</${path.layout}>`, ...parentsLayoutClose]
     }
 
-    const joinIndenting = (arr: string[], reversed): string => {
-      let final = ""
-      for (let idx = 0; idx < arr.length; idx++) {
-        const item = arr[idx]
-        const indexCalc = reversed ? arr.length - idx - 1 : idx
-        const indent = "  ".repeat(indexCalc)
-        final += `${indent}${item}`
-        if (idx < arr.length - 1) {
-          final += "\n"
-        }
-      }
-      return final
-    }
-
-    const resolveParamsAndTypes = (path: string) => {
-      let final = `{`
-      for (const segment of path.split("/")) {
-        if (segment.startsWith(":")) {
-          if (segment.toLowerCase().includes("id")) {
-            final += `${segment.replace(":", "")}: UUID,`
-          } else {
-            final += `${segment.replace(":", "")}: string,`
-          }
-        }
-      }
-      final += `}`
-      return final
-    }
-
     if (path.page) {
       const parentLayoutStr = joinIndenting(parentLayoutsOpen, false)
       const parentsLayoutCloseStr = joinIndenting(parentsLayoutClose, true)
       const contentStr = `${KEEP_INDENT}  `.repeat(parentLayoutsOpen.length) + `<${path.page} {...params}/>`
 
       content += trimIndent`
-        <Route path="${folderPath || "/"}">
-          { (params: ${resolveParamsAndTypes(folderPath)}) => {
+        <Route path="${urlPath || "/"}">
+          { (params: ${resolveParamsAndTypes(urlPath)}) => {
             return (
               ${parentLayoutStr}
               ${contentStr}
@@ -167,16 +178,8 @@ const writeRoutes = async () => {
       `
     }
 
-    const toParamPath = (path: string) => {
-      if (path.startsWith("[") && path.endsWith("]")) {
-        return path.replace("[", ":").replace("]", "")
-      }
-      return path
-    }
-
     for (const child in path.children) {
-      const childPath =
-        child.startsWith("(") && child.endsWith(")") ? folderPath : `${folderPath}/${toParamPath(child)}`
+      const childPath = segmentShouldBeIgnored(child) ? urlPath : `${urlPath}/${segmentToPath(child)}`
       content += writeRoutes(path.children[child], childPath, parentLayoutsOpen, parentsLayoutClose)
     }
 
