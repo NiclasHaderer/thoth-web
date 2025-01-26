@@ -1,3 +1,5 @@
+import { UserPermissionsModel } from "@thoth/client"
+
 export interface JwtHeader {
   alg: string
   typ: string
@@ -5,13 +7,12 @@ export interface JwtHeader {
 }
 
 export type JwtPayload = {
+  exp: number
   iss: string
-  username: string
-  edit: boolean
-  admin: boolean
   sub: string
   type: "access"
-  exp: number
+
+  permissions: UserPermissionsModel
 }
 
 export interface Jwt {
@@ -21,9 +22,13 @@ export interface Jwt {
 
 export const decodeJWT = (jwt: string): Jwt => {
   const [header, payload] = jwt.split(".")
+  const pay = JSON.parse(window.atob(payload))
   return {
     header: JSON.parse(window.atob(header)) as JwtHeader,
-    payload: JSON.parse(window.atob(payload)) as JwtPayload,
+    payload: {
+      ...pay,
+      permissions: JSON.parse(pay.permissions) as UserPermissionsModel,
+    } as JwtPayload,
   }
 }
 

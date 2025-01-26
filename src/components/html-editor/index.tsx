@@ -1,5 +1,6 @@
 import { FC, lazy, Suspense } from "react"
 import { Content } from "@tiptap/react"
+import { Loading } from "@thoth/components/loading.tsx"
 
 const _HtmlEditor = lazy(() => import("./_html-editor.tsx").then(i => ({ default: i._HtmlEditor })))
 const _HtmlViewer = lazy(() => import("./_html-viewer.tsx").then(i => ({ default: i._HtmlViewer })))
@@ -11,7 +12,7 @@ export const HtmlEditor: FC<{
   onChange?: (newValue: string | null) => void
 }> = props => {
   return (
-    <Suspense fallback={"Loading..."}>
+    <Suspense fallback={<Loading count={2} />}>
       <_HtmlEditor {...props} />
     </Suspense>
   )
@@ -23,7 +24,7 @@ export const HtmlViewer: FC<{
   title: string
 }> = props => {
   return (
-    <Suspense fallback={"Loading ..."}>
+    <Suspense fallback={<Loading count={2} />}>
       <_HtmlViewer {...props} />
     </Suspense>
   )

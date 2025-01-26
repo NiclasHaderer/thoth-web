@@ -11,7 +11,7 @@ export const SearchBar: FC = () => {
   const jwt = useAuthState(s => s.accessToken)
   return (
     <div className="m-3 flex h-20 min-h-20 items-center rounded-xl bg-elevate pr-3">
-      <Link href="/libraries" className="flex overflow-hidden rounded-l-xl" aria-label={"HOME"}>
+      <Link href={"/libraries"} className="flex overflow-hidden rounded-l-xl" aria-label={"HOME"}>
         <div className="inline-flex cursor-pointer items-center pr-2 no-touch:group-focus:bg-active-light">
           <Logo className="h-20 w-auto p-3" />
           <h1 className="font-serif text-3xl font-extrabold">THOTH</h1>
@@ -19,57 +19,66 @@ export const SearchBar: FC = () => {
       </Link>
       <Search />
       <Menu as="div" className="relative">
-        <MenuButton
-          id="user-account-menu"
-          className="h-12 w-12 cursor-pointer rounded-full p-2 focus:bg-active-light no-touch:focus:bg-active-light"
-        >
-          <MdAccountCircle className="h-full w-full" />
-        </MenuButton>
-        <MenuItems className="absolute right-0 z-10 w-56 origin-top-right divide-y rounded-md border-1 border-solid border-active bg-elevate-2 shadow-lg focus:outline-none">
-          <div className="px-1 py-1">
-            <MenuItem>
-              {({ focus }) => (
-                <ActiveLink
-                  href={"/account"}
-                  className={`${
-                    focus ? "bg-active-light" : "text-gray-900"
-                  } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-                >
-                  <MdPerson className="mr-3 h-6 w-6" />
-                  Account
-                </ActiveLink>
-              )}
-            </MenuItem>
-            <MenuItem>
-              {({ focus }) => (
-                <ActiveLink
-                  href="/logout"
-                  className={`${
-                    focus ? "bg-active-light" : "text-gray-900"
-                  } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-                >
-                  <MdLogout className="mr-3 h-6 w-6" />
-                  Logout
-                </ActiveLink>
-              )}
-            </MenuItem>
-            {jwt?.payload.admin && (
-              <MenuItem>
-                {({ focus }) => (
-                  <ActiveLink
-                    href="/settings"
-                    className={`${
-                      focus ? "bg-active-light" : "text-gray-900"
-                    } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-                  >
-                    <MdTune className="mr-3 h-6 w-6" />
-                    Server Settings
-                  </ActiveLink>
-                )}
-              </MenuItem>
-            )}
-          </div>
-        </MenuItems>
+        {({ close }) => {
+          return (
+            <>
+              <MenuButton
+                id="user-account-menu"
+                className="h-12 w-12 cursor-pointer rounded-full p-2 focus:bg-active-light no-touch:focus:bg-active-light"
+              >
+                <MdAccountCircle className="h-full w-full" />
+              </MenuButton>
+              <MenuItems className="absolute right-0 z-10 w-56 origin-top-right divide-y rounded-md border-1 border-solid border-active bg-elevate-2 shadow-lg focus:outline-none">
+                <div className="px-1 py-1">
+                  <MenuItem>
+                    {({ focus }) => (
+                      <ActiveLink
+                        onClick={close}
+                        href={"/account"}
+                        className={`${
+                          focus ? "bg-active-light" : "text-gray-900"
+                        } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                      >
+                        <MdPerson className="mr-3 h-6 w-6" />
+                        Account
+                      </ActiveLink>
+                    )}
+                  </MenuItem>{" "}
+                  {jwt?.payload.permissions.isAdmin && (
+                    <MenuItem>
+                      {({ focus }) => (
+                        <ActiveLink
+                          onClick={close}
+                          href="/settings"
+                          className={`${
+                            focus ? "bg-active-light" : "text-gray-900"
+                          } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                        >
+                          <MdTune className="mr-3 h-6 w-6" />
+                          Server Settings
+                        </ActiveLink>
+                      )}
+                    </MenuItem>
+                  )}
+                  <MenuItem>
+                    {({ focus }) => (
+                      <ActiveLink
+                        onClick={close}
+                        href="/logout"
+                        className={`${
+                          focus ? "bg-active-light" : "text-gray-900"
+                        } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                      >
+                        <MdLogout className="mr-3 h-6 w-6" />
+                        Logout
+                      </ActiveLink>
+                    )}
+                  </MenuItem>
+                </div>
+              </MenuItems>
+            </>
+          )
+        }}
       </Menu>
     </div>
   )
