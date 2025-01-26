@@ -20,7 +20,7 @@ import { ColoredButton } from "@thoth/components/colored-button"
 import { Dialog, DialogButtons } from "@thoth/components/dialog"
 import { ResponsiveImage } from "@thoth/components/responsive-image"
 import { ManagedInput } from "@thoth/components/input/managed-input"
-import HtmlEditor from "../html-editor"
+import { HtmlEditor } from "../html-editor"
 
 const mergeMetaIntoBook = ({ ...book }: PartialBookApiModel, meta: MetadataBook): PartialBookApiModel => {
   // TODO fix
