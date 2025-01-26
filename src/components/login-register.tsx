@@ -28,7 +28,7 @@ export const LoginRegister: FC<{ type: "register" | "login" }> = ({ type }) => {
     const cb = type === "login" ? userState.login : userState.register
     const result = await cb(values)
     if (!result.success) return
-    const origin = new URLSearchParams(location().search).get("origin") ?? "/"
+    const origin = new URLSearchParams(location.search).get("origin") ?? "/"
     navigate(`/${origin}`.replaceAll("//", "/"))
   }
 
@@ -80,9 +80,7 @@ export const LoginRegister: FC<{ type: "register" | "login" }> = ({ type }) => {
           <p className="p-2">
             {type === "login" ? "Don't have an account?" : "Already have an account?"}{" "}
             <Link
-              href={
-                type === "login" ? `/register?${location().search.slice(1)}` : `/login?${location().search.slice(1)}`
-              }
+              href={type === "login" ? `/register?${location.search.slice(1)}` : `/login?${location.search.slice(1)}`}
               className="underline"
             >
               {type === "login" ? "Register" : "Login"}
@@ -92,9 +90,4 @@ export const LoginRegister: FC<{ type: "register" | "login" }> = ({ type }) => {
       </Form>
     </div>
   )
-}
-
-const location = () => {
-  if (typeof window === "undefined") return { search: "" }
-  return window.location
 }
