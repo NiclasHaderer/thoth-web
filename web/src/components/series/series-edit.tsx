@@ -9,7 +9,7 @@ import { DetailedSeriesModel, MetadataSeries, PartialSeriesApiModel, UUID } from
 import { ColoredButton } from "@thoth/components/colored-button"
 import { Dialog, DialogButtons } from "@thoth/components/dialog"
 import { ManagedInput } from "@thoth/components/input/managed-input"
-import HtmlEditor from "../html-editor"
+import { HtmlEditor } from "../html-editor"
 
 const mergeMetaIntoSeries = ({ ...series }: PartialSeriesApiModel, _: MetadataSeries): PartialSeriesApiModel => {
   // TODO fix
