@@ -1,4 +1,3 @@
-import React from "react"
 import { Logo } from "@thoth/components/icons/logo"
 import { Search } from "@thoth/components/menu/search"
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react"
@@ -6,8 +5,9 @@ import { MdAccountCircle, MdLogout, MdPerson, MdTune } from "react-icons/md"
 import { ActiveLink } from "@thoth/components/active-link"
 import { useAuthState } from "@thoth/state/auth.state"
 import { Link } from "wouter"
+import { FC } from "react"
 
-export const SearchBar: React.FC = () => {
+export const SearchBar: FC = () => {
   const jwt = useAuthState(s => s.accessToken)
   return (
     <div className="m-3 flex h-20 min-h-20 items-center rounded-xl bg-elevate pr-3">

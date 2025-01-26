@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, ReactElement, useContext, useState } from "react"
+import { createContext, FC, PropsWithChildren, ReactElement, useContext, useState } from "react"
 import { MdClose } from "react-icons/md"
 
 type SnackbarOptions = {
@@ -20,7 +20,7 @@ const error = (__: ReactElement | string, _?: SnackbarOptions) => {
   console.error("You cannot use the Snackbar without the provided SnackbarProvider")
 }
 
-const Snackbar = React.createContext(error)
+const Snackbar = createContext(error)
 
 // Use this global store as single source of trough, because using setState
 // would cause a race condition
@@ -32,7 +32,7 @@ const classes: Record<SnackbarProps["type"], string> = {
   warn: "border-solid border-orange-400 border-2",
 }
 
-export const SnackbarProvider: React.FC<PropsWithChildren> = ({ children }) => {
+export const SnackbarProvider: FC<PropsWithChildren> = ({ children }) => {
   const [elements, setElements] = useState<SnackbarStore>({})
 
   const addSnackbar = (

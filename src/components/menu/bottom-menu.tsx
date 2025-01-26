@@ -1,11 +1,11 @@
-import React from "react"
 import { useAudiobookState } from "@thoth/state/audiobook.state"
 import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
 import { Ripple } from "@thoth/components/ripple"
 import { ActiveLink } from "@thoth/components/active-link"
 import { MdBook, MdCollectionsBookmark, MdPerson } from "react-icons/md"
+import { FC } from "react"
 
-export const BottomResourceMenu: React.FC<{ className?: string }> = ({ className = "" }) => {
+export const BottomResourceMenu: FC<{ className?: string }> = ({ className = "" }) => {
   const currentLib = useAudiobookState(AudiobookSelectors.selectedLibraryId)
   return (
     <aside className="bg-surface">

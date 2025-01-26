@@ -1,4 +1,4 @@
-import React, { FC, PropsWithChildren } from "react"
+import { FC, PropsWithChildren } from "react"
 import { Editor } from "@tiptap/react"
 import { Select } from "../input/select"
 import {
@@ -56,7 +56,7 @@ const TextStyle: FC<{ editor: Editor }> = ({ editor }) => {
   )
 }
 
-const EditorControlButton: React.FC<{ onClick: () => void; active: boolean } & PropsWithChildren> = ({
+const EditorControlButton: FC<{ onClick: () => void; active: boolean } & PropsWithChildren> = ({
   onClick,
   active,
   children,
@@ -72,7 +72,7 @@ const EditorControlButton: React.FC<{ onClick: () => void; active: boolean } & P
   </button>
 )
 
-export const EditorControls: React.FC<{ editor: Editor | null }> = ({ editor }) => {
+export const EditorControls: FC<{ editor: Editor | null }> = ({ editor }) => {
   if (!editor) return null
 
   return (

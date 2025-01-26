@@ -1,15 +1,15 @@
-import React from "react"
+import { forwardRef } from "react"
 import { MdImageNotSupported } from "react-icons/md"
 import { BookModel } from "@thoth/client"
 import { useAudiobookState } from "@thoth/state/audiobook.state"
 import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
 import { Link } from "wouter"
 
-export const BookDisplay: React.FC<BookModel> = ({ coverID, title, authors, id }) => {
+export const BookDisplay = forwardRef<HTMLDivElement, BookModel>(({ coverID, title, authors, id }, ref) => {
   const libraryId = useAudiobookState(AudiobookSelectors.selectedLibraryId)
 
   return (
-    <div className="mx-6 mb-6 inline-block w-52">
+    <div className="mx-6 mb-6 inline-block w-52" ref={ref}>
       <Link href={`/libraries/${libraryId}/books/${id}`} aria-label={title} tabIndex={-1}>
         {coverID ? (
           <img
@@ -37,4 +37,4 @@ export const BookDisplay: React.FC<BookModel> = ({ coverID, title, authors, id }
       </div>
     </div>
   )
-}
+})

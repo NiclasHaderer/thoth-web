@@ -5,7 +5,7 @@ import {
   Transition as HTransition,
   TransitionChild,
 } from "@headlessui/react"
-import React, { Fragment, PropsWithChildren, ReactElement } from "react"
+import { FC, Fragment, PropsWithChildren, ReactElement } from "react"
 import { ColoredButton } from "./colored-button"
 
 interface DialogProps {
@@ -67,19 +67,19 @@ export const Dialog = ({ isOpen, closeModal, title, children, dialogClass, outer
   )
 }
 
-export const DialogBody: React.FC<PropsWithChildren> = ({ children }) => {
+export const DialogBody: FC<PropsWithChildren> = ({ children }) => {
   return <div className="flex h-4/5 grow flex-col justify-between">{children}</div>
 }
 
-export const DialogContent: React.FC<PropsWithChildren> = ({ children }) => {
+export const DialogContent: FC<PropsWithChildren> = ({ children }) => {
   return <div>{children}</div>
 }
 
-export const DialogActions: React.FC<PropsWithChildren> = ({ children }) => {
+export const DialogActions: FC<PropsWithChildren> = ({ children }) => {
   return <div className="mt-4 flex flex-row-reverse justify-between">{children}</div>
 }
 
-export const DialogButtons: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
+export const DialogButtons: FC<{ closeModal: () => void }> = ({ closeModal }) => {
   return (
     <>
       <ColoredButton type="submit">Submit</ColoredButton>

@@ -1,10 +1,10 @@
-import React from "react"
+import { FC } from "react"
 import { useAudiobookState } from "@thoth/state/audiobook.state"
 import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
 import { ActiveLink } from "@thoth/components/active-link"
 import { MdBook, MdCollectionsBookmark, MdPerson } from "react-icons/md"
 
-export const LeftResourceMenu: React.FC = () => {
+export const LeftResourceMenu: FC = () => {
   const currentLib = useAudiobookState(AudiobookSelectors.selectedLibraryId)
   return (
     <aside className="my-10 ml-10 inline-block min-w-80 max-w-80 overflow-hidden rounded-xl bg-elevate">

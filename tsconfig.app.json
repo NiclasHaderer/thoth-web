@@ -26,5 +26,5 @@
       "@thoth/*": ["./src/*"]
     }
   },
-  "include": ["src"]
+  "include": ["src", "build-routes.ts"]
 }

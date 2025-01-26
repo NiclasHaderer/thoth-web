@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import { FC, useEffect } from "react"
 import { MdImageNotSupported } from "react-icons/md"
 
 import { AudiobookSelectors } from "../../state/audiobook.selectors"
@@ -11,7 +11,7 @@ import { ResponsiveGrid } from "@thoth/components/responsive-grid"
 import { BookDisplay } from "@thoth/components/book/book"
 import { Link } from "wouter"
 
-export const SeriesDetails: React.FC<{ seriesId: UUID }> = ({ seriesId }) => {
+export const SeriesDetails: FC<{ seriesId: UUID }> = ({ seriesId }) => {
   const libraryId = useAudiobookState(AudiobookSelectors.selectedLibraryId)!
   const getSeriesWithBooks = useAudiobookState(s => s.fetchSeriesDetails)
 

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import { FC, useEffect } from "react"
 import { MdPerson } from "react-icons/md"
 
 import { AudiobookSelectors } from "../../state/audiobook.selectors"
@@ -11,7 +11,7 @@ import { isDetailedAuthor } from "@thoth/models/typeguards"
 import { ResponsiveGrid } from "@thoth/components/responsive-grid"
 import { BookDisplay } from "@thoth/components/book/book"
 
-export const AuthorDetails: React.FC<{ authorId: UUID }> = ({ authorId }) => {
+export const AuthorDetails: FC<{ authorId: UUID }> = ({ authorId }) => {
   const libraryId = useAudiobookState(AudiobookSelectors.selectedLibraryId)!
   const author = useAudiobookState(AudiobookSelectors.selectAuthor(libraryId, authorId))
   const getAuthorDetails = useAudiobookState(s => s.fetchAuthorDetails)
