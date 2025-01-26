@@ -1,5 +1,5 @@
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react"
-import React, { Fragment, useEffect, useState } from "react"
+import { FC, Fragment, useEffect, useState } from "react"
 import { MdEdit, MdPerson, MdSearch } from "react-icons/md"
 import { AudiobookSelectors } from "../../state/audiobook.selectors"
 import { useAudiobookState } from "../../state/audiobook.state"
@@ -30,10 +30,7 @@ const toPatchSeries = ({ id: _, ...rest }: DetailedSeriesModel): PartialSeriesAp
   }
 }
 
-export const SeriesEdit: React.FC<{ series: DetailedSeriesModel; seriesId: UUID }> = ({
-  series: _seriesProp,
-  seriesId,
-}) => {
+export const SeriesEdit: FC<{ series: DetailedSeriesModel; seriesId: UUID }> = ({ series: _seriesProp, seriesId }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [series, setSeries] = useState(toPatchSeries(_seriesProp))
   const [selectedTabIndex, setSelectedTabIndex] = useState(0)

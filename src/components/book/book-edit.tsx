@@ -1,5 +1,5 @@
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react"
-import React, { Fragment, useEffect, useRef, useState } from "react"
+import { FC, Fragment, useEffect, useRef, useState } from "react"
 import {
   MdCollectionsBookmark,
   MdEdit,
@@ -40,7 +40,7 @@ const toPatchBook = (book: BookModel): PartialBookApiModel => {
   return book as unknown as PartialBookApiModel
 }
 
-export const BookEdit: React.FC<{ book: BookModel; bookId: UUID }> = ({ book: _bookProp, bookId }) => {
+export const BookEdit: FC<{ book: BookModel; bookId: UUID }> = ({ book: _bookProp, bookId }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [selectedTabIndex, setSelectedTabIndex] = useState(0)
   const [book, setBook] = useState(toPatchBook(_bookProp))

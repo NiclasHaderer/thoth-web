@@ -1,9 +1,9 @@
 import "./ripple.scss"
 
-import React, { MouseEvent, useRef, useState } from "react"
+import { FC, HTMLAttributes, MouseEvent, useRef, useState } from "react"
 import { useOnUnMount } from "@thoth/hooks/lifecycle"
 
-type RippleProps = React.HTMLAttributes<HTMLInputElement> & {
+type RippleProps = HTMLAttributes<HTMLInputElement> & {
   duration?: number
   rippleClasses?: string
 } & (
@@ -24,7 +24,7 @@ interface SpanPosition {
   height: string
 }
 
-const RippleSpan: React.FC<{ spans: SpanPosition[]; duration: string; className: string }> = ({
+const RippleSpan: FC<{ spans: SpanPosition[]; duration: string; className: string }> = ({
   spans,
   className,
   duration,
@@ -36,7 +36,7 @@ const RippleSpan: React.FC<{ spans: SpanPosition[]; duration: string; className:
   </>
 )
 
-export const Ripple: React.FC<RippleProps> = ({
+export const Ripple: FC<RippleProps> = ({
   className,
   children,
   widthPercent = 0.5,

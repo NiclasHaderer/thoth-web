@@ -1,4 +1,4 @@
-import { FC } from "react"
+import { forwardRef } from "react"
 import { MdPerson } from "react-icons/md"
 import { useAudiobookState } from "@thoth/state/audiobook.state"
 import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
@@ -11,10 +11,10 @@ interface AuthorProps {
   className?: string
 }
 
-export const AuthorDisplay: FC<AuthorProps> = ({ imageID, name, id, className }) => {
+export const AuthorDisplay = forwardRef<HTMLDivElement, AuthorProps>(({ imageID, name, id, className }, ref) => {
   const libraryId = useAudiobookState(AudiobookSelectors.selectedLibraryId)
   return (
-    <div className={`mx-6 mb-6 inline-block w-52 min-w-52 ${className}`}>
+    <div className={`mx-6 mb-6 inline-block w-52 min-w-52 ${className}`} ref={ref}>
       <Link href={`/libraries/${libraryId}/authors/${id}`} aria-label={name} tabIndex={-1}>
         {imageID ? (
           <img
@@ -35,4 +35,4 @@ export const AuthorDisplay: FC<AuthorProps> = ({ imageID, name, id, className })
       </div>
     </div>
   )
-}
+})

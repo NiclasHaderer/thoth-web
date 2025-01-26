@@ -1,11 +1,10 @@
-import React, { useRef } from "react"
+import { DetailedHTMLProps, FC, ImgHTMLAttributes, useRef } from "react"
 
-interface ResponsiveImageProps
-  extends React.DetailedHTMLProps<React.ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement> {
+interface ResponsiveImageProps extends DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement> {
   src: string
 }
 
-export const ResponsiveImage: React.FC<ResponsiveImageProps> = ({ src, ...props }) => {
+export const ResponsiveImage: FC<ResponsiveImageProps> = ({ src, ...props }) => {
   const element = useRef<HTMLDivElement>(null)
 
   return (

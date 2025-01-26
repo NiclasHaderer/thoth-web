@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react"
+import { FC, Fragment, useState } from "react"
 import { MdSearch } from "react-icons/md"
 import { Api, MetadataAuthor } from "@thoth/client"
 import { useHttpRequest } from "@thoth/hooks/async-response"
@@ -51,7 +51,7 @@ export const AuthorSearch: FC<{
   )
 }
 
-const AuthorSearchResult: React.FC<{ results: MetadataAuthor[]; select: (result: MetadataAuthor) => void }> = ({
+const AuthorSearchResult: FC<{ results: MetadataAuthor[]; select: (result: MetadataAuthor) => void }> = ({
   results,
   select,
 }) => {
@@ -59,7 +59,7 @@ const AuthorSearchResult: React.FC<{ results: MetadataAuthor[]; select: (result:
     <>
       {results.length === 0 ? <div>Nothing was found</div> : null}
       {results.map((author, i) => (
-        <React.Fragment key={i}>
+        <Fragment key={i}>
           <div
             onClick={() => select(author)}
             className="flex cursor-pointer items-stretch justify-between rounded-md p-2 transition-colors hover:bg-active-light focus:bg-active-light"
@@ -78,7 +78,7 @@ const AuthorSearchResult: React.FC<{ results: MetadataAuthor[]; select: (result:
             ) : null}
           </div>
           {results.length - 1 !== i ? <hr className="my-4 border-elevate" /> : null}
-        </React.Fragment>
+        </Fragment>
       ))}
     </>
   )

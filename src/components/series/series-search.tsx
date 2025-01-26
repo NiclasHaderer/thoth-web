@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import { FC, Fragment, useState } from "react"
 import { MdSearch } from "react-icons/md"
 import { useHttpRequest } from "../../hooks/async-response"
 import { Api, MetadataSeries } from "@thoth/client"
@@ -8,7 +8,7 @@ import { LoadingCards } from "@thoth/components/loading-card"
 import { useAudiobookState } from "@thoth/state/audiobook.state"
 import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
 
-export const SeriesSearch: React.FC<{
+export const SeriesSearch: FC<{
   series?: string | null | undefined
   authors?: string[] | null | undefined
   select: (result: MetadataSeries) => void
@@ -60,7 +60,7 @@ export const SeriesSearch: React.FC<{
   )
 }
 
-const AuthorSearchResult: React.FC<{ results: MetadataSeries[]; select: (result: MetadataSeries) => void }> = ({
+const AuthorSearchResult: FC<{ results: MetadataSeries[]; select: (result: MetadataSeries) => void }> = ({
   results,
   select,
 }) => {
@@ -68,7 +68,7 @@ const AuthorSearchResult: React.FC<{ results: MetadataSeries[]; select: (result:
     <>
       {results.length === 0 ? <div>Nothing was found</div> : null}
       {results.map((series, i) => (
-        <React.Fragment key={i}>
+        <Fragment key={i}>
           <div
             onClick={() => select(series)}
             className="flex cursor-pointer items-stretch justify-between rounded-md p-2 transition-colors hover:bg-active-light focus:bg-active-light"
@@ -80,7 +80,7 @@ const AuthorSearchResult: React.FC<{ results: MetadataSeries[]; select: (result:
             </div>
           </div>
           {results.length - 1 !== i ? <hr className="my-4 border-elevate" /> : null}
-        </React.Fragment>
+        </Fragment>
       ))}
     </>
   )

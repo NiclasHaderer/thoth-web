@@ -1,5 +1,5 @@
-import React from "react"
+import { FC, ReactNode } from "react"
 
-export const RegisterLayout = ({ children }: { children: React.ReactNode }) => {
+export const RegisterLayout: FC<{ children: ReactNode }> = ({ children }) => {
   return <>{children}</>
 }
