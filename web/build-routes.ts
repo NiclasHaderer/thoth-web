@@ -1,6 +1,6 @@
 import fs from "node:fs"
 import path from "node:path"
-import { KEEP_INDENT, trimIndent } from "./src/utils/trim-inden"
+import { keepIndent, trimIndent } from "./src/utils/trim-inden"
 
 const listFolderContent = async (folderPath: string): Promise<{ files: string[]; directories: string[] }> => {
   const content = await fs.promises.readdir(folderPath, { withFileTypes: true })
@@ -17,8 +17,8 @@ type Paths = {
 }
 
 type Path = {
-  layout: string | null
-  page: string | null
+  layout: { export: string; importPath: string; lazy: false } | null
+  page: { export: string; importPath: string; lazy: boolean } | null
   children: Paths
 }
 
@@ -28,12 +28,10 @@ const paths: Path = {
   children: {},
 }
 
-const resolveExport = async (file: string): Promise<string> => {
+const resolveExport = async (file: string): Promise<string | null> => {
   const fileContent = await fs.promises.readFile(file, "utf-8")
   const exportMatch = fileContent.match(/export const (.+) = /)
-  if (!exportMatch) {
-    throw new Error(`No export found in ${file}`)
-  }
+  if (!exportMatch) return null
   return exportMatch[1]
 }
 
@@ -48,7 +46,7 @@ const getAtPath = (folderPath: string): Path => {
   return rootPaths
 }
 
-const insertPath = (folderPath: string, layout: string | null, page: string | null) => {
+const insertPath = (folderPath: string, layout: Path["layout"], page: Path["page"]) => {
   folderPath = folderPath.replace(routesDir, "")
   const segments = folderPath.split("/").filter(segment => segment !== "")
   let rootPaths = paths
@@ -65,9 +63,11 @@ const insertPath = (folderPath: string, layout: string | null, page: string | nu
 
   const insertAt = getAtPath(folderPath)
   if (layout) {
+    if (!layout.export) throw new Error(`No export symbol found for ${layout.importPath}`)
     insertAt.layout = layout
   }
   if (page) {
+    if (!page.export) throw new Error(`No export symbol found for ${page.importPath}`)
     insertAt.page = page
   }
 }
@@ -75,10 +75,30 @@ const insertPath = (folderPath: string, layout: string | null, page: string | nu
 const resolvePaths = async (root: string) => {
   const { files, directories } = await listFolderContent(root)
   for (const file of files) {
+    const importPath = path.join(root.replace(rootDir, ""), file).replace("/src", ".")
+    const exportSymbol = await resolveExport(path.join(root, file))
+
     if (file === "layout.tsx") {
-      insertPath(root, await resolveExport(path.join(root, file)), null)
+      insertPath(
+        root,
+        {
+          export: exportSymbol,
+          importPath,
+        },
+        null
+      )
     } else if (file === "page.tsx") {
-      insertPath(root, null, await resolveExport(path.join(root, file)))
+      insertPath(root, null, {
+        export: exportSymbol,
+        lazy: false,
+        importPath,
+      })
+    } else if (file === "page.lazy.tsx") {
+      insertPath(root, null, {
+        export: exportSymbol,
+        lazy: true,
+        importPath,
+      })
     } else {
       throw new Error(`Unexpected file: ${file}`)
     }
@@ -101,6 +121,14 @@ const joinIndenting = (arr: string[], reversed): string => {
     }
   }
   return final
+}
+
+const padStart = (str: string, paddingCount: number): string => {
+  paddingCount = Math.max(0, paddingCount)
+  return str
+    .split("\n")
+    .map(s => " ".repeat(paddingCount) + s)
+    .join("\n")
 }
 
 const resolveParamsAndTypes = (path: string) => {
@@ -129,20 +157,38 @@ const segmentToPath = (segment: string) => {
   return segment
 }
 
+const getPageComponent = (page: Path["page"]) => {
+  if (page.lazy) {
+    return trimIndent`
+    <Suspense fallback={"Loading..."}>
+      <${page.export} {...params}/>
+    </Suspense>
+    `
+  } else {
+    return `<${page.export} {...params}/>`
+  }
+}
+
 const writeRoutes = async () => {
   const writeImports = (path: Path, folderPath: string, imports: string[] = []): string[] => {
-    if (path.layout) {
-      imports.push(`import { ${path.layout} } from '${folderPath}/layout.tsx'`)
+    const createImport = (p: Path["layout"] | Path["page"]) => {
+      if (p?.lazy) {
+        imports.push(
+          `const ${p.export} = lazy(() => import('${p.importPath}').then(i => ({'default': i.${p.export}})))`
+        )
+      } else if (p) {
+        imports.push(`import { ${p.export} } from '${p.importPath}'`)
+      }
     }
-    if (path.page) {
-      imports.push(`import { ${path.page} } from '${folderPath}/page.tsx'`)
-    }
+    createImport(path.layout)
+    createImport(path.page)
     for (const child in path.children) {
       imports.push(...writeImports(path.children[child], `${folderPath}/${child}`))
     }
     return imports
   }
   const imports = writeImports(paths, "@thoth/app", [
+    'import { Suspense, lazy } from "react"',
     'import { Route, Router, Switch } from "wouter"',
     'import { UUID } from "@thoth/client"',
   ])
@@ -155,21 +201,21 @@ const writeRoutes = async () => {
   ): string => {
     let content = ""
     if (path.layout) {
-      parentLayoutsOpen = [...parentLayoutsOpen, `<${path.layout}>`]
-      parentsLayoutClose = [`</${path.layout}>`, ...parentsLayoutClose]
+      parentLayoutsOpen = [...parentLayoutsOpen, `<${path.layout.export}>`]
+      parentsLayoutClose = [`</${path.layout.export}>`, ...parentsLayoutClose]
     }
 
     if (path.page) {
       const parentLayoutStr = joinIndenting(parentLayoutsOpen, false)
       const parentsLayoutCloseStr = joinIndenting(parentsLayoutClose, true)
-      const contentStr = `${KEEP_INDENT}  `.repeat(parentLayoutsOpen.length) + `<${path.page} {...params}/>`
+      const contentStr = padStart(getPageComponent(path.page), (parentLayoutsOpen.length - 1) * 2)
 
       content += trimIndent`
         <Route path="${urlPath || "/"}">
           { (params: ${resolveParamsAndTypes(urlPath)}) => {
             return (
               ${parentLayoutStr}
-              ${contentStr}
+              ${keepIndent(contentStr)}
               ${parentsLayoutCloseStr}
             )
           }}
