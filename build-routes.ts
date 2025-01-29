@@ -115,28 +115,6 @@ const resolvePaths = async (root: string) => {
   }
 }
 
-const joinIndenting = (arr: string[], reversed: boolean): string => {
-  let final = ""
-  for (let idx = 0; idx < arr.length; idx++) {
-    const item = arr[idx]
-    const indexCalc = reversed ? arr.length - idx - 1 : idx
-    const indent = "  ".repeat(indexCalc)
-    final += `${indent}${item}`
-    if (idx < arr.length - 1) {
-      final += "\n"
-    }
-  }
-  return final
-}
-
-const padStart = (str: string, paddingCount: number): string => {
-  paddingCount = Math.max(0, paddingCount)
-  return str
-    .split("\n")
-    .map(s => " ".repeat(paddingCount) + s)
-    .join("\n")
-}
-
 const resolveParamsAndTypes = (path: string) => {
   let final = `{`
 
@@ -196,7 +174,7 @@ const writeRoutes = async () => {
   }
   const imports = writeImports(paths, "@thoth/app", [
     'import { Suspense, lazy } from "react"',
-    'import { Route, Router, Redirect } from "wouter"',
+    'import { Route, Router, Redirect, Switch } from "wouter"',
     'import { UUID } from "@thoth/client"',
     'import { Loading } from "@thoth/components/loading.tsx"',
   ])
@@ -269,9 +247,13 @@ const writeRoutes = async () => {
 
   const router = trimIndent`
   export const Routes = () => {
-    return <Router>
-      ${routes.join("\n")}
-    </Router>
+    return (
+      <Router>
+        <Switch>
+          ${routes.join("\n")}
+        </Switch>
+      </Router>
+    )
   }
   `
 
