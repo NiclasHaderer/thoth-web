@@ -61,37 +61,37 @@ export const LibraryManager = () => {
         easily find and listen to audiobooks in their preferred language.
       </p>
       <div className="mt-4 w-full overflow-y-auto">
-        <table className="w-full table-auto overflow-hidden rounded">
+        <table className="w-full table-fixed overflow-hidden rounded">
           <thead>
             <tr className="bg-elevate p-2 [&>*]:py-2">
-              <th className="pl-2 text-left">
-                <div className="flex items-center">
-                  <MdLocalLibrary className="mr-4 h-6 w-6" />
+              <th className="overflow-hidden pl-2 text-left">
+                <div className="flex items-center overflow-ellipsis text-nowrap">
+                  <MdLocalLibrary className="mr-4 min-h-6 min-w-6" />
                   Library
                 </div>
               </th>
-              <th className="pl-2 text-left">
-                <div className="flex items-center">
-                  <MdAutoAwesome className="mr-4 h-6 w-6" />
-                  Metadata preference
+              <th className="overflow-ellipsis pl-2 text-left">
+                <div className="has-tooltip relative flex items-center text-nowrap">
+                  <MdAutoAwesome className="mr-4 min-h-6 min-w-6" />
+                  <span className="overflow-hidden overflow-ellipsis">Metadata preference</span>
                 </div>
               </th>
               <th className="pl-2 text-left">
-                <div className="flex items-center">
-                  <MdRadar className="mr-4 h-6 w-6" />
-                  Metadata scanners
+                <div className="flex items-center text-nowrap">
+                  <MdRadar className="mr-4 min-h-6 min-w-6" />
+                  <span className="overflow-hidden overflow-ellipsis">Metadata scanners</span>
                 </div>
               </th>
               <th className="pl-2 text-left">
-                <div className="flex items-center">
-                  <MdScan className="mr-4 h-6 w-6" />
-                  File scanners
+                <div className="flex items-center text-nowrap">
+                  <MdScan className="mr-4 min-h-6 min-w-6" />
+                  <span className="overflow-hidden overflow-ellipsis">File scanners</span>
                 </div>
               </th>
               <th className="pl-2 text-left">
-                <div className="flex items-center">
-                  <MdLanguage className="mr-4 h-6 w-6" />
-                  Language
+                <div className="flex items-center text-nowrap">
+                  <MdLanguage className="mr-4 min-h-6 min-w-6" />
+                  <span className="overflow-hidden overflow-ellipsis">Language</span>
                 </div>
               </th>
               <th className="w-0"></th>
