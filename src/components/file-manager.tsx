@@ -8,7 +8,8 @@ export const FolderManager: FC<{
   onSelectFolder?: (path: string) => void
   contentClassName?: string
   className?: string
-}> = ({ onSelectFolder, contentClassName, className }) => {
+  errors: string[] | undefined
+}> = ({ onSelectFolder, contentClassName, className, errors }) => {
   const [currentPath, setCurrentPath] = useState("/")
   const folders = useHttpRequest(Api.listFoldersAtACertainPath)
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -59,7 +60,8 @@ export const FolderManager: FC<{
           </button>
         ))}
       </div>
-      <div className="flex justify-end" onClick={() => onSelectFolder?.(currentPath)}>
+      <div className="flex justify-between" onClick={() => onSelectFolder?.(currentPath)}>
+        <div>{errors?.map((error, index) => <div key={index}>{error}</div>)}</div>
         <ColoredButton color="primary">Add Folder</ColoredButton>
       </div>
     </div>

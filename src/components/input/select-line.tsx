@@ -28,6 +28,7 @@ export function SelectLine<T, MULTIPLE extends boolean = false>({
         <div className="relative mt-2 flex-grow">
           {icon ? <div className={`absolute left-0 top-1/2 z-10 -translate-y-1/2 p-2`}>{icon}</div> : null}
           <Select
+            onBlur={() => setTouched(true)}
             {...props}
             value={value}
             placeholderButtonClassName={"pl-8 hover:bg-elevate w-full"}

@@ -8,7 +8,7 @@
     "build": "npm run build-routes && tsc -b && USE_PREACT=1 vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "build-routes": "node esbuild.js && node ./build-routes.cjs",
+    "build-routes": "tsx build-routes.ts",
     "prepare": "husky"
   },
   "dependencies": {
@@ -21,13 +21,11 @@
     "@tiptap/starter-kit": "^2.11.2",
     "dompurify": "^3.2.3",
     "react-icons": "^5.4.0",
+    "tsx": "^4.20.3",
     "wouter": "^3.4.0",
     "zustand": "^4.5.6"
   },
   "devDependencies": {
-    "vite-tsconfig-paths": "^5.1.4",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
     "@eslint/js": "^9.18.0",
     "@preact/preset-vite": "^2.10.0",
     "@tailwindcss/typography": "^0.5.16",
@@ -35,20 +33,22 @@
     "@types/node": "^22.10.7",
     "@types/react": "^19.0.7",
     "@types/react-dom": "^19.0.3",
-    "globals": "^15.14.0",
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.20",
-    "esbuild": "0.24.2",
     "eslint": "^9.18.0",
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.16",
+    "globals": "^15.14.0",
     "husky": "^9.1.7",
     "prettier": "3.4.2",
     "prettier-plugin-tailwindcss": "^0.6.10",
     "pretty-quick": "^4.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
     "tailwindcss": "^3.4.17",
     "typescript": "~5.6.2",
     "typescript-eslint": "^8.18.2",
-    "vite": "^6.0.5"
+    "vite": "^6.0.5",
+    "vite-tsconfig-paths": "^5.1.4"
   }
 }
