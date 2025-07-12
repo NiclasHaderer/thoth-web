@@ -1,8 +1,8 @@
-import { createApi } from "./generated/api-client"
-import { ApiCallData, ApiInterceptor, ApiResponse } from "./generated/client"
+import { unstable_batchedUpdates } from "react-dom"
 import { AuthState, useAuthState } from "@thoth/state/auth.state"
 import { isExpired } from "@thoth/utils/jwt"
-import { unstable_batchedUpdates } from "react-dom"
+import { createApi } from "./generated/api-client"
+import { ApiCallData, ApiInterceptor, ApiResponse } from "./generated/client"
 
 export * from "./generated/models"
 export type { ApiResponse } from "./generated/client"

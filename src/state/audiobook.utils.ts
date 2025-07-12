@@ -1,10 +1,10 @@
-import { Mutate, StoreApi, StoreMutatorIdentifier } from "zustand"
 import { unstable_batchedUpdates } from "react-dom"
-import { insertAtPosition, replaceRangeInList, toIdRecord } from "../utils/utils"
+import { Mutate, StoreApi, StoreMutatorIdentifier } from "zustand"
 import { ApiResponse, PaginatedResponse, Position, UUID } from "@thoth/client"
-import { WebsocketConnection } from "@thoth/websocket"
 import { ChangeEvent } from "@thoth/models/ws"
 import { AudiobookState } from "@thoth/state/audiobook.state"
+import { WebsocketConnection } from "@thoth/websocket"
+import { insertAtPosition, replaceRangeInList, toIdRecord } from "../utils/utils"
 
 type AssetsToUpdate = "book" | "series" | "author"
 
