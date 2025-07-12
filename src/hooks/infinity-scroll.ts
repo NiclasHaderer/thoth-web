@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
-import { useIntersectionObserver } from "./intersection-observer"
 import { useOnMount } from "@thoth/hooks/lifecycle"
+import { useIntersectionObserver } from "./intersection-observer"
 
 export const useInfinityScroll = (target: HTMLElement | null, fetchNext: (index: number) => void, startIndex = 0) => {
   const [index, setIndex] = useState(startIndex)

@@ -1,6 +1,6 @@
-import { getWebsocket, WebsocketConnection } from "./websocket"
 import { environment } from "@thoth/environment"
 import { toRealURL } from "@thoth/utils/utils"
+import { getWebsocket, WebsocketConnection } from "./websocket"
 
 export const websocketWithBaseUrl = <T>(baseURL: string, url: string): WebsocketConnection<T> => {
   baseURL = toRealURL(baseURL)
