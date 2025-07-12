@@ -1,5 +1,5 @@
-import { AudiobookState } from "./audiobook.state"
 import { LibraryModel, UUID } from "@thoth/client"
+import { AudiobookState } from "./audiobook.state"
 
 export const AudiobookSelectors = {
   // Libraries

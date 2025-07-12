@@ -1,8 +1,8 @@
-import { defineConfig } from "vite"
+import { preact } from "@preact/preset-vite"
 import react from "@vitejs/plugin-react"
 import tailwindcss from "tailwindcss"
+import { defineConfig } from "vite"
 import tsconfigPaths from "vite-tsconfig-paths"
-import { preact } from "@preact/preset-vite"
 
 const shouldUsePreact = !!process.env.USE_PREACT
 const reactPlugin = shouldUsePreact ? preact : react
