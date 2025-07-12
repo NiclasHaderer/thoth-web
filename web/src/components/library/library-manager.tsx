@@ -17,15 +17,6 @@ export const LibraryManager = () => {
   const fetchLibraries = useAudiobookState(s => s.fetchLibraries)
   useOnMount(() => void fetchLibraries())
 
-  const onSubmit = async (values: LibraryFormValues) => {
-    setIsOpen(false)
-    if (values.mode === "create") {
-      await createLibrary(values)
-    } else {
-      await updateLibrary(values.id!, values)
-    }
-  }
-
   const form: FormContext<LibraryFormValues> = useForm(
     {
       id: undefined as undefined | UUID,
@@ -53,6 +44,15 @@ export const LibraryManager = () => {
     }
   )
 
+  const onSubmit = async (values: LibraryFormValues) => {
+    setIsOpen(false)
+    if (values.mode === "create") {
+      await createLibrary(values)
+    } else {
+      await updateLibrary(values.id!, values)
+    }
+  }
+
   return (
     <>
       <p>
@@ -61,7 +61,7 @@ export const LibraryManager = () => {
         easily find and listen to audiobooks in their preferred language.
       </p>
       <div className="mt-4 w-full overflow-y-auto">
-        <table className="w-full table-fixed overflow-hidden rounded">
+        <table className="w-full overflow-hidden rounded">
           <thead>
             <tr className="bg-elevate p-2 [&>*]:py-2">
               <th className="overflow-hidden pl-2 text-left">
@@ -71,27 +71,27 @@ export const LibraryManager = () => {
                 </div>
               </th>
               <th className="overflow-ellipsis pl-2 text-left">
-                <div className="has-tooltip relative flex items-center text-nowrap">
+                <div className="flex items-center text-nowrap">
                   <MdAutoAwesome className="mr-4 min-h-6 min-w-6" />
-                  <span className="overflow-hidden overflow-ellipsis">Metadata preference</span>
+                  Metadata preference
                 </div>
               </th>
               <th className="pl-2 text-left">
                 <div className="flex items-center text-nowrap">
                   <MdRadar className="mr-4 min-h-6 min-w-6" />
-                  <span className="overflow-hidden overflow-ellipsis">Metadata scanners</span>
+                  Metadata scanners
                 </div>
               </th>
               <th className="pl-2 text-left">
                 <div className="flex items-center text-nowrap">
                   <MdScan className="mr-4 min-h-6 min-w-6" />
-                  <span className="overflow-hidden overflow-ellipsis">File scanners</span>
+                  File scanners
                 </div>
               </th>
               <th className="pl-2 text-left">
                 <div className="flex items-center text-nowrap">
                   <MdLanguage className="mr-4 min-h-6 min-w-6" />
-                  <span className="overflow-hidden overflow-ellipsis">Language</span>
+                  Language
                 </div>
               </th>
               <th className="w-0"></th>
@@ -123,7 +123,9 @@ export const LibraryManager = () => {
                 ))}
                 {(!libraries || libraries.length === 0) && (
                   <tr className="odd:bg-active-light">
-                    <td className="pl-2">No library yet</td>
+                    <td className="pl-2" colSpan={6}>
+                      No library yet
+                    </td>
                     <td></td>
                     <td></td>
                     <td></td>
