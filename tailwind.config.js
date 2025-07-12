@@ -26,6 +26,7 @@ module.exports = {
       // Basic colors
       transparent: "transparent",
       inherit: "inherit",
+      red: "red",
     },
     extend: {
       screens: {

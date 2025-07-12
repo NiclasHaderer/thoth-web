@@ -1,4 +1,4 @@
-import { FC } from "react"
+import { FC, useState } from "react"
 import { Form, FormContext } from "@thoth/hooks/form"
 import { Api, FileScanner, MetadataAgent, UUID } from "@thoth/client"
 import { useHttpRequest } from "@thoth/hooks/async-response"
@@ -34,10 +34,26 @@ interface LibraryDialogProps {
 export const LibraryDialog: FC<LibraryDialogProps> = ({ isOpen, setIsOpen, form, onSubmit }) => {
   const metadataAgents = useHttpRequest(Api.listMetadataAgents)
   const fileScanners = useHttpRequest(Api.listFileScanners)
+  const [activeTab, setActiveTab] = useState(0)
   useOnMount(() => {
     void metadataAgents.invoke()
     void fileScanners.invoke()
   })
+
+  const onSumitInternal = async (values: LibraryFormValues) => {
+    if (form.hasErrors()) {
+      const errors = form.getErrors()
+      const errorFields = Object.keys(errors)
+      if (errorFields.length === 1 && errorFields[0] === "folders") {
+        setActiveTab(1)
+      } else if (!errorFields.includes("folders")) {
+        setActiveTab(0)
+      }
+      return
+    }
+    onSubmit(values)
+  }
+
   return (
     <Dialog
       isOpen={isOpen}
@@ -45,9 +61,11 @@ export const LibraryDialog: FC<LibraryDialogProps> = ({ isOpen, setIsOpen, form,
       title={form.fields.mode === "create" ? "Create new Library" : "Edit Library"}
       outerDialogClass="h-3/5 w-3/5 lg:!max-w-[75%] xl:!max-w-[50%] !max-w-[95%]"
     >
-      <Form form={form} onSubmit={onSubmit}>
+      <Form form={form} onSubmit={onSumitInternal}>
         <DialogBody>
           <LeftTabs
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
             rightClassname="h-full"
             tabs={[
               <div className="flex items-center" key={1}>
@@ -144,6 +162,7 @@ export const LibraryDialog: FC<LibraryDialogProps> = ({ isOpen, setIsOpen, form,
                   onSelectFolder={path => {
                     form.setFields({ folders: unique([...form.fields.folders, path]) })
                   }}
+                  errors={form.errors["folders"]}
                 />
               </div>
             </TabContent>

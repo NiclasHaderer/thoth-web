@@ -7,9 +7,11 @@ import {
   ReactNode,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from "react"
 import { notNullIsh } from "@thoth/utils/utils"
+import { useOnMount } from "@thoth/hooks/lifecycle.ts"
 
 export interface FormContext<T extends Record<string, any>> {
   fields: T
@@ -22,6 +24,9 @@ export interface FormContext<T extends Record<string, any>> {
   touched: {
     [K in keyof T]: boolean
   }
+  getErrors: () => Partial<{
+    [K in keyof T]: string[] | undefined
+  }>
   setTouched: (newValue: Partial<{ [K in keyof T]: boolean }>) => void
   toFormTransformers: {
     [K in keyof T]?: (value: T[K]) => any
@@ -51,6 +56,7 @@ export const CONTEXT = createContext<FormContext<Record<any, any>>>({
   touched: {},
   hasErrors: () => false,
   setTouched: () => {},
+  getErrors: () => ({}),
   toFormTransformers: {},
   fromFormTransformers: {},
   markAllAsTouched: () => {},
@@ -71,6 +77,20 @@ const getFilledObject = <T extends string | symbol | number, V>(state: T[], defa
   )
 }
 
+const useCurrentState = <T = undefined,>(value: T) => {
+  const ref = useRef<T>(value)
+  const [state, setState] = useState<T>(value)
+
+  return [
+    state,
+    (newState: T) => {
+      ref.current = newState
+      setState(newState)
+    },
+    ref as Readonly<{ current: T }>,
+  ] as const
+}
+
 export const useForm = <T extends Record<string, any>>(
   initialState: T,
   {
@@ -83,18 +103,23 @@ export const useForm = <T extends Record<string, any>>(
     reloadOnInitialChange?: boolean
   } = {}
 ): FormContext<T> => {
-  const [fields, setFields] = useState(initialState)
+  const [fields, setFields, currentFields] = useCurrentState(initialState)
+  const [touched, setTouched, currentTouched] = useCurrentState(
+    getFilledObject<keyof T, boolean>(Object.keys(initialState), false)
+  )
+  const [errors, setErrors, currentErrors] = useCurrentState(
+    getFilledObject<keyof T, string[] | undefined>(Object.keys(initialState), undefined)
+  )
+
+  useOnMount(() => validateFields(currentFields.current))
+
   useEffect(() => {
     if (reloadOnInitialChange) {
       setFields(initialState)
     }
   }, [initialState, reloadOnInitialChange])
-  const [touched, setTouched] = useState(getFilledObject(Object.keys(initialState) as (keyof T)[], false))
-  const [errors, setErrors] = useState(getFilledObject(Object.keys(initialState) as (keyof T)[], undefined))
 
   const validateField = (key: keyof T, value: T[keyof T]): string[] | undefined => {
-    if (!touched[key]) return undefined
-
     const validator = options.validate && options.validate[key]
     if (validator) {
       if (Array.isArray(validator)) {
@@ -115,7 +140,7 @@ export const useForm = <T extends Record<string, any>>(
     for (const key of Object.keys(fieldsToValidate) as (keyof T)[]) {
       newErrors[key] = validateField(key, fieldsToValidate[key] as T[keyof T])
     }
-    setErrors(currErrors => ({ ...currErrors, ...newErrors }))
+    setErrors({ ...currentErrors.current, ...newErrors })
   }
 
   const markAllAsTouched = () => {
@@ -133,17 +158,28 @@ export const useForm = <T extends Record<string, any>>(
   return {
     fields,
     setFields: (newValue: Partial<T>) => {
-      setFields(currFields => ({ ...currFields, ...newValue }))
+      setFields({ ...currentFields.current, ...newValue })
       validateFields(newValue)
     },
     errors,
     setErrors: (newValue: Partial<Record<keyof T, string | undefined>>) => {
-      setErrors(currErrors => ({ ...currErrors, ...newValue }))
+      setErrors({ ...currentErrors.current, ...newValue })
     },
-    hasErrors: () => Object.values(errors).some(notNullIsh),
+    hasErrors: () => Object.values(currentErrors.current).some(notNullIsh),
+    getErrors: () => {
+      return Object.entries(currentErrors.current).reduce(
+        (acc, [key, value]) => {
+          if (value) {
+            acc[key as keyof T] = value
+          }
+          return acc
+        },
+        {} as Record<keyof T, string[] | undefined>
+      )
+    },
     touched,
     setTouched: (newValue: Partial<Record<keyof T, boolean>>) => {
-      setTouched(currTouched => ({ ...currTouched, ...newValue }))
+      setTouched({ ...currentTouched.current, ...newValue })
     },
     restoreInitial: () => setFields(initialState),
     fromFormTransformers: options.fromForm || {},
@@ -151,10 +187,10 @@ export const useForm = <T extends Record<string, any>>(
     formValidators: options.validate || {},
     markAllAsTouched,
     contextType: Symbol(`FORM_CONTEXT_${Math.random()}`),
-    revalidateAll: () => validateFields(fields),
+    revalidateAll: () => validateFields(currentFields.current),
     forceValidateAll: () => {
       markAllAsTouched()
-      validateFields(fields)
+      validateFields(currentFields.current)
     },
   }
 }
@@ -188,7 +224,7 @@ export const useField = <T extends Record<string, any>, K extends keyof T>(
     toForm: toFormTransformers[name],
     touched: touched[name],
     setTouched: (newValue: boolean) => {
-      setTouched({ ...touched, [name]: newValue })
+      setTouched({ [name]: newValue })
     },
   }
 }
@@ -228,9 +264,7 @@ export const Form = <T extends Record<string, any>>({
       e.preventDefault()
       e.stopPropagation()
       form.forceValidateAll()
-      if (!form.hasErrors()) {
-        onSubmit && onSubmit(form.fields)
-      }
+      onSubmit && onSubmit(form.fields)
     }}
   >
     <CONTEXT.Provider value={form}>{children}</CONTEXT.Provider>
