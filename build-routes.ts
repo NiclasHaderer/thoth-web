@@ -123,7 +123,11 @@ const resolveParamsAndTypes = (path: string) => {
 
   const finds = path.matchAll(/\?<(\w+)>/g)
   for (const find of finds) {
-    final += `${find[1]}: string,`
+    if (find[1].toLowerCase().includes("id")) {
+      final += `${find[1]}: UUID,`
+    } else {
+      final += `${find[1]}: string,`
+    }
   }
   final += `}`
   return final
@@ -172,8 +176,11 @@ const writeRoutes = async () => {
     return imports
   }
   const imports = writeImports(paths, "@ratings/app", [
+    'import { lazy, Suspense } from "react"',
     'import { Route, Router, Redirect, Switch } from "wouter"',
     'import { useHashLocation } from "wouter/use-hash-location";',
+    'import { Loading } from "@thoth/components/loading.tsx"',
+    'import { UUID } from "@thoth/client"',
   ])
 
   const resolveAllPossibleChildPaths = (baseUrl: string, p: Path, topLevel = true): string[] => {
