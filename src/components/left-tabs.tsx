@@ -1,4 +1,4 @@
-import { FC, PropsWithChildren, ReactNode, useState } from "react"
+import { FC, PropsWithChildren, ReactNode } from "react"
 
 interface LeftTabsProps {
   leftClassname?: string
@@ -6,18 +6,26 @@ interface LeftTabsProps {
   className?: string
   tabs: ReactNode[]
   children: ReactNode[]
+  activeTab: number
+  setActiveTab: (index: number) => void
 }
 
 export const TabContent = ({ children }: PropsWithChildren) => {
   return <>{children}</>
 }
 
-export const LeftTabs: FC<LeftTabsProps> = ({ leftClassname, tabs, className, rightClassname, children }) => {
+export const LeftTabs: FC<LeftTabsProps> = ({
+  leftClassname,
+  tabs,
+  className,
+  rightClassname,
+  children,
+  activeTab,
+  setActiveTab,
+}) => {
   if (tabs.length !== children.length) {
     throw new Error("Number of tabs and children must match")
   }
-
-  const [activeTab, setActiveTab] = useState(0)
 
   return (
     <div className={`flex ${className ?? ""}`}>

@@ -20,6 +20,7 @@ export function ManagedSelect<T, MULTIPLE extends boolean = false>({
         setTouched(true)
         onChange?.(v)
       }}
+      onBlur={() => setTouched(true)}
     />
   )
 }

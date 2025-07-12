@@ -26,6 +26,7 @@ export type SelectProps<T, MULTIPLE extends boolean = false> = {
   placeholderClassName?: string
   optionClassName?: string
   optionListClassName?: string
+  onBlur?: () => void
 }
 
 function getSelectedValue<T>(
@@ -72,6 +73,7 @@ export function Select<T, MULTIPLE extends boolean = false>({
   outerClassName,
   onChange,
   multiple,
+  onBlur,
   displayValue = (v: ExtractedSelectValue<T>) => v?.toString() ?? "",
 }: SelectProps<T, MULTIPLE>) {
   const toDisplayValue = (value: SelectValue<T> | T): string => {
@@ -102,6 +104,7 @@ export function Select<T, MULTIPLE extends boolean = false>({
       className={`relative inline-block h-fit ${outerClassName ?? ""}`}
     >
       <ListboxButton
+        onBlur={onBlur}
         className={`flex min-w-32 cursor-pointer items-center overflow-hidden rounded bg-elevate p-1 text-left hover:bg-active-light focus:bg-active-light ${
           placeholderButtonClassName ?? ""
         }`}

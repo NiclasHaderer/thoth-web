@@ -1,6 +1,8 @@
 import * as nodeFs from "node:fs"
 import * as nodePath from "node:path"
+import * as path from "node:path"
 import { keepIndent, trimIndent } from "./src/utils/trim-inden"
+import { fileURLToPath } from "node:url"
 
 const listFolderContent = async (folderPath: string): Promise<{ files: string[]; directories: string[] }> => {
   const content = await nodeFs.promises.readdir(folderPath, { withFileTypes: true })
@@ -8,7 +10,8 @@ const listFolderContent = async (folderPath: string): Promise<{ files: string[];
   const directories = content.filter(item => item.isDirectory()).map(item => item.name)
   return { files, directories }
 }
-
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 const rootDir = __dirname
 const routesDir = nodePath.join(rootDir, "src", "app")
 
@@ -120,11 +123,7 @@ const resolveParamsAndTypes = (path: string) => {
 
   const finds = path.matchAll(/\?<(\w+)>/g)
   for (const find of finds) {
-    if (find[1].toLowerCase().includes("id")) {
-      final += `${find[1]}: UUID,`
-    } else {
-      final += `${find[1]}: string,`
-    }
+    final += `${find[1]}: string,`
   }
   final += `}`
   return final
@@ -172,11 +171,9 @@ const writeRoutes = async () => {
     }
     return imports
   }
-  const imports = writeImports(paths, "@thoth/app", [
-    'import { Suspense, lazy } from "react"',
+  const imports = writeImports(paths, "@ratings/app", [
     'import { Route, Router, Redirect, Switch } from "wouter"',
-    'import { UUID } from "@thoth/client"',
-    'import { Loading } from "@thoth/components/loading.tsx"',
+    'import { useHashLocation } from "wouter/use-hash-location";',
   ])
 
   const resolveAllPossibleChildPaths = (baseUrl: string, p: Path, topLevel = true): string[] => {
@@ -248,7 +245,7 @@ const writeRoutes = async () => {
   const router = trimIndent`
   export const Routes = () => {
     return (
-      <Router>
+      <Router hook={useHashLocation}>
         <Switch>
           ${routes.join("\n")}
         </Switch>
@@ -257,8 +254,7 @@ const writeRoutes = async () => {
   }
   `
 
-  let content = imports.join("\n") + "\n" + router
-
+  const content = imports.join("\n") + "\n" + router
   await nodeFs.promises.writeFile(nodePath.join(rootDir, "src", "routes.tsx"), content)
 }
 
