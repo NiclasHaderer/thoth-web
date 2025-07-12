@@ -1,8 +1,9 @@
 import * as nodeFs from "node:fs"
 import * as nodePath from "node:path"
 import * as path from "node:path"
-import { keepIndent, trimIndent } from "./src/utils/trim-inden"
 import { fileURLToPath } from "node:url"
+import * as prettier from "prettier"
+import { keepIndent, trimIndent } from "./src/utils/trim-inden"
 
 const listFolderContent = async (folderPath: string): Promise<{ files: string[]; directories: string[] }> => {
   const content = await nodeFs.promises.readdir(folderPath, { withFileTypes: true })
@@ -261,8 +262,14 @@ const writeRoutes = async () => {
   }
   `
 
-  const content = imports.join("\n") + "\n" + router
-  await nodeFs.promises.writeFile(nodePath.join(rootDir, "src", "routes.tsx"), content)
+  const destinationFile = nodePath.join(rootDir, "src", "routes.tsx")
+  let content = imports.join("\n") + "\n" + router
+  const config = await prettier.resolveConfig(destinationFile)
+  content = await prettier.format(content, {
+    ...config!,
+    filepath: destinationFile,
+  })
+  await nodeFs.promises.writeFile(destinationFile, content)
 }
 
 const main = async () => {

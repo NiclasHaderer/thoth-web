@@ -1,7 +1,7 @@
 import { create } from "zustand"
 import { combine, persist } from "zustand/middleware"
-import { decodeJWT, Jwt } from "@thoth/utils/jwt"
 import { Api, ThothLoginUser } from "@thoth/client"
+import { decodeJWT, Jwt } from "@thoth/utils/jwt"
 
 export type AuthState =
   | {
