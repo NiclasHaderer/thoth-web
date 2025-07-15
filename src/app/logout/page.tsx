@@ -1,9 +1,10 @@
-import { useAuthState } from "@thoth/state/auth.state"
+import { useLocation } from "wouter"
 import { useOnMount } from "@thoth/hooks/lifecycle"
-import { navigate } from "wouter/use-browser-location"
+import { useAuthState } from "@thoth/state/auth.state"
 
 export const LogoutOutlet = () => {
   const auth = useAuthState()
+  const [, navigate] = useLocation()
   useOnMount(async () => {
     await auth.logout()
     navigate("/login")

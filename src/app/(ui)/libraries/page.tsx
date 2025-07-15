@@ -1,8 +1,8 @@
-import { useAudiobookState } from "@thoth/state/audiobook.state"
-import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
-import { useOnMount } from "@thoth/hooks/lifecycle"
+import { useLocation } from "wouter"
 import { LibraryPreview } from "@thoth/components/library/library-preview"
-import { navigate } from "wouter/use-browser-location"
+import { useOnMount } from "@thoth/hooks/lifecycle"
+import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
+import { useAudiobookState } from "@thoth/state/audiobook.state"
 
 export const LibrariesOutlet = () => {
   const libraries = useAudiobookState(AudiobookSelectors.libraries)
@@ -10,6 +10,7 @@ export const LibrariesOutlet = () => {
   const fetchBooks = useAudiobookState(s => s.fetchBooks)
   const fetchSeries = useAudiobookState(s => s.fetchSeries)
   const fetchAuthors = useAudiobookState(s => s.fetchAuthors)
+  const [, navigate] = useLocation()
 
   useOnMount(() => {
     void fetchLibraries().then(libs => {
