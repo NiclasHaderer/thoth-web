@@ -1,6 +1,5 @@
 import { createElement, forwardRef, ReactNode } from "react"
-import { usePathname } from "wouter/use-browser-location"
-import { Link } from "wouter"
+import { Link, useLocation } from "wouter"
 
 type ActiveLinkProps = {
   withSubRoutes?: boolean
@@ -13,12 +12,12 @@ type ActiveLinkProps = {
 
 export const ActiveLink = forwardRef<HTMLAnchorElement, ActiveLinkProps>(
   ({ href, children, className, withSubRoutes, as = "a", onClick }, ref) => {
-    const pathname = usePathname()
+    const [pathname] = useLocation()
     const isActive = withSubRoutes ? pathname.startsWith(href) : pathname === href
     return (
       <Link href={href} asChild onClick={onClick}>
         {createElement(as, {
-          className: `group cursor-pointer transition-colors ${isActive ? "text-primary" : ""} ${className ?? ""}`,
+          className: `group cursor-pointer ${isActive ? "text-primary" : ""} ${className ?? ""}`,
           ref,
           children,
         })}
