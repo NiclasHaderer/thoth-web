@@ -1,14 +1,15 @@
-import { MdLock, MdPerson, MdVisibility, MdVisibilityOff } from "react-icons/md"
 import { FC, useState } from "react"
-import { ColoredButton } from "@thoth/components/colored-button"
+import { MdLock, MdPerson, MdVisibility, MdVisibilityOff } from "react-icons/md"
 import { Link } from "wouter"
-import { Form, useForm } from "@thoth/hooks/form"
+import { useLocation } from "wouter"
+import { ColoredButton } from "@thoth/components/colored-button"
 import { Logo } from "@thoth/components/icons/logo"
 import { ManagedInput } from "@thoth/components/input/managed-input"
+import { Form, useForm } from "@thoth/hooks/form"
 import { useAuthState } from "@thoth/state/auth.state"
-import { navigate } from "wouter/use-browser-location"
 
-export const LoginRegister: FC<{ type: "register" | "login" }> = ({ type }) => {
+export const LoginRegister: FC<{ type: "register" | "login"; path: string }> = ({ type, path }) => {
+  const [, navigate] = useLocation()
   const form = useForm(
     {
       username: "",
@@ -28,8 +29,8 @@ export const LoginRegister: FC<{ type: "register" | "login" }> = ({ type }) => {
     const cb = type === "login" ? userState.login : userState.register
     const result = await cb(values)
     if (!result.success) return
-    const origin = new URLSearchParams(location.search).get("origin") ?? "/"
-    navigate(`/${origin}`.replaceAll("//", "/"))
+    console.log({ result, path })
+    navigate(path)
   }
 
   return (

@@ -140,8 +140,13 @@ const segmentShouldBeIgnored = (segment: string) => {
 
 const segmentToPath = (segment: string) => {
   if (segment.startsWith("[") && segment.endsWith("]")) {
-    const segmentName = segment.replace("[", "").replace("]", "")
-    return `(?<${segmentName}>(\\w+|\\d|-|_))`
+    let segmentName = segment.replace("[", "").replace("]", "")
+    if (segmentName.endsWith(":path")) {
+      segmentName = segmentName.replace(":path", "")
+      return `(?<${segmentName}>.+)`
+    } else {
+      return `(?<${segmentName}>(\\w+|\\d|-|_))`
+    }
   }
   return segment
 }
@@ -184,26 +189,29 @@ const writeRoutes = async () => {
     'import { UUID } from "@thoth/client"',
   ])
 
+  const cleanupPath = (path: string) => {
+    return path
+      .replaceAll("/", "\\/")
+      .replaceAll(/\?<\w+>/g, "")
+      .replaceAll("((", "(")
+      .replaceAll("))", ")")
+  }
+
   const resolveAllPossibleChildPaths = (baseUrl: string, p: Path, topLevel = true): string[] => {
     let possibleUrls: string[] = []
 
     for (const [childDir, child] of Object.entries(p.children)) {
       const childPath = segmentShouldBeIgnored(childDir) ? baseUrl : nodePath.join(baseUrl, segmentToPath(childDir))
       if (child.layout || child.page) {
-        possibleUrls.push(`(${childPath})`)
+        possibleUrls.push(cleanupPath(`^(${childPath})$`))
       }
       possibleUrls.push(...resolveAllPossibleChildPaths(childPath, child, false))
     }
 
     if (topLevel) {
       if (possibleUrls.length === 0) {
-        possibleUrls.push(baseUrl)
+        possibleUrls.push(cleanupPath(`^${baseUrl}$`))
       }
-      possibleUrls = possibleUrls
-        .map(u => u.replaceAll("/", "\\/"))
-        .map(u => u.replaceAll(/\?<\w+>/g, ""))
-        .map(u => u.replaceAll("((", "("))
-        .map(u => u.replaceAll("))", ")"))
       possibleUrls = [...new Set(possibleUrls)]
     }
 
@@ -215,7 +223,7 @@ const writeRoutes = async () => {
     let parentsLayoutClose: string[] = []
     if (path.layout) {
       content.push(
-        `<Route path={/^${resolveAllPossibleChildPaths(baseUrl, path).join("|")}\\/?$/}>`,
+        `<Route path={/${resolveAllPossibleChildPaths(baseUrl, path).join("|")}/}>`,
         `<${path.layout.export}>`
       )
       parentsLayoutClose = [`</${path.layout.export}>`, `</Route>`, ...parentsLayoutClose]
@@ -223,8 +231,9 @@ const writeRoutes = async () => {
 
     if (path.page) {
       const contentStr = getComponent(path.page)
+      const baseUrlRegex = baseUrl.replaceAll("/", "\\/")
       const out = trimIndent`
-          <Route path="${baseUrl}">
+          <Route path={/^${baseUrlRegex}$/}>
             { (params: ${resolveParamsAndTypes(baseUrl)}) => {
               return (
                 ${keepIndent(contentStr)}
@@ -264,11 +273,16 @@ const writeRoutes = async () => {
 
   const destinationFile = nodePath.join(rootDir, "src", "routes.tsx")
   let content = imports.join("\n") + "\n" + router
-  const config = await prettier.resolveConfig(destinationFile)
-  content = await prettier.format(content, {
-    ...config!,
-    filepath: destinationFile,
-  })
+  try {
+    const config = await prettier.resolveConfig(destinationFile)
+    content = await prettier.format(content, {
+      ...config!,
+      filepath: destinationFile,
+    })
+  } catch {
+    // If prettier fails, we just write the content without formatting
+    console.log("Could not format routes.tsx, writing unformatted content.")
+  }
   await nodeFs.promises.writeFile(destinationFile, content)
 }
 
