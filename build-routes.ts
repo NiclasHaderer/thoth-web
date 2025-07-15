@@ -141,11 +141,11 @@ const segmentShouldBeIgnored = (segment: string) => {
 const segmentToPath = (segment: string) => {
   if (segment.startsWith("[") && segment.endsWith("]")) {
     let segmentName = segment.replace("[", "").replace("]", "")
-    if (segmentName.endsWith(":path")) {
-      segmentName = segmentName.replace(":path", "")
+    if (segmentName.endsWith("{path}")) {
+      segmentName = segmentName.replace("{path}", "")
       return `(?<${segmentName}>.+)`
     } else {
-      return `(?<${segmentName}>(\\w+|\\d|-|_))`
+      return `(?<${segmentName}>(?:\\w|-)+)`
     }
   }
   return segment
@@ -190,11 +190,7 @@ const writeRoutes = async () => {
   ])
 
   const cleanupPath = (path: string) => {
-    return path
-      .replaceAll("/", "\\/")
-      .replaceAll(/\?<\w+>/g, "")
-      .replaceAll("((", "(")
-      .replaceAll("))", ")")
+    return path.replaceAll("/", "\\/").replaceAll(/\?<\w+>/g, "?:")
   }
 
   const resolveAllPossibleChildPaths = (baseUrl: string, p: Path, topLevel = true): string[] => {
