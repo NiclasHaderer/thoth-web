@@ -1,14 +1,6 @@
 import { UUID } from "@thoth/client"
-import { useAudiobookState } from "@thoth/state/audiobook.state"
-import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
-import { useEffect } from "react"
-import { SeriesDisplay } from "@thoth/components/series/series"
+import SeriesDetails from "@thoth/components/series/series-details.tsx"
 
 export const SeriesOutlet = ({ libraryId, seriesId }: { libraryId: UUID; seriesId: UUID }) => {
-  const fetchSeries = useAudiobookState(s => s.fetchSeriesDetails)
-  const series = useAudiobookState(AudiobookSelectors.selectSeries(libraryId, seriesId))
-  useEffect(() => {
-    void fetchSeries({ libraryId, id: seriesId })
-  })
-  return series && <SeriesDisplay {...series} />
+  return <SeriesDetails seriesId={seriesId} libraryId={libraryId} />
 }

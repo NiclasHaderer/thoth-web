@@ -1,18 +1,16 @@
 import { FC, useEffect } from "react"
 import { MdImageNotSupported } from "react-icons/md"
-
+import { Link } from "wouter"
+import { UUID } from "@thoth/client"
+import { BookPreview } from "@thoth/components/book/book-preview.tsx"
+import { HtmlViewer } from "@thoth/components/html-editor"
+import { ResponsiveGrid } from "@thoth/components/responsive-grid"
+import { isDetailedSeries } from "@thoth/models/typeguards"
 import { AudiobookSelectors } from "../../state/audiobook.selectors"
 import { useAudiobookState } from "../../state/audiobook.state"
 import SeriesEdit from "./series-edit"
-import { UUID } from "@thoth/client"
-import { isDetailedSeries } from "@thoth/models/typeguards"
-import { HtmlViewer } from "@thoth/components/html-editor"
-import { ResponsiveGrid } from "@thoth/components/responsive-grid"
-import { BookDisplay } from "@thoth/components/book/book"
-import { Link } from "wouter"
 
-export const SeriesDetails: FC<{ seriesId: UUID }> = ({ seriesId }) => {
-  const libraryId = useAudiobookState(AudiobookSelectors.selectedLibraryId)!
+export const SeriesDetails: FC<{ seriesId: UUID; libraryId: UUID }> = ({ seriesId, libraryId }) => {
   const getSeriesWithBooks = useAudiobookState(s => s.fetchSeriesDetails)
 
   const series = useAudiobookState(AudiobookSelectors.selectSeries(libraryId, seriesId))
@@ -38,7 +36,7 @@ export const SeriesDetails: FC<{ seriesId: UUID }> = ({ seriesId }) => {
               <div className="flex pb-3">
                 <h3 className="min-w-40 pr-3 uppercase text-font-secondary">Author</h3>
                 {series.authors.map(author => (
-                  <Link href={`/authors/${author.id}`} key={author.id}>
+                  <Link href={`/libraries/${libraryId}/authors/${author.id}`} key={author.id}>
                     <h3 className="text-xl hover:underline no-touch:group-focus:underline">{author.name}</h3>
                   </Link>
                 ))}
@@ -87,7 +85,7 @@ export const SeriesDetails: FC<{ seriesId: UUID }> = ({ seriesId }) => {
           <h2 className="p-2 pb-6 text-2xl">{series.books.length} Books</h2>
           <ResponsiveGrid>
             {series.books.map((book, k) => (
-              <BookDisplay {...book} key={k} />
+              <BookPreview {...book} key={k} />
             ))}
           </ResponsiveGrid>
         </>
