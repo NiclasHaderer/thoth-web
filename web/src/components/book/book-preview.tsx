@@ -1,21 +1,17 @@
 import { forwardRef } from "react"
 import { MdImageNotSupported } from "react-icons/md"
-import { BookModel } from "@thoth/client"
-import { useAudiobookState } from "@thoth/state/audiobook.state"
-import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
 import { Link } from "wouter"
+import { BookModel } from "@thoth/client"
 
-export const BookDisplay = forwardRef<HTMLDivElement, BookModel>(({ coverID, title, authors, id }, ref) => {
-  const libraryId = useAudiobookState(AudiobookSelectors.selectedLibraryId)
-
+export const BookPreview = forwardRef<HTMLDivElement, BookModel>((book, ref) => {
   return (
     <div className="mx-6 mb-6 inline-block w-52" ref={ref}>
-      <Link href={`/libraries/${libraryId}/books/${id}`} aria-label={title} tabIndex={-1}>
-        {coverID ? (
+      <Link href={`/libraries/${book.library.id}/books/${book.id}`} aria-label={book.title} tabIndex={-1}>
+        {book.coverID ? (
           <img
             className="h-52 w-52 cursor-pointer rounded-md border-2 border-transparent object-cover transition-colors hover:border-primary"
-            src={`/api/stream/images/${coverID}`}
-            alt={title}
+            src={`/api/stream/images/${book.coverID}`}
+            alt={book.title}
             loading="lazy"
           />
         ) : (
@@ -24,11 +20,11 @@ export const BookDisplay = forwardRef<HTMLDivElement, BookModel>(({ coverID, tit
       </Link>
 
       <div className="relative p-2 text-center">
-        <Link href={`/libraries/${libraryId}/books/${id}`}>
-          <span className="line-clamp-2 cursor-pointer hover:underline group-focus:underline">{title}</span>
+        <Link href={`/libraries/${book.library.id}/books/${book.id}`}>
+          <span className="line-clamp-2 cursor-pointer hover:underline group-focus:underline">{book.title}</span>
         </Link>
-        {authors.map(author => (
-          <Link href={`/libraries/${libraryId}/authors/${author.id}`} key={author.id}>
+        {book.authors.map(author => (
+          <Link href={`/libraries/${book.library.id}/authors/${author.id}`} key={author.id}>
             <span className="cursor-pointer text-font-secondary hover:underline group-focus:underline">
               {author.name}
             </span>
