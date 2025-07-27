@@ -220,9 +220,10 @@ const writeRoutes = async () => {
     if (path.layout) {
       content.push(
         `<Route path={/${resolveAllPossibleChildPaths(baseUrl, path).join("|")}/}>`,
-        `<${path.layout.export}>`
+        `{(params: ${resolveParamsAndTypes(baseUrl)})=> (`,
+        `<${path.layout.export} {...params}>`
       )
-      parentsLayoutClose = [`</${path.layout.export}>`, `</Route>`, ...parentsLayoutClose]
+      parentsLayoutClose = [`</${path.layout.export}>`, ")}", `</Route>`, ...parentsLayoutClose]
     }
 
     if (path.page) {

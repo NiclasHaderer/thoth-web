@@ -1,22 +1,19 @@
 import { FC, useEffect } from "react"
+import { BiDotsVerticalRounded } from "react-icons/bi"
 import { MdCheckCircle, MdImageNotSupported, MdPlayCircle, MdRadioButtonUnchecked } from "react-icons/md"
-
+import { Link } from "wouter"
+import { DetailedBookModel, UUID } from "@thoth/client"
+import { ColoredButton } from "@thoth/components/colored-button"
+import { HtmlViewer } from "@thoth/components/html-editor"
+import { isDetailedBook } from "@thoth/models/typeguards"
 import { AudiobookSelectors } from "../../state/audiobook.selectors"
 import { useAudiobookState } from "../../state/audiobook.state"
 import { usePlaybackState } from "../../state/playback.state"
 import { Track } from "../track/track"
 import { BookEdit } from "./book-edit"
-import { Link } from "wouter"
-import { ColoredButton } from "@thoth/components/colored-button"
-import { HtmlViewer } from "@thoth/components/html-editor"
-import { isDetailedBook } from "@thoth/models/typeguards"
-import { DetailedBookModel, UUID } from "@thoth/client"
-import { BiDotsVerticalRounded } from "react-icons/bi"
 
-export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId }) => {
-  // TODO library ID
+export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId, libraryId }) => {
   const getBookWithTracks = useAudiobookState(s => s.fetchBookDetails)
-  const libraryId = useAudiobookState(AudiobookSelectors.selectedLibraryId)!
   const play = usePlaybackState(state => state.start)
 
   const book = useAudiobookState(AudiobookSelectors.selectBook(libraryId, bookId))
@@ -79,7 +76,7 @@ export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId }) =
               <div className="flex pb-3">
                 <h3 className="min-w-40 pr-3 uppercase text-font-secondary">Series</h3>
                 {book.series.map(series => (
-                  <Link href={`/series/${series.id}`} key={series.id}>
+                  <Link href={`/libraries/${libraryId}/series/${series.id}`} key={series.id}>
                     <h3 className="hover:underline group-focus:underline">{series.title}</h3>
                   </Link>
                 ))}

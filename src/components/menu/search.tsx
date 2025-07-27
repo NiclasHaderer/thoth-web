@@ -1,11 +1,10 @@
 import { FC, KeyboardEvent, useEffect, useRef, useState } from "react"
 import { MdImageNotSupported, MdPerson, MdSearch } from "react-icons/md"
-
-import { useFocusTrap } from "../../hooks/trap-focus"
-import { useGlobalEvent } from "../../hooks/global-events"
+import { Link } from "wouter"
 import { Api, SearchModel } from "@thoth/client"
 import { Input } from "@thoth/components/input/input"
-import { Link } from "wouter"
+import { useGlobalEvent } from "../../hooks/global-events"
+import { useFocusTrap } from "../../hooks/trap-focus"
 
 export const Search: FC = () => {
   const [input, setInput] = useState("")
@@ -117,7 +116,7 @@ const AuthorSearchResult: FC<{ authors: SearchModel["authors"]; onClose: () => v
   <>
     {authors.map((author, i) => (
       <Link
-        href={`/authors/${author.id}`}
+        href={`/libraries/${author.library.id}/authors/${author.id}`}
         onClick={onClose}
         key={i}
         aria-label={author.name}
@@ -145,7 +144,7 @@ const BookSearchResult: FC<{ books: SearchModel["books"]; onClose: () => void }>
   <>
     {books.map((book, i) => (
       <Link
-        href={`/books/${book.id}`}
+        href={`/libraries/${book.library.id}/books/${book.id}`}
         onClick={onClose}
         key={i}
         aria-label={book.title}
@@ -173,7 +172,7 @@ const SeriesSearchResult: FC<{ series: SearchModel["series"]; onClose: () => voi
   <>
     {series.map((series, i) => (
       <Link
-        href={`/series/${series.id}`}
+        href={`/libraries/${series.library.id}/series/${series.id}`}
         onClick={onClose}
         key={i}
         aria-label={series.title}

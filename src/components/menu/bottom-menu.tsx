@@ -1,18 +1,16 @@
-import { useAudiobookState } from "@thoth/state/audiobook.state"
-import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
-import { Ripple } from "@thoth/components/ripple"
-import { ActiveLink } from "@thoth/components/active-link"
-import { MdBook, MdCollectionsBookmark, MdPerson } from "react-icons/md"
 import { FC } from "react"
+import { MdBook, MdCollectionsBookmark, MdPerson } from "react-icons/md"
+import { UUID } from "@thoth/client"
+import { ActiveLink } from "@thoth/components/active-link"
+import { Ripple } from "@thoth/components/ripple"
 
-export const BottomResourceMenu: FC<{ className?: string }> = ({ className = "" }) => {
-  const currentLib = useAudiobookState(AudiobookSelectors.selectedLibraryId)
+export const BottomResourceMenu: FC<{ className?: string; libraryId: UUID }> = ({ className = "", libraryId }) => {
   return (
     <aside className="bg-surface">
       <div className={`relative flex h-16 items-center justify-between px-4 ${className}`}>
         <Ripple className="h-full flex-grow cursor-pointer bg-opacity-30" rippleClasses={"bg-primary bg-opacity-80"}>
           <ActiveLink
-            href={`/libraries/${currentLib}/authors`}
+            href={`/libraries/${libraryId}/authors`}
             withSubRoutes={true}
             className="flex h-full items-center justify-center"
           >
@@ -21,7 +19,7 @@ export const BottomResourceMenu: FC<{ className?: string }> = ({ className = "" 
         </Ripple>
         <Ripple className="h-full flex-grow cursor-pointer" rippleClasses={"bg-primary bg-opacity-80"}>
           <ActiveLink
-            href={`/libraries/${currentLib}/books`}
+            href={`/libraries/${libraryId}/books`}
             withSubRoutes={true}
             className="flex h-full items-center justify-center"
           >
@@ -30,7 +28,7 @@ export const BottomResourceMenu: FC<{ className?: string }> = ({ className = "" 
         </Ripple>
         <Ripple className="h-full flex-grow cursor-pointer" rippleClasses={"bg-primary bg-opacity-80"}>
           <ActiveLink
-            href={`/libraries/${currentLib}/series`}
+            href={`/libraries/${libraryId}/series`}
             withSubRoutes={true}
             className="flex h-full items-center justify-center"
           >

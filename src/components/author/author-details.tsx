@@ -1,18 +1,16 @@
 import { FC, useEffect } from "react"
 import { MdPerson } from "react-icons/md"
-
+import { UUID } from "@thoth/client"
+import { BookPreview } from "@thoth/components/book/book-preview.tsx"
+import { HtmlViewer } from "@thoth/components/html-editor"
+import { ResponsiveGrid } from "@thoth/components/responsive-grid"
+import { isDetailedAuthor } from "@thoth/models/typeguards"
 import { AudiobookSelectors } from "../../state/audiobook.selectors"
 import { useAudiobookState } from "../../state/audiobook.state"
-import AuthorEdit from "./author-edit"
 import { formatDate } from "../../utils/utils"
-import { UUID } from "@thoth/client"
-import { HtmlViewer } from "@thoth/components/html-editor"
-import { isDetailedAuthor } from "@thoth/models/typeguards"
-import { ResponsiveGrid } from "@thoth/components/responsive-grid"
-import { BookDisplay } from "@thoth/components/book/book"
+import AuthorEdit from "./author-edit"
 
-export const AuthorDetails: FC<{ authorId: UUID }> = ({ authorId }) => {
-  const libraryId = useAudiobookState(AudiobookSelectors.selectedLibraryId)!
+export const AuthorDetails: FC<{ authorId: UUID; libraryId: UUID }> = ({ authorId, libraryId }) => {
   const author = useAudiobookState(AudiobookSelectors.selectAuthor(libraryId, authorId))
   const getAuthorDetails = useAudiobookState(s => s.fetchAuthorDetails)
   useEffect(() => void getAuthorDetails({ libraryId, id: authorId }), [authorId, libraryId, getAuthorDetails])
@@ -87,7 +85,7 @@ export const AuthorDetails: FC<{ authorId: UUID }> = ({ authorId }) => {
           <h2 className="p-2 pb-6 text-2xl"> {author.books.length} Books</h2>
           <ResponsiveGrid>
             {author.books.map((book, k) => (
-              <BookDisplay {...book} key={k} />
+              <BookPreview {...book} key={k} />
             ))}
           </ResponsiveGrid>
         </>

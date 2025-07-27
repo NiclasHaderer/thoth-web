@@ -1,20 +1,17 @@
 import { forwardRef } from "react"
 import { MdImageNotSupported } from "react-icons/md"
-import { useAudiobookState } from "@thoth/state/audiobook.state"
-import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
-import { SeriesModel } from "@thoth/client"
 import { Link } from "wouter"
+import { SeriesModel } from "@thoth/client"
 
-export const SeriesDisplay = forwardRef<HTMLSpanElement, SeriesModel>(({ id, title, coverID }, ref) => {
-  const seriesId = useAudiobookState(AudiobookSelectors.selectedLibraryId)
+export const SeriesPreview = forwardRef<HTMLSpanElement, SeriesModel>((series, ref) => {
   return (
     <span className="mx-6 mb-6 inline-block w-52" ref={ref}>
-      <Link href={`/libraries/${seriesId}/series/${id}`} aria-label={title} tabIndex={-1}>
-        {coverID ? (
+      <Link href={`/libraries/${series.library.id}/series/${series.id}`} aria-label={series.title} tabIndex={-1}>
+        {series.coverID ? (
           <img
             loading="lazy"
             className="h-52 w-52 cursor-pointer rounded-md border-2 border-transparent transition-colors hover:border-primary"
-            src={`/api/stream/image/${coverID}`}
+            src={`/api/stream/image/${series.coverID}`}
             alt="Series"
           />
         ) : (
@@ -23,8 +20,10 @@ export const SeriesDisplay = forwardRef<HTMLSpanElement, SeriesModel>(({ id, tit
       </Link>
 
       <div className="relative p-2 text-center">
-        <Link href={`/libraries/${seriesId}/series/${id}`}>
-          <span className="line-clamp-2 cursor-pointer hover:underline no-touch:group-focus:underline">{title}</span>
+        <Link href={`/libraries/${series.library.id}/series/${series.id}`}>
+          <span className="line-clamp-2 cursor-pointer hover:underline no-touch:group-focus:underline">
+            {series.title}
+          </span>
         </Link>
         {/*TODO amount*/}
         {/*<span className="text-font-secondary">{amount} Audiobooks</span>*/}

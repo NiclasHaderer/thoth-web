@@ -41,11 +41,9 @@ export type AudiobookState = {
   libraryMap: Record<string, LibraryModel>
   librarySorting: string[]
   libraryTotal: number
-  selectedLibraryId?: UUID
 }
 
 const INITIAL_STATE = {
-  selectedLibraryId: undefined as UUID | undefined,
   content: {},
   libraryMap: {},
   librarySorting: [],

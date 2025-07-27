@@ -3,8 +3,8 @@ import { LoginRegister } from "@thoth/components/login-register.tsx"
 import { useOnMount } from "@thoth/hooks/lifecycle.ts"
 import { useAuthState } from "@thoth/state/auth.state.ts"
 
-export const LoginOutlet: FC<{ path: string }> = ({ path }) => {
+export const RegisterOutlet: FC<{ path: string }> = ({ path }) => {
   const logout = useAuthState(s => s.logout)
   useOnMount(() => logout())
-  return <LoginRegister type="login" path={path} />
+  return <LoginRegister type="register" path={path} />
 }

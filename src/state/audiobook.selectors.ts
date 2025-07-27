@@ -1,11 +1,8 @@
-import { LibraryModel, UUID } from "@thoth/client"
+import { UUID } from "@thoth/client"
 import { AudiobookState } from "./audiobook.state"
 
 export const AudiobookSelectors = {
   // Libraries
-  selectedLibraryContent: (state: AudiobookState) => state.content[state.selectedLibraryId!],
-  selectedLibrary: (state: AudiobookState): LibraryModel | undefined => state.libraryMap[state.selectedLibraryId!],
-  selectedLibraryId: (state: AudiobookState) => state.selectedLibraryId,
   libraries: (state: AudiobookState) => Object.values(state.libraryMap),
 
   // Books

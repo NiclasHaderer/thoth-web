@@ -29,7 +29,6 @@ export const LoginRegister: FC<{ type: "register" | "login"; path: string }> = (
     const cb = type === "login" ? userState.login : userState.register
     const result = await cb(values)
     if (!result.success) return
-    console.log({ result, path })
     navigate(path)
   }
 
