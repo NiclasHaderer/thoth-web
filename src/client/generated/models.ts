@@ -111,9 +111,9 @@ export interface PartialLibraryApiModel {
   preferEmbeddedMetadata: boolean | undefined
 }
 
-export interface TitledId {
+export interface NamedId {
   id: UUID
-  title: string
+  name: string
 }
 
 export interface AuthorModel {
@@ -123,16 +123,16 @@ export interface AuthorModel {
   deathDate: string | undefined
   id: UUID
   imageID: UUID | undefined
-  library: TitledId
+  library: NamedId
   name: string
   provider: string | undefined
   providerID: string | undefined
   website: string | undefined
 }
 
-export interface NamedId {
+export interface TitledId {
   id: UUID
-  name: string
+  title: string
 }
 
 export interface BookModel {
@@ -143,7 +143,7 @@ export interface BookModel {
   id: UUID
   isbn: string | undefined
   language: string | undefined
-  library: TitledId
+  library: NamedId
   narrator: string | undefined
   provider: string | undefined
   providerID: string | undefined
@@ -160,7 +160,7 @@ export interface SeriesModel {
   description: string | undefined
   genres: Array<NamedId>
   id: UUID
-  library: TitledId
+  library: NamedId
   primaryWorks: number | undefined
   provider: string | undefined
   providerID: string | undefined
@@ -199,6 +199,7 @@ export interface TrackModel {
   book: TitledId
   duration: number
   id: UUID
+  library: NamedId
   path: string
   title: string
   trackNr: number | undefined

@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "npm run build-routes && vite",
     "build": "npm run build-routes && tsc -b && USE_PREACT=1 vite build",
+    "typecheck": "tsc -b",
     "lint": "eslint .",
     "preview": "vite preview",
     "build-routes": "tsx build-routes.ts",

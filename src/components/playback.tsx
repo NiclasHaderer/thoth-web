@@ -1,11 +1,11 @@
 import { FC, useEffect, useRef } from "react"
 import { MdImageNotSupported, MdPauseCircle, MdPlayCircle, MdSkipNext, MdSkipPrevious, MdStop } from "react-icons/md"
+import { Link } from "wouter"
+import { ProgressBar } from "@thoth/components/progress-bar"
+import { Ripple } from "@thoth/components/ripple"
 import { useAudio, useDuration, useOnEnded, usePercentage, usePlayState, usePosition } from "../hooks/playback"
 import { usePlaybackState } from "../state/playback.state"
 import { toReadableTime } from "./track/helpers"
-import { ProgressBar } from "@thoth/components/progress-bar"
-import { Ripple } from "@thoth/components/ripple"
-import { Link } from "wouter"
 
 export const Playback: FC<{ className?: string }> = ({ className }) => {
   const playback = usePlaybackState()
@@ -34,7 +34,12 @@ export const Playback: FC<{ className?: string }> = ({ className }) => {
       />
 
       <div className="flex items-center">
-        <Link href={`/books/${track.book.id}`} className="mr-3" aria-label={track.title} tabIndex={-1}>
+        <Link
+          href={`/libraries/${track.library.id}/books/${track.book.id}`}
+          className="mr-3"
+          aria-label={track.title}
+          tabIndex={-1}
+        >
           {track.coverID ? (
             <img
               className="h-12 w-12 rounded-md md:h-20 md:w-20"
@@ -55,7 +60,7 @@ export const Playback: FC<{ className?: string }> = ({ className }) => {
             {track.authors.map((author, index) => (
               <Link
                 className="pr-2 hover:underline no-touch:focus:underline"
-                href={`/authors/${author.id}`}
+                href={`/libraries/${track.library.id}/authors/${author.id}`}
                 key={index}
               >
                 {author.name}
