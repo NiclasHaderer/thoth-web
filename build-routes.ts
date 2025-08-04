@@ -5,12 +5,6 @@ import { fileURLToPath } from "node:url"
 import * as prettier from "prettier"
 import { keepIndent, trimIndent } from "./src/utils/trim-inden"
 
-const listFolderContent = async (folderPath: string): Promise<{ files: string[]; directories: string[] }> => {
-  const content = await nodeFs.promises.readdir(folderPath, { withFileTypes: true })
-  const files = content.filter(item => item.isFile()).map(item => item.name)
-  const directories = content.filter(item => item.isDirectory()).map(item => item.name)
-  return { files, directories }
-}
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 const rootDir = __dirname
@@ -29,10 +23,11 @@ type Paths = {
   [folderPath: string]: Path
 }
 
-const paths: Path = {
-  layout: null,
-  page: null,
-  children: {},
+const listFolderContent = async (folderPath: string): Promise<{ files: string[]; directories: string[] }> => {
+  const content = await nodeFs.promises.readdir(folderPath, { withFileTypes: true })
+  const files = content.filter(item => item.isFile()).map(item => item.name)
+  const directories = content.filter(item => item.isDirectory()).map(item => item.name)
+  return { files, directories }
 }
 
 const resolveExport = async (file: string): Promise<string> => {
@@ -44,10 +39,9 @@ const resolveExport = async (file: string): Promise<string> => {
   return exportMatch[1]
 }
 
-const getAtPath = (folderPath: string): Path => {
+const getAtPath = (folderPath: string, rootPaths: Path): Path => {
   folderPath = folderPath.replace(routesDir, "")
   const segments = folderPath.split("/").filter(segment => segment !== "")
-  let rootPaths = paths
   for (let i = 0; i < segments.length; i++) {
     const segment = segments[i]
     rootPaths = rootPaths.children[segment]
@@ -55,22 +49,22 @@ const getAtPath = (folderPath: string): Path => {
   return rootPaths
 }
 
-const insertPath = (folderPath: string, layout: Path["layout"], page: Path["page"]) => {
+const insertPath = (folderPath: string, layout: Path["layout"], page: Path["page"], rootPaths: Path) => {
   folderPath = folderPath.replace(routesDir, "")
   const segments = folderPath.split("/").filter(segment => segment !== "")
-  let rootPaths = paths
+  let localRoot = rootPaths
   for (const segment of segments) {
-    if (!(segment in rootPaths.children)) {
-      rootPaths.children[segment] = {
+    if (!(segment in localRoot.children)) {
+      localRoot.children[segment] = {
         layout: null,
         page: null,
         children: {},
       }
     }
-    rootPaths = rootPaths.children[segment]
+    localRoot = localRoot.children[segment]
   }
 
-  const insertAt = getAtPath(folderPath)
+  const insertAt = getAtPath(folderPath, rootPaths)
   if (layout) {
     if (!layout.export) throw new Error(`No export symbol found for ${layout.importPath}`)
     insertAt.layout = layout
@@ -81,10 +75,13 @@ const insertPath = (folderPath: string, layout: Path["layout"], page: Path["page
   }
 }
 
-const resolvePaths = async (root: string) => {
+const resolvePaths = async (root: string, paths: Path) => {
   const { files, directories } = await listFolderContent(root)
   for (const file of files) {
-    const importPath = nodePath.join(root.replace(rootDir, ""), file).replace("/src", ".")
+    let importPath = nodePath.join(root.replace(rootDir, ""), file)
+    // To abs path
+    importPath = path.resolve(importPath)
+
     const exportSymbol = await resolveExport(nodePath.join(root, file))
 
     if (file === "layout.tsx") {
@@ -95,27 +92,38 @@ const resolvePaths = async (root: string) => {
           importPath,
           lazy: false,
         },
-        null
+        null,
+        paths
       )
     } else if (file === "page.tsx") {
-      insertPath(root, null, {
-        export: exportSymbol,
-        lazy: false,
-        importPath,
-      })
+      insertPath(
+        root,
+        null,
+        {
+          export: exportSymbol,
+          lazy: false,
+          importPath,
+        },
+        paths
+      )
     } else if (file === "page.lazy.tsx") {
-      insertPath(root, null, {
-        export: exportSymbol,
-        lazy: true,
-        importPath,
-      })
+      insertPath(
+        root,
+        null,
+        {
+          export: exportSymbol,
+          lazy: true,
+          importPath,
+        },
+        paths
+      )
     } else {
       throw new Error(`Unexpected file: ${file}`)
     }
   }
 
   for (const directory of directories) {
-    await resolvePaths(nodePath.join(root, directory))
+    await resolvePaths(nodePath.join(root, directory), paths)
   }
 }
 
@@ -163,8 +171,8 @@ const getComponent = (page: Page) => {
   }
 }
 
-const writeRoutes = async () => {
-  const writeImports = (path: Path, folderPath: string, imports: string[] = []): string[] => {
+const buildRoutes = async (paths: Path) => {
+  const writeImports = (path: Path, imports: string[] = []): string[] => {
     const createImport = (p: Path["layout"] | Path["page"]) => {
       if (p?.lazy) {
         imports.push(
@@ -177,11 +185,11 @@ const writeRoutes = async () => {
     createImport(path.layout)
     createImport(path.page)
     for (const child in path.children) {
-      imports.push(...writeImports(path.children[child], `${folderPath}/${child}`))
+      imports.push(...writeImports(path.children[child]))
     }
     return imports
   }
-  const imports = writeImports(paths, "@ratings/app", [
+  const imports = writeImports(paths, [
     'import { lazy, Suspense } from "react"',
     'import { Route, Router, Switch } from "wouter"',
     'import { useHashLocation } from "wouter/use-hash-location";',
@@ -269,8 +277,12 @@ const writeRoutes = async () => {
   }
   `
 
+  return imports.join("\n") + "\n" + router
+}
+
+const writeFile = async (content: string) => {
   const destinationFile = nodePath.join(rootDir, "src", "routes.tsx")
-  let content = imports.join("\n") + "\n" + router
+
   try {
     const config = await prettier.resolveConfig(destinationFile)
     content = await prettier.format(content, {
@@ -284,10 +296,22 @@ const writeRoutes = async () => {
   await nodeFs.promises.writeFile(destinationFile, content)
 }
 
-const main = async () => {
-  await resolvePaths(routesDir)
-
-  await writeRoutes()
+export const getContent = async () => {
+  const paths: Path = {
+    layout: null,
+    page: null,
+    children: {},
+  }
+  await resolvePaths(routesDir, paths)
+  return await buildRoutes(paths)
 }
 
-void main()
+const main = async () => {
+  await writeFile(await getContent())
+}
+// Check if this is the main module being run directly
+if (import.meta.url === `file://${__filename}`) {
+  main()
+    .then(() => console.log("Routes file generated successfully."))
+    .catch(err => console.error("Error generating routes file:", err))
+}
