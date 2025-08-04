@@ -183,7 +183,7 @@ const writeRoutes = async () => {
   }
   const imports = writeImports(paths, "@ratings/app", [
     'import { lazy, Suspense } from "react"',
-    'import { Route, Router, Redirect, Switch } from "wouter"',
+    'import { Route, Router, Switch } from "wouter"',
     'import { useHashLocation } from "wouter/use-hash-location";',
     'import { Loading } from "@thoth/components/loading.tsx"',
     'import { NotFound } from "@thoth/components/not-found.tsx"',
@@ -191,7 +191,7 @@ const writeRoutes = async () => {
   ])
 
   const cleanupPath = (path: string) => {
-    return path.replaceAll("/", "\\/").replaceAll(/\?<\w+>/g, "?:")
+    return path.replaceAll("/", "\\/")
   }
 
   const resolveAllPossibleChildPaths = (baseUrl: string, p: Path, topLevel = true): string[] => {
