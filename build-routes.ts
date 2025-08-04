@@ -186,6 +186,7 @@ const writeRoutes = async () => {
     'import { Route, Router, Redirect, Switch } from "wouter"',
     'import { useHashLocation } from "wouter/use-hash-location";',
     'import { Loading } from "@thoth/components/loading.tsx"',
+    'import { NotFound } from "@thoth/components/not-found.tsx"',
     'import { UUID } from "@thoth/client"',
   ])
 
@@ -252,7 +253,7 @@ const writeRoutes = async () => {
   const routes = writeRoutes(paths, "/")
   routes.push(trimIndent`
   <Route>
-    <Redirect to="/" />
+    <NotFound/>
   </Route>
   `)
 

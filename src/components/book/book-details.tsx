@@ -61,7 +61,7 @@ export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId, lib
             <div className="flex pb-3">
               <h3 className="min-w-40 pr-3 uppercase text-font-secondary">Authors</h3>
               {book.authors.map(author => (
-                <Link href={`/authors/${author.id}`} key={author.id}>
+                <Link href={`/libraries/${libraryId}/authors/${author.id}`} key={author.id}>
                   <h3 className="hover:underline focus:underline group-focus:underline">{author.name}</h3>
                 </Link>
               ))}
@@ -101,10 +101,6 @@ export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId, lib
               <MdPlayCircle className="mr-2" /> Play
             </ColoredButton>
 
-            <ColoredButton color="secondary">
-              <BiDotsVerticalRounded />
-            </ColoredButton>
-
             <ColoredButton color="secondary" className="mr-3">
               <MdCheckCircle className="mr-2" />
               Done
@@ -126,6 +122,7 @@ export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId, lib
                 startPlayback={startPlayback}
                 {...track}
                 coverID={book?.coverID}
+                libraryId={libraryId}
                 key={k}
                 index={k}
               />
