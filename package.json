@@ -9,7 +9,7 @@
     "typecheck": "tsc -b",
     "lint": "eslint .",
     "preview": "vite preview",
-    "build-routes": "tsx build-routes.ts",
+    "build-routes": "tsx build-routes.ts --write-routes",
     "prepare": "husky"
   },
   "dependencies": {
@@ -32,7 +32,7 @@
     "@tailwindcss/typography": "^0.5.16",
     "@trivago/prettier-plugin-sort-imports": "^5.2.2",
     "@types/dompurify": "^3.2.0",
-    "@types/node": "^22.10.7",
+    "@types/node": "^18.19.121",
     "@types/react": "^19.0.7",
     "@types/react-dom": "^19.0.3",
     "@vitejs/plugin-react": "^4.3.4",
