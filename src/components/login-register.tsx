@@ -1,14 +1,13 @@
 import { FC, useState } from "react"
 import { MdLock, MdPerson, MdVisibility, MdVisibilityOff } from "react-icons/md"
-import { Link } from "wouter"
-import { useLocation } from "wouter"
+import { Link, useLocation } from "wouter"
 import { ColoredButton } from "@thoth/components/colored-button"
 import { Logo } from "@thoth/components/icons/logo"
 import { ManagedInput } from "@thoth/components/input/managed-input"
 import { Form, useForm } from "@thoth/hooks/form"
 import { useAuthState } from "@thoth/state/auth.state"
 
-export const LoginRegister: FC<{ type: "register" | "login"; path: string }> = ({ type, path }) => {
+export const LoginRegister: FC<{ type: "register" | "login"; redirectPath: string }> = ({ type, redirectPath }) => {
   const [, navigate] = useLocation()
   const form = useForm(
     {
@@ -29,7 +28,7 @@ export const LoginRegister: FC<{ type: "register" | "login"; path: string }> = (
     const cb = type === "login" ? userState.login : userState.register
     const result = await cb(values)
     if (!result.success) return
-    navigate(path)
+    navigate(redirectPath)
   }
 
   return (

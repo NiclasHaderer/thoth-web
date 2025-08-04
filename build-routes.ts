@@ -12,10 +12,16 @@ const routesDir = nodePath.join(rootDir, "src", "app")
 type Layout = { export: string; importPath: string; lazy: false }
 type Page = { export: string; importPath: string; lazy: boolean }
 
+type SegmentType = "path" | "uuid" | "string" | "literal"
+
 type Path = {
   layout: Layout | null
   page: Page | null
   children: Paths
+  segmentRegex: string | null
+  type: SegmentType | null
+  variableName: string | null
+  parent: Path | null
 }
 
 type Paths = {
@@ -58,6 +64,8 @@ const insertPath = (folderPath: string, layout: Path["layout"], page: Path["page
         layout: null,
         page: null,
         children: {},
+        ...segmentToPath(segment),
+        parent: localRoot,
       }
     }
     localRoot = localRoot.children[segment]
@@ -124,42 +132,82 @@ const resolvePaths = async (root: string, paths: Path) => {
   }
 }
 
-const resolveParamsAndTypes = (path: string) => {
+const resolveParamTypes = (path: Path | null) => {
   let final = `{`
 
-  const finds = path.matchAll(/\?<(\w+)>/g)
-  for (const find of finds) {
-    if (find[1].toLowerCase().includes("id")) {
-      final += `${find[1]}: UUID,`
-    } else {
-      final += `${find[1]}: string,`
+  while (path) {
+    if (path.variableName) {
+      console.assert(path.type !== "literal")
+      if (path.type === "uuid") {
+        final += `${path.variableName}: UUID,`
+      } else if (path.type === "string") {
+        final += `${path.variableName}: string,`
+      } else if (path.type === "path") {
+        final += `${path.variableName}: string,`
+      } else {
+        throw new Error(`Unknown segment type "${path.type}" for variable "${path.variableName}"`)
+      }
     }
+    path = path.parent
   }
   final += `}`
   return final
 }
 
-const segmentShouldBeIgnored = (segment: string) => {
-  return segment.startsWith("(") && segment.endsWith(")")
-}
+const segmentToPath = (segment: string): Pick<Path, "segmentRegex" | "type" | "variableName"> => {
+  let segmentName: string
+  let segmentType: SegmentType
 
-const segmentToPath = (segment: string) => {
   if (segment.startsWith("[") && segment.endsWith("]")) {
-    let segmentName = segment.replace("[", "").replace("]", "")
-    if (segmentName.endsWith("{path}")) {
-      segmentName = segmentName.replace("{path}", "")
-      return `(?<${segmentName}>.+)`
-    } else {
-      return `(?<${segmentName}>(?:\\w|-)+)`
+    let cleanSegment = segment.replace("[", "").replace("]", "")
+    const segmentPlusType = cleanSegment.split(" ")
+    if (segmentPlusType.length > 2) {
+      throw new Error(
+        `Invalid segment name "${cleanSegment}" in path "${segment}". Segment names cannot contain more than 1 space`
+      )
     }
+
+    if (segmentPlusType.length == 1) {
+      segmentName = cleanSegment
+      segmentType = "string"
+    } else {
+      segmentType = segmentPlusType[0] as SegmentType
+      segmentName = segmentPlusType[1]
+    }
+  } else if (segment.startsWith("(") && segment.endsWith(")")) {
+    return { segmentRegex: null, type: null, variableName: null }
+  } else {
+    segmentName = segment
+    segmentType = "literal"
   }
-  return segment
+  if (!segmentName.match(/^[a-z]|[A-Z]$/)) {
+    throw new Error(`Invalid segment name "${segmentName}" in path "${segment}". Segment names must be alphanumeric.`)
+  }
+
+  let segmentRegex: string
+  if (segmentType == "uuid") {
+    segmentRegex = `(?<${segmentName}>[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})`
+  } else if (segmentType == "path") {
+    segmentRegex = `(?<${segmentName}>[^/]+)`
+  } else if (segmentType == "string") {
+    segmentRegex = `(?<${segmentName}>(?:\\w|-)+)`
+  } else if (segmentType == "literal") {
+    segmentRegex = segmentName
+  } else {
+    throw new Error(`Unknown segment type "${segmentType}" in path "${segment}"`)
+  }
+
+  return {
+    segmentRegex,
+    type: segmentType,
+    variableName: segmentType === "literal" ? null : segmentName,
+  }
 }
 
 const getComponent = (page: Page) => {
   if (page.lazy) {
     return `
-    <Suspense fallback={<Loading count={16}/> }>
+    <Suspense fallback={<></>}>
       <${page.export} {...params}/>
     </Suspense>
     `
@@ -190,7 +238,6 @@ const buildRoutes = async (paths: Path) => {
     'import { lazy, Suspense } from "react"',
     'import { Route, Router, Switch } from "wouter"',
     'import { useHashLocation } from "wouter/use-hash-location";',
-    'import { Loading } from "@thoth/components/loading.tsx"',
     'import { NotFound } from "@thoth/components/not-found.tsx"',
     'import { UUID } from "@thoth/client"',
   ])
@@ -202,8 +249,8 @@ const buildRoutes = async (paths: Path) => {
   const resolveAllPossibleChildPaths = (baseUrl: string, p: Path, topLevel = true): string[] => {
     let possibleUrls: string[] = []
 
-    for (const [childDir, child] of Object.entries(p.children)) {
-      const childPath = segmentShouldBeIgnored(childDir) ? baseUrl : nodePath.join(baseUrl, segmentToPath(childDir))
+    for (const [, child] of Object.entries(p.children)) {
+      const childPath = child.segmentRegex ? nodePath.join(baseUrl, child.segmentRegex) : baseUrl
       if (child.layout || child.page) {
         possibleUrls.push(cleanupPath(`^(${childPath})$`))
       }
@@ -226,7 +273,7 @@ const buildRoutes = async (paths: Path) => {
     if (path.layout) {
       content.push(
         `<Route path={/${resolveAllPossibleChildPaths(baseUrl, path).join("|")}/}>`,
-        `{(params: ${resolveParamsAndTypes(baseUrl)})=> (`,
+        `{(params: ${resolveParamTypes(path)})=> (`,
         `<${path.layout.export} {...params}>`
       )
       parentsLayoutClose = [`</${path.layout.export}>`, ")}", `</Route>`, ...parentsLayoutClose]
@@ -237,7 +284,7 @@ const buildRoutes = async (paths: Path) => {
       const baseUrlRegex = baseUrl.replaceAll("/", "\\/")
       const out = `
           <Route path={/^${baseUrlRegex}$/}>
-            { (params: ${resolveParamsAndTypes(baseUrl)}) => {
+            { (params: ${resolveParamTypes(path)}) => {
               return (
                 ${contentStr}
               )
@@ -247,8 +294,8 @@ const buildRoutes = async (paths: Path) => {
       content.push(out)
     }
 
-    for (const [childDir, child] of Object.entries(path.children)) {
-      const childPath = segmentShouldBeIgnored(childDir) ? baseUrl : nodePath.join(baseUrl, segmentToPath(childDir))
+    for (const [, child] of Object.entries(path.children)) {
+      const childPath = child.segmentRegex ? nodePath.join(baseUrl, child.segmentRegex) : baseUrl
       content.push(...writeRoutes(child, childPath))
     }
 
@@ -288,6 +335,10 @@ const getContent = async () => {
     layout: null,
     page: null,
     children: {},
+    segmentRegex: "",
+    type: "path",
+    parent: null,
+    variableName: null,
   }
   await resolvePaths(routesDir, paths)
   const content = await buildRoutes(paths)
@@ -312,6 +363,10 @@ const writeRoutesFile = async () => {
   if (currentContent.trim() !== newContent.trim()) {
     await writeFile(newContent)
   }
+}
+
+if (process.argv && process.argv.includes("--write-routes")) {
+  void writeRoutesFile()
 }
 
 export const buildRoutesPlugin = (): Plugin => {
