@@ -78,9 +78,7 @@ const insertPath = (folderPath: string, layout: Path["layout"], page: Path["page
 const resolvePaths = async (root: string, paths: Path) => {
   const { files, directories } = await listFolderContent(root)
   for (const file of files) {
-    let importPath = nodePath.join(root.replace(rootDir, ""), file)
-    // To abs path
-    importPath = path.resolve(importPath)
+    const importPath = nodePath.join(root.replace(rootDir, ""), file).replace("/src", "@thoth")
 
     const exportSymbol = await resolveExport(nodePath.join(root, file))
 
