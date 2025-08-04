@@ -2,8 +2,7 @@ import * as nodeFs from "node:fs"
 import * as nodePath from "node:path"
 import * as path from "node:path"
 import { fileURLToPath } from "node:url"
-import * as prettier from "prettier"
-import { keepIndent, trimIndent } from "./src/utils/trim-inden"
+import type { Plugin } from "vite"
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -159,7 +158,7 @@ const segmentToPath = (segment: string) => {
 
 const getComponent = (page: Page) => {
   if (page.lazy) {
-    return trimIndent`
+    return `
     <Suspense fallback={<Loading count={16}/> }>
       <${page.export} {...params}/>
     </Suspense>
@@ -236,11 +235,11 @@ const buildRoutes = async (paths: Path) => {
     if (path.page) {
       const contentStr = getComponent(path.page)
       const baseUrlRegex = baseUrl.replaceAll("/", "\\/")
-      const out = trimIndent`
+      const out = `
           <Route path={/^${baseUrlRegex}$/}>
             { (params: ${resolveParamsAndTypes(baseUrl)}) => {
               return (
-                ${keepIndent(contentStr)}
+                ${contentStr}
               )
             }}
           </Route>
@@ -257,13 +256,13 @@ const buildRoutes = async (paths: Path) => {
   }
 
   const routes = writeRoutes(paths, "/")
-  routes.push(trimIndent`
+  routes.push(`
   <Route>
     <NotFound/>
   </Route>
   `)
 
-  const router = trimIndent`
+  const router = `
   export const Routes = () => {
     return (
       <Router hook={useHashLocation}>
@@ -281,35 +280,51 @@ const buildRoutes = async (paths: Path) => {
 const writeFile = async (content: string) => {
   const destinationFile = nodePath.join(rootDir, "src", "routes.tsx")
 
-  try {
-    const config = await prettier.resolveConfig(destinationFile)
-    content = await prettier.format(content, {
-      ...config!,
-      filepath: destinationFile,
-    })
-  } catch {
-    // If prettier fails, we just write the content without formatting
-    console.log("Could not format routes.tsx, writing unformatted content.")
-  }
   await nodeFs.promises.writeFile(destinationFile, content)
 }
 
-export const getContent = async () => {
+const getContent = async () => {
   const paths: Path = {
     layout: null,
     page: null,
     children: {},
   }
   await resolvePaths(routesDir, paths)
-  return await buildRoutes(paths)
+  const content = await buildRoutes(paths)
+  if (process.env.ENABLE_PRETTIER) {
+    const prettier = await import("prettier")
+    const config = await prettier.resolveConfig("src/000.tsx")
+    return await prettier.format(content, {
+      ...config!,
+      filepath: "src/000.tsx",
+    })
+  } else {
+    return content
+  }
 }
 
-const main = async () => {
-  await writeFile(await getContent())
+const writeRoutesFile = async () => {
+  const destinationFile = nodePath.join(rootDir, "src", "routes.tsx")
+
+  const currentContent = await nodeFs.promises.readFile(destinationFile, "utf-8").catch(() => "")
+  const newContent = await getContent()
+
+  if (currentContent.trim() !== newContent.trim()) {
+    await writeFile(newContent)
+  }
 }
-// Check if this is the main module being run directly
-if (import.meta.url === `file://${__filename}`) {
-  main()
-    .then(() => console.log("Routes file generated successfully."))
-    .catch(err => console.error("Error generating routes file:", err))
+
+export const buildRoutesPlugin = (): Plugin => {
+  return {
+    name: "rebuild-routes",
+    enforce: "pre",
+    buildStart: async () => {
+      await writeRoutesFile()
+    },
+    watchChange: async id => {
+      if (id.replace(__dirname, "").startsWith("/src/app/")) {
+        await writeRoutesFile()
+      }
+    },
+  }
 }
