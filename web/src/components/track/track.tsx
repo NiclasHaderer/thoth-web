@@ -1,8 +1,8 @@
 import { FC } from "react"
 import { MdImageNotSupported, MdPlayCircle } from "react-icons/md"
-import { toReadableTime } from "./helpers"
-import { NamedId } from "@thoth/client"
 import { Link } from "wouter"
+import { NamedId, UUID } from "@thoth/client"
+import { toReadableTime } from "./helpers"
 
 interface TrackProps {
   coverID?: string | null
@@ -12,9 +12,19 @@ interface TrackProps {
   index: number
   trackNr?: number | null
   startPlayback: (index: number) => void
+  libraryId: UUID
 }
 
-export const Track: FC<TrackProps> = ({ coverID, title, duration, trackNr, index, authors, startPlayback }) => (
+export const Track: FC<TrackProps> = ({
+  coverID,
+  libraryId,
+  title,
+  duration,
+  trackNr,
+  index,
+  authors,
+  startPlayback,
+}) => (
   <div className="mr-3 flex rounded-md p-2 even:bg-active-light">
     <div
       className="group relative cursor-pointer"
@@ -41,7 +51,7 @@ export const Track: FC<TrackProps> = ({ coverID, title, duration, trackNr, index
         <div className="flex flex-col pl-6">
           <span>{title}</span>
           {authors.map(author => (
-            <Link href={`/authors/${author.id}`} tabIndex={-1} key={author.id}>
+            <Link href={`/libraries/${libraryId}/authors/${author.id}`} tabIndex={-1} key={author.id}>
               <span className="cursor-pointer hover:underline group-focus:underline">{author.name}</span>
             </Link>
           ))}
