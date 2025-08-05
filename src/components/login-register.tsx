@@ -7,7 +7,7 @@ import { ManagedInput } from "@thoth/components/input/managed-input"
 import { Form, useForm } from "@thoth/hooks/form"
 import { useAuthState } from "@thoth/state/auth.state"
 
-export const LoginRegister: FC<{ type: "register" | "login"; redirectPath: string }> = ({ type, redirectPath }) => {
+export const LoginRegister: FC<{ type: "register" | "login"; redirectPath?: string }> = ({ type, redirectPath }) => {
   const [, navigate] = useLocation()
   const form = useForm(
     {
@@ -28,7 +28,7 @@ export const LoginRegister: FC<{ type: "register" | "login"; redirectPath: strin
     const cb = type === "login" ? userState.login : userState.register
     const result = await cb(values)
     if (!result.success) return
-    navigate(redirectPath)
+    navigate(redirectPath || "/libraries", { replace: true })
   }
 
   return (

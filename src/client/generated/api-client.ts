@@ -18,6 +18,7 @@ import type {
   JWKs,
   LibraryApiModel,
   LibraryModel,
+  LibraryPermissions,
   LibraryPermissionsModel,
   MetadataAgent,
   MetadataAgentApiModel,
@@ -48,9 +49,11 @@ import type {
   ThothRegisterUser,
   ThothRenameUser,
   ThothUser,
-  ThothUserPermissions,
+  ThothUserWithPermissions,
   TitledId,
   TrackModel,
+  UpdateLibraryPermissionsModel,
+  UpdatePermissionsModel,
   UserPermissionsModel,
   UUID,
   YearRange,
@@ -100,7 +103,7 @@ export const createApi = (
       body: ThothRegisterUser,
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
-    ): Promise<ApiResponse<ThothUser<UUID, UserPermissionsModel>>> => {
+    ): Promise<ApiResponse<ThothUser>> => {
       return _request(
         `/api/auth/register`,
         "POST",
@@ -130,10 +133,10 @@ export const createApi = (
       }: {
         id: UUID
       },
-      body: ThothModifyPermissions<UserPermissionsModel>,
+      body: ThothModifyPermissions<UpdatePermissionsModel>,
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
-    ): Promise<ApiResponse<ThothUser<UUID, UserPermissionsModel>>> => {
+    ): Promise<ApiResponse<ThothUser>> => {
       return _request(
         `/api/auth/user/${id}/permissions`,
         "PUT",
@@ -153,7 +156,7 @@ export const createApi = (
       },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
-    ): Promise<ApiResponse<ThothUser<UUID, UserPermissionsModel>>> => {
+    ): Promise<ApiResponse<ThothUser>> => {
       return _request(
         `/api/auth/user/${id}`,
         "GET",
@@ -188,7 +191,7 @@ export const createApi = (
     getCurrentUser: (
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
-    ): Promise<ApiResponse<ThothUser<UUID, UserPermissionsModel>>> => {
+    ): Promise<ApiResponse<ThothUserWithPermissions<UserPermissionsModel>>> => {
       return _request(
         `/api/auth/user/current`,
         "GET",
@@ -203,7 +206,7 @@ export const createApi = (
     listUsers: (
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
-    ): Promise<ApiResponse<Array<ThothUser<UUID, UserPermissionsModel>>>> => {
+    ): Promise<ApiResponse<Array<ThothUserWithPermissions<UserPermissionsModel>>>> => {
       return _request(
         `/api/auth/user`,
         "GET",
@@ -224,7 +227,7 @@ export const createApi = (
       body: ThothRenameUser,
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
-    ): Promise<ApiResponse<ThothUser<UUID, UserPermissionsModel>>> => {
+    ): Promise<ApiResponse<ThothUser>> => {
       return _request(
         `/api/auth/user/${id}/username`,
         "POST",
@@ -401,21 +404,6 @@ export const createApi = (
     ): Promise<ApiResponse<Empty>> => {
       return _request(
         `/api/libraries/${libraryId}/rescan`,
-        "POST",
-        "text",
-        _mergeHeaders(defaultHeadersImpl, headers),
-        undefined,
-        [...defaultInterceptors, ...interceptors],
-        executor,
-        true
-      )
-    },
-    rescanAllLibraries: (
-      headers: HeadersInit = {},
-      interceptors: ApiInterceptor[] = []
-    ): Promise<ApiResponse<Empty>> => {
-      return _request(
-        `/api/libraries/rescan`,
         "POST",
         "text",
         _mergeHeaders(defaultHeadersImpl, headers),
@@ -1270,7 +1258,7 @@ export const createApi = (
         undefined,
         [...defaultInterceptors, ...interceptors],
         executor,
-        true
+        false
       )
     },
   } as const
