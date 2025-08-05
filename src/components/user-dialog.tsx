@@ -1,19 +1,19 @@
+import { UUID } from "crypto"
 import { FC, useMemo } from "react"
-import { Form, useForm } from "@thoth/hooks/form"
 import { MdLocalLibrary, MdPerson } from "react-icons/md"
+import { ThothUser, UserPermissionsModel } from "@thoth/client"
 import { Dialog, DialogActions, DialogBody, DialogButtons } from "@thoth/components/dialog"
+import { MdFolderManaged } from "@thoth/components/icons/managed"
 import { ManagedInput } from "@thoth/components/input/managed-input"
 import { SelectLine } from "@thoth/components/input/select-line"
-import { MdFolderManaged } from "@thoth/components/icons/managed"
-import { ThothUser, UserPermissionsModel } from "@thoth/client"
-import { useAudiobookState } from "@thoth/state/audiobook.state"
+import { Form, useForm } from "@thoth/hooks/form"
 import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
-import { UUID } from "crypto"
+import { useAudiobookState } from "@thoth/state/audiobook.state"
 
 export const UserDialog: FC<{
   isOpen: boolean
   setIsOpen: (open: boolean) => void
-  user: ThothUser<UUID, UserPermissionsModel>
+  user: ThothUser
   onModifyUser: (id: UUID, user: "no-proper-type-defined") => void
 }> = ({ isOpen, setIsOpen, onModifyUser, user }) => {
   /* TODO this has to be implemented correctly */

@@ -1,8 +1,8 @@
 import { useState } from "react"
 import { MdDelete, MdEdit, MdPerson } from "react-icons/md"
+import { Api, ThothUser } from "@thoth/client"
 import { UserDialog } from "@thoth/components/user-dialog"
 import { useHttpRequest } from "@thoth/hooks/async-response"
-import { Api, ThothUser, UserPermissionsModel, UUID } from "@thoth/client"
 import { useOnMount } from "@thoth/hooks/lifecycle"
 import { useAuthState } from "@thoth/state/auth.state"
 
@@ -13,7 +13,7 @@ export const UserManager = () => {
   const updateUser = () => {
     throw new Error("Not implemented yet")
   }
-  const [userToEdit, setUserToEdit] = useState<ThothUser<UUID, UserPermissionsModel>>()
+  const [userToEdit, setUserToEdit] = useState<ThothUser>()
   useOnMount(async () => {
     await listUsers()
   })
@@ -56,11 +56,7 @@ export const UserManager = () => {
                     <td className="pl-2">{user.username}</td>
                     <td className="pl-2">{user.permissions.isAdmin ? "Admin" : "User"}</td>
                     <td className="pl-2">
-                      {user.permissions.libraries
-                        .map(l => {
-                          return `${l.name} (${l.canEdit ? "Edit" : "Read"})`
-                        })
-                        .join(", ")}
+                      {user.permissions.libraries.map(l => `${l.name} (${l.permissions})`).join(", ")}
                     </td>
                     <td className="pr-2">
                       <MdEdit className="h-4 w-4 opacity-0 transition-opacity group-hover:opacity-100" />

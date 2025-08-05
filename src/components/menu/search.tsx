@@ -17,9 +17,7 @@ export const Search: FC = () => {
 
   useGlobalEvent(
     "keyup",
-    () => {
-      setResultVisible(false)
-    },
+    () => setResultVisible(false),
     event => event.key === "Escape"
   )
 

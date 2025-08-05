@@ -1,5 +1,4 @@
 import { FC, useEffect } from "react"
-import { BiDotsVerticalRounded } from "react-icons/bi"
 import { MdCheckCircle, MdImageNotSupported, MdPlayCircle, MdRadioButtonUnchecked } from "react-icons/md"
 import { Link } from "wouter"
 import { DetailedBookModel, UUID } from "@thoth/client"
