@@ -15,23 +15,8 @@ export type Empty = ""
 
 export type UUID = `${string}-${string}-${string}-${string}-${string}`
 
-export interface ThothUserPermissions {
-  isAdmin: boolean
-}
-
-export interface LibraryPermissionsModel {
-  canEdit: boolean
+export interface ThothUser {
   id: UUID
-  name: string
-}
-
-export interface UserPermissionsModel extends ThothUserPermissions {
-  libraries: Array<LibraryPermissionsModel>
-}
-
-export interface ThothUser<ID extends NonNullable<any>, PERMISSIONS extends ThothUserPermissions> {
-  id: ID
-  permissions: PERMISSIONS
   username: string
 }
 
@@ -52,8 +37,37 @@ export interface JWKs {
   keys: Array<JWK>
 }
 
-export interface ThothModifyPermissions<PERMISSIONS extends ThothUserPermissions> {
+export type LibraryPermissions = "READONLY" | "READ_WRITE"
+
+export interface UpdateLibraryPermissionsModel {
+  id: UUID
+  permissions: LibraryPermissions
+}
+
+export interface UpdatePermissionsModel {
+  isAdmin: boolean
+  libraries: Array<UpdateLibraryPermissionsModel>
+}
+
+export interface ThothModifyPermissions<PERMISSIONS> {
   permissions: PERMISSIONS
+}
+
+export interface LibraryPermissionsModel {
+  id: UUID
+  name: string
+  permissions: LibraryPermissions
+}
+
+export interface UserPermissionsModel {
+  isAdmin: boolean
+  libraries: Array<LibraryPermissionsModel>
+}
+
+export interface ThothUserWithPermissions<PERMISSIONS extends NonNullable<any>> {
+  id: UUID
+  permissions: PERMISSIONS
+  username: string
 }
 
 export interface ThothRenameUser {
