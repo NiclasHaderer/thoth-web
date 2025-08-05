@@ -1,5 +1,4 @@
 import * as nodeFs from "node:fs"
-import * as nodePath from "node:path"
 import * as path from "node:path"
 import { fileURLToPath } from "node:url"
 import type { Plugin } from "vite"
@@ -7,22 +6,31 @@ import type { Plugin } from "vite"
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 const rootDir = __dirname
-const routesDir = nodePath.join(rootDir, "src", "app")
+const routesDir = `${rootDir}/src/app`
 
 type Layout = { export: string; importPath: string; lazy: false }
 type Page = { export: string; importPath: string; lazy: boolean }
 
 type SegmentType = "path" | "uuid" | "string" | "literal"
 
+type Segment = {
+  ignored: false
+  segmentType: SegmentType
+  segmentRegex: string
+  variableName: string
+  optional: boolean
+}
+
+type IgnoredSegment = {
+  ignored: true
+}
+
 type Path = {
   layout: Layout | null
   page: Page | null
   children: Paths
-  segmentRegex: string | null
-  type: SegmentType | null
-  variableName: string | null
   parent: Path | null
-}
+} & (Segment | IgnoredSegment)
 
 type Paths = {
   [folderPath: string]: Path
@@ -64,8 +72,8 @@ const insertPath = (folderPath: string, layout: Path["layout"], page: Path["page
         layout: null,
         page: null,
         children: {},
-        ...segmentToPath(segment),
         parent: localRoot,
+        ...segmentToPath(segment),
       }
     }
     localRoot = localRoot.children[segment]
@@ -85,9 +93,9 @@ const insertPath = (folderPath: string, layout: Path["layout"], page: Path["page
 const resolvePaths = async (root: string, paths: Path) => {
   const { files, directories } = await listFolderContent(root)
   for (const file of files) {
-    const importPath = nodePath.join(root.replace(rootDir, ""), file).replace("/src", "@thoth")
+    const importPath = `${root.replace(rootDir, "")}/${file}`.replace("/src", "@thoth")
 
-    const exportSymbol = await resolveExport(nodePath.join(root, file))
+    const exportSymbol = await resolveExport(`${root}/${file}`)
 
     if (file === "layout.tsx") {
       insertPath(
@@ -128,7 +136,7 @@ const resolvePaths = async (root: string, paths: Path) => {
   }
 
   for (const directory of directories) {
-    await resolvePaths(nodePath.join(root, directory), paths)
+    await resolvePaths(`${root}/${directory}`, paths)
   }
 }
 
@@ -136,17 +144,20 @@ const resolveParamTypes = (path: Path | null) => {
   let final = `{`
 
   while (path) {
-    if (path.variableName) {
-      console.assert(path.type !== "literal")
-      if (path.type === "uuid") {
-        final += `${path.variableName}: UUID,`
-      } else if (path.type === "string") {
-        final += `${path.variableName}: string,`
-      } else if (path.type === "path") {
-        final += `${path.variableName}: string,`
+    if (!path.ignored && path.segmentType !== "literal") {
+      if (path.segmentType === "uuid") {
+        final += `${path.variableName}: UUID`
+      } else if (path.segmentType === "string") {
+        final += `${path.variableName}: string`
+      } else if (path.segmentType === "path") {
+        final += `${path.variableName}: string`
       } else {
-        throw new Error(`Unknown segment type "${path.type}" for variable "${path.variableName}"`)
+        throw new Error(`Unknown segment type "${path.segmentType}" for variable "${path.variableName}"`)
       }
+      if (path.optional) {
+        final += ` | undefined`
+      }
+      final += `, `
     }
     path = path.parent
   }
@@ -154,12 +165,14 @@ const resolveParamTypes = (path: Path | null) => {
   return final
 }
 
-const segmentToPath = (segment: string): Pick<Path, "segmentRegex" | "type" | "variableName"> => {
+const segmentToPath = (segment: string): Segment | IgnoredSegment => {
   let segmentName: string
   let segmentType: SegmentType
 
-  if (segment.startsWith("[") && segment.endsWith("]")) {
-    let cleanSegment = segment.replace("[", "").replace("]", "")
+  let optional = false
+  if (segment.startsWith("[") || segment.endsWith("]") || (segment.startsWith("{") && segment.endsWith("}"))) {
+    optional = segment.startsWith("{") && segment.endsWith("}")
+    const cleanSegment = segment.replace("[", "").replace("]", "").replace("{", "").replace("}", "")
     const segmentPlusType = cleanSegment.split(" ")
     if (segmentPlusType.length > 2) {
       throw new Error(
@@ -175,7 +188,7 @@ const segmentToPath = (segment: string): Pick<Path, "segmentRegex" | "type" | "v
       segmentName = segmentPlusType[1]
     }
   } else if (segment.startsWith("(") && segment.endsWith(")")) {
-    return { segmentRegex: null, type: null, variableName: null }
+    return { ignored: true }
   } else {
     segmentName = segment
     segmentType = "literal"
@@ -188,7 +201,7 @@ const segmentToPath = (segment: string): Pick<Path, "segmentRegex" | "type" | "v
   if (segmentType == "uuid") {
     segmentRegex = `(?<${segmentName}>[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})`
   } else if (segmentType == "path") {
-    segmentRegex = `(?<${segmentName}>[^/]+)`
+    segmentRegex = `(?<${segmentName}>.*)`
   } else if (segmentType == "string") {
     segmentRegex = `(?<${segmentName}>(?:\\w|-)+)`
   } else if (segmentType == "literal") {
@@ -198,9 +211,11 @@ const segmentToPath = (segment: string): Pick<Path, "segmentRegex" | "type" | "v
   }
 
   return {
+    ignored: false,
     segmentRegex,
-    type: segmentType,
-    variableName: segmentType === "literal" ? null : segmentName,
+    segmentType: segmentType,
+    variableName: segmentName,
+    optional,
   }
 }
 
@@ -246,11 +261,22 @@ const buildRoutes = async (paths: Path) => {
     return path.replaceAll("/", "\\/")
   }
 
+  const joinUrlPaths = (base: string, path: Path) => {
+    if (path.ignored) {
+      return base
+    }
+    if (path.optional) {
+      return `${base}(?:/${path.segmentRegex})?`
+    } else {
+      return `${base}/${path.segmentRegex}`
+    }
+  }
+
   const resolveAllPossibleChildPaths = (baseUrl: string, p: Path, topLevel = true): string[] => {
     let possibleUrls: string[] = []
 
     for (const [, child] of Object.entries(p.children)) {
-      const childPath = child.segmentRegex ? nodePath.join(baseUrl, child.segmentRegex) : baseUrl
+      const childPath = joinUrlPaths(baseUrl, child)
       if (child.layout || child.page) {
         possibleUrls.push(cleanupPath(`^(${childPath})$`))
       }
@@ -295,14 +321,14 @@ const buildRoutes = async (paths: Path) => {
     }
 
     for (const [, child] of Object.entries(path.children)) {
-      const childPath = child.segmentRegex ? nodePath.join(baseUrl, child.segmentRegex) : baseUrl
+      const childPath = joinUrlPaths(baseUrl, child)
       content.push(...writeRoutes(child, childPath))
     }
 
     return [...content, ...parentsLayoutClose]
   }
 
-  const routes = writeRoutes(paths, "/")
+  const routes = writeRoutes(paths, "")
   routes.push(`
   <Route>
     <NotFound/>
@@ -325,24 +351,22 @@ const buildRoutes = async (paths: Path) => {
 }
 
 const writeFile = async (content: string) => {
-  const destinationFile = nodePath.join(rootDir, "src", "routes.tsx")
+  const destinationFile = `${rootDir}/src/routes.tsx`
 
   await nodeFs.promises.writeFile(destinationFile, content)
 }
 
-const getContent = async () => {
+const getContent = async (makePretty: boolean) => {
   const paths: Path = {
     layout: null,
     page: null,
     children: {},
-    segmentRegex: "",
-    type: "path",
     parent: null,
-    variableName: null,
+    ignored: true,
   }
   await resolvePaths(routesDir, paths)
   const content = await buildRoutes(paths)
-  if (process.env.ENABLE_PRETTIER) {
+  if (makePretty) {
     const prettier = await import("prettier")
     const config = await prettier.resolveConfig("src/000.tsx")
     return await prettier.format(content, {
@@ -354,11 +378,11 @@ const getContent = async () => {
   }
 }
 
-const writeRoutesFile = async () => {
-  const destinationFile = nodePath.join(rootDir, "src", "routes.tsx")
+const writeRoutesFile = async (makePretty: boolean) => {
+  const destinationFile = `${rootDir}/src/routes.tsx`
 
   const currentContent = await nodeFs.promises.readFile(destinationFile, "utf-8").catch(() => "")
-  const newContent = await getContent()
+  const newContent = await getContent(makePretty)
 
   if (currentContent.trim() !== newContent.trim()) {
     await writeFile(newContent)
@@ -366,7 +390,7 @@ const writeRoutesFile = async () => {
 }
 
 if (process.argv && process.argv.includes("--write-routes")) {
-  void writeRoutesFile()
+  void writeRoutesFile(true)
 }
 
 export const buildRoutesPlugin = (): Plugin => {
@@ -374,11 +398,11 @@ export const buildRoutesPlugin = (): Plugin => {
     name: "rebuild-routes",
     enforce: "pre",
     buildStart: async () => {
-      await writeRoutesFile()
+      await writeRoutesFile(false)
     },
     watchChange: async id => {
       if (id.replace(__dirname, "").startsWith("/src/app/")) {
-        await writeRoutesFile()
+        await writeRoutesFile(false)
       }
     },
   }

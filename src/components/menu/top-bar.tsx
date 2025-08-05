@@ -1,14 +1,17 @@
+import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react"
+import { FC } from "react"
+import { MdAccountCircle, MdLogout, MdPerson, MdTune } from "react-icons/md"
+import { Link } from "wouter"
+import { Api } from "@thoth/client"
+import { ActiveLink } from "@thoth/components/active-link"
 import { Logo } from "@thoth/components/icons/logo"
 import { Search } from "@thoth/components/menu/search"
-import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react"
-import { MdAccountCircle, MdLogout, MdPerson, MdTune } from "react-icons/md"
-import { ActiveLink } from "@thoth/components/active-link"
-import { useAuthState } from "@thoth/state/auth.state"
-import { Link } from "wouter"
-import { FC } from "react"
+import { useHttpRequest } from "@thoth/hooks/async-response.ts"
+import { useOnMount } from "@thoth/hooks/lifecycle.ts"
 
 export const SearchBar: FC = () => {
-  const jwt = useAuthState(s => s.accessToken)
+  const { result, invoke } = useHttpRequest(Api.getCurrentUser)
+  useOnMount(() => invoke())
   return (
     <div className="m-3 flex h-20 min-h-20 items-center rounded-xl bg-elevate pr-3">
       <Link href={"/libraries"} className="flex overflow-hidden rounded-l-xl" aria-label={"HOME"}>
@@ -44,7 +47,7 @@ export const SearchBar: FC = () => {
                       </ActiveLink>
                     )}
                   </MenuItem>{" "}
-                  {jwt?.payload.permissions.isAdmin && (
+                  {result?.permissions?.isAdmin && (
                     <MenuItem>
                       {({ focus }) => (
                         <ActiveLink
