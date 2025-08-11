@@ -1,26 +1,24 @@
 import { FC, Fragment, useState } from "react"
 import { MdSearch } from "react-icons/md"
-import { Api, MetadataAuthor } from "@thoth/client"
-import { useHttpRequest } from "@thoth/hooks/async-response"
-import { Input } from "@thoth/components/input/input"
+import { Api, MetadataAuthor, UUID } from "@thoth/client"
 import { ColoredButton } from "@thoth/components/colored-button"
+import { Input } from "@thoth/components/input/input"
 import { LoadingCards } from "@thoth/components/loading-card"
 import { ResponsiveImage } from "@thoth/components/responsive-image"
-import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
-import { useAudiobookState } from "@thoth/state/audiobook.state"
+import { useHttpRequest } from "@thoth/hooks/async-response"
 
 export const AuthorSearch: FC<{
-  author?: string | null | undefined
+  authorSearch?: string | null | undefined
+  libraryId: UUID
   select: (result: MetadataAuthor) => void
-}> = ({ select, author: _author }) => {
-  const [author, setAuthor] = useState(_author)
+}> = ({ select, authorSearch, libraryId }) => {
+  const [author, setAuthor] = useState(authorSearch)
 
-  const library = useAudiobookState(AudiobookSelectors.selectedLibrary)!
   const { result, loading, invoke } = useHttpRequest(Api.searchAuthorMetadata)
 
   const search = async () => {
     if (!author) return
-    await invoke({ q: author, region: library.language })
+    await invoke({ q: author, libraryId })
   }
 
   return (
