@@ -64,7 +64,8 @@ export const AuthorDetails: FC<{ authorId: UUID; libraryId: UUID }> = ({ authorI
           </div>
         ) : null}
         <AuthorEdit
-          authorID={author.id}
+          libraryId={libraryId}
+          authorId={author.id}
           author={{
             name: author.name,
             providerID: author.providerID,

@@ -1014,28 +1014,27 @@ export const createApi = (
         language,
         narrator,
         pageSize,
-        region,
         title,
+        libraryId,
       }: {
         author?: string
         keywords?: string
         language?: MetadataLanguage
         narrator?: string
         pageSize?: MetadataSearchCount
-        region: string
         title?: string
+        libraryId: UUID
       },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<Array<MetadataSearchBook>>> => {
       return _request(
-        _createUrl(`/api/metadata/search`, {
+        _createUrl(`/api/libraries/${libraryId}/metadata/search`, {
           author,
           keywords,
           language,
           narrator,
           pageSize,
-          region,
           title,
         }),
         "GET",
@@ -1050,21 +1049,18 @@ export const createApi = (
     getAuthorMetadata: (
       {
         provider,
-        region,
         id,
+        libraryId,
       }: {
         provider: string
-        region: string
         id: string
+        libraryId: UUID
       },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<MetadataAuthor>> => {
       return _request(
-        _createUrl(`/api/metadata/author/${id}`, {
-          provider,
-          region,
-        }),
+        _createUrl(`/api/libraries/${libraryId}/metadata/author/${id}`, { provider }),
         "GET",
         "json",
         _mergeHeaders(defaultHeadersImpl, headers),
@@ -1077,19 +1073,16 @@ export const createApi = (
     searchAuthorMetadata: (
       {
         q,
-        region,
+        libraryId,
       }: {
         q: string
-        region: string
+        libraryId: UUID
       },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<Array<MetadataAuthor>>> => {
       return _request(
-        _createUrl(`/api/metadata/author/search`, {
-          q,
-          region,
-        }),
+        _createUrl(`/api/libraries/${libraryId}/metadata/author/search`, { q }),
         "GET",
         "json",
         _mergeHeaders(defaultHeadersImpl, headers),
@@ -1102,21 +1095,18 @@ export const createApi = (
     getBookMetadata: (
       {
         provider,
-        region,
         id,
+        libraryId,
       }: {
         provider: string
-        region: string
         id: string
+        libraryId: UUID
       },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<MetadataBook>> => {
       return _request(
-        _createUrl(`/api/metadata/book/${id}`, {
-          provider,
-          region,
-        }),
+        _createUrl(`/api/libraries/${libraryId}/metadata/book/${id}`, { provider }),
         "GET",
         "json",
         _mergeHeaders(defaultHeadersImpl, headers),
@@ -1130,20 +1120,19 @@ export const createApi = (
       {
         authorName,
         q,
-        region,
+        libraryId,
       }: {
         authorName?: string
         q: string
-        region: string
+        libraryId: UUID
       },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<Array<MetadataBook>>> => {
       return _request(
-        _createUrl(`/api/metadata/book/search`, {
+        _createUrl(`/api/libraries/${libraryId}/metadata/book/search`, {
           authorName,
           q,
-          region,
         }),
         "GET",
         "json",
@@ -1157,21 +1146,18 @@ export const createApi = (
     getSeriesMetadata: (
       {
         provider,
-        region,
         id,
+        libraryId,
       }: {
         provider: string
-        region: string
         id: string
+        libraryId: UUID
       },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<MetadataSeries>> => {
       return _request(
-        _createUrl(`/api/metadata/series/${id}`, {
-          provider,
-          region,
-        }),
+        _createUrl(`/api/libraries/${libraryId}/metadata/series/${id}`, { provider }),
         "GET",
         "json",
         _mergeHeaders(defaultHeadersImpl, headers),
@@ -1185,20 +1171,19 @@ export const createApi = (
       {
         authorName,
         q,
-        region,
+        libraryId,
       }: {
         authorName?: string
         q: string
-        region: string
+        libraryId: UUID
       },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<Array<MetadataSeries>>> => {
       return _request(
-        _createUrl(`/api/metadata/series/search`, {
+        _createUrl(`/api/libraries/${libraryId}/metadata/series/search`, {
           authorName,
           q,
-          region,
         }),
         "GET",
         "json",
