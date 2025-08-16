@@ -10,12 +10,13 @@ import {
   useRef,
   useState,
 } from "react"
-import { notNullIsh } from "@thoth/utils/utils"
 import { useOnMount } from "@thoth/hooks/lifecycle.ts"
+import { notNullIsh } from "@thoth/utils/utils"
 
 export interface FormContext<T extends Record<string, any>> {
   fields: T
   setFields: (newValue: Partial<T>) => void
+  setAllFields: (newValue: T) => void
   errors: {
     [K in keyof T]: string[] | undefined
   }
@@ -51,6 +52,7 @@ const DEFAULT = Symbol("DEFAULT_FORM_CONTEXT")
 export const CONTEXT = createContext<FormContext<Record<any, any>>>({
   fields: {},
   setFields: () => {},
+  setAllFields: () => {},
   errors: {},
   setErrors: () => {},
   touched: {},
@@ -161,6 +163,10 @@ export const useForm = <T extends Record<string, any>>(
       setFields({ ...currentFields.current, ...newValue })
       validateFields(newValue)
     },
+    setAllFields: (newValue: T) => {
+      setFields({ ...newValue })
+      validateFields(newValue)
+    },
     errors,
     setErrors: (newValue: Partial<Record<keyof T, string | undefined>>) => {
       setErrors({ ...currentErrors.current, ...newValue })
@@ -195,7 +201,7 @@ export const useForm = <T extends Record<string, any>>(
   }
 }
 
-export const useField = <T extends Record<string, any>, K extends keyof T>(
+export const useField = <T extends Record<string, any>, K extends keyof T & string>(
   name: K
 ): {
   value: T[K]
@@ -210,6 +216,9 @@ export const useField = <T extends Record<string, any>, K extends keyof T>(
     useContext(CONTEXT)
   if (contextType === DEFAULT) {
     console.error("useField must be used inside a FormProvider")
+  }
+  if (!(name in fields)) {
+    console.error(`Could not find ${name} in form fields. Possible values are: ${Object.values(fields)}`)
   }
 
   return {
@@ -229,7 +238,7 @@ export const useField = <T extends Record<string, any>, K extends keyof T>(
   }
 }
 
-export const useFieldUpdater = <T extends Record<string, any>, K extends keyof T>(
+export const useFieldUpdater = <T extends Record<string, any>, K extends keyof T & string>(
   field: K
 ): InputHTMLAttributes<HTMLInputElement> => {
   const { value, formSetValue, setTouched, toForm } = useField<T, K>(field)

@@ -76,16 +76,16 @@ export const DialogContent: FC<PropsWithChildren> = ({ children }) => {
 }
 
 export const DialogActions: FC<PropsWithChildren> = ({ children }) => {
-  return <div className="mt-4 flex flex-row-reverse justify-between">{children}</div>
+  return <div className="mt-4 flex justify-between">{children}</div>
 }
 
 export const DialogButtons: FC<{ closeModal: () => void }> = ({ closeModal }) => {
   return (
     <>
-      <ColoredButton type="submit">Submit</ColoredButton>
       <ColoredButton type="button" color="secondary" onClick={closeModal}>
         Cancel
       </ColoredButton>
+      <ColoredButton type="submit">Submit</ColoredButton>
     </>
   )
 }
