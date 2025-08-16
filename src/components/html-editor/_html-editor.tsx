@@ -1,8 +1,13 @@
+import Bold from "@tiptap/extension-bold"
+import { Document } from "@tiptap/extension-document"
+import Heading from "@tiptap/extension-heading"
+import Italic from "@tiptap/extension-italic"
+import Paragraph from "@tiptap/extension-paragraph"
 import { Placeholder } from "@tiptap/extension-placeholder"
+import Text from "@tiptap/extension-text"
 import { TextAlign } from "@tiptap/extension-text-align"
 import { Underline } from "@tiptap/extension-underline"
 import { Content, EditorContent, useEditor } from "@tiptap/react"
-import StarterKit from "@tiptap/starter-kit"
 import { FC, useEffect } from "react"
 import "./_html-editor.scss"
 
@@ -14,19 +19,19 @@ export const _HtmlEditor: FC<{
 }> = ({ value, className, onChange, placeholder = "..." }) => {
   const editor = useEditor({
     extensions: [
-      StarterKit.configure({ heading: { levels: [1, 2, 3] } }),
-      TextAlign,
+      Document,
+      Paragraph,
+      Text,
+      Bold,
+      Italic,
       Underline,
+      TextAlign,
+      Heading.configure({ levels: [1, 2, 3] }),
       Placeholder.configure({ placeholder }),
     ],
     content: value,
     autofocus: false,
   })
-
-  useEffect(() => {
-    editor?.commands?.setContent(value ?? "")
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value])
 
   useEffect(() => {
     const update = () => {
