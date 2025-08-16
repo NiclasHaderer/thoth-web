@@ -1,13 +1,13 @@
 import { useState } from "react"
 import { MdAutoAwesome, MdEdit, MdLanguage, MdLocalLibrary, MdRadar } from "react-icons/md"
-import { FormContext, useForm } from "@thoth/hooks/form"
-import { ColoredButton } from "@thoth/components/colored-button"
-import { useOnMount } from "@thoth/hooks/lifecycle"
 import { FileScanner, MetadataAgent, UUID } from "@thoth/client"
-import { LibraryDialog, LibraryFormValues } from "@thoth/components/library/library-dialog"
-import { useAudiobookState } from "@thoth/state/audiobook.state"
-import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
+import { ColoredButton } from "@thoth/components/colored-button"
 import { MdScan } from "@thoth/components/icons/scan"
+import { LibraryDialog, LibraryFormValues } from "@thoth/components/library/library-dialog"
+import { FormContext, useForm } from "@thoth/hooks/form"
+import { useOnMount } from "@thoth/hooks/lifecycle"
+import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
+import { useAudiobookState } from "@thoth/state/audiobook.state"
 
 export const LibraryManager = () => {
   const libraries = useAudiobookState(AudiobookSelectors.libraries)
@@ -102,10 +102,10 @@ export const LibraryManager = () => {
               <>
                 {libraries?.map(library => (
                   <tr
-                    className="group cursor-pointer odd:bg-active-light hover:bg-active"
+                    className="group cursor-pointer whitespace-nowrap odd:bg-active-light hover:bg-active [&>*]:py-2"
                     key={library.id}
                     onClick={() => {
-                      form.setFields({ ...library, mode: "edit" })
+                      form.setAllFields({ ...library, mode: "edit" })
                       setIsOpen(true)
                     }}
                   >

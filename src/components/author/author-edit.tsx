@@ -90,7 +90,7 @@ export const AuthorEdit: FC<{ author: AuthorApiModel; authorId: UUID; libraryId:
                       libraryId={libraryId}
                       authorSearch={form.fields.name}
                       select={authorMeta => {
-                        form.setFields(mergeMetaIntoAuthor(form.fields, authorMeta))
+                        form.setAllFields(mergeMetaIntoAuthor(form.fields, authorMeta))
                         setSelectedTabIndex(0)
                       }}
                     />
