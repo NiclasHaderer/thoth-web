@@ -7,7 +7,7 @@ interface SeriesPreviewProps extends SeriesModel {
   className?: string
 }
 
-export const SeriesPreview = forwardRef<HTMLSpanElement, SeriesPreviewProps>(
+export const SeriesPreview = forwardRef<HTMLAnchorElement, SeriesPreviewProps>(
   ({ size = "normal", className = "", ...series }, ref) => {
     return (
       <GenericPreview

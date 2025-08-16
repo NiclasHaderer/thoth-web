@@ -84,14 +84,12 @@ export const AuthorForm = () => {
           />
         </div>
       </div>
-      <label className="flex items-center">
-        <HtmlEditor
-          className="flex-grow"
-          placeholder="Description"
-          value={descriptionValue}
-          onChange={setDescriptionValue}
-        />
-      </label>
+      <HtmlEditor
+        className="flex-grow"
+        placeholder="Description"
+        value={descriptionValue}
+        onChange={setDescriptionValue}
+      />
     </>
   )
 }
