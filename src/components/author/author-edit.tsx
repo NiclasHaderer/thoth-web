@@ -82,7 +82,7 @@ export const AuthorEdit: FC<{ author: AuthorApiModel; authorId: UUID; libraryId:
                   </Tab>
                 </TabList>
                 <TabPanels className="mt-2">
-                  <TabPanel className="rounded-md bg-elevate">
+                  <TabPanel className="rounded-md">
                     <AuthorForm />
                   </TabPanel>
                   <TabPanel>
