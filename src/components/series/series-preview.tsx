@@ -1,33 +1,25 @@
 import { forwardRef } from "react"
-import { MdImageNotSupported } from "react-icons/md"
-import { Link } from "wouter"
 import { SeriesModel } from "@thoth/client"
+import { GenericPreview } from "@thoth/components/generic-preview.tsx"
 
-export const SeriesPreview = forwardRef<HTMLSpanElement, SeriesModel>((series, ref) => {
-  return (
-    <span className="mx-6 mb-6 inline-block w-52" ref={ref}>
-      <Link href={`/libraries/${series.library.id}/series/${series.id}`} aria-label={series.title} tabIndex={-1}>
-        {series.coverID ? (
-          <img
-            loading="lazy"
-            className="h-52 w-52 cursor-pointer rounded-md border-2 border-transparent transition-colors hover:border-primary"
-            src={`/api/stream/image/${series.coverID}`}
-            alt="Series"
-          />
-        ) : (
-          <MdImageNotSupported className="h-52 w-52 cursor-pointer rounded-md border-2 border-transparent transition-colors hover:border-primary" />
-        )}
-      </Link>
+interface SeriesPreviewProps extends SeriesModel {
+  size?: "small" | "normal"
+  className?: string
+}
 
-      <div className="relative p-2 text-center">
-        <Link href={`/libraries/${series.library.id}/series/${series.id}`}>
-          <span className="line-clamp-2 cursor-pointer hover:underline no-touch:group-focus:underline">
-            {series.title}
-          </span>
-        </Link>
-        {/*TODO amount*/}
-        {/*<span className="text-font-secondary">{amount} Audiobooks</span>*/}
-      </div>
-    </span>
-  )
-})
+export const SeriesPreview = forwardRef<HTMLSpanElement, SeriesPreviewProps>(
+  ({ size = "normal", className = "", ...series }, ref) => {
+    return (
+      <GenericPreview
+        label={series.title}
+        libraryId={series.library.id}
+        id={series.id}
+        size={size}
+        imageId={series.coverID}
+        type="series"
+        ref={ref}
+        className={className}
+      />
+    )
+  }
+)
