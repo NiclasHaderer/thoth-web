@@ -1,26 +1,26 @@
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react"
 import { FC, Fragment, useEffect, useRef, useState } from "react"
+import { CiImageOff } from "react-icons/ci"
 import {
   MdCollectionsBookmark,
   MdEdit,
   MdEvent,
   MdFormatListNumbered,
-  MdImageNotSupported,
   MdLanguage,
   MdPerson,
   MdSearch,
 } from "react-icons/md"
-import { AudiobookSelectors } from "../../state/audiobook.selectors"
-import { useAudiobookState } from "../../state/audiobook.state"
-import { BookSearch } from "./book-search"
-import { toBase64 } from "../../utils/utils"
-import { Form, useField, useForm } from "../../hooks/form"
 import { BookModel, MetadataBook, PartialBookApiModel, UUID } from "@thoth/client"
 import { ColoredButton } from "@thoth/components/colored-button"
 import { Dialog, DialogButtons } from "@thoth/components/dialog"
-import { ResponsiveImage } from "@thoth/components/responsive-image"
 import { ManagedInput } from "@thoth/components/input/managed-input"
+import { ResponsiveImage } from "@thoth/components/responsive-image"
+import { Form, useField, useForm } from "../../hooks/form"
+import { AudiobookSelectors } from "../../state/audiobook.selectors"
+import { useAudiobookState } from "../../state/audiobook.state"
+import { toBase64 } from "../../utils/utils"
 import { HtmlEditor } from "../html-editor"
+import { BookSearch } from "./book-search"
 
 const mergeMetaIntoBook = ({ ...book }: PartialBookApiModel, meta: MetadataBook): PartialBookApiModel => {
   // TODO fix
@@ -133,7 +133,7 @@ const BookForm = () => {
                 onClick={() => imageRef.current && imageRef.current.click()}
               />
             ) : (
-              <MdImageNotSupported
+              <CiImageOff
                 className="h-52 w-52 cursor-pointer rounded-md"
                 onClick={() => imageRef.current && imageRef.current.click()}
               />

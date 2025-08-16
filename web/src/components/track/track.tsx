@@ -1,5 +1,6 @@
 import { FC } from "react"
-import { MdImageNotSupported, MdPlayCircle } from "react-icons/md"
+import { CiImageOff } from "react-icons/ci"
+import { MdPlayCircle } from "react-icons/md"
 import { Link } from "wouter"
 import { NamedId, UUID } from "@thoth/client"
 import { toReadableTime } from "./helpers"
@@ -39,7 +40,7 @@ export const Track: FC<TrackProps> = ({
           loading="lazy"
         />
       ) : (
-        <MdImageNotSupported className="h-16 w-16 rounded-md" />
+        <CiImageOff className="h-16 w-16 rounded-md" />
       )}
       <button className="absolute left-0 top-0 flex h-full w-full items-center justify-center rounded-md bg-opacity-0 opacity-0 transition-all duration-300 focus:opacity-100 group-hover:bg-surface group-hover:bg-opacity-40 group-hover:opacity-100">
         <MdPlayCircle className="h-6 w-6" />
