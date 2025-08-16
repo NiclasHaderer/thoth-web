@@ -48,8 +48,8 @@ export const Input: FC<InputProps> = memo(
     return (
       <>
         <label className={`flex items-center ${wrapperClassName ?? ""}`}>
-          {label ? <div className={`mt-2 px-2 ${labelClassName ?? ""}`}>{label}</div> : null}
-          <div className="relative mt-2 flex-grow">
+          {label ? <div className={`px-2 ${labelClassName ?? ""}`}>{label}</div> : null}
+          <div className="relative flex-grow">
             {leftIcon ? <div className={`absolute left-0 top-1/2 -translate-y-1/2 p-2`}>{leftIcon}</div> : null}
             {rightIcon ? <div className={`absolute right-0 top-1/2 -translate-y-1/2 p-2`}>{rightIcon}</div> : null}
             <input

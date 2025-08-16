@@ -1,11 +1,10 @@
+import { Placeholder } from "@tiptap/extension-placeholder"
+import { TextAlign } from "@tiptap/extension-text-align"
+import { Underline } from "@tiptap/extension-underline"
 import { Content, EditorContent, useEditor } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
 import { FC, useEffect } from "react"
-import { TextAlign } from "@tiptap/extension-text-align"
-import { Placeholder } from "@tiptap/extension-placeholder"
-import { Underline } from "@tiptap/extension-underline"
 import "./_html-editor.scss"
-import { EditorControls } from "./_controls.tsx"
 
 export const _HtmlEditor: FC<{
   value?: Content
@@ -43,10 +42,10 @@ export const _HtmlEditor: FC<{
 
   return (
     <div className="flex flex-grow flex-col rounded-md border border-active">
-      <EditorControls editor={editor} />
+      <button type="button" className="hidden" />
       <EditorContent
         editor={editor}
-        className={`prose prose-invert max-h-36 max-w-none cursor-auto overflow-y-auto rounded-b-md bg-elevate p-2 ${
+        className={`prose prose-invert max-h-36 max-w-none cursor-auto overflow-y-auto rounded-b-md p-2 ${
           className ?? ""
         }`}
       />
