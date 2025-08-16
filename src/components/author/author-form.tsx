@@ -1,13 +1,13 @@
 import { useRef } from "react"
-import { isUUID, toBase64 } from "../../utils/utils"
+import { CiSaveUp1 } from "react-icons/ci"
 import { MdAddLink, MdCelebration, MdPerson } from "react-icons/md"
-import { MdDeceased } from "../icons/deceased"
-import { useField } from "../../hooks/form"
-import { ResponsiveImage } from "@thoth/components/responsive-image"
-import { ColoredButton } from "@thoth/components/colored-button"
-import { ManagedInput } from "@thoth/components/input/managed-input"
-import { HtmlEditor } from "../html-editor"
 import { PartialAuthorApiModel } from "@thoth/client"
+import { ManagedInput } from "@thoth/components/input/managed-input"
+import { ResponsiveImage } from "@thoth/components/responsive-image"
+import { useField } from "../../hooks/form"
+import { isUUID, toBase64 } from "../../utils/utils"
+import { HtmlEditor } from "../html-editor"
+import { MdDeceased } from "../icons/deceased"
 
 export const AuthorForm = () => {
   const imageInputRef = useRef<HTMLInputElement>(null)
@@ -21,17 +21,17 @@ export const AuthorForm = () => {
     <>
       <div className="flex flex-col md:flex-row">
         <div className="flex cursor-pointer items-center justify-center pr-2">
-          <div className="flex flex-col justify-center">
+          <div className="group relative flex flex-col justify-center">
             {imageValue ? (
               <ResponsiveImage
-                className="h-52 min-h-52 w-52 cursor-pointer rounded-full bg-cover"
+                className="m-2 h-52 min-h-52 w-52 cursor-pointer rounded-full bg-cover"
                 src={isUUID(imageValue) ? `/api/stream/images/${imageValue}` : imageValue}
                 alt="author"
                 onClick={() => imageInputRef.current && imageInputRef.current.click()}
               />
             ) : (
               <MdPerson
-                className="h-52 w-52 cursor-pointer rounded-full"
+                className="m-2 h-52 w-52 cursor-pointer rounded-full"
                 onClick={() => imageInputRef.current && imageInputRef.current.click()}
               />
             )}
@@ -46,20 +46,42 @@ export const AuthorForm = () => {
                 setImageValue(base64)
               }}
             />
-            <ColoredButton
-              color="secondary"
-              className="my-2 self-center"
-              onClick={() => imageInputRef.current && imageInputRef.current.click()}
-            >
-              Upload image
-            </ColoredButton>
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-elevate p-2 opacity-0 transition-all group-hover:opacity-70">
+              <CiSaveUp1 className="h-6 w-6" />
+            </div>
           </div>
         </div>
         <div>
-          <ManagedInput name="name" labelClassName="w-28" label="Name" leftIcon={<MdPerson />} />
-          <ManagedInput name="birthDate" type="date" labelClassName="w-28" label="Born" leftIcon={<MdCelebration />} />
-          <ManagedInput name="deathDate" type="date" labelClassName="w-28" label="Died" leftIcon={<MdDeceased />} />
-          <ManagedInput name="website" labelClassName="w-28" label="Website" leftIcon={<MdAddLink />} />
+          <ManagedInput
+            wrapperClassName="pt-2"
+            name="name"
+            labelClassName="w-28"
+            label="Name"
+            leftIcon={<MdPerson />}
+          />
+          <ManagedInput
+            wrapperClassName="pt-2"
+            name="birthDate"
+            type="date"
+            labelClassName="w-28"
+            label="Born"
+            leftIcon={<MdCelebration />}
+          />
+          <ManagedInput
+            wrapperClassName="pt-2"
+            name="deathDate"
+            type="date"
+            labelClassName="w-28"
+            label="Died"
+            leftIcon={<MdDeceased />}
+          />
+          <ManagedInput
+            wrapperClassName="pt-2"
+            name="website"
+            labelClassName="w-28"
+            label="Website"
+            leftIcon={<MdAddLink />}
+          />
         </div>
       </div>
       <label className="flex items-center">

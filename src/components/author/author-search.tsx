@@ -24,14 +24,7 @@ export const AuthorSearch: FC<{
   return (
     <>
       <div className="mb-4 flex items-center">
-        <Input
-          labelClassName="w-28"
-          wrapperClassName="grow pr-2"
-          label="Author"
-          onEnter={search}
-          onValue={setAuthor}
-          defaultValue={author}
-        />
+        <Input wrapperClassName="grow pr-2" label="Author" onEnter={search} onValue={setAuthor} defaultValue={author} />
         <ColoredButton
           className="ml-2 h-10 w-10 min-w-10"
           innerClassName="!p-2 items-center justify-around"
