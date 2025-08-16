@@ -1,16 +1,16 @@
 import { FC, useState } from "react"
-import { Form, FormContext } from "@thoth/hooks/form"
-import { Api, FileScanner, MetadataAgent, UUID } from "@thoth/client"
-import { useHttpRequest } from "@thoth/hooks/async-response"
-import { useOnMount } from "@thoth/hooks/lifecycle"
-import { Dialog, DialogActions, DialogBody, DialogButtons } from "@thoth/components/dialog"
-import { LeftTabs, TabContent } from "@thoth/components/left-tabs"
 import { MdAutoAwesome, MdClose, MdFolder, MdLanguage, MdLocalLibrary, MdRadar, MdSettings } from "react-icons/md"
+import { Api, FileScanner, MetadataAgent, UUID } from "@thoth/client"
+import { Dialog, DialogActions, DialogBody, DialogButtons } from "@thoth/components/dialog"
+import { FolderManager } from "@thoth/components/file-manager"
+import { MdScan } from "@thoth/components/icons/scan"
 import { ManagedInput } from "@thoth/components/input/managed-input"
 import { SelectLine } from "@thoth/components/input/select-line"
+import { LeftTabs, TabContent } from "@thoth/components/left-tabs"
+import { useHttpRequest } from "@thoth/hooks/async-response"
+import { Form, FormContext } from "@thoth/hooks/form"
+import { useOnMount } from "@thoth/hooks/lifecycle"
 import { unique } from "@thoth/utils/utils"
-import { MdScan } from "@thoth/components/icons/scan"
-import { FolderManager } from "@thoth/components/file-manager"
 
 export type LibraryFormValues = {
   id: UUID | undefined
@@ -27,7 +27,7 @@ export type LibraryFormValues = {
 interface LibraryDialogProps {
   isOpen: boolean
   setIsOpen: (open: boolean) => void
-  onSubmit: (values: LibraryFormValues) => void
+  onSubmit: (library: LibraryFormValues) => void
   form: FormContext<LibraryFormValues>
 }
 
@@ -40,7 +40,7 @@ export const LibraryDialog: FC<LibraryDialogProps> = ({ isOpen, setIsOpen, form,
     void fileScanners.invoke()
   })
 
-  const onSumitInternal = async (values: LibraryFormValues) => {
+  const onSumitInternal = (values: LibraryFormValues) => {
     if (form.hasErrors()) {
       const errors = form.getErrors()
       const errorFields = Object.keys(errors)

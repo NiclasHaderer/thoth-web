@@ -1,8 +1,9 @@
 import { useState } from "react"
 import { MdDelete, MdEdit, MdPerson } from "react-icons/md"
-import { Api, ThothUser } from "@thoth/client"
-import { UserDialog } from "@thoth/components/user-dialog"
+import { Api } from "@thoth/client"
+import { UserDialog, UserFormValues } from "@thoth/components/user-dialog"
 import { useHttpRequest } from "@thoth/hooks/async-response"
+import { useForm } from "@thoth/hooks/form.tsx"
 import { useOnMount } from "@thoth/hooks/lifecycle"
 import { useAuthState } from "@thoth/state/auth.state"
 
@@ -10,12 +11,26 @@ export const UserManager = () => {
   const loggedInUserId = useAuthState(s => s.accessToken?.payload.sub)
   const [isOpen, setIsOpen] = useState(false)
   const { result: users, invoke: listUsers } = useHttpRequest(Api.listUsers)
-  const updateUser = () => {
-    throw new Error("Not implemented yet")
+  useOnMount(() => listUsers())
+
+  const updateUser = (user: UserFormValues) => {
+    Api.updateUsername({ id: user.id! }, { username: user.username })
+    Api.updatePermissions(
+      { id: user.id! },
+      {
+        permissions: {
+          isAdmin: user.admin,
+          libraries: user.libraries,
+        },
+      }
+    )
   }
-  const [userToEdit, setUserToEdit] = useState<ThothUser>()
-  useOnMount(async () => {
-    await listUsers()
+
+  const form = useForm<UserFormValues>({
+    username: "",
+    admin: false,
+    libraries: [],
+    id: undefined,
   })
 
   return (
@@ -46,11 +61,16 @@ export const UserManager = () => {
               <>
                 {users?.map(user => (
                   <tr
-                    className="group cursor-pointer odd:bg-active-light hover:bg-active"
+                    className="group cursor-pointer whitespace-nowrap odd:bg-active-light hover:bg-active [&>*]:py-2"
                     key={user.id}
                     onClick={() => {
+                      form.setAllFields({
+                        id: user.id,
+                        username: user.username,
+                        admin: user.permissions.isAdmin,
+                        libraries: user.permissions.libraries,
+                      })
                       setIsOpen(true)
-                      setUserToEdit(user)
                     }}
                   >
                     <td className="pl-2">{user.username}</td>
@@ -80,16 +100,7 @@ export const UserManager = () => {
           </tbody>
         </table>
       </div>
-      {userToEdit && (
-        <UserDialog
-          isOpen={isOpen}
-          user={userToEdit}
-          setIsOpen={setIsOpen}
-          onModifyUser={() => {
-            updateUser()
-          }}
-        />
-      )}
+      <UserDialog isOpen={isOpen} form={form} setIsOpen={setIsOpen} onSubmit={updateUser} />
     </>
   )
 }
