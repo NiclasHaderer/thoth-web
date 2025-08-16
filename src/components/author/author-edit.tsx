@@ -82,10 +82,10 @@ export const AuthorEdit: FC<{ author: AuthorApiModel; authorId: UUID; libraryId:
                   </Tab>
                 </TabList>
                 <TabPanels className="mt-2">
-                  <TabPanel className="rounded-md">
+                  <TabPanel tabIndex={-1}>
                     <AuthorForm />
                   </TabPanel>
-                  <TabPanel>
+                  <TabPanel tabIndex={-1}>
                     <AuthorSearch
                       libraryId={libraryId}
                       authorSearch={form.fields.name}

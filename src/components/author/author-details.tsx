@@ -79,6 +79,7 @@ export const AuthorDetails: FC<{ authorId: UUID; libraryId: UUID }> = ({ authorI
           }}
         />
       </div>
+
       <HtmlViewer content={author.biography} className="min-w-full pb-6" title="Biographie" />
 
       {isDetailedAuthor(author) ? (
@@ -91,6 +92,8 @@ export const AuthorDetails: FC<{ authorId: UUID; libraryId: UUID }> = ({ authorI
           </ResponsiveGrid>
         </>
       ) : null}
+
+      <div className="p-10" />
     </>
   )
 }
