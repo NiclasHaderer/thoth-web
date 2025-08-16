@@ -1,5 +1,6 @@
 import { FC, useEffect } from "react"
-import { MdCheckCircle, MdImageNotSupported, MdPlayCircle, MdRadioButtonUnchecked } from "react-icons/md"
+import { CiImageOff } from "react-icons/ci"
+import { MdCheckCircle, MdPlayCircle, MdRadioButtonUnchecked } from "react-icons/md"
 import { Link } from "wouter"
 import { DetailedBookModel, UUID } from "@thoth/client"
 import { ColoredButton } from "@thoth/components/colored-button"
@@ -45,7 +46,7 @@ export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId, lib
               src={`/api/stream/images/${book.coverID}`}
             />
           ) : (
-            <MdImageNotSupported className="h-40 w-40 rounded-md border-2 border-active-light md:h-80 md:w-80" />
+            <CiImageOff className="h-40 w-40 rounded-md border-2 border-active-light md:h-80 md:w-80" />
           )}
         </div>
         <div className="flex flex-grow flex-col justify-between pl-4 md:pl-10">

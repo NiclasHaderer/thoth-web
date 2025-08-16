@@ -59,11 +59,11 @@ export const AuthorEdit: FC<{ author: AuthorApiModel; authorId: UUID; libraryId:
           <DialogBody>
             <DialogContent>
               <TabGroup selectedIndex={selectedTabIndex} onChange={index => setSelectedTabIndex(index)}>
-                <TabList className="p-2-solid w-full rounded-md border-2 border-primary border-opacity-50">
+                <TabList className="p-2-solid w-full">
                   <Tab as={Fragment}>
                     {({ selected }) => (
                       <button
-                        className={`w-1/2 p-2 transition-colors focus:bg-active ${selected ? "bg-active-light" : ""}`}
+                        className={`w-1/2 rounded-l-md p-2 transition-colors focus:bg-active ${selected ? "bg-active-light" : ""}`}
                       >
                         Tags
                       </button>
@@ -72,7 +72,7 @@ export const AuthorEdit: FC<{ author: AuthorApiModel; authorId: UUID; libraryId:
                   <Tab as={Fragment}>
                     {({ selected }) => (
                       <button
-                        className={`w-1/2 border-l-2 border-primary border-opacity-50 p-2 transition-colors focus:bg-active ${
+                        className={`w-1/2 rounded-r-md p-2 transition-colors focus:bg-active ${
                           selected ? "bg-active-light" : ""
                         }`}
                       >
@@ -82,7 +82,7 @@ export const AuthorEdit: FC<{ author: AuthorApiModel; authorId: UUID; libraryId:
                   </Tab>
                 </TabList>
                 <TabPanels className="mt-2">
-                  <TabPanel className="rounded-md border-2 border-primary border-opacity-0 focus:border-opacity-20">
+                  <TabPanel className="rounded-md bg-elevate">
                     <AuthorForm />
                   </TabPanel>
                   <TabPanel>

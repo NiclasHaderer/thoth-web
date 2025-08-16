@@ -42,7 +42,7 @@ export const Input: FC<InputProps> = memo(
 
     useEffect(() => {
       const input = ref.current
-      if (input) input.setSelectionRange(cursor, cursor)
+      if (input && cursor) input.setSelectionRange(cursor, cursor)
     }, [ref, cursor, value])
 
     return (

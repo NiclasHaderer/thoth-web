@@ -1,5 +1,6 @@
 import { FC, useEffect, useRef } from "react"
-import { MdImageNotSupported, MdPauseCircle, MdPlayCircle, MdSkipNext, MdSkipPrevious, MdStop } from "react-icons/md"
+import { CiImageOff } from "react-icons/ci"
+import { MdPauseCircle, MdPlayCircle, MdSkipNext, MdSkipPrevious, MdStop } from "react-icons/md"
 import { Link } from "wouter"
 import { ProgressBar } from "@thoth/components/progress-bar"
 import { Ripple } from "@thoth/components/ripple"
@@ -48,7 +49,7 @@ export const Playback: FC<{ className?: string }> = ({ className }) => {
               src={`/api/stream/images/${track.coverID}`}
             />
           ) : (
-            <MdImageNotSupported className="h-10 w-10 rounded-md md:h-20 md:w-20" />
+            <CiImageOff className="h-10 w-10 rounded-md md:h-20 md:w-20" />
           )}
         </Link>
 

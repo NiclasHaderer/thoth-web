@@ -1,5 +1,6 @@
 import { FC, KeyboardEvent, useEffect, useRef, useState } from "react"
-import { MdImageNotSupported, MdPerson, MdSearch } from "react-icons/md"
+import { CiImageOff } from "react-icons/ci"
+import { MdPerson, MdSearch } from "react-icons/md"
 import { Link } from "wouter"
 import { Api, SearchModel } from "@thoth/client"
 import { Input } from "@thoth/components/input/input"
@@ -157,7 +158,7 @@ const BookSearchResult: FC<{ books: SearchModel["books"]; onClose: () => void }>
               loading="lazy"
             />
           ) : (
-            <MdImageNotSupported className="h-8 w-8 rounded-full" />
+            <CiImageOff className="h-8 w-8 rounded-full" />
           )}
           <h4 className="pl-3">{book.title}</h4>
         </div>
@@ -177,7 +178,7 @@ const SeriesSearchResult: FC<{ series: SearchModel["series"]; onClose: () => voi
         className="block rounded-md transition-colors hover:bg-active-light no-touch:focus:bg-active-light"
       >
         <div className="flex items-center p-2">
-          <MdImageNotSupported className="h-8 w-8 rounded-md" />
+          <CiImageOff className="h-8 w-8 rounded-md" />
           <h4 className="pl-3">{series.title}</h4>
         </div>
       </Link>
