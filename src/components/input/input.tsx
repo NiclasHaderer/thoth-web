@@ -26,7 +26,7 @@ export const Input: FC<InputProps> = memo(
     labelClassName,
     defaultValue,
     className,
-    preventSubmit = true,
+    preventSubmit = false,
     value,
     onValue,
     onEnter,
