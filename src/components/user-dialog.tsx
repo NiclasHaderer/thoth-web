@@ -1,7 +1,6 @@
 import { UUID } from "crypto"
 import { FC, useMemo } from "react"
 import { MdLocalLibrary, MdPerson } from "react-icons/md"
-import { LibraryPermissionsModel } from "@thoth/client"
 import { Dialog, DialogActions, DialogBody, DialogButtons } from "@thoth/components/dialog"
 import { MdFolderManaged } from "@thoth/components/icons/managed"
 import { ManagedInput } from "@thoth/components/input/managed-input"
@@ -14,7 +13,7 @@ export interface UserFormValues {
   id?: UUID
   username: string
   admin: boolean
-  libraries: LibraryPermissionsModel[]
+  libraries: UUID[]
 }
 
 export const UserDialog: FC<{

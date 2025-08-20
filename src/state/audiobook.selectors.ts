@@ -18,7 +18,7 @@ export const AudiobookSelectors = {
       return state.content[libraryId!].bookTotal
     }
   },
-  selectBook: (libraryId: UUID | undefined, id: string | undefined) => {
+  selectBook: (libraryId: UUID | undefined, id: UUID | undefined) => {
     return (state: AudiobookState) => {
       if (!(libraryId! in state.content)) return null
       if (!(id! in state.content[libraryId!].bookMap)) return null
