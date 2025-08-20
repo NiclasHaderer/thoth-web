@@ -24,7 +24,8 @@
 
     "paths": {
       "@thoth/*": ["./src/*"]
-    }
+    },
+    "types": ["./src/global.d.ts"]
   },
   "include": ["src", "build-routes.ts"]
 }

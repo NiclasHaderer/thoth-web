@@ -258,7 +258,7 @@ const buildRoutes = async (paths: Path) => {
   ])
 
   const cleanupPath = (path: string) => {
-    return path.replaceAll("/", "\\/")
+    return path.replaceAll("//", "/").replaceAll("/", "\\/")
   }
 
   const joinUrlPaths = (base: string, path: Path) => {
@@ -307,9 +307,8 @@ const buildRoutes = async (paths: Path) => {
 
     if (path.page) {
       const contentStr = getComponent(path.page)
-      const baseUrlRegex = baseUrl.replaceAll("/", "\\/")
       const out = `
-          <Route path={/^${baseUrlRegex}$/}>
+          <Route path={/^${cleanupPath(baseUrl)}$/}>
             { (params: ${resolveParamTypes(path)}) => {
               return (
                 ${contentStr}
@@ -328,7 +327,7 @@ const buildRoutes = async (paths: Path) => {
     return [...content, ...parentsLayoutClose]
   }
 
-  const routes = writeRoutes(paths, "")
+  const routes = writeRoutes(paths, "/")
   routes.push(`
   <Route>
     <NotFound/>
@@ -398,11 +397,11 @@ export const buildRoutesPlugin = (): Plugin => {
     name: "rebuild-routes",
     enforce: "pre",
     buildStart: async () => {
-      await writeRoutesFile(false)
+      await writeRoutesFile(true)
     },
     watchChange: async id => {
       if (id.replace(__dirname, "").startsWith("/src/app/")) {
-        await writeRoutesFile(false)
+        await writeRoutesFile(true)
       }
     },
   }

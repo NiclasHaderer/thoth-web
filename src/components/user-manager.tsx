@@ -14,13 +14,17 @@ export const UserManager = () => {
   useOnMount(() => listUsers())
 
   const updateUser = (user: UserFormValues) => {
+    console.log(user.libraries)
     Api.updateUsername({ id: user.id! }, { username: user.username })
     Api.updatePermissions(
       { id: user.id! },
       {
         permissions: {
           isAdmin: user.admin,
-          libraries: user.libraries,
+          libraries: user.libraries.map(l => ({
+            id: l,
+            permissions: "READONLY",
+          })),
         },
       }
     )
@@ -68,7 +72,7 @@ export const UserManager = () => {
                         id: user.id,
                         username: user.username,
                         admin: user.permissions.isAdmin,
-                        libraries: user.permissions.libraries,
+                        libraries: user.permissions.libraries.map(l => l.id),
                       })
                       setIsOpen(true)
                     }}

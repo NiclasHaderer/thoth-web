@@ -1,24 +1,42 @@
-import { FC, useState } from "react"
+import { FC } from "react"
 import { MdBadge } from "react-icons/md"
-import { ThothUserWithPermissions, UserPermissionsModel } from "@thoth/client"
-import { Input } from "@thoth/components/input/input"
+import { Api, ThothUserWithPermissions, UserPermissionsModel } from "@thoth/client"
+import { ColoredButton } from "@thoth/components/colored-button.tsx"
+import { ManagedInput } from "@thoth/components/input/managed-input.tsx"
+import { Form, useForm } from "@thoth/hooks/form.tsx"
+import { useOnMount } from "@thoth/hooks/lifecycle.ts"
+import { useAudiobookState } from "@thoth/state/audiobook.state.ts"
 
 export const User: FC<{ user: ThothUserWithPermissions<UserPermissionsModel> }> = ({ user }) => {
-  const [username, setUsername] = useState(user.username)
+  const fetchLibraries = useAudiobookState(s => s.fetchLibraries)
+
+  const form = useForm({
+    username: user.username,
+  })
+
+  useOnMount(() => fetchLibraries())
 
   return (
-    <div>
+    <Form
+      form={form}
+      onSubmit={values => {
+        if (form.hasErrors()) {
+          form.markAllAsTouched()
+        }
+
+        Api.updateUsername({ id: user.id }, { username: values.username })
+      }}
+    >
       <h2 className="mb-4 text-2xl font-bold">
         User Profile <span className="text-base font-light">({user.id})</span>
       </h2>
 
       <div className="mb-4">
-        <Input
+        <ManagedInput
+          name="username"
           label="Username"
           labelClassName="font-bold w-28"
           leftIcon={<MdBadge />}
-          value={username}
-          onValue={setUsername}
           type="text"
           className="rounded border px-2 py-1"
         />
@@ -39,6 +57,14 @@ export const User: FC<{ user: ThothUserWithPermissions<UserPermissionsModel> }> 
           ))}
         </span>
       </div>
-    </div>
+      <div className="flex justify-between">
+        <ColoredButton onClick={() => form.restoreInitial()} color="secondary">
+          Cancel
+        </ColoredButton>
+        <ColoredButton type="submit" className="ml-2">
+          Save
+        </ColoredButton>
+      </div>
+    </Form>
   )
 }

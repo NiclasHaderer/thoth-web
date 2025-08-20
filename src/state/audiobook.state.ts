@@ -27,19 +27,19 @@ import { toIdRecord } from "@thoth/utils/utils"
 export type AudiobookState = {
   content: {
     [libraryId: UUID]: {
-      authorMap: Record<string, AuthorModel | DetailedAuthorModel>
-      authorSorting: string[]
+      authorMap: Record<UUID, AuthorModel | DetailedAuthorModel>
+      authorSorting: UUID[]
       authorTotal: number
-      seriesMap: Record<string, SeriesModel | DetailedSeriesModel>
-      seriesSorting: string[]
+      seriesMap: Record<UUID, SeriesModel | DetailedSeriesModel>
+      seriesSorting: UUID[]
       seriesTotal: number
-      bookMap: Record<string, BookModel | DetailedBookModel>
-      bookSorting: string[]
+      bookMap: Record<UUID, BookModel | DetailedBookModel>
+      bookSorting: UUID[]
       bookTotal: number
     }
   }
-  libraryMap: Record<string, LibraryModel>
-  librarySorting: string[]
+  libraryMap: Record<UUID, LibraryModel>
+  librarySorting: UUID[]
   libraryTotal: number
 }
 
