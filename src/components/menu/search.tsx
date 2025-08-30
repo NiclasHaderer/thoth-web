@@ -2,14 +2,14 @@ import { FC, KeyboardEvent, useEffect, useRef, useState } from "react"
 import { CiImageOff } from "react-icons/ci"
 import { MdPerson, MdSearch } from "react-icons/md"
 import { Link } from "wouter"
-import { Api, SearchModel } from "@thoth/client"
+import { Api, LibrarySearchResult } from "@thoth/client"
 import { Input } from "@thoth/components/input/input"
 import { useGlobalEvent } from "../../hooks/global-events"
 import { useFocusTrap } from "../../hooks/trap-focus"
 
 export const Search: FC = () => {
   const [input, setInput] = useState("")
-  const [searchResult, setSearchResult] = useState<SearchModel | null>(null)
+  const [searchResult, setSearchResult] = useState<LibrarySearchResult | null>(null)
   const [resultVisible, setResultVisible] = useState(false)
   const [searchOverlay, setSearchOverlay] = useState<HTMLDivElement | null>(null)
   const inputElement = useRef<HTMLInputElement | null>(null)
@@ -82,7 +82,7 @@ export const Search: FC = () => {
   )
 }
 
-const SearchResults: FC<{ search: SearchModel; onClose: () => void }> = ({ search, onClose }) => (
+const SearchResults: FC<{ search: LibrarySearchResult; onClose: () => void }> = ({ search, onClose }) => (
   <>
     {search.books.length || search.authors.length || search.series.length ? (
       <>
@@ -111,7 +111,10 @@ const SearchResults: FC<{ search: SearchModel; onClose: () => void }> = ({ searc
   </>
 )
 
-const AuthorSearchResult: FC<{ authors: SearchModel["authors"]; onClose: () => void }> = ({ authors, onClose }) => (
+const AuthorSearchResult: FC<{ authors: LibrarySearchResult["authors"]; onClose: () => void }> = ({
+  authors,
+  onClose,
+}) => (
   <>
     {authors.map((author, i) => (
       <Link
@@ -139,7 +142,7 @@ const AuthorSearchResult: FC<{ authors: SearchModel["authors"]; onClose: () => v
   </>
 )
 
-const BookSearchResult: FC<{ books: SearchModel["books"]; onClose: () => void }> = ({ books, onClose }) => (
+const BookSearchResult: FC<{ books: LibrarySearchResult["books"]; onClose: () => void }> = ({ books, onClose }) => (
   <>
     {books.map((book, i) => (
       <Link
@@ -167,7 +170,10 @@ const BookSearchResult: FC<{ books: SearchModel["books"]; onClose: () => void }>
   </>
 )
 
-const SeriesSearchResult: FC<{ series: SearchModel["series"]; onClose: () => void }> = ({ series, onClose }) => (
+const SeriesSearchResult: FC<{ series: LibrarySearchResult["series"]; onClose: () => void }> = ({
+  series,
+  onClose,
+}) => (
   <>
     {series.map((series, i) => (
       <Link

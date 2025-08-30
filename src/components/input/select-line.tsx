@@ -1,4 +1,3 @@
-/* eslint-disable*/
 import { ReactNode } from "react"
 import { Select, SelectProps } from "@thoth/components/input/select"
 import { useField } from "@thoth/hooks/form"

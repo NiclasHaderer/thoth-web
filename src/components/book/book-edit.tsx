@@ -39,7 +39,7 @@ const toPatchBook = (book: BookModel): PartialBookApiModel => {
   return book as unknown as PartialBookApiModel
 }
 
-export const BookEdit: FC<{ book: BookApiModel; libraryId: UUID }> = ({ book, libraryId }) => {
+export const BookEdit: FC<{ book: BookApiModel }> = ({ book, libraryId }) => {
   const updateBook = useAudiobookState(s => s.updateBook)
   const form = useForm(book)
 

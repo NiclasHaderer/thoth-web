@@ -1,8 +1,8 @@
 /* eslint-disable */
-// @ts-nocheck
 // noinspection JSUnusedGlobalSymbols,ES6UnusedImports
 // noinspection ES6UnusedImports
-import { _createUrl, _mergeHeaders, _request, ApiCallData, ApiInterceptor, ApiResponse } from "./client"
+// @ts-nocheck
+import { ApiCallData, ApiInterceptor, ApiResponse, _request, _createUrl, _mergeHeaders } from "./client"
 import type {
   Author,
   AuthorDetailed,
@@ -15,9 +15,10 @@ import type {
   FileSystemItem,
   JWK,
   Library,
+  LibraryCreate,
   LibraryPermissions,
   LibrarySearchResult,
-  MetadataAgentApiModel,
+  LibraryUpdate,
   MetadataAgentID,
   MetadataAuthor,
   MetadataBook,
@@ -31,7 +32,6 @@ import type {
   NamedMetadataAgent,
   Order,
   PaginatedResponse,
-  PartialUpdateLibrary,
   Position,
   Series,
   SeriesDetailed,
@@ -47,12 +47,11 @@ import type {
   ThothUserWithPermissions,
   TitledId,
   Track,
-  UpdateLibrary,
+  UUID,
   UpdateLibraryPermissions,
   UpdatePermissions,
   UpdateUserPermissions,
   UserPermissions,
-  UUID,
   YearRange,
 } from "./models"
 
@@ -125,11 +124,7 @@ export const createApi = (
       )
     },
     updatePermissions: (
-      {
-        id,
-      }: {
-        id: UUID
-      },
+      { id }: { id: UUID },
       body: ThothModifyPermissions<UpdateUserPermissions>,
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
@@ -146,11 +141,7 @@ export const createApi = (
       )
     },
     getUser: (
-      {
-        id,
-      }: {
-        id: UUID
-      },
+      { id }: { id: UUID },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<ThothUser>> => {
@@ -166,11 +157,7 @@ export const createApi = (
       )
     },
     deleteUser: (
-      {
-        id,
-      }: {
-        id: UUID
-      },
+      { id }: { id: UUID },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<Empty>> => {
@@ -216,11 +203,7 @@ export const createApi = (
       )
     },
     updateUsername: (
-      {
-        id,
-      }: {
-        id: UUID
-      },
+      { id }: { id: UUID },
       body: ThothRenameUser,
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
@@ -237,11 +220,7 @@ export const createApi = (
       )
     },
     updatePassword: (
-      {
-        id,
-      }: {
-        id: UUID
-      },
+      { id }: { id: UUID },
       body: ThothChangePassword,
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
@@ -273,21 +252,12 @@ export const createApi = (
       )
     },
     listFoldersAtACertainPath: (
-      {
-        path,
-        showHidden,
-      }: {
-        path: string
-        showHidden?: boolean
-      },
+      { path, showHidden }: { path: string; showHidden?: boolean },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<Array<FileSystemItem>>> => {
       return _request(
-        _createUrl(`/api/fs`, {
-          path,
-          showHidden,
-        }),
+        _createUrl(`/api/fs`, { path, showHidden }),
         "GET",
         "json",
         _mergeHeaders(defaultHeadersImpl, headers),
@@ -313,7 +283,7 @@ export const createApi = (
       )
     },
     createLibrary: (
-      body: UpdateLibrary,
+      body: LibraryCreate,
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<Library>> => {
@@ -329,11 +299,7 @@ export const createApi = (
       )
     },
     getLibrary: (
-      {
-        libraryId,
-      }: {
-        libraryId: UUID
-      },
+      { libraryId }: { libraryId: UUID },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<Library>> => {
@@ -349,12 +315,8 @@ export const createApi = (
       )
     },
     updateLibrary: (
-      {
-        libraryId,
-      }: {
-        libraryId: UUID
-      },
-      body: PartialUpdateLibrary,
+      { libraryId }: { libraryId: UUID },
+      body: LibraryUpdate,
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<Library>> => {
@@ -370,11 +332,7 @@ export const createApi = (
       )
     },
     rescanLibrary: (
-      {
-        libraryId,
-      }: {
-        libraryId: UUID
-      },
+      { libraryId }: { libraryId: UUID },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<Empty>> => {
@@ -390,27 +348,12 @@ export const createApi = (
       )
     },
     searchInAllLibraries: (
-      {
-        author,
-        book,
-        q,
-        series,
-      }: {
-        author?: string
-        book?: string
-        q?: string
-        series?: string
-      },
+      { author, book, q, series }: { author?: string; book?: string; q?: string; series?: string },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<LibrarySearchResult>> => {
       return _request(
-        _createUrl(`/api/libraries/search`, {
-          author,
-          book,
-          q,
-          series,
-        }),
+        _createUrl(`/api/libraries/search`, { author, book, q, series }),
         "GET",
         "json",
         _mergeHeaders(defaultHeadersImpl, headers),
@@ -436,11 +379,12 @@ export const createApi = (
       )
     },
     listMetadataAgents: (
+      { language }: { language: string },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
-    ): Promise<ApiResponse<Array<MetadataAgentApiModel>>> => {
+    ): Promise<ApiResponse<Array<NamedMetadataAgent>>> => {
       return _request(
-        `/api/metadata-agents`,
+        _createUrl(`/api/metadata-agents`, { language }),
         "GET",
         "json",
         _mergeHeaders(defaultHeadersImpl, headers),
@@ -451,23 +395,12 @@ export const createApi = (
       )
     },
     listBooks: (
-      {
-        limit,
-        offset,
-        libraryId,
-      }: {
-        limit?: number
-        offset?: number
-        libraryId: UUID
-      },
+      { limit, offset, libraryId }: { limit?: number; offset?: number; libraryId: UUID },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<PaginatedResponse<Book>>> => {
       return _request(
-        _createUrl(`/api/libraries/${libraryId}/books`, {
-          limit,
-          offset,
-        }),
+        _createUrl(`/api/libraries/${libraryId}/books`, { limit, offset }),
         "GET",
         "json",
         _mergeHeaders(defaultHeadersImpl, headers),
@@ -478,23 +411,12 @@ export const createApi = (
       )
     },
     listBookSorting: (
-      {
-        limit,
-        offset,
-        libraryId,
-      }: {
-        limit?: number
-        offset?: number
-        libraryId: UUID
-      },
+      { limit, offset, libraryId }: { limit?: number; offset?: number; libraryId: UUID },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<Array<UUID>>> => {
       return _request(
-        _createUrl(`/api/libraries/${libraryId}/books/sorting`, {
-          limit,
-          offset,
-        }),
+        _createUrl(`/api/libraries/${libraryId}/books/sorting`, { limit, offset }),
         "GET",
         "json",
         _mergeHeaders(defaultHeadersImpl, headers),
@@ -505,13 +427,7 @@ export const createApi = (
       )
     },
     getBookPosition: (
-      {
-        id,
-        libraryId,
-      }: {
-        id: UUID
-        libraryId: UUID
-      },
+      { id, libraryId }: { id: UUID; libraryId: UUID },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<Position>> => {
@@ -527,13 +443,7 @@ export const createApi = (
       )
     },
     getBook: (
-      {
-        id,
-        libraryId,
-      }: {
-        id: UUID
-        libraryId: UUID
-      },
+      { id, libraryId }: { id: UUID; libraryId: UUID },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<BookDetailed>> => {
@@ -549,13 +459,7 @@ export const createApi = (
       )
     },
     updateBook: (
-      {
-        id,
-        libraryId,
-      }: {
-        id: UUID
-        libraryId: UUID
-      },
+      { id, libraryId }: { id: UUID; libraryId: UUID },
       body: BookUpdate,
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
@@ -572,13 +476,7 @@ export const createApi = (
       )
     },
     getBookAutocomplete: (
-      {
-        q,
-        libraryId,
-      }: {
-        q: string
-        libraryId: UUID
-      },
+      { q, libraryId }: { q: string; libraryId: UUID },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<Array<TitledId>>> => {
@@ -594,13 +492,7 @@ export const createApi = (
       )
     },
     autoMatchBook: (
-      {
-        id,
-        libraryId,
-      }: {
-        id: UUID
-        libraryId: UUID
-      },
+      { id, libraryId }: { id: UUID; libraryId: UUID },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<Book>> => {
@@ -616,23 +508,12 @@ export const createApi = (
       )
     },
     listSeries: (
-      {
-        limit,
-        offset,
-        libraryId,
-      }: {
-        limit?: number
-        offset?: number
-        libraryId: UUID
-      },
+      { limit, offset, libraryId }: { limit?: number; offset?: number; libraryId: UUID },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<PaginatedResponse<Series>>> => {
       return _request(
-        _createUrl(`/api/libraries/${libraryId}/series`, {
-          limit,
-          offset,
-        }),
+        _createUrl(`/api/libraries/${libraryId}/series`, { limit, offset }),
         "GET",
         "json",
         _mergeHeaders(defaultHeadersImpl, headers),
@@ -643,26 +524,12 @@ export const createApi = (
       )
     },
     listSeriesSorting: (
-      {
-        limit,
-        offset,
-        order,
-        libraryId,
-      }: {
-        limit?: number
-        offset?: number
-        order?: Order
-        libraryId: UUID
-      },
+      { limit, offset, order, libraryId }: { limit?: number; offset?: number; order?: Order; libraryId: UUID },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<Array<UUID>>> => {
       return _request(
-        _createUrl(`/api/libraries/${libraryId}/series/sorting`, {
-          limit,
-          offset,
-          order,
-        }),
+        _createUrl(`/api/libraries/${libraryId}/series/sorting`, { limit, offset, order }),
         "GET",
         "json",
         _mergeHeaders(defaultHeadersImpl, headers),
@@ -673,15 +540,7 @@ export const createApi = (
       )
     },
     getSeriesPosition: (
-      {
-        order,
-        id,
-        libraryId,
-      }: {
-        order?: Order
-        id: UUID
-        libraryId: UUID
-      },
+      { order, id, libraryId }: { order?: Order; id: UUID; libraryId: UUID },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<Position>> => {
@@ -697,13 +556,7 @@ export const createApi = (
       )
     },
     getSeries: (
-      {
-        id,
-        libraryId,
-      }: {
-        id: UUID
-        libraryId: UUID
-      },
+      { id, libraryId }: { id: UUID; libraryId: UUID },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<SeriesDetailed>> => {
@@ -719,13 +572,7 @@ export const createApi = (
       )
     },
     updateSeries: (
-      {
-        id,
-        libraryId,
-      }: {
-        id: UUID
-        libraryId: UUID
-      },
+      { id, libraryId }: { id: UUID; libraryId: UUID },
       body: SeriesUpdate,
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
@@ -742,13 +589,7 @@ export const createApi = (
       )
     },
     getSeriesAutocomplete: (
-      {
-        q,
-        libraryId,
-      }: {
-        q: string
-        libraryId: UUID
-      },
+      { q, libraryId }: { q: string; libraryId: UUID },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<Array<TitledId>>> => {
@@ -764,26 +605,12 @@ export const createApi = (
       )
     },
     listAuthors: (
-      {
-        limit,
-        offset,
-        order,
-        libraryId,
-      }: {
-        limit?: number
-        offset?: number
-        order?: Order
-        libraryId: UUID
-      },
+      { limit, offset, order, libraryId }: { limit?: number; offset?: number; order?: Order; libraryId: UUID },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<PaginatedResponse<Author>>> => {
       return _request(
-        _createUrl(`/api/libraries/${libraryId}/authors`, {
-          limit,
-          offset,
-          order,
-        }),
+        _createUrl(`/api/libraries/${libraryId}/authors`, { limit, offset, order }),
         "GET",
         "json",
         _mergeHeaders(defaultHeadersImpl, headers),
@@ -794,26 +621,12 @@ export const createApi = (
       )
     },
     listAuthorSorting: (
-      {
-        limit,
-        offset,
-        order,
-        libraryId,
-      }: {
-        limit?: number
-        offset?: number
-        order?: Order
-        libraryId: UUID
-      },
+      { limit, offset, order, libraryId }: { limit?: number; offset?: number; order?: Order; libraryId: UUID },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<Array<UUID>>> => {
       return _request(
-        _createUrl(`/api/libraries/${libraryId}/authors/sorting`, {
-          limit,
-          offset,
-          order,
-        }),
+        _createUrl(`/api/libraries/${libraryId}/authors/sorting`, { limit, offset, order }),
         "GET",
         "json",
         _mergeHeaders(defaultHeadersImpl, headers),
@@ -824,15 +637,7 @@ export const createApi = (
       )
     },
     getAuthorPosition: (
-      {
-        order,
-        id,
-        libraryId,
-      }: {
-        order?: Order
-        id: UUID
-        libraryId: UUID
-      },
+      { order, id, libraryId }: { order?: Order; id: UUID; libraryId: UUID },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<Position>> => {
@@ -848,13 +653,7 @@ export const createApi = (
       )
     },
     getAuthor: (
-      {
-        id,
-        libraryId,
-      }: {
-        id: UUID
-        libraryId: UUID
-      },
+      { id, libraryId }: { id: UUID; libraryId: UUID },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<AuthorDetailed>> => {
@@ -870,13 +669,7 @@ export const createApi = (
       )
     },
     updateAuthor: (
-      {
-        id,
-        libraryId,
-      }: {
-        id: UUID
-        libraryId: UUID
-      },
+      { id, libraryId }: { id: UUID; libraryId: UUID },
       body: AuthorUpdate,
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
@@ -893,13 +686,7 @@ export const createApi = (
       )
     },
     getAuthorAutocomplete: (
-      {
-        q,
-        libraryId,
-      }: {
-        q: string
-        libraryId: UUID
-      },
+      { q, libraryId }: { q: string; libraryId: UUID },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<Array<NamedId>>> => {
@@ -954,15 +741,7 @@ export const createApi = (
       )
     },
     getAuthorMetadata: (
-      {
-        provider,
-        id,
-        libraryId,
-      }: {
-        provider: string
-        id: string
-        libraryId: UUID
-      },
+      { provider, id, libraryId }: { provider: string; id: string; libraryId: UUID },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<MetadataAuthor>> => {
@@ -978,13 +757,7 @@ export const createApi = (
       )
     },
     searchAuthorMetadata: (
-      {
-        q,
-        libraryId,
-      }: {
-        q: string
-        libraryId: UUID
-      },
+      { q, libraryId }: { q: string; libraryId: UUID },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<Array<MetadataAuthor>>> => {
@@ -1000,15 +773,7 @@ export const createApi = (
       )
     },
     getBookMetadata: (
-      {
-        provider,
-        id,
-        libraryId,
-      }: {
-        provider: string
-        id: string
-        libraryId: UUID
-      },
+      { provider, id, libraryId }: { provider: string; id: string; libraryId: UUID },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<MetadataBook>> => {
@@ -1024,23 +789,12 @@ export const createApi = (
       )
     },
     searchBookMetadata: (
-      {
-        authorName,
-        q,
-        libraryId,
-      }: {
-        authorName?: string
-        q: string
-        libraryId: UUID
-      },
+      { authorName, q, libraryId }: { authorName?: string; q: string; libraryId: UUID },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<Array<MetadataBook>>> => {
       return _request(
-        _createUrl(`/api/libraries/${libraryId}/metadata/book/search`, {
-          authorName,
-          q,
-        }),
+        _createUrl(`/api/libraries/${libraryId}/metadata/book/search`, { authorName, q }),
         "GET",
         "json",
         _mergeHeaders(defaultHeadersImpl, headers),
@@ -1051,15 +805,7 @@ export const createApi = (
       )
     },
     getSeriesMetadata: (
-      {
-        provider,
-        id,
-        libraryId,
-      }: {
-        provider: string
-        id: string
-        libraryId: UUID
-      },
+      { provider, id, libraryId }: { provider: string; id: string; libraryId: UUID },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<MetadataSeries>> => {
@@ -1075,23 +821,12 @@ export const createApi = (
       )
     },
     searchSeriesMetadata: (
-      {
-        authorName,
-        q,
-        libraryId,
-      }: {
-        authorName?: string
-        q: string
-        libraryId: UUID
-      },
+      { authorName, q, libraryId }: { authorName?: string; q: string; libraryId: UUID },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<Array<MetadataSeries>>> => {
       return _request(
-        _createUrl(`/api/libraries/${libraryId}/metadata/series/search`, {
-          authorName,
-          q,
-        }),
+        _createUrl(`/api/libraries/${libraryId}/metadata/series/search`, { authorName, q }),
         "GET",
         "json",
         _mergeHeaders(defaultHeadersImpl, headers),
@@ -1102,11 +837,7 @@ export const createApi = (
       )
     },
     getAudioFile: (
-      {
-        id,
-      }: {
-        id: UUID
-      },
+      { id }: { id: UUID },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<Blob>> => {
@@ -1122,11 +853,7 @@ export const createApi = (
       )
     },
     getImageFile: (
-      {
-        id,
-      }: {
-        id: UUID
-      },
+      { id }: { id: UUID },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<Blob>> => {

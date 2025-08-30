@@ -1,6 +1,6 @@
 import { FC } from "react"
 import { MdNumbers, MdSearch } from "react-icons/md"
-import { MetadataSeries, PartialSeriesApiModel, SeriesApiModel, SeriesModel } from "@thoth/client"
+import { MetadataSeries, Series, SeriesUpdate } from "@thoth/client"
 import { GenericEdit } from "@thoth/components/generic/generic-edit.tsx"
 import { ManagedInput } from "@thoth/components/input/managed-input"
 import { FormContext, useForm } from "../../hooks/form"
@@ -8,7 +8,7 @@ import { useAudiobookState } from "../../state/audiobook.state"
 import { HtmlEditor } from "../html-editor"
 import { SeriesSearch } from "./series-search"
 
-const mergeMetaIntoSeries = ({ ...series }: SeriesApiModel, seriesMetadata: MetadataSeries): SeriesApiModel => {
+const mergeMetaIntoSeries = ({ ...series }: SeriesUpdate, seriesMetadata: MetadataSeries): SeriesUpdate => {
   series.description = seriesMetadata.description ?? series.description
   series.title = seriesMetadata.description ?? series.title
   series.cover = seriesMetadata.coverURL ?? series.cover
@@ -18,7 +18,7 @@ const mergeMetaIntoSeries = ({ ...series }: SeriesApiModel, seriesMetadata: Meta
   return series
 }
 
-const seriesToUpdate = (series: SeriesModel): SeriesApiModel => {
+const seriesToUpdate = (series: Series): SeriesUpdate => {
   return {
     cover: series.coverID,
     description: series.description,
@@ -32,7 +32,7 @@ const seriesToUpdate = (series: SeriesModel): SeriesApiModel => {
   }
 }
 
-export const SeriesEdit: FC<{ series: SeriesModel }> = ({ series }) => {
+export const SeriesEdit: FC<{ series: Series }> = ({ series }) => {
   const updateSeries = useAudiobookState(s => s.updateSeries)
   const form = useForm(seriesToUpdate(series))
 
@@ -59,7 +59,7 @@ export const SeriesEdit: FC<{ series: SeriesModel }> = ({ series }) => {
   )
 }
 
-const SeriesForm: FC<{ form: FormContext<PartialSeriesApiModel> }> = ({ form }) => {
+const SeriesForm: FC<{ form: FormContext<SeriesUpdate> }> = ({ form }) => {
   return (
     <>
       <ManagedInput className="pt-2" name="title" labelClassName="w-28" label="Title" leftIcon={<MdSearch />} />
