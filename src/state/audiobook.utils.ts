@@ -31,7 +31,7 @@ export const wrapFetch = <K extends AssetsToUpdate>(
     libraryId: UUID
     limit?: number
     offset?: number
-  }) => Promise<ApiResponse<PaginatedResponse<AudiobookState["content"][UUID][`${K}Map`][string]>>>
+  }) => Promise<ApiResponse<PaginatedResponse<AudiobookState["content"][UUID][`${K}Map`][UUID]>>>
 ) => {
   return async ({ libraryId, offset }: { libraryId: UUID; offset: number }) => {
     const limit = 30
@@ -72,7 +72,7 @@ export const wrapUpdate = <K extends AssetsToUpdate, UPDATE_TYPE>(
       id: UUID
     },
     data: UPDATE_TYPE
-  ) => Promise<ApiResponse<AudiobookState["content"][UUID][`${K}Map`][string]>>
+  ) => Promise<ApiResponse<AudiobookState["content"][UUID][`${K}Map`][UUID]>>
 ) => {
   return async ({ libraryId, id }: { libraryId: UUID; id: UUID }, data: UPDATE_TYPE) => {
     const response = await updateFunction({ libraryId, id }, data)
@@ -99,7 +99,7 @@ export const wrapUpdate = <K extends AssetsToUpdate, UPDATE_TYPE>(
 export const wrapSorting = <K extends AssetsToUpdate>(
   mutate: Mutate<StoreApi<AudiobookState>, [StoreMutatorIdentifier, unknown][]>,
   key: K,
-  sortingFunction: (params: { libraryId: UUID; limit?: number; offset?: number }) => Promise<ApiResponse<string[]>>
+  sortingFunction: (params: { libraryId: UUID; limit?: number; offset?: number }) => Promise<ApiResponse<UUID[]>>
 ) => {
   return async ({ libraryId, offset }: { libraryId: UUID; offset: number }) => {
     const limit = 30
@@ -127,7 +127,7 @@ export const wrapDetails = <K extends AssetsToUpdate>(
   detailsFunction: (params: {
     libraryId: UUID
     id: UUID
-  }) => Promise<ApiResponse<AudiobookState["content"][UUID][`${K}Map`][string]>>
+  }) => Promise<ApiResponse<AudiobookState["content"][UUID][`${K}Map`][UUID]>>
 ) => {
   return async ({ libraryId, id }: { libraryId: UUID; id: UUID }) => {
     const response = await detailsFunction({ libraryId, id })
