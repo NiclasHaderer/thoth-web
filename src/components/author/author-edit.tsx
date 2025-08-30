@@ -1,5 +1,5 @@
 import { FC } from "react"
-import { AuthorApiModel, MetadataAuthor, UUID } from "@thoth/client"
+import { AuthorApiModel, AuthorModel, MetadataAuthor } from "@thoth/client"
 import { GenericEdit } from "@thoth/components/generic/generic-edit.tsx"
 import { useForm } from "../../hooks/form"
 import { useAudiobookState } from "../../state/audiobook.state"
@@ -20,13 +20,23 @@ const mergeMetaIntoAuthor = ({ ...author }: AuthorApiModel, meta: MetadataAuthor
   return author
 }
 
-export const AuthorEdit: FC<{ author: AuthorApiModel; authorId: UUID; libraryId: UUID }> = ({
-  author,
-  authorId,
-  libraryId,
-}) => {
+const authorToUpdateModel = (author: AuthorModel): AuthorApiModel => {
+  return {
+    biography: author.biography,
+    birthDate: author.birthDate,
+    bornIn: author.bornIn,
+    deathDate: author.deathDate,
+    image: author.imageID,
+    name: author.name,
+    provider: author.provider,
+    providerID: author.providerID,
+    website: author.website,
+  }
+}
+
+export const AuthorEdit: FC<{ author: AuthorModel }> = ({ author }) => {
   const updateAuthor = useAudiobookState(s => s.updateAuthor)
-  const form = useForm(author, {
+  const form = useForm(authorToUpdateModel(author), {
     toForm: {
       birthDate: value => value && toFormDate(value),
       deathDate: value => value && toFormDate(value),
@@ -38,13 +48,13 @@ export const AuthorEdit: FC<{ author: AuthorApiModel; authorId: UUID; libraryId:
       title="Edit Author"
       form={form}
       onSubmit={async (values, closeModal) => {
-        await updateAuthor({ libraryId, id: authorId }, values)
+        await updateAuthor({ libraryId: author.library.id, id: author.id }, values)
         closeModal()
       }}
       InformationDisplay={() => <AuthorForm form={form} />}
       Search={({ onSelect }) => (
         <AuthorSearch
-          libraryId={libraryId}
+          libraryId={author.library.id}
           authorSearch={form.fields.name}
           onSelect={authorMeta => {
             form.setAllFields(mergeMetaIntoAuthor(form.fields, authorMeta))

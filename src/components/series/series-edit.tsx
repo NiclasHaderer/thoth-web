@@ -1,6 +1,6 @@
 import { FC } from "react"
 import { MdNumbers, MdSearch } from "react-icons/md"
-import { DetailedSeriesModel, MetadataSeries, PartialSeriesApiModel } from "@thoth/client"
+import { MetadataSeries, PartialSeriesApiModel, SeriesApiModel, SeriesModel } from "@thoth/client"
 import { GenericEdit } from "@thoth/components/generic/generic-edit.tsx"
 import { ManagedInput } from "@thoth/components/input/managed-input"
 import { FormContext, useForm } from "../../hooks/form"
@@ -8,35 +8,33 @@ import { useAudiobookState } from "../../state/audiobook.state"
 import { HtmlEditor } from "../html-editor"
 import { SeriesSearch } from "./series-search"
 
-type SeriesForm = Pick<
-  PartialSeriesApiModel,
-  "title" | "description" | "provider" | "providerID" | "primaryWorks" | "cover"
->
-
-const mergeMetaIntoSeries = ({ ...seriesModel }: SeriesForm, seriesMetadata: MetadataSeries): SeriesForm => {
-  seriesModel.description = seriesMetadata.description ?? seriesModel.description
-  seriesModel.title = seriesMetadata.description ?? seriesModel.title
-  seriesModel.cover = seriesMetadata.coverURL ?? seriesModel.cover
-  seriesModel.primaryWorks = seriesMetadata.primaryWorks ?? seriesModel.primaryWorks
-  seriesModel.provider = seriesMetadata.id.provider ?? seriesModel.providerID
-  seriesModel.providerID = seriesMetadata.id.itemID ?? seriesModel.providerID
-  return seriesModel
+const mergeMetaIntoSeries = ({ ...series }: SeriesApiModel, seriesMetadata: MetadataSeries): SeriesApiModel => {
+  series.description = seriesMetadata.description ?? series.description
+  series.title = seriesMetadata.description ?? series.title
+  series.cover = seriesMetadata.coverURL ?? series.cover
+  series.primaryWorks = seriesMetadata.primaryWorks ?? series.primaryWorks
+  series.provider = seriesMetadata.id.provider ?? series.providerID
+  series.providerID = seriesMetadata.id.itemID ?? series.providerID
+  return series
 }
 
-const toSeriesForm = ({ id: _, ...rest }: DetailedSeriesModel): SeriesForm => {
+const seriesToUpdate = (series: SeriesModel): SeriesApiModel => {
   return {
-    cover: rest.coverID,
-    description: rest.description,
-    title: rest.title,
-    primaryWorks: rest.primaryWorks,
-    provider: rest.provider,
-    providerID: rest.providerID,
+    cover: series.coverID,
+    description: series.description,
+    primaryWorks: series.primaryWorks,
+    provider: series.provider,
+    providerID: series.providerID,
+    title: series.title,
+    totalBooks: series.totalBooks,
+    authors: undefined,
+    books: undefined,
   }
 }
 
-export const SeriesEdit: FC<{ series: DetailedSeriesModel }> = ({ series }) => {
+export const SeriesEdit: FC<{ series: SeriesModel }> = ({ series }) => {
   const updateSeries = useAudiobookState(s => s.updateSeries)
-  const form = useForm(toSeriesForm(series))
+  const form = useForm(seriesToUpdate(series))
 
   return (
     <GenericEdit
@@ -61,7 +59,7 @@ export const SeriesEdit: FC<{ series: DetailedSeriesModel }> = ({ series }) => {
   )
 }
 
-const SeriesForm: FC<{ form: FormContext<SeriesForm> }> = ({ form }) => {
+const SeriesForm: FC<{ form: FormContext<PartialSeriesApiModel> }> = ({ form }) => {
   return (
     <>
       <ManagedInput className="pt-2" name="title" labelClassName="w-28" label="Title" leftIcon={<MdSearch />} />
