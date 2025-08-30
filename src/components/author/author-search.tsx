@@ -10,8 +10,8 @@ import { useHttpRequest } from "@thoth/hooks/async-response"
 export const AuthorSearch: FC<{
   authorSearch?: string | null | undefined
   libraryId: UUID
-  select: (result: MetadataAuthor) => void
-}> = ({ select, authorSearch, libraryId }) => {
+  onSelect: (result: MetadataAuthor) => void
+}> = ({ onSelect, authorSearch, libraryId }) => {
   const [author, setAuthor] = useState(authorSearch)
 
   const { result, loading, invoke } = useHttpRequest(Api.searchAuthorMetadata)
@@ -35,7 +35,7 @@ export const AuthorSearch: FC<{
         </ColoredButton>
       </div>
       <div className="max-h-96 overflow-y-auto">
-        {result ? <AuthorSearchResult results={result} select={select} /> : null}
+        {result ? <AuthorSearchResult results={result} select={onSelect} /> : null}
         {loading ? <LoadingCards amount={10} /> : null}
       </div>
     </>
