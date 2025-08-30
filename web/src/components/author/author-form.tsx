@@ -1,7 +1,7 @@
 import { FC, useRef } from "react"
 import { CiSaveUp1 } from "react-icons/ci"
 import { MdAddLink, MdCelebration, MdPerson } from "react-icons/md"
-import { AuthorApiModel } from "@thoth/client"
+import { AuthorUpdate } from "@thoth/client"
 import { ManagedInput } from "@thoth/components/input/managed-input"
 import { ResponsiveImage } from "@thoth/components/responsive-image"
 import { FormContext } from "../../hooks/form"
@@ -9,7 +9,7 @@ import { isUUID, toBase64 } from "../../utils/utils"
 import { HtmlEditor } from "../html-editor"
 import { MdDeceased } from "../icons/deceased"
 
-export const AuthorForm: FC<{ form: FormContext<AuthorApiModel> }> = ({ form }) => {
+export const AuthorForm: FC<{ form: FormContext<AuthorUpdate> }> = ({ form }) => {
   const imageInputRef = useRef<HTMLInputElement>(null)
   return (
     <>
