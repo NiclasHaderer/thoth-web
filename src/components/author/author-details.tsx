@@ -63,21 +63,7 @@ export const AuthorDetails: FC<{ authorId: UUID; libraryId: UUID }> = ({ authorI
             </h3>
           </div>
         ) : null}
-        <AuthorEdit
-          libraryId={libraryId}
-          authorId={author.id}
-          author={{
-            name: author.name,
-            providerID: author.providerID,
-            provider: author.provider,
-            image: author.imageID,
-            birthDate: author.birthDate,
-            deathDate: author.deathDate,
-            bornIn: author.bornIn,
-            website: author.website,
-            biography: author.biography,
-          }}
-        />
+        <AuthorEdit author={author} />
       </div>
 
       <HtmlViewer content={author.biography} className="min-w-full pb-6" title="Biographie" />
