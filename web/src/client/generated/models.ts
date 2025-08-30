@@ -33,35 +33,35 @@ export interface JWK {
   use: string
 }
 
-export interface JWKs {
+export interface ThothJWKs {
   keys: Array<JWK>
 }
 
-export type LibraryPermissions = "READONLY" | "READ_WRITE"
+export type UpdatePermissions = "READONLY" | "READ_WRITE"
 
-export interface UpdateLibraryPermissionsModel {
+export interface UpdateLibraryPermissions {
   id: UUID
-  permissions: LibraryPermissions
+  permissions: UpdatePermissions
 }
 
-export interface UpdatePermissionsModel {
+export interface UpdateUserPermissions {
   isAdmin: boolean
-  libraries: Array<UpdateLibraryPermissionsModel>
+  libraries: Array<UpdateLibraryPermissions>
 }
 
 export interface ThothModifyPermissions<PERMISSIONS> {
   permissions: PERMISSIONS
 }
 
-export interface LibraryPermissionsModel {
+export interface LibraryPermissions {
   id: UUID
   name: string
-  permissions: LibraryPermissions
+  permissions: UpdatePermissions
 }
 
-export interface UserPermissionsModel {
+export interface UserPermissions {
   isAdmin: boolean
-  libraries: Array<LibraryPermissionsModel>
+  libraries: Array<LibraryPermissions>
 }
 
 export interface ThothUserWithPermissions<PERMISSIONS extends NonNullable<any>> {
@@ -89,38 +89,38 @@ export interface FileScanner {
   name: string
 }
 
-export interface MetadataAgent {
+export interface NamedMetadataAgent {
   name: string
 }
 
-export interface LibraryModel {
+export interface Library {
   fileScanners: Array<FileScanner>
   folders: Array<string>
   icon: string | undefined
   id: UUID
   language: string
-  metadataScanners: Array<MetadataAgent>
+  metadataScanners: Array<NamedMetadataAgent>
   name: string
   preferEmbeddedMetadata: boolean
   scanIndex: number
 }
 
-export interface LibraryApiModel {
+export interface UpdateLibrary {
   fileScanners: Array<FileScanner>
   folders: Array<string>
   icon: string | undefined
   language: string
-  metadataScanners: Array<MetadataAgent>
+  metadataScanners: Array<NamedMetadataAgent>
   name: string
   preferEmbeddedMetadata: boolean
 }
 
-export interface PartialLibraryApiModel {
+export interface PartialUpdateLibrary {
   fileScanners: Array<FileScanner> | undefined
   folders: Array<string> | undefined
   icon: string | undefined
   language: string | undefined
-  metadataScanners: Array<MetadataAgent> | undefined
+  metadataScanners: Array<NamedMetadataAgent> | undefined
   name: string | undefined
   preferEmbeddedMetadata: boolean | undefined
 }
@@ -130,7 +130,7 @@ export interface NamedId {
   name: string
 }
 
-export interface AuthorModel {
+export interface Author {
   biography: string | undefined
   birthDate: string | undefined
   bornIn: string | undefined
@@ -149,7 +149,7 @@ export interface TitledId {
   title: string
 }
 
-export interface BookModel {
+export interface Book {
   authors: Array<NamedId>
   coverID: UUID | undefined
   description: string | undefined
@@ -168,7 +168,7 @@ export interface BookModel {
   title: string
 }
 
-export interface SeriesModel {
+export interface Series {
   authors: Array<NamedId>
   coverID: UUID | undefined
   description: string | undefined
@@ -182,10 +182,10 @@ export interface SeriesModel {
   totalBooks: number | undefined
 }
 
-export interface SearchModel {
-  authors: Array<AuthorModel>
-  books: Array<BookModel>
-  series: Array<SeriesModel>
+export interface LibrarySearchResult {
+  authors: Array<Author>
+  books: Array<Book>
+  series: Array<Series>
 }
 
 export interface MetadataAgentApiModel {
@@ -208,7 +208,7 @@ export interface Position {
   sortIndex: number
 }
 
-export interface TrackModel {
+export interface Track {
   accessTime: number
   book: TitledId
   duration: number
@@ -220,11 +220,11 @@ export interface TrackModel {
   updateTime: string
 }
 
-export interface DetailedBookModel extends BookModel {
-  tracks: Array<TrackModel>
+export interface BookDetailed extends Book {
+  tracks: Array<Track>
 }
 
-export interface PartialBookApiModel {
+export interface BookUpdate {
   authors: Array<UUID> | undefined
   cover: string | undefined
   description: string | undefined
@@ -240,34 +240,18 @@ export interface PartialBookApiModel {
   title: string | undefined
 }
 
-export interface BookApiModel {
-  authors: Array<UUID>
-  cover: string | undefined
-  description: string | undefined
-  isbn: string | undefined
-  language: string | undefined
-  narrator: string | undefined
-  provider: string | undefined
-  providerID: string | undefined
-  providerRating: number | undefined
-  publisher: string | undefined
-  releaseDate: string | undefined
-  series: Array<UUID> | undefined
-  title: string
-}
-
 export interface YearRange {
   end: number
   start: number
 }
 
-export interface DetailedSeriesModel extends SeriesModel {
-  books: Array<BookModel>
+export interface SeriesDetailed extends Series {
+  books: Array<Book>
   narrators: Array<string>
   yearRange: YearRange | undefined
 }
 
-export interface PartialSeriesApiModel {
+export interface SeriesUpdate {
   authors: Array<UUID> | undefined
   books: Array<UUID> | undefined
   cover: string | undefined
@@ -279,24 +263,12 @@ export interface PartialSeriesApiModel {
   totalBooks: number | undefined
 }
 
-export interface SeriesApiModel {
-  authors: Array<UUID>
-  books: Array<UUID>
-  cover: string | undefined
-  description: string | undefined
-  primaryWorks: number | undefined
-  provider: string | undefined
-  providerID: string | undefined
-  title: string
-  totalBooks: number | undefined
+export interface AuthorDetailed extends Author {
+  books: Array<Book>
+  series: Array<Series>
 }
 
-export interface DetailedAuthorModel extends AuthorModel {
-  books: Array<BookModel>
-  series: Array<SeriesModel>
-}
-
-export interface PartialAuthorApiModel {
+export interface AuthorUpdate {
   biography: string | undefined
   birthDate: string | undefined
   bornIn: string | undefined
@@ -308,31 +280,19 @@ export interface PartialAuthorApiModel {
   website: string | undefined
 }
 
-export interface AuthorApiModel {
-  biography: string | undefined
-  birthDate: string | undefined
-  bornIn: string | undefined
-  deathDate: string | undefined
-  image: string | undefined
-  name: string
-  provider: string | undefined
-  providerID: string | undefined
-  website: string | undefined
-}
-
-export interface MetadataProviderWithID {
+export interface MetadataAgentID {
   itemID: string
   provider: string
 }
 
 export interface MetadataSearchAuthor {
-  id: MetadataProviderWithID
+  id: MetadataAgentID
   link: string
   name: string | undefined
 }
 
 export interface MetadataBookSeries {
-  id: MetadataProviderWithID
+  id: MetadataAgentID
   index: number | undefined
   link: string
   title: string | undefined
@@ -341,7 +301,7 @@ export interface MetadataBookSeries {
 export interface MetadataSearchBook {
   authors: Array<MetadataSearchAuthor> | undefined
   coverURL: string | undefined
-  id: MetadataProviderWithID
+  id: MetadataAgentID
   language: string | undefined
   link: string | undefined
   narrator: string | undefined
@@ -385,7 +345,7 @@ export interface MetadataSeries {
   books: Array<MetadataSearchBook> | undefined
   coverURL: string | undefined
   description: string | undefined
-  id: MetadataProviderWithID
+  id: MetadataAgentID
   link: string
   primaryWorks: number | undefined
   title: string | undefined
