@@ -7,16 +7,18 @@ import { SeriesPreview } from "@thoth/components/series/series-preview.tsx"
 import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
 import { useAudiobookState } from "@thoth/state/audiobook.state"
 
-export const LibraryPreview: FC<{ library: LibraryModel }> = ({ library }) => {
+export const LibraryPreview: FC<{ library: LibraryModel; libraryCount: number }> = ({ library, libraryCount }) => {
   const libraryBooks = useAudiobookState(AudiobookSelectors.selectBooks(library.id))
   const librarySeries = useAudiobookState(AudiobookSelectors.selectSeriesList(library.id))
   const libraryAuthors = useAudiobookState(AudiobookSelectors.selectAuthors(library.id))
 
   return (
     <div className={`p-2`}>
-      <Link className="mt-4 block text-2xl font-medium hover:underline" href={`/libraries/${library.id}`}>
-        {library.name}
-      </Link>
+      {libraryCount > 1 && (
+        <Link className="mt-4 block text-2xl font-medium hover:underline" href={`/libraries/${library.id}`}>
+          {library.name}
+        </Link>
+      )}
 
       <Link className="mb-2 mt-4 block text-xl hover:underline" href={`/libraries/${library.id}/books`}>
         Books

@@ -13,21 +13,21 @@ import {
 import { useOnMount } from "@thoth/hooks/lifecycle.ts"
 import { notNullIsh } from "@thoth/utils/utils"
 
+export type SubmitError<T extends Record<string, any>> = Partial<{
+  [K in keyof T]: string[] | undefined
+}>
+
 export interface FormContext<T extends Record<string, any>> {
   fields: T
   setFields: (newValue: Partial<T>) => void
   setAllFields: (newValue: T) => void
-  errors: {
-    [K in keyof T]: string[] | undefined
-  }
+  errors: SubmitError<T>
   setErrors: (newValue: Partial<{ [K in keyof T]: string | undefined }>) => void
   hasErrors: () => boolean
   touched: {
     [K in keyof T]: boolean
   }
-  getErrors: () => Partial<{
-    [K in keyof T]: string[] | undefined
-  }>
+  getErrors: () => SubmitError<T>
   setTouched: (newValue: Partial<{ [K in keyof T]: boolean }>) => void
   toFormTransformers: {
     [K in keyof T]?: (value: T[K]) => any
@@ -261,11 +261,13 @@ export const Form = <T extends Record<string, any>>({
   form,
   children,
   onSubmit,
+  onSubmitError,
   ...props
 }: {
   form: FormContext<T>
   children?: ReactNode | undefined
   onSubmit?: (values: T) => void
+  onSubmitError?: (errors: SubmitError<T>) => void
 } & Omit<FormHTMLAttributes<HTMLFormElement>, "onSubmit">) => (
   <form
     {...props}
@@ -273,7 +275,12 @@ export const Form = <T extends Record<string, any>>({
       e.preventDefault()
       e.stopPropagation()
       form.forceValidateAll()
-      onSubmit && onSubmit(form.fields)
+      if (form.hasErrors()) {
+        form.markAllAsTouched()
+        onSubmitError?.(form.getErrors())
+        return
+      }
+      onSubmit?.(form.fields)
     }}
   >
     <CONTEXT.Provider value={form}>{children}</CONTEXT.Provider>
