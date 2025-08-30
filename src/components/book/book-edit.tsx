@@ -1,5 +1,5 @@
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react"
-import { FC, Fragment, useEffect, useRef, useState } from "react"
+import { FC, Fragment, useEffect, useRef } from "react"
 import { CiImageOff } from "react-icons/ci"
 import {
   MdCollectionsBookmark,
@@ -10,7 +10,7 @@ import {
   MdPerson,
   MdSearch,
 } from "react-icons/md"
-import { BookApiModel, BookModel, MetadataBook, PartialBookApiModel, UUID } from "@thoth/client"
+import { Book, BookUpdate, MetadataBook } from "@thoth/client"
 import { ColoredButton } from "@thoth/components/colored-button"
 import { Dialog, DialogButtons } from "@thoth/components/dialog"
 import { ManagedInput } from "@thoth/components/input/managed-input"
@@ -21,7 +21,7 @@ import { toBase64 } from "../../utils/utils"
 import { HtmlEditor } from "../html-editor"
 import { BookSearch } from "./book-search"
 
-const mergeMetaIntoBook = ({ ...book }: PartialBookApiModel, meta: MetadataBook): PartialBookApiModel => {
+const mergeMetaIntoBook = ({ ...book }: BookUpdate, meta: MetadataBook): BookUpdate => {
   // TODO fix
   book.title = meta.title || book.title
   // book.author = meta.author?.name || book.author
@@ -34,12 +34,12 @@ const mergeMetaIntoBook = ({ ...book }: PartialBookApiModel, meta: MetadataBook)
   return book
 }
 
-const toPatchBook = (book: BookModel): PartialBookApiModel => {
+const toPatchBook = (book: Book): BookUpdate => {
   // TODO
-  return book as unknown as PartialBookApiModel
+  throw new Error("toPatchBook not implemented")
 }
 
-export const BookEdit: FC<{ book: BookApiModel }> = ({ book, libraryId }) => {
+export const BookEdit: FC<{ book: Book }> = ({ book }) => {
   const updateBook = useAudiobookState(s => s.updateBook)
   const form = useForm(book)
 
