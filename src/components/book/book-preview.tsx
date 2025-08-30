@@ -1,13 +1,13 @@
 import { forwardRef } from "react"
-import { BookModel } from "@thoth/client"
+import { Book } from "@thoth/client"
 import { GenericPreview } from "@thoth/components/generic/generic-preview.tsx"
 
-interface BookPreviewProps extends BookModel {
+interface BookPreviewProps extends Book {
   size?: "small" | "normal"
   className?: string
 }
 
-export const BookPreview = forwardRef<HTMLDivElement, BookPreviewProps>(
+export const BookPreview = forwardRef<HTMLAnchorElement, BookPreviewProps>(
   ({ size = "normal", className = "", ...book }, ref) => {
     return (
       <GenericPreview

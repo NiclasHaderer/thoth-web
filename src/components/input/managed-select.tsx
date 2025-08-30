@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { useField } from "@thoth/hooks/form"
 import { Select, SelectProps } from "./select"
 

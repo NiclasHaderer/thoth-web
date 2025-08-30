@@ -1,6 +1,6 @@
 /* eslint-disable */
-
 // @ts-nocheck
+import type { Pair } from "./utility-types"
 
 export interface ThothAccessToken {
   accessToken: string
@@ -105,7 +105,7 @@ export interface Library {
   scanIndex: number
 }
 
-export interface UpdateLibrary {
+export interface LibraryCreate {
   fileScanners: Array<FileScanner>
   folders: Array<string>
   icon: string | undefined
@@ -115,7 +115,7 @@ export interface UpdateLibrary {
   preferEmbeddedMetadata: boolean
 }
 
-export interface PartialUpdateLibrary {
+export interface LibraryUpdate {
   fileScanners: Array<FileScanner> | undefined
   folders: Array<string> | undefined
   icon: string | undefined
@@ -186,11 +186,6 @@ export interface LibrarySearchResult {
   authors: Array<Author>
   books: Array<Book>
   series: Array<Series>
-}
-
-export interface MetadataAgentApiModel {
-  name: string
-  supportedCountryCodes: Array<string>
 }
 
 export interface PaginatedResponse<T> {

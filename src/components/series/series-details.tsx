@@ -73,9 +73,7 @@ export const SeriesDetails: FC<{ seriesId: UUID; libraryId: UUID }> = ({ seriesI
               ) : null}
             </div>
           </div>
-          <div className="mt-2">
-            {isDetailedSeries(series) ? <SeriesEdit series={series} seriesId={series.id} /> : null}
-          </div>
+          <div className="mt-2">{isDetailedSeries(series) ? <SeriesEdit series={series} /> : null}</div>
         </div>
       </div>
       <HtmlViewer title="Description" content={series.description} className="min-w-full pb-6" />

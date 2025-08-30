@@ -1,6 +1,6 @@
 import { FC, useState } from "react"
 import { MdAutoAwesome, MdClose, MdFolder, MdLanguage, MdLocalLibrary, MdRadar, MdSettings } from "react-icons/md"
-import { Api, FileScanner, MetadataAgent, UUID } from "@thoth/client"
+import { Api, FileScanner, NamedMetadataAgent, UUID } from "@thoth/client"
 import { Dialog, DialogActions, DialogBody, DialogButtons } from "@thoth/components/dialog"
 import { FolderManager } from "@thoth/components/file-manager"
 import { MdScan } from "@thoth/components/icons/scan"
@@ -18,7 +18,7 @@ export type LibraryFormValues = {
   language: string
   preferEmbeddedMetadata: boolean
   folders: string[]
-  metadataScanners: MetadataAgent[]
+  metadataScanners: NamedMetadataAgent[]
   fileScanners: FileScanner[]
   mode: "create" | "edit"
   icon: string | undefined
