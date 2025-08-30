@@ -15,8 +15,8 @@ export function GenericEdit<T extends Record<string, any>>({
   form: FormContext<T>
   onSubmit: (values: T, closeModal: () => void) => any
   title: string
-  InformationDisplay: FC<{ form: FormContext<T> }>
-  Search: FC<{ form: FormContext<T> }>
+  InformationDisplay: FC
+  Search: FC<{ onSelect: () => void }>
 }) {
   const [isOpen, setIsOpen] = useState(false)
   const [selectedTabIndex, setSelectedTabIndex] = useState(0)
@@ -57,10 +57,10 @@ export function GenericEdit<T extends Record<string, any>>({
               </TabList>
               <TabPanels className="mt-2">
                 <TabPanel tabIndex={-1}>
-                  <InformationDisplay form={form} />
+                  <InformationDisplay />
                 </TabPanel>
                 <TabPanel tabIndex={-1}>
-                  <Search form={form} />
+                  <Search onSelect={() => setSelectedTabIndex(0)} />
                 </TabPanel>
               </TabPanels>
             </TabGroup>
