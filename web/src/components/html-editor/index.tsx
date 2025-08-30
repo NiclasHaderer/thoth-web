@@ -9,7 +9,7 @@ export const HtmlEditor: FC<{
   value?: Content
   placeholder?: string
   className?: string | undefined
-  onChange?: (newValue: string | null) => void
+  onChange?: (newValue: string | undefined) => void
 }> = props => {
   return (
     <Suspense fallback={<Loading count={2} />}>

@@ -8,7 +8,7 @@ import { ManagedInput } from "@thoth/components/input/managed-input"
 import { SelectLine } from "@thoth/components/input/select-line"
 import { LeftTabs, TabContent } from "@thoth/components/left-tabs"
 import { useHttpRequest } from "@thoth/hooks/async-response"
-import { Form, FormContext } from "@thoth/hooks/form"
+import { Form, FormContext, SubmitError } from "@thoth/hooks/form"
 import { useOnMount } from "@thoth/hooks/lifecycle"
 import { unique } from "@thoth/utils/utils"
 
@@ -40,18 +40,13 @@ export const LibraryDialog: FC<LibraryDialogProps> = ({ isOpen, setIsOpen, form,
     void fileScanners.invoke()
   })
 
-  const onSumitInternal = (values: LibraryFormValues) => {
-    if (form.hasErrors()) {
-      const errors = form.getErrors()
-      const errorFields = Object.keys(errors)
-      if (errorFields.length === 1 && errorFields[0] === "folders") {
-        setActiveTab(1)
-      } else if (!errorFields.includes("folders")) {
-        setActiveTab(0)
-      }
-      return
+  const switchToRightTab = (errors: SubmitError<LibraryFormValues>) => {
+    const errorFields = Object.keys(errors)
+    if (errorFields.length === 1 && errorFields[0] === "folders") {
+      setActiveTab(1)
+    } else if (!errorFields.includes("folders")) {
+      setActiveTab(0)
     }
-    onSubmit(values)
   }
 
   return (
@@ -61,7 +56,7 @@ export const LibraryDialog: FC<LibraryDialogProps> = ({ isOpen, setIsOpen, form,
       title={form.fields.mode === "create" ? "Create new Library" : "Edit Library"}
       outerDialogClass="h-3/5 w-3/5 lg:!max-w-[75%] xl:!max-w-[50%] !max-w-[95%]"
     >
-      <Form form={form} onSubmit={onSumitInternal}>
+      <Form form={form} onSubmit={onSubmit} onSubmitError={switchToRightTab}>
         <DialogBody>
           <LeftTabs
             activeTab={activeTab}
