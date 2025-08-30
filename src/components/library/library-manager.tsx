@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { MdAutoAwesome, MdEdit, MdLanguage, MdLocalLibrary, MdRadar } from "react-icons/md"
-import { FileScanner, MetadataAgent, UUID } from "@thoth/client"
+import { FileScanner, NamedMetadataAgent, UUID } from "@thoth/client"
 import { ColoredButton } from "@thoth/components/colored-button"
 import { MdScan } from "@thoth/components/icons/scan"
 import { LibraryDialog, LibraryFormValues } from "@thoth/components/library/library-dialog"
@@ -24,7 +24,7 @@ export const LibraryManager = () => {
       language: "",
       preferEmbeddedMetadata: false as boolean,
       folders: [] as string[],
-      metadataScanners: [] as MetadataAgent[],
+      metadataScanners: [] as NamedMetadataAgent[],
       fileScanners: [] as FileScanner[],
       mode: "create" as "create" | "edit",
       icon: undefined as string | undefined,
@@ -34,9 +34,6 @@ export const LibraryManager = () => {
         name: (name: string) => name.length > 0 || "Name is required",
         language: (language: string) => language.length > 0 || "Language is required",
         folders: (folders: string[]) => folders.length > 0 || "At least one folder is required",
-        metadataScanners: (metadataScanners: MetadataAgent[]) => {
-          return metadataScanners.length > 0 || "At least one metadata scanner is required"
-        },
         fileScanners: (fileScanners: FileScanner[]) => {
           return fileScanners.length > 0 || "At least one file scanner is required"
         },

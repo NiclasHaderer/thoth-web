@@ -1,8 +1,8 @@
 import { forwardRef } from "react"
-import { AuthorModel } from "@thoth/client"
+import { Author } from "@thoth/client"
 import { GenericPreview } from "@thoth/components/generic/generic-preview.tsx"
 
-interface AuthorProps extends AuthorModel {
+interface AuthorProps extends Author {
   size?: "small" | "normal"
   className?: string
 }

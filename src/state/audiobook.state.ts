@@ -2,15 +2,15 @@ import { create } from "zustand"
 import { combine } from "zustand/middleware"
 import {
   Api,
-  AuthorModel,
-  BookModel,
-  DetailedAuthorModel,
-  DetailedBookModel,
-  DetailedSeriesModel,
-  LibraryApiModel,
-  LibraryModel,
-  PartialLibraryApiModel,
-  SeriesModel,
+  Author,
+  AuthorDetailed,
+  Book,
+  BookDetailed,
+  Library,
+  LibraryCreate,
+  LibraryUpdate,
+  Series,
+  SeriesDetailed,
   UUID,
 } from "@thoth/client"
 import {
@@ -27,18 +27,18 @@ import { toIdRecord } from "@thoth/utils/utils"
 export type AudiobookState = {
   content: {
     [libraryId: UUID]: {
-      authorMap: Record<UUID, AuthorModel | DetailedAuthorModel>
+      authorMap: Record<UUID, Author | AuthorDetailed>
       authorSorting: UUID[]
       authorTotal: number
-      seriesMap: Record<UUID, SeriesModel | DetailedSeriesModel>
+      seriesMap: Record<UUID, Series | SeriesDetailed>
       seriesSorting: UUID[]
       seriesTotal: number
-      bookMap: Record<UUID, BookModel | DetailedBookModel>
+      bookMap: Record<UUID, Book | BookDetailed>
       bookSorting: UUID[]
       bookTotal: number
     }
   }
-  libraryMap: Record<UUID, LibraryModel>
+  libraryMap: Record<UUID, Library>
   librarySorting: UUID[]
   libraryTotal: number
 }
@@ -115,7 +115,7 @@ export const useAudiobookState = create(
       }))
       return lib
     },
-    updateLibrary: async (id: UUID, library: PartialLibraryApiModel) => {
+    updateLibrary: async (id: UUID, library: LibraryUpdate) => {
       const res = await Api.updateLibrary({ libraryId: id }, library)
       if (!res.success) return
       mutate.setState(state => ({
@@ -126,7 +126,7 @@ export const useAudiobookState = create(
         },
       }))
     },
-    createLibrary: async (library: LibraryApiModel) => {
+    createLibrary: async (library: LibraryCreate) => {
       const res = await Api.createLibrary(library)
       if (!res.success) return
       mutate.setState(state => ({

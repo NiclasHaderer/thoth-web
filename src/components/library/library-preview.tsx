@@ -1,13 +1,13 @@
 import { FC } from "react"
 import { Link } from "wouter"
-import { LibraryModel } from "@thoth/client"
+import { Library } from "@thoth/client"
 import { AuthorPreview } from "@thoth/components/author/author-preview.tsx"
 import { BookPreview } from "@thoth/components/book/book-preview.tsx"
 import { SeriesPreview } from "@thoth/components/series/series-preview.tsx"
 import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
 import { useAudiobookState } from "@thoth/state/audiobook.state"
 
-export const LibraryPreview: FC<{ library: LibraryModel; libraryCount: number }> = ({ library, libraryCount }) => {
+export const LibraryPreview: FC<{ library: Library; libraryCount: number }> = ({ library, libraryCount }) => {
   const libraryBooks = useAudiobookState(AudiobookSelectors.selectBooks(library.id))
   const librarySeries = useAudiobookState(AudiobookSelectors.selectSeriesList(library.id))
   const libraryAuthors = useAudiobookState(AudiobookSelectors.selectAuthors(library.id))

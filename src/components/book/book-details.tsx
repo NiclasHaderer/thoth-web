@@ -2,7 +2,7 @@ import { FC, useEffect } from "react"
 import { CiImageOff } from "react-icons/ci"
 import { MdCheckCircle, MdPlayCircle, MdRadioButtonUnchecked } from "react-icons/md"
 import { Link } from "wouter"
-import { DetailedBookModel, UUID } from "@thoth/client"
+import { BookDetailed, UUID } from "@thoth/client"
 import { ColoredButton } from "@thoth/components/colored-button"
 import { HtmlViewer } from "@thoth/components/html-editor"
 import { isDetailedBook } from "@thoth/models/typeguards"
@@ -22,7 +22,7 @@ export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId, lib
   if (!book) return <></>
 
   const startPlayback = (position: number) => {
-    const tracks = (book as DetailedBookModel).tracks
+    const tracks = (book as BookDetailed).tracks
 
     const start = { ...tracks[position], authors: book.authors, coverID: book.coverID }
     const queue = tracks.slice(position + 1, tracks.length).map(q => ({
@@ -107,7 +107,7 @@ export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId, lib
               <MdRadioButtonUnchecked className="ml-2" />
             </ColoredButton>
 
-            <BookEdit book={book} bookId={book.id} />
+            <BookEdit book={book} />
           </div>
         </div>
       </div>

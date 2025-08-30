@@ -1,5 +1,5 @@
 import { FC } from "react"
-import { AuthorApiModel, AuthorModel, MetadataAuthor } from "@thoth/client"
+import { Author, AuthorUpdate, MetadataAuthor } from "@thoth/client"
 import { GenericEdit } from "@thoth/components/generic/generic-edit.tsx"
 import { useForm } from "../../hooks/form"
 import { useAudiobookState } from "../../state/audiobook.state"
@@ -7,7 +7,7 @@ import { toFormDate } from "../../utils/utils"
 import { AuthorForm } from "./author-form"
 import { AuthorSearch } from "./author-search"
 
-const mergeMetaIntoAuthor = ({ ...author }: AuthorApiModel, meta: MetadataAuthor): AuthorApiModel => {
+const mergeMetaIntoAuthor = ({ ...author }: AuthorUpdate, meta: MetadataAuthor): AuthorUpdate => {
   author.biography = meta.biography || author.biography
   author.birthDate = meta.birthDate || author.birthDate
   author.deathDate = meta.deathDate || author.deathDate
@@ -20,7 +20,7 @@ const mergeMetaIntoAuthor = ({ ...author }: AuthorApiModel, meta: MetadataAuthor
   return author
 }
 
-const authorToUpdateModel = (author: AuthorModel): AuthorApiModel => {
+const authorToUpdateModel = (author: Author): AuthorUpdate => {
   return {
     biography: author.biography,
     birthDate: author.birthDate,
@@ -34,7 +34,7 @@ const authorToUpdateModel = (author: AuthorModel): AuthorApiModel => {
   }
 }
 
-export const AuthorEdit: FC<{ author: AuthorModel }> = ({ author }) => {
+export const AuthorEdit: FC<{ author: Author }> = ({ author }) => {
   const updateAuthor = useAudiobookState(s => s.updateAuthor)
   const form = useForm(authorToUpdateModel(author), {
     toForm: {

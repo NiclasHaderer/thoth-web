@@ -1,13 +1,13 @@
 import { FC } from "react"
 import { MdBadge } from "react-icons/md"
-import { Api, ThothUserWithPermissions, UserPermissionsModel } from "@thoth/client"
+import { Api, ThothUserWithPermissions, UserPermissions } from "@thoth/client"
 import { ColoredButton } from "@thoth/components/colored-button.tsx"
 import { ManagedInput } from "@thoth/components/input/managed-input.tsx"
 import { Form, useForm } from "@thoth/hooks/form.tsx"
 import { useOnMount } from "@thoth/hooks/lifecycle.ts"
 import { useAudiobookState } from "@thoth/state/audiobook.state.ts"
 
-export const User: FC<{ user: ThothUserWithPermissions<UserPermissionsModel> }> = ({ user }) => {
+export const User: FC<{ user: ThothUserWithPermissions<UserPermissions> }> = ({ user }) => {
   const fetchLibraries = useAudiobookState(s => s.fetchLibraries)
 
   const form = useForm({
