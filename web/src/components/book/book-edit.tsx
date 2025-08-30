@@ -10,13 +10,12 @@ import {
   MdPerson,
   MdSearch,
 } from "react-icons/md"
-import { BookModel, MetadataBook, PartialBookApiModel, UUID } from "@thoth/client"
+import { BookApiModel, BookModel, MetadataBook, PartialBookApiModel, UUID } from "@thoth/client"
 import { ColoredButton } from "@thoth/components/colored-button"
 import { Dialog, DialogButtons } from "@thoth/components/dialog"
 import { ManagedInput } from "@thoth/components/input/managed-input"
 import { ResponsiveImage } from "@thoth/components/responsive-image"
 import { Form, useField, useForm } from "../../hooks/form"
-import { AudiobookSelectors } from "../../state/audiobook.selectors"
 import { useAudiobookState } from "../../state/audiobook.state"
 import { toBase64 } from "../../utils/utils"
 import { HtmlEditor } from "../html-editor"
@@ -40,12 +39,8 @@ const toPatchBook = (book: BookModel): PartialBookApiModel => {
   return book as unknown as PartialBookApiModel
 }
 
-export const BookEdit: FC<{ book: BookModel; bookId: UUID }> = ({ book: _bookProp, bookId }) => {
-  const [isOpen, setIsOpen] = useState(false)
-  const [selectedTabIndex, setSelectedTabIndex] = useState(0)
-  const [book, setBook] = useState(toPatchBook(_bookProp))
+export const BookEdit: FC<{ book: BookApiModel; libraryId: UUID }> = ({ book, libraryId }) => {
   const updateBook = useAudiobookState(s => s.updateBook)
-  const libraryId = useAudiobookState(AudiobookSelectors.selectedLibraryId)!
   const form = useForm(book)
 
   useEffect(() => setBook(toPatchBook(_bookProp)), [_bookProp])
