@@ -1,6 +1,6 @@
 import { forwardRef } from "react"
 import { BookModel } from "@thoth/client"
-import { GenericPreview } from "@thoth/components/generic-preview.tsx"
+import { GenericPreview } from "@thoth/components/generic/generic-preview.tsx"
 
 interface BookPreviewProps extends BookModel {
   size?: "small" | "normal"

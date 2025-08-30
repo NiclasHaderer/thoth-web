@@ -26,7 +26,7 @@ export const LibrariesOutlet = () => {
   return (
     <div className="mx-10">
       {libraries.map(library => (
-        <LibraryPreview key={library.id} library={library} />
+        <LibraryPreview libraryCount={libraries.length} key={library.id} library={library} />
       ))}
     </div>
   )

@@ -1,6 +1,6 @@
 import { forwardRef } from "react"
 import { SeriesModel } from "@thoth/client"
-import { GenericPreview } from "@thoth/components/generic-preview.tsx"
+import { GenericPreview } from "@thoth/components/generic/generic-preview.tsx"
 
 interface SeriesPreviewProps extends SeriesModel {
   size?: "small" | "normal"

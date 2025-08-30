@@ -20,10 +20,6 @@ export const User: FC<{ user: ThothUserWithPermissions<UserPermissionsModel> }> 
     <Form
       form={form}
       onSubmit={values => {
-        if (form.hasErrors()) {
-          form.markAllAsTouched()
-        }
-
         Api.updateUsername({ id: user.id }, { username: values.username })
       }}
     >

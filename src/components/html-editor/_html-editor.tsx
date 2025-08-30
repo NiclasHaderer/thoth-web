@@ -15,7 +15,7 @@ export const _HtmlEditor: FC<{
   value?: Content
   placeholder?: string
   className?: string | undefined
-  onChange?: (newValue: string | null) => void
+  onChange?: (newValue: string | undefined) => void
 }> = ({ value, className, onChange, placeholder = "..." }) => {
   const editor = useEditor({
     extensions: [
@@ -36,7 +36,7 @@ export const _HtmlEditor: FC<{
   useEffect(() => {
     const update = () => {
       if (!editor || !onChange) return
-      editor.isEmpty ? onChange(null) : onChange(editor.getHTML())
+      editor.isEmpty ? onChange(undefined) : onChange(editor.getHTML())
     }
     editor?.on("update", update)
     return () => {

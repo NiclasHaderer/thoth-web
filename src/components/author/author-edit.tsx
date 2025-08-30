@@ -3,7 +3,7 @@ import { FC, Fragment, useState } from "react"
 import { MdEdit } from "react-icons/md"
 import { AuthorApiModel, MetadataAuthor, UUID } from "@thoth/client"
 import { ColoredButton } from "@thoth/components/colored-button"
-import { Dialog, DialogActions, DialogBody, DialogButtons, DialogContent } from "@thoth/components/dialog"
+import { Dialog, DialogActions, DialogBody, DialogButtons } from "@thoth/components/dialog"
 import { Form, useForm } from "../../hooks/form"
 import { useAudiobookState } from "../../state/audiobook.state"
 import { toFormDate } from "../../utils/utils"
@@ -47,62 +47,59 @@ export const AuthorEdit: FC<{ author: AuthorApiModel; authorId: UUID; libraryId:
       <ColoredButton color="secondary" onClick={openModal}>
         <MdEdit className="mr-2" /> Edit
       </ColoredButton>
-      <div></div>
       <Dialog closeModal={closeModal} isOpen={isOpen} dialogClass="min-h-[510px]" title="Edit Author">
-        <Form
-          form={form}
-          onSubmit={async values => {
-            await updateAuthor({ libraryId, id: authorId }, values)
-            closeModal()
-          }}
-        >
-          <DialogBody>
-            <DialogContent>
-              <TabGroup selectedIndex={selectedTabIndex} onChange={index => setSelectedTabIndex(index)}>
-                <TabList className="p-2-solid w-full">
-                  <Tab as={Fragment}>
-                    {({ selected }) => (
-                      <button
-                        className={`w-1/2 rounded-l-md p-2 transition-colors focus:bg-active ${selected ? "bg-active-light" : ""}`}
-                      >
-                        Tags
-                      </button>
-                    )}
-                  </Tab>
-                  <Tab as={Fragment}>
-                    {({ selected }) => (
-                      <button
-                        className={`w-1/2 rounded-r-md p-2 transition-colors focus:bg-active ${
-                          selected ? "bg-active-light" : ""
-                        }`}
-                      >
-                        Lookup information
-                      </button>
-                    )}
-                  </Tab>
-                </TabList>
-                <TabPanels className="mt-2">
-                  <TabPanel tabIndex={-1}>
-                    <AuthorForm />
-                  </TabPanel>
-                  <TabPanel tabIndex={-1}>
-                    <AuthorSearch
-                      libraryId={libraryId}
-                      authorSearch={form.fields.name}
-                      select={authorMeta => {
-                        form.setAllFields(mergeMetaIntoAuthor(form.fields, authorMeta))
-                        setSelectedTabIndex(0)
-                      }}
-                    />
-                  </TabPanel>
-                </TabPanels>
-              </TabGroup>
-            </DialogContent>
+        <DialogBody>
+          <Form
+            form={form}
+            onSubmit={async values => {
+              await updateAuthor({ libraryId, id: authorId }, values)
+              closeModal()
+            }}
+          >
+            <TabGroup selectedIndex={selectedTabIndex} onChange={index => setSelectedTabIndex(index)}>
+              <TabList className="p-2-solid w-full">
+                <Tab as={Fragment}>
+                  {({ selected }) => (
+                    <button
+                      className={`w-1/2 rounded-l-md p-2 transition-colors focus:bg-active ${selected ? "bg-active-light" : ""}`}
+                    >
+                      Tags
+                    </button>
+                  )}
+                </Tab>
+                <Tab as={Fragment}>
+                  {({ selected }) => (
+                    <button
+                      className={`w-1/2 rounded-r-md p-2 transition-colors focus:bg-active ${
+                        selected ? "bg-active-light" : ""
+                      }`}
+                    >
+                      Lookup information
+                    </button>
+                  )}
+                </Tab>
+              </TabList>
+              <TabPanels className="mt-2">
+                <TabPanel tabIndex={-1}>
+                  <AuthorForm form={form} />
+                </TabPanel>
+                <TabPanel tabIndex={-1}>
+                  <AuthorSearch
+                    libraryId={libraryId}
+                    authorSearch={form.fields.name}
+                    select={authorMeta => {
+                      form.setAllFields(mergeMetaIntoAuthor(form.fields, authorMeta))
+                      setSelectedTabIndex(0)
+                    }}
+                  />
+                </TabPanel>
+              </TabPanels>
+            </TabGroup>
             <DialogActions>
               <DialogButtons closeModal={closeModal} />
             </DialogActions>
-          </DialogBody>
-        </Form>
+          </Form>
+        </DialogBody>
       </Dialog>
     </>
   )
