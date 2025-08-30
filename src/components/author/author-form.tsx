@@ -1,31 +1,25 @@
-import { useRef } from "react"
+import { FC, useRef } from "react"
 import { CiSaveUp1 } from "react-icons/ci"
 import { MdAddLink, MdCelebration, MdPerson } from "react-icons/md"
-import { PartialAuthorApiModel } from "@thoth/client"
+import { AuthorApiModel } from "@thoth/client"
 import { ManagedInput } from "@thoth/components/input/managed-input"
 import { ResponsiveImage } from "@thoth/components/responsive-image"
-import { useField } from "../../hooks/form"
+import { FormContext } from "../../hooks/form"
 import { isUUID, toBase64 } from "../../utils/utils"
 import { HtmlEditor } from "../html-editor"
 import { MdDeceased } from "../icons/deceased"
 
-export const AuthorForm = () => {
+export const AuthorForm: FC<{ form: FormContext<AuthorApiModel> }> = ({ form }) => {
   const imageInputRef = useRef<HTMLInputElement>(null)
-
-  const { value: descriptionValue, formSetValue: setDescriptionValue } = useField<PartialAuthorApiModel, "biography">(
-    "biography"
-  )
-  const { value: imageValue, formSetValue: setImageValue } = useField<PartialAuthorApiModel, "image">("image")
-
   return (
     <>
-      <div className="flex flex-col md:flex-row">
+      <div className="flex flex-col pb-2 md:flex-row">
         <div className="flex cursor-pointer items-center justify-center pr-2">
           <div className="group relative flex flex-col justify-center">
-            {imageValue ? (
+            {form.fields.image ? (
               <ResponsiveImage
-                className="m-2 h-52 min-h-52 w-52 cursor-pointer rounded-full bg-cover"
-                src={isUUID(imageValue) ? `/api/stream/images/${imageValue}` : imageValue}
+                className="mx-2 mt-2 h-52 min-h-52 w-52 cursor-pointer rounded-full bg-cover"
+                src={isUUID(form.fields.image) ? `/api/stream/images/${form.fields.image}` : form.fields.image}
                 alt="author"
                 onClick={() => imageInputRef.current && imageInputRef.current.click()}
               />
@@ -43,7 +37,7 @@ export const AuthorForm = () => {
               onChange={async () => {
                 const file = imageInputRef.current!.files![0]
                 const base64 = await toBase64(file)
-                setImageValue(base64)
+                form.setFields({ image: base64 })
               }}
             />
             <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-elevate p-2 opacity-0 transition-all group-hover:opacity-70">
@@ -86,9 +80,9 @@ export const AuthorForm = () => {
       </div>
       <HtmlEditor
         className="flex-grow"
-        placeholder="Description"
-        value={descriptionValue}
-        onChange={setDescriptionValue}
+        placeholder="Biography"
+        value={form.fields.biography}
+        onChange={bio => form.setFields({ biography: bio ?? "" })}
       />
     </>
   )

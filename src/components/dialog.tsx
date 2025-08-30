@@ -68,11 +68,7 @@ export const Dialog = ({ isOpen, closeModal, title, children, dialogClass, outer
 }
 
 export const DialogBody: FC<PropsWithChildren> = ({ children }) => {
-  return <div className="flex h-4/5 grow flex-col justify-between">{children}</div>
-}
-
-export const DialogContent: FC<PropsWithChildren> = ({ children }) => {
-  return <div>{children}</div>
+  return <DialogPanel className="flex h-4/5 grow flex-col justify-between">{children}</DialogPanel>
 }
 
 export const DialogActions: FC<PropsWithChildren> = ({ children }) => {
