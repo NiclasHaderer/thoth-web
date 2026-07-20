@@ -1,4 +1,4 @@
-import "./ripple.scss"
+import "./ripple.css"
 
 import { FC, HTMLAttributes, MouseEvent, useRef, useState } from "react"
 import { useOnUnMount } from "@thoth/hooks/lifecycle"
