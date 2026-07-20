@@ -1,5 +1,6 @@
-import { create } from "zustand"
 import { combine } from "zustand/middleware"
+import { shallow } from "zustand/shallow"
+import { createWithEqualityFn } from "zustand/traditional"
 import {
   Api,
   Author,
@@ -50,7 +51,7 @@ const INITIAL_STATE = {
   libraryTotal: 0,
 } as AudiobookState
 
-export const useAudiobookState = create(
+export const useAudiobookState = createWithEqualityFn(
   combine(INITIAL_STATE, (_get, _set, mutate) => ({
     // Author
     fetchAuthors: wrapFetch(mutate, "author", Api.listAuthors),
@@ -143,5 +144,6 @@ export const useAudiobookState = create(
         libraryMap: {},
       }))
     },
-  }))
+  })),
+  shallow
 )

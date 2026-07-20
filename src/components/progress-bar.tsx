@@ -1,4 +1,4 @@
-import { FC, MouseEventHandler, useEffect, useState } from "react"
+import { FC, MouseEventHandler, useState } from "react"
 
 export const ProgressBar: FC<{
   className?: string
@@ -6,7 +6,11 @@ export const ProgressBar: FC<{
   onChange?: (percentage: number) => void | undefined
 }> = ({ percentage, onChange, className }) => {
   const [width, setWidth] = useState(percentage)
-  useEffect(() => setWidth(percentage), [percentage])
+  const [prevPercentage, setPrevPercentage] = useState(percentage)
+  if (percentage !== prevPercentage) {
+    setPrevPercentage(percentage)
+    setWidth(percentage)
+  }
 
   const change: MouseEventHandler<HTMLElement> = e => {
     const w = e.pageX / window.innerWidth
@@ -15,9 +19,9 @@ export const ProgressBar: FC<{
   }
 
   return (
-    <div className={`bg-gray-800 h-1.5 cursor-pointer ${className}`} onClick={change}>
+    <div className={`h-1.5 cursor-pointer bg-gray-800 ${className}`} onClick={change}>
       <div
-        className={"absolute bottom-0 left-0 top-0 bg-primary transition-all duration-500"}
+        className={"bg-primary absolute top-0 bottom-0 left-0 transition-all duration-500"}
         style={{ width: `${width ? width * 100 : 0}%` }}
       />
     </div>

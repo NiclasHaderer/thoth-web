@@ -12,7 +12,7 @@ export const BookListOutlet = ({ libraryId }: { libraryId: UUID }) => {
   const getBooks = useAudiobookState(s => s.fetchBooks)
   const loading = useRef<HTMLDivElement>(null)
   useScrollTo("main")
-  useInfinityScroll(loading.current, offset => getBooks({ libraryId, offset }))
+  useInfinityScroll(loading, offset => getBooks({ libraryId, offset }))
   const books = useAudiobookState(AudiobookSelectors.selectBooks(libraryId))
   const bookCount = useAudiobookState(AudiobookSelectors.selectBookCount(libraryId))
 

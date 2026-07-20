@@ -37,8 +37,7 @@ export interface FormContext<T extends Record<string, any>> {
   }
   formValidators: {
     [K in keyof T]?:
-      | ((value: T[K]) => string | undefined | null | true)
-      | ((value: T[K]) => string | undefined | null | true)[]
+      ((value: T[K]) => string | undefined | null | true) | ((value: T[K]) => string | undefined | null | true)[]
   }
 
   restoreInitial: () => void
@@ -49,6 +48,7 @@ export interface FormContext<T extends Record<string, any>> {
 }
 
 const DEFAULT = Symbol("DEFAULT_FORM_CONTEXT")
+const PROVIDED = Symbol("FORM_CONTEXT")
 export const CONTEXT = createContext<FormContext<Record<any, any>>>({
   fields: {},
   setFields: () => {},
@@ -113,14 +113,6 @@ export const useForm = <T extends Record<string, any>>(
     getFilledObject<keyof T, string[] | undefined>(Object.keys(initialState), undefined)
   )
 
-  useOnMount(() => validateFields(currentFields.current))
-
-  useEffect(() => {
-    if (reloadOnInitialChange) {
-      setFields(initialState)
-    }
-  }, [initialState, reloadOnInitialChange])
-
   const validateField = (key: keyof T, value: T[keyof T]): string[] | undefined => {
     const validator = options.validate && options.validate[key]
     if (validator) {
@@ -144,6 +136,14 @@ export const useForm = <T extends Record<string, any>>(
     }
     setErrors({ ...currentErrors.current, ...newErrors })
   }
+
+  useOnMount(() => validateFields(currentFields.current))
+
+  useEffect(() => {
+    if (reloadOnInitialChange) {
+      setFields(initialState)
+    }
+  }, [initialState, reloadOnInitialChange])
 
   const markAllAsTouched = () => {
     setTouched(
@@ -192,7 +192,7 @@ export const useForm = <T extends Record<string, any>>(
     toFormTransformers: options.toForm || {},
     formValidators: options.validate || {},
     markAllAsTouched,
-    contextType: Symbol(`FORM_CONTEXT_${Math.random()}`),
+    contextType: PROVIDED,
     revalidateAll: () => validateFields(currentFields.current),
     forceValidateAll: () => {
       markAllAsTouched()
@@ -218,7 +218,7 @@ export const useField = <T extends Record<string, any>, K extends keyof T & stri
     console.error("useField must be used inside a FormProvider")
   }
   if (!(name in fields)) {
-    console.error(`Could not find ${name} in form fields. Possible values are: ${Object.values(fields)}`)
+    console.error(`Could not find ${name} in form fields. Possible values are: ${Object.values(fields).join(", ")}`)
   }
 
   return {
@@ -242,9 +242,7 @@ export const useFieldUpdater = <T extends Record<string, any>, K extends keyof T
   field: K
 ): InputHTMLAttributes<HTMLInputElement> => {
   const { value, formSetValue, setTouched, toForm } = useField<T, K>(field)
-  const [transformedValue, setTransformedValue] = useState(toForm?.(value) ?? value)
-
-  useEffect(() => setTransformedValue(toForm?.(value) ?? value), [value, toForm])
+  const transformedValue = toForm?.(value) ?? value
 
   return {
     value: transformedValue,

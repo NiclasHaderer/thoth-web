@@ -11,7 +11,7 @@ import { Content, EditorContent, useEditor } from "@tiptap/react"
 import { FC, useEffect } from "react"
 import "./_html-editor.css"
 
-export const _HtmlEditor: FC<{
+export const HtmlEditorImpl: FC<{
   value?: Content
   placeholder?: string
   className?: string | undefined
@@ -46,7 +46,7 @@ export const _HtmlEditor: FC<{
   }, [editor])
 
   return (
-    <div className="flex grow flex-col rounded-md border border-active">
+    <div className="border-active flex grow flex-col rounded-md border">
       <button type="button" className="hidden" />
       <EditorContent
         editor={editor}
