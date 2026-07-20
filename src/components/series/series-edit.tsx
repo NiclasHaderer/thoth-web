@@ -47,9 +47,10 @@ export const SeriesEdit: FC<{ series: Series }> = ({ series }) => {
       InformationDisplay={() => <SeriesForm form={form} />}
       Search={({ onSelect }) => (
         <SeriesSearch
+          libraryId={series.library.id}
           series={form.fields.title}
           authors={series.authors.map(a => a.name)}
-          select={seriesMeta => {
+          onSelect={seriesMeta => {
             form.setAllFields(mergeMetaIntoSeries(form.fields, seriesMeta))
             onSelect()
           }}
