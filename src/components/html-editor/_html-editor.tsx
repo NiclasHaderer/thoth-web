@@ -9,7 +9,7 @@ import { TextAlign } from "@tiptap/extension-text-align"
 import { Underline } from "@tiptap/extension-underline"
 import { Content, EditorContent, useEditor } from "@tiptap/react"
 import { FC, useEffect } from "react"
-import "./_html-editor.scss"
+import "./_html-editor.css"
 
 export const _HtmlEditor: FC<{
   value?: Content
