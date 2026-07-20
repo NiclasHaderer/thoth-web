@@ -11,6 +11,7 @@ export const Search: FC = () => {
   const [input, setInput] = useState("")
   const [searchResult, setSearchResult] = useState<LibrarySearchResult | null>(null)
   const [resultVisible, setResultVisible] = useState(false)
+  const [prevInput, setPrevInput] = useState("")
   const [searchOverlay, setSearchOverlay] = useState<HTMLDivElement | null>(null)
   const inputElement = useRef<HTMLInputElement | null>(null)
   const { focusPrevious, focusNext } = useFocusTrap(searchOverlay, () => !resultVisible)
@@ -38,13 +39,14 @@ export const Search: FC = () => {
     }
   }
 
-  useEffect(() => {
-    if (input === "") {
-      setResultVisible(false)
-      return
-    }
+  if (input !== prevInput) {
+    setPrevInput(input)
+    setResultVisible(input !== "")
+  }
 
-    setResultVisible(true)
+  useEffect(() => {
+    if (input === "") return
+
     clearTimeout(timeout.current)
     timeout.current = setTimeout(async () => {
       const result = await Api.searchInAllLibraries({ q: input })
@@ -58,13 +60,13 @@ export const Search: FC = () => {
     <div className="relative grow px-3 shadow-none" onKeyDown={modifyFocus} ref={setSearchOverlay}>
       <Input
         hideError
-        className="rounded-3xl bg-elevate-2 pl-11!"
+        className="bg-elevate-2 rounded-3xl! pl-11!"
         leftIcon={<MdSearch className="mx-1 h-6 w-6" />}
         placeholder="Search ..."
         inputRef={inputElement}
         onKeyUp={event => setInput((event.target as HTMLInputElement).value)}
         onFocus={event => {
-          if ((event.target as HTMLInputElement).value.trim() !== "") {
+          if (event.target.value.trim() !== "") {
             setResultVisible(true)
           }
         }}
@@ -75,7 +77,7 @@ export const Search: FC = () => {
         }}
       />
       {searchResult && resultVisible ? (
-        <div className="absolute bottom-0 left-0 right-0 z-10 mx-3 translate-y-full overflow-hidden rounded-md bg-surface p-3 shadow-2xl">
+        <div className="bg-surface absolute right-0 bottom-0 left-0 z-10 mx-3 translate-y-full overflow-hidden rounded-md p-3 shadow-2xl">
           <SearchResults search={searchResult} onClose={() => setResultVisible(false)} />
         </div>
       ) : null}
@@ -89,19 +91,19 @@ const SearchResults: FC<{ search: LibrarySearchResult; onClose: () => void }> = 
       <>
         {search.books.length ? (
           <>
-            <h2 className="py-3 uppercase text-font-secondary">Books</h2>
+            <h2 className="text-font-secondary py-3 uppercase">Books</h2>
             <BookSearchResult books={search.books} onClose={onClose} />
           </>
         ) : null}
         {search.authors.length ? (
           <>
-            <h2 className="py-3 uppercase text-font-secondary">Authors</h2>
+            <h2 className="text-font-secondary py-3 uppercase">Authors</h2>
             <AuthorSearchResult authors={search.authors} onClose={onClose} />
           </>
         ) : null}
         {search.series.length ? (
           <>
-            <h2 className="py-3 uppercase text-font-secondary">Series</h2>
+            <h2 className="text-font-secondary py-3 uppercase">Series</h2>
             <SeriesSearchResult series={search.series} onClose={onClose} />
           </>
         ) : null}
@@ -123,7 +125,7 @@ const AuthorSearchResult: FC<{ authors: LibrarySearchResult["authors"]; onClose:
         onClick={onClose}
         key={i}
         aria-label={author.name}
-        className="block rounded-md transition-colors hover:bg-active-light no-touch:focus:bg-active-light"
+        className="hover:bg-active-light no-touch:focus:bg-active-light block rounded-md transition-colors"
       >
         <div className="flex items-center p-2">
           {author.imageID ? (
@@ -151,7 +153,7 @@ const BookSearchResult: FC<{ books: LibrarySearchResult["books"]; onClose: () =>
         onClick={onClose}
         key={i}
         aria-label={book.title}
-        className="block rounded-md transition-colors hover:bg-active-light no-touch:focus:bg-active-light"
+        className="hover:bg-active-light no-touch:focus:bg-active-light block rounded-md transition-colors"
       >
         <div className="flex items-center p-2">
           {book.coverID ? (
@@ -182,7 +184,7 @@ const SeriesSearchResult: FC<{ series: LibrarySearchResult["series"]; onClose: (
         onClick={onClose}
         key={i}
         aria-label={series.title}
-        className="block rounded-md transition-colors hover:bg-active-light no-touch:focus:bg-active-light"
+        className="hover:bg-active-light no-touch:focus:bg-active-light block rounded-md transition-colors"
       >
         <div className="flex items-center p-2">
           <CiImageOff className="h-8 w-8 rounded-md" />

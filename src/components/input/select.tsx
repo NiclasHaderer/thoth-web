@@ -1,5 +1,5 @@
 import { Listbox, ListboxButton, ListboxOption, ListboxOptions, Transition } from "@headlessui/react"
-import { Fragment, useEffect, useState } from "react"
+import { Fragment, useMemo } from "react"
 import { MdDone } from "react-icons/md"
 import { deepEquals } from "@thoth/utils/equals"
 
@@ -84,18 +84,13 @@ export function Select<T, MULTIPLE extends boolean = false>({
     }
   }
 
-  const [selected, setSelected] = useState(() => getSelectedValue(options, value, multiple))
-  useEffect(() => {
-    const newSelection = getSelectedValue(options, value, multiple)
-    setSelected(newSelection)
-  }, [multiple, options, value])
+  const selected = useMemo(() => getSelectedValue(options, value, multiple), [options, value, multiple])
 
   return (
     <Listbox
       disabled={disabled}
       value={selected ?? null}
       onChange={value => {
-        setSelected(value)
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument,@typescript-eslint/no-explicit-any
         onChange?.(value as any)
       }}
@@ -105,7 +100,7 @@ export function Select<T, MULTIPLE extends boolean = false>({
     >
       <ListboxButton
         onBlur={onBlur}
-        className={`flex min-w-32 cursor-pointer items-center overflow-hidden rounded bg-elevate p-1 text-left hover:bg-active-light focus:bg-active-light ${
+        className={`bg-elevate hover:bg-active-light focus:bg-active-light flex min-w-32 cursor-pointer items-center overflow-hidden rounded p-1 text-left ${
           placeholderButtonClassName ?? ""
         }`}
       >
@@ -130,7 +125,7 @@ export function Select<T, MULTIPLE extends boolean = false>({
         <ListboxOptions
           className={`${hDir === "right" ? "right-0" : "left-0"} ${
             vDir === "top" ? "top-0 mb-2 -translate-y-full" : "mt-2"
-          } absolute z-20 w-56 origin-top-right overflow-hidden rounded-md bg-surface ${optionListClassName ?? ""}`}
+          } bg-surface absolute z-20 w-56 origin-top-right overflow-hidden rounded-md ${optionListClassName ?? ""}`}
         >
           <div className="bg-elevate">
             <div className="px-1 py-1">
@@ -148,7 +143,7 @@ export function Select<T, MULTIPLE extends boolean = false>({
                   >
                     {({ selected, disabled }) => (
                       <>
-                        {selected ? <MdDone className="absolute left-1 top-1/2 h-7 w-7 -translate-y-1/2 p-1" /> : null}
+                        {selected ? <MdDone className="absolute top-1/2 left-1 h-7 w-7 -translate-y-1/2 p-1" /> : null}
                         <button
                           type="button"
                           disabled={disabled}

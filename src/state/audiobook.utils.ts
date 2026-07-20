@@ -76,7 +76,7 @@ export const wrapUpdate = <K extends AssetsToUpdate, UPDATE_TYPE>(
 ) => {
   return async ({ libraryId, id }: { libraryId: UUID; id: UUID }, data: UPDATE_TYPE) => {
     const response = await updateFunction({ libraryId, id }, data)
-    if (!response.success) return
+    if (!response.success) return response
     mutate.setState(state => ({
       ...state,
       content: {
@@ -93,6 +93,7 @@ export const wrapUpdate = <K extends AssetsToUpdate, UPDATE_TYPE>(
         },
       },
     }))
+    return response
   }
 }
 

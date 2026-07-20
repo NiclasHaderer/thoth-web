@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState, useSyncExternalStore } from "react"
 
 export const useAudio = (
   url: string | undefined | null,
@@ -12,6 +12,7 @@ export const useAudio = (
     audioElement.setAttribute("controls", "true")
     audioElement.src = url
     autoplay && void audioElement.play()
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- stores the created element so consumers re-render
     setAudio(audioElement)
     return () => {
       audioElement.pause()
@@ -24,71 +25,59 @@ export const useAudio = (
     audio,
     (url: string) => {
       if (!audio) return
-
+      // eslint-disable-next-line react-hooks/immutability -- imperative HTMLAudioElement mutation
       audio.src = url
     },
   ]
 }
 
+const useAudioEvent = <T>(
+  audio: HTMLAudioElement | undefined | null,
+  events: string[],
+  getSnapshot: (audio: HTMLAudioElement) => T,
+  fallback: T
+): T => {
+  const subscribe = useCallback(
+    (onChange: () => void) => {
+      if (!audio) return () => {}
+      events.forEach(event => audio.addEventListener(event, onChange))
+      return () => events.forEach(event => audio.removeEventListener(event, onChange))
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [audio]
+  )
+  return useSyncExternalStore(subscribe, () => (audio ? getSnapshot(audio) : fallback))
+}
+
 export const usePosition = (
   audio: HTMLAudioElement | undefined | null
 ): [number | undefined, (seconds: number) => void] => {
-  const [position, setPosition] = useState<number>()
-
-  useEffect(() => {
-    if (!audio) return
-
-    const update = () => setPosition(audio.currentTime)
-    setPosition(audio.currentTime)
-
-    audio.addEventListener("timeupdate", update)
-    return () => audio.removeEventListener("timeupdate", update)
-  }, [audio])
+  const position = useAudioEvent(audio, ["timeupdate"], a => a.currentTime, undefined)
 
   return [
     position,
     (seconds: number) => {
       if (!audio) return
+      // eslint-disable-next-line react-hooks/immutability -- imperative HTMLAudioElement mutation
       audio.currentTime = seconds
     },
   ]
 }
 
 export const useDuration = (audio: HTMLAudioElement | undefined | null) => {
-  const [position, setPosition] = useState<number | undefined>()
-
-  useEffect(() => {
-    if (!audio) return
-
-    setPosition(audio.duration)
-    const update = () => setPosition(audio.duration)
-
-    audio.addEventListener("durationchange", update)
-    return () => audio.removeEventListener("durationchange", update)
-  }, [audio])
-
-  return position
+  return useAudioEvent(audio, ["durationchange"], a => a.duration, undefined)
 }
 
 export const usePercentage = (
   audio: HTMLAudioElement | undefined | null
 ): [number | undefined, (percentage: number) => void] => {
-  const [percentage, setPercentage] = useState<number>()
-
-  useEffect(() => {
-    if (!audio) return
-
-    setPercentage(audio.currentTime / audio.duration)
-    const update = () => setPercentage(audio.currentTime / audio.duration)
-
-    audio.addEventListener("timeupdate", update)
-    return () => audio.removeEventListener("timeupdate", update)
-  }, [audio])
+  const percentage = useAudioEvent(audio, ["timeupdate"], a => a.currentTime / a.duration, undefined)
 
   return [
     percentage,
     (percentage: number) => {
       if (!audio) return
+      // eslint-disable-next-line react-hooks/immutability -- imperative HTMLAudioElement mutation
       audio.currentTime = Math.floor(audio.duration * percentage)
       void audio.play()
     },
@@ -96,22 +85,7 @@ export const usePercentage = (
 }
 
 export const usePlayState = (audio: HTMLAudioElement | undefined | null): [boolean, (shouldPlay: boolean) => void] => {
-  const [playing, setPlaying] = useState<boolean>(false)
-
-  useEffect(() => {
-    if (!audio) return
-
-    setPlaying(!audio.paused)
-    const update = () => setPlaying(!audio.paused)
-
-    audio.addEventListener("play", update)
-    audio.addEventListener("pause", update)
-
-    return () => {
-      audio.removeEventListener("play", update)
-      audio.removeEventListener("pause", update)
-    }
-  }, [audio])
+  const playing = useAudioEvent(audio, ["play", "pause"], a => !a.paused, false)
 
   return [
     playing,

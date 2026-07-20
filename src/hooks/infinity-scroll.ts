@@ -1,17 +1,21 @@
-import { useEffect, useState } from "react"
+import { RefObject, useEffect, useRef } from "react"
 import { useOnMount } from "@thoth/hooks/lifecycle"
 import { useIntersectionObserver } from "./intersection-observer"
 
-export const useInfinityScroll = (target: HTMLElement | null, fetchNext: (index: number) => void, startIndex = 0) => {
-  const [index, setIndex] = useState(startIndex)
+export const useInfinityScroll = (
+  target: RefObject<HTMLElement | null>,
+  fetchNext: (index: number) => void,
+  startIndex = 0
+) => {
+  const index = useRef(startIndex)
   const visible = useIntersectionObserver(target)
 
-  useOnMount(() => fetchNext(index))
+  useOnMount(() => fetchNext(index.current))
 
   useEffect(() => {
     if (!visible) return
-    setIndex(i => i + 1)
-    fetchNext(index)
+    fetchNext(index.current)
+    index.current += 1
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible])
 }
