@@ -1,6 +1,6 @@
-import { FC, useState } from "react"
+import { FC, useEffect, useState } from "react"
 import { MdAutoAwesome, MdClose, MdFolder, MdLanguage, MdLocalLibrary, MdRadar, MdSettings } from "react-icons/md"
-import { Api, FileScanner, NamedMetadataAgent, UUID } from "@thoth/client"
+import { Api, FileScanner, MetadataLanguage, NamedMetadataAgent, UUID } from "@thoth/client"
 import { Dialog, DialogActions, DialogBody, DialogButtons } from "@thoth/components/dialog"
 import { FolderManager } from "@thoth/components/file-manager"
 import { MdScan } from "@thoth/components/icons/scan"
@@ -11,6 +11,21 @@ import { useHttpRequest } from "@thoth/hooks/async-response"
 import { Form, FormContext, SubmitError } from "@thoth/hooks/form"
 import { useOnMount } from "@thoth/hooks/lifecycle"
 import { unique } from "@thoth/utils/utils"
+
+// The `satisfies Record<MetadataLanguage, ...>` forces every union member to be
+// listed (missing -> "property missing", typo/extra -> "unknown property").
+const LANGUAGES = Object.keys({
+  Spanish: 0,
+  English: 0,
+  German: 0,
+  French: 0,
+  Italian: 0,
+  Danish: 0,
+  Finnish: 0,
+  Norwegian: 0,
+  Swedish: 0,
+  Russian: 0,
+} satisfies Record<MetadataLanguage, unknown>) as MetadataLanguage[]
 
 export type LibraryFormValues = {
   id: UUID | undefined
@@ -36,9 +51,23 @@ export const LibraryDialog: FC<LibraryDialogProps> = ({ isOpen, setIsOpen, form,
   const fileScanners = useHttpRequest(Api.listFileScanners)
   const [activeTab, setActiveTab] = useState(0)
   useOnMount(() => {
-    void metadataAgents.invoke()
     void fileScanners.invoke()
   })
+  useEffect(() => {
+    void metadataAgents.invoke({ language: form.fields.language })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form.fields.language])
+
+  // Drop selected scanners that the newly fetched language no longer offers.
+  useEffect(() => {
+    if (!metadataAgents.result) return
+    const available = new Set(metadataAgents.result.map(a => a.name))
+    const filtered = form.fields.metadataScanners.filter(a => available.has(a.name))
+    if (filtered.length !== form.fields.metadataScanners.length) {
+      form.setFields({ metadataScanners: filtered })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [metadataAgents.result])
 
   const switchToRightTab = (errors: SubmitError<LibraryFormValues>) => {
     const errorFields = Object.keys(errors)
@@ -90,7 +119,7 @@ export const LibraryDialog: FC<LibraryDialogProps> = ({ isOpen, setIsOpen, form,
                 icon={<MdLanguage />}
                 name="language"
                 title={"Language"}
-                options={unique(metadataAgents.result?.flatMap(a => a.supportedCountryCodes))}
+                options={LANGUAGES}
               />
               <SelectLine
                 labelClassName="w-28"
