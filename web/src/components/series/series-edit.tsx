@@ -73,7 +73,7 @@ const SeriesForm: FC<{ form: FormContext<SeriesUpdate> }> = ({ form }) => {
       />
 
       <HtmlEditor
-        className="flex-grow"
+        className="grow"
         placeholder="Description"
         value={form.fields.description}
         onChange={description => form.setFields({ description })}

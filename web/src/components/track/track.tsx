@@ -46,7 +46,7 @@ export const Track: FC<TrackProps> = ({
         <MdPlayCircle className="h-6 w-6" />
       </button>
     </div>
-    <div className="flex flex-grow items-center justify-between pl-6">
+    <div className="flex grow items-center justify-between pl-6">
       <div className="flex items-center">
         {trackNr}
         <div className="flex flex-col pl-6">

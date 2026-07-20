@@ -6,7 +6,7 @@ export const UiLayout: FC<{ children: ReactNode }> = ({ children }) => {
   return (
     <RequireLogin>
       <SearchBar />
-      <div className="flex flex-grow flex-col overflow-y-auto">{children}</div>
+      <div className="flex grow flex-col overflow-y-auto">{children}</div>
     </RequireLogin>
   )
 }
