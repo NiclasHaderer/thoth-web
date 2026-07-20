@@ -1,17 +1,17 @@
 import { FC, Fragment, useState } from "react"
 import { MdSearch } from "react-icons/md"
-import { Api, MetadataSeries } from "@thoth/client"
+import { Api, MetadataSeries, UUID } from "@thoth/client"
 import { ColoredButton } from "@thoth/components/colored-button"
 import { Input } from "@thoth/components/input/input"
 import { LoadingCards } from "@thoth/components/loading-card"
 import { useHttpRequest } from "../../hooks/async-response"
 
-// TODO rewrite (like author search)
 export const SeriesSearch: FC<{
   series?: string | null | undefined
   authors?: string[] | null | undefined
-  select: (result: MetadataSeries) => void
-}> = ({ series: _series, authors: _authors, select }) => {
+  libraryId: UUID
+  onSelect: (result: MetadataSeries) => void
+}> = ({ series: _series, authors: _authors, libraryId, onSelect }) => {
   const [authors, setAuthors] = useState(_authors?.join(", "))
   const [series, setSeries] = useState(_series)
 
@@ -19,7 +19,7 @@ export const SeriesSearch: FC<{
 
   const search = async () => {
     if (!series) return
-    await invoke({ q: series, region: library.language, authorName: authors })
+    await invoke({ q: series, libraryId, authorName: authors })
   }
 
   return (
@@ -51,7 +51,7 @@ export const SeriesSearch: FC<{
         </ColoredButton>
       </div>
       <div className="max-h-96 overflow-y-auto">
-        {result ? <AuthorSearchResult results={result} select={select} /> : null}
+        {result ? <AuthorSearchResult results={result} select={onSelect} /> : null}
         {loading ? <LoadingCards amount={10} /> : null}
       </div>
     </>
