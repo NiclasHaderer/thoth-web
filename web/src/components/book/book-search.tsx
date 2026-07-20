@@ -1,27 +1,25 @@
 import { FC, Fragment, useState } from "react"
 import { MdSearch } from "react-icons/md"
 import { useHttpRequest } from "../../hooks/async-response"
-import { Api, MetadataBook } from "@thoth/client"
+import { Api, MetadataBook, UUID } from "@thoth/client"
 import { Input } from "@thoth/components/input/input"
 import { ColoredButton } from "@thoth/components/colored-button"
 import { LoadingCards } from "@thoth/components/loading-card"
-import { useAudiobookState } from "@thoth/state/audiobook.state"
-import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
 
 export const BookSearch: FC<{
   authors?: string[] | null | undefined
   book?: string | null | undefined
-  select: (result: MetadataBook) => void
-}> = ({ book: _book, authors: _authors, select }) => {
+  libraryId: UUID
+  onSelect: (result: MetadataBook) => void
+}> = ({ book: _book, authors: _authors, libraryId, onSelect }) => {
   const [authors, setAuthors] = useState(_authors?.join(", "))
   const [book, setBook] = useState(_book)
-  const library = useAudiobookState(AudiobookSelectors.selectedLibrary)!
 
   const { result, loading, invoke } = useHttpRequest(Api.searchBookMetadata)
 
   const search = async () => {
     if (!book) return
-    await invoke({ q: book, region: library.language, authorName: authors })
+    await invoke({ q: book, libraryId, authorName: authors })
   }
 
   return (
@@ -47,7 +45,7 @@ export const BookSearch: FC<{
         </ColoredButton>
       </div>
       <div className="max-h-96 overflow-y-auto">
-        {result ? <BookSearchResult results={result} select={select} /> : null}
+        {result ? <BookSearchResult results={result} select={onSelect} /> : null}
         {loading ? <LoadingCards amount={10} /> : null}
       </div>
     </>
