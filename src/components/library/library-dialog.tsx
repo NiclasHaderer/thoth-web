@@ -83,7 +83,7 @@ export const LibraryDialog: FC<LibraryDialogProps> = ({ isOpen, setIsOpen, form,
       isOpen={isOpen}
       closeModal={() => setIsOpen(false)}
       title={form.fields.mode === "create" ? "Create new Library" : "Edit Library"}
-      outerDialogClass="h-3/5 w-3/5 lg:!max-w-[75%] xl:!max-w-[50%] !max-w-[95%]"
+      outerDialogClass="h-3/5 w-3/5 lg:max-w-[75%]! xl:max-w-[50%]! max-w-[95%]!"
     >
       <Form form={form} onSubmit={onSubmit} onSubmitError={switchToRightTab}>
         <DialogBody>
@@ -181,7 +181,7 @@ export const LibraryDialog: FC<LibraryDialogProps> = ({ isOpen, setIsOpen, form,
                   ))}
                 </div>
                 <FolderManager
-                  className="min-w-1/2 flex-grow justify-between"
+                  className="min-w-1/2 grow justify-between"
                   contentClassName="h-4/5 overflow-y-auto"
                   onSelectFolder={path => {
                     form.setFields({ folders: unique([...form.fields.folders, path]) })

@@ -24,7 +24,7 @@ export function SelectLine<T, MULTIPLE extends boolean = false>({
     <>
       <label className={`flex items-center ${wrapperClassName ?? ""}`}>
         {label ? <div className={`mt-2 px-2 ${labelClassName ?? ""}`}>{label}</div> : null}
-        <div className="relative mt-2 flex-grow">
+        <div className="relative mt-2 grow">
           {icon ? <div className={`absolute left-0 top-1/2 z-10 -translate-y-1/2 p-2`}>{icon}</div> : null}
           <Select
             onBlur={() => setTouched(true)}
@@ -47,10 +47,9 @@ export function SelectLine<T, MULTIPLE extends boolean = false>({
           />
         </div>
       </label>
-      <div className="flex items-center">
-        <div className={labelClassName} />
+      <div className="flex min-h-[1lh] items-center justify-end">
         {touched && errors ? (
-          <div className="error">
+          <div className="text-sm text-error">
             {errors.map((error, index) => (
               <div key={index}>{error}</div>
             ))}

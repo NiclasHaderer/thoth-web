@@ -3,9 +3,16 @@ import { MdLock, MdPerson, MdVisibility, MdVisibilityOff } from "react-icons/md"
 import { Link, useLocation } from "wouter"
 import { ColoredButton } from "@thoth/components/colored-button"
 import { Logo } from "@thoth/components/icons/logo"
+import { InputError } from "@thoth/components/input/input-error"
 import { ManagedInput } from "@thoth/components/input/managed-input"
 import { Form, useForm } from "@thoth/hooks/form"
 import { useAuthState } from "@thoth/state/auth.state"
+
+const errorMessage = (error: string | object): string => {
+  if (typeof error === "string") return error
+  if (error && typeof error === "object" && "error" in error && typeof error.error === "string") return error.error
+  return "Something went wrong"
+}
 
 export const LoginRegister: FC<{ type: "register" | "login"; redirectPath?: string }> = ({ type, redirectPath }) => {
   const [, navigate] = useLocation()
@@ -22,12 +29,17 @@ export const LoginRegister: FC<{ type: "register" | "login"; redirectPath?: stri
     }
   )
   const [passwordVisible, setPasswordVisible] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const userState = useAuthState()
 
   const loginOrRegister = async (values: (typeof form)["fields"]) => {
+    setError(null)
     const cb = type === "login" ? userState.login : userState.register
     const result = await cb(values)
-    if (!result.success) return
+    if (!result.success) {
+      setError(errorMessage(result.error))
+      return
+    }
     navigate(redirectPath || "/libraries", { replace: true })
   }
 
@@ -71,20 +83,19 @@ export const LoginRegister: FC<{ type: "register" | "login"; redirectPath?: stri
               </button>
             }
           />
-          <div className="flex justify-end">
-            <ColoredButton type="submit" className="mt-2 self-center">
-              {type === "login" ? "Login" : "Register"}
-            </ColoredButton>
+          <InputError errors={error} />
+          <div className="mt-2 flex items-center justify-between">
+            <p>
+              {type === "login" ? "Don't have an account?" : "Already have an account?"}{" "}
+              <Link
+                href={type === "login" ? `/register?${location.search.slice(1)}` : `/login?${location.search.slice(1)}`}
+                className="underline"
+              >
+                {type === "login" ? "Register" : "Login"}
+              </Link>
+            </p>
+            <ColoredButton type="submit">{type === "login" ? "Login" : "Register"}</ColoredButton>
           </div>
-          <p className="p-2">
-            {type === "login" ? "Don't have an account?" : "Already have an account?"}{" "}
-            <Link
-              href={type === "login" ? `/register?${location.search.slice(1)}` : `/login?${location.search.slice(1)}`}
-              className="underline"
-            >
-              {type === "login" ? "Register" : "Login"}
-            </Link>
-          </p>
         </div>
       </Form>
     </div>

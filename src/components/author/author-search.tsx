@@ -27,7 +27,7 @@ export const AuthorSearch: FC<{
         <Input wrapperClassName="grow pr-2" label="Author" onEnter={search} onValue={setAuthor} defaultValue={author} />
         <ColoredButton
           className="ml-2 h-10 w-10 min-w-10"
-          innerClassName="!p-2 items-center justify-around"
+          innerClassName="p-2! items-center justify-around"
           color="secondary"
           onClick={search}
         >

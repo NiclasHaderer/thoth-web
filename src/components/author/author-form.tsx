@@ -79,7 +79,7 @@ export const AuthorForm: FC<{ form: FormContext<AuthorUpdate> }> = ({ form }) =>
         </div>
       </div>
       <HtmlEditor
-        className="flex-grow"
+        className="grow"
         placeholder="Biography"
         value={form.fields.biography}
         onChange={bio => form.setFields({ biography: bio ?? "" })}

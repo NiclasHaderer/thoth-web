@@ -25,7 +25,7 @@ export const LibraryPreview: FC<{ library: Library; libraryCount: number }> = ({
       </Link>
       <div className="overflow-auto whitespace-nowrap">
         {libraryBooks.slice(0, 6).map((book, index) => (
-          <BookPreview size="small" {...book} className="mx-3 align-top first:!ml-0" key={index} />
+          <BookPreview size="small" {...book} className="mx-3 align-top first:ml-0!" key={index} />
         ))}
       </div>
 
@@ -34,7 +34,7 @@ export const LibraryPreview: FC<{ library: Library; libraryCount: number }> = ({
       </Link>
       <div className="overflow-auto whitespace-nowrap">
         {librarySeries.slice(0, 6).map((series, index) => (
-          <SeriesPreview size="small" {...series} className="mx-3 align-top first:!ml-0" key={index} />
+          <SeriesPreview size="small" {...series} className="mx-3 align-top first:ml-0!" key={index} />
         ))}
       </div>
 
@@ -43,7 +43,7 @@ export const LibraryPreview: FC<{ library: Library; libraryCount: number }> = ({
       </Link>
       <div className="overflow-auto whitespace-nowrap">
         {libraryAuthors.slice(0, 6).map((author, index) => (
-          <AuthorPreview size="small" {...author} className="mx-3 align-top first:!ml-0" key={index} />
+          <AuthorPreview size="small" {...author} className="mx-3 align-top first:ml-0!" key={index} />
         ))}
       </div>
     </div>
