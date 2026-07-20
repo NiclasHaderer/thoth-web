@@ -1,9 +1,11 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
-@plugin '@tailwindcss/typography';
-@plugin '../../tailwind.touch';
+@plugin "@tailwindcss/typography";
 
-@source '../**/*.{js,ts,jsx,tsx,mdx}';
+@custom-variant touch (@media (hover: none));
+@custom-variant no-touch (@media (hover: hover));
+
+@source "../**/*.{js,ts,jsx,tsx,mdx}";
 
 @theme inline {
   --color-*: initial;
@@ -65,16 +67,16 @@
 }
 
 ::-webkit-scrollbar-track {
-  @apply rounded-full bg-elevate;
+  @apply bg-elevate rounded-full;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply rounded-full bg-active-light transition-colors hover:bg-active;
+  @apply bg-active-light hover:bg-active rounded-full transition-colors;
 }
 
 @layer base {
   input {
-    @apply border-0 bg-transparent shadow-none transition-all focus:bg-active-light;
+    @apply focus:bg-active-light border-0 bg-transparent shadow-none transition-all;
     outline: none !important;
   }
 }
