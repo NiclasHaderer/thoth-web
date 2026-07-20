@@ -52,6 +52,12 @@ export const formatDate = (date: Date | number | string) => {
   })
 }
 
+export const apiErrorMessage = (error: string | object): string => {
+  if (typeof error === "string") return error
+  if (error && typeof error === "object" && "error" in error && typeof error.error === "string") return error.error
+  return "Something went wrong"
+}
+
 export const notNull = <T>(p: T | null): p is T => p !== null
 export const notNullIsh = <T>(p: T | null | undefined): p is T => p !== null && p !== undefined
 

@@ -1,6 +1,6 @@
 import { useEffect } from "react"
 
-export const useOnMount = (effect: () => any) => {
+export const useOnMount = (effect: () => unknown) => {
   useEffect(() => void effect(), [])
 }
 

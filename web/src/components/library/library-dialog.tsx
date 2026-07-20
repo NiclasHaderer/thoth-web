@@ -166,9 +166,10 @@ export const LibraryDialog: FC<LibraryDialogProps> = ({ isOpen, setIsOpen, form,
                 <div className="h-full min-w-1/2 overflow-auto">
                   <h3 className="mb-3 text-xl">Library folders</h3>
                   {form.fields.folders.map((folder, index) => (
-                    <div key={index} className="mb-2 flex items-center justify-between rounded bg-elevate p-2">
+                    <div key={index} className="bg-elevate mb-2 flex items-center justify-between rounded p-2">
                       {folder}
                       <button
+                        type="button"
                         onClick={() => {
                           const folders = [...form.fields.folders]
                           folders.splice(index, 1)

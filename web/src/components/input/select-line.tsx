@@ -1,4 +1,5 @@
 import { ReactNode } from "react"
+import { InputError } from "@thoth/components/input/input-error"
 import { Select, SelectProps } from "@thoth/components/input/select"
 import { useField } from "@thoth/hooks/form"
 
@@ -18,44 +19,32 @@ export function SelectLine<T, MULTIPLE extends boolean = false>({
   name,
   ...props
 }: SelectProps<T, MULTIPLE> & SelectLineProps) {
-  const { value, touched, setValue, setTouched, errors } = useField(name)
+  const { value, touched, setValue, setTouched, errors } = useField<Record<string, unknown>, string>(name)
 
   return (
     <>
       <label className={`flex items-center ${wrapperClassName ?? ""}`}>
         {label ? <div className={`mt-2 px-2 ${labelClassName ?? ""}`}>{label}</div> : null}
         <div className="relative mt-2 grow">
-          {icon ? <div className={`absolute left-0 top-1/2 z-10 -translate-y-1/2 p-2`}>{icon}</div> : null}
+          {icon ? <div className={`absolute top-1/2 left-0 z-10 -translate-y-1/2 p-2`}>{icon}</div> : null}
           <Select
             onBlur={() => setTouched(true)}
             {...props}
-            value={value}
+            value={value as SelectProps<T, MULTIPLE>["value"]}
             placeholderButtonClassName={"pl-8 hover:bg-elevate w-full"}
             placeholderClassName="w-full"
             outerClassName="w-full"
             optionListClassName="w-full border-solid border-active border-1"
             onChange={v => {
-              let value
-              if (Array.isArray(v)) {
-                value = v.map(val => (typeof val === "object" && val !== null && "value" in val ? val.value : v))
-              } else {
-                value = typeof v === "object" && v !== null && "value" in v ? v.value : v
-              }
-              setValue(value as any)
+              const extract = (val: unknown): unknown =>
+                typeof val === "object" && val !== null && "value" in val ? val.value : val
+              setValue(Array.isArray(v) ? v.map(extract) : extract(v))
               setTouched(true)
             }}
           />
         </div>
       </label>
-      <div className="flex min-h-[1lh] items-center justify-end">
-        {touched && errors ? (
-          <div className="text-sm text-error">
-            {errors.map((error, index) => (
-              <div key={index}>{error}</div>
-            ))}
-          </div>
-        ) : null}
-      </div>
+      <InputError errors={errors} show={touched} />
     </>
   )
 }
