@@ -47,14 +47,14 @@ export const Dialog = ({ isOpen, closeModal, title, children, dialogClass, outer
             leaveFrom="opacity-100 scale-100"
             leaveTo="opacity-0 scale-95"
           >
-            {/*Do not remove the transform class. This will lead to the modal closing if you click on the modal background! */}
+            {/* relative z-10 keeps the panel above the fixed backdrop so backdrop clicks (not content clicks) dismiss it. */}
             <DialogPanel
-              className={`inline-block w-full transform rounded-2xl bg-surface text-left align-middle shadow-2xl transition-all sm:max-w-full md:max-w-2xl ${
+              className={`bg-surface relative z-10 inline-block w-full rounded-2xl text-left align-middle shadow-2xl transition-all sm:max-w-full md:max-w-2xl ${
                 outerDialogClass ?? ""
               }`}
             >
-              <div className={`flex h-full flex-col rounded-2xl bg-active-light p-6 ${dialogClass || ""}`}>
-                <DialogTitle as="h3" className="pb-2 text-xl font-medium leading-6">
+              <div className={`bg-active-light flex h-full flex-col rounded-2xl p-6 ${dialogClass || ""}`}>
+                <DialogTitle as="h3" className="pb-2 text-xl leading-6 font-medium">
                   {title}
                 </DialogTitle>
                 {children}
@@ -68,7 +68,7 @@ export const Dialog = ({ isOpen, closeModal, title, children, dialogClass, outer
 }
 
 export const DialogBody: FC<PropsWithChildren> = ({ children }) => {
-  return <DialogPanel className="flex h-4/5 grow flex-col justify-between">{children}</DialogPanel>
+  return <div className="flex h-4/5 grow flex-col justify-between">{children}</div>
 }
 
 export const DialogActions: FC<PropsWithChildren> = ({ children }) => {

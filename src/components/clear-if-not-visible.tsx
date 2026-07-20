@@ -11,7 +11,7 @@ export const ClearIfNotVisible = <T extends object, REF extends HTMLElement>({
   // TODO make sure this really works (perhaps we need to save the elements on resize or more often)
   const wrapperRef = useRef<HTMLDivElement>(null)
   const childRef = useRef<REF>(null)
-  const visible = useIntersectionObserver(wrapperRef.current)
+  const visible = useIntersectionObserver(wrapperRef)
   const [placeHolderStyle, setPlaceHolderStyle] = useState<CSSProperties | undefined>(undefined)
 
   const setPlaceholderStyles = () => {
@@ -32,7 +32,7 @@ export const ClearIfNotVisible = <T extends object, REF extends HTMLElement>({
     })
   }
 
-  useEffect(setPlaceholderStyles, [childRef.current])
+  useEffect(setPlaceholderStyles, [visible])
 
   return (
     <div className="inline-block" style={visible ? undefined : placeHolderStyle} ref={wrapperRef}>

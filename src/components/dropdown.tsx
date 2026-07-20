@@ -24,7 +24,7 @@ export function Dropdown<T>({
   return (
     <Menu as="div" className="relative inline-block h-fit text-left">
       <MenuButton className="group cursor-pointer overflow-hidden rounded">
-        <span className="h-full w-full p-1 group-hover:bg-active-light group-focus:bg-active-light">{title}</span>
+        <span className="group-hover:bg-active-light group-focus:bg-active-light h-full w-full p-1">{title}</span>
       </MenuButton>
       <Transition
         as={Fragment}
@@ -38,7 +38,7 @@ export function Dropdown<T>({
         <MenuItems
           className={`${hDir === "right" ? "right-0" : "left-0"} ${
             vDir === "top" ? "top-0 mb-2 -translate-y-full" : "mt-2"
-          } absolute z-10 w-56 origin-top-right overflow-hidden rounded-md bg-surface`}
+          } bg-surface absolute z-10 w-56 origin-top-right overflow-hidden rounded-md`}
         >
           <div className="bg-elevate">
             <div className="px-1 py-1">
@@ -52,8 +52,8 @@ export function Dropdown<T>({
                       type="button"
                       disabled={disabled}
                       className={`${focus && !disabled ? "bg-active-light" : ""} ${
-                        disabled ? "text-active" : ""
-                      } group flex w-full items-center rounded-md px-2 py-2`}
+                        disabled ? "text-active" : "hover:bg-active-light"
+                      } group flex w-full items-center rounded-md px-2 py-2 transition-colors`}
                     >
                       {/* eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-explicit-any,@typescript-eslint/no-unsafe-call */}
                       {valueDisplay ? valueDisplay(value) : (value as any).toString()}

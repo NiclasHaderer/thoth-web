@@ -1,22 +1,28 @@
 import { useState } from "react"
 import { MdDelete, MdEdit, MdPerson } from "react-icons/md"
 import { Api } from "@thoth/client"
+import { useSnackbar } from "@thoth/components/snackbar"
 import { UserDialog, UserFormValues } from "@thoth/components/user-dialog"
 import { useHttpRequest } from "@thoth/hooks/async-response"
 import { useForm } from "@thoth/hooks/form.tsx"
 import { useOnMount } from "@thoth/hooks/lifecycle"
 import { useAuthState } from "@thoth/state/auth.state"
+import { apiErrorMessage } from "@thoth/utils/utils"
 
 export const UserManager = () => {
   const loggedInUserId = useAuthState(s => s.accessToken?.payload.sub)
   const [isOpen, setIsOpen] = useState(false)
+  const { show } = useSnackbar()
   const { result: users, invoke: listUsers } = useHttpRequest(Api.listUsers)
   useOnMount(() => listUsers())
 
-  const updateUser = (user: UserFormValues) => {
-    console.log(user.libraries)
-    Api.updateUsername({ id: user.id! }, { username: user.username })
-    Api.updatePermissions(
+  const updateUser = async (user: UserFormValues) => {
+    const rename = await Api.updateUsername({ id: user.id! }, { username: user.username })
+    if (!rename.success) {
+      show(apiErrorMessage(rename.error), { type: "error" })
+      return
+    }
+    const permissions = await Api.updatePermissions(
       { id: user.id! },
       {
         permissions: {
@@ -28,6 +34,12 @@ export const UserManager = () => {
         },
       }
     )
+    if (!permissions.success) {
+      show(apiErrorMessage(permissions.error), { type: "error" })
+      return
+    }
+    await listUsers()
+    setIsOpen(false)
   }
 
   const form = useForm<UserFormValues>({
@@ -65,7 +77,7 @@ export const UserManager = () => {
               <>
                 {users?.map(user => (
                   <tr
-                    className="group cursor-pointer whitespace-nowrap odd:bg-active-light hover:bg-active *:py-2"
+                    className="group odd:bg-active-light hover:bg-active cursor-pointer whitespace-nowrap *:py-2"
                     key={user.id}
                     onClick={() => {
                       form.setAllFields({

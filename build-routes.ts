@@ -141,28 +141,29 @@ const resolvePaths = async (root: string, paths: Path) => {
 }
 
 const resolveParamTypes = (path: Path | null) => {
-  let final = `{`
+  const parts: string[] = []
 
   while (path) {
     if (!path.ignored && path.segmentType !== "literal") {
+      let part: string
       if (path.segmentType === "uuid") {
-        final += `${path.variableName}: UUID`
+        part = `${path.variableName}: UUID`
       } else if (path.segmentType === "string") {
-        final += `${path.variableName}: string`
+        part = `${path.variableName}: string`
       } else if (path.segmentType === "path") {
-        final += `${path.variableName}: string`
+        part = `${path.variableName}: string`
       } else {
-        throw new Error(`Unknown segment type "${path.segmentType}" for variable "${path.variableName}"`)
+        throw new Error(`Unknown segment type "${String(path.segmentType)}" for variable "${path.variableName}"`)
       }
       if (path.optional) {
-        final += ` | undefined`
+        part += ` | undefined`
       }
-      final += `, `
+      parts.push(part)
     }
     path = path.parent
   }
-  final += `}`
-  return final
+  if (parts.length === 0) return `Record<string, never>`
+  return `{ ${parts.join(", ")} }`
 }
 
 const segmentToPath = (segment: string): Segment | IgnoredSegment => {
@@ -207,7 +208,7 @@ const segmentToPath = (segment: string): Segment | IgnoredSegment => {
   } else if (segmentType == "literal") {
     segmentRegex = segmentName
   } else {
-    throw new Error(`Unknown segment type "${segmentType}" in path "${segment}"`)
+    throw new Error(`Unknown segment type "${String(segmentType)}" in path "${segment}"`)
   }
 
   return {
@@ -231,7 +232,7 @@ const getComponent = (page: Page) => {
   }
 }
 
-const buildRoutes = async (paths: Path) => {
+const buildRoutes = (paths: Path) => {
   const writeImports = (path: Path, imports: string[] = []): string[] => {
     const createImport = (p: Path["layout"] | Path["page"]) => {
       if (p?.lazy) {
@@ -364,7 +365,7 @@ const getContent = async (makePretty: boolean) => {
     ignored: true,
   }
   await resolvePaths(routesDir, paths)
-  const content = await buildRoutes(paths)
+  const content = buildRoutes(paths)
   if (makePretty) {
     const prettier = await import("prettier")
     const config = await prettier.resolveConfig("src/000.tsx")

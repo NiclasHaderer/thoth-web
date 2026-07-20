@@ -3,6 +3,8 @@ import { MdNumbers, MdSearch } from "react-icons/md"
 import { MetadataSeries, Series, SeriesUpdate } from "@thoth/client"
 import { GenericEdit } from "@thoth/components/generic/generic-edit.tsx"
 import { ManagedInput } from "@thoth/components/input/managed-input"
+import { useSnackbar } from "@thoth/components/snackbar"
+import { apiErrorMessage } from "@thoth/utils/utils"
 import { FormContext, useForm } from "../../hooks/form"
 import { useAudiobookState } from "../../state/audiobook.state"
 import { HtmlEditor } from "../html-editor"
@@ -34,13 +36,18 @@ const seriesToUpdate = (series: Series): SeriesUpdate => {
 
 export const SeriesEdit: FC<{ series: Series }> = ({ series }) => {
   const updateSeries = useAudiobookState(s => s.updateSeries)
+  const { show } = useSnackbar()
   const form = useForm(seriesToUpdate(series))
 
   return (
     <GenericEdit
       form={form}
       onSubmit={async (values, closeModal) => {
-        updateSeries({ libraryId: series.library.id, id: series.id }, values)
+        const result = await updateSeries({ libraryId: series.library.id, id: series.id }, values)
+        if (result && !result.success) {
+          show(apiErrorMessage(result.error), { type: "error" })
+          return
+        }
         closeModal()
       }}
       title="Edit Series"

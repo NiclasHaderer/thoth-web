@@ -5,6 +5,7 @@ import { ColoredButton } from "@thoth/components/colored-button.tsx"
 import { Dialog, DialogActions, DialogBody, DialogButtons } from "@thoth/components/dialog.tsx"
 import { Form, FormContext } from "@thoth/hooks/form.tsx"
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- matches FormContext's Record<string, any> so interface-typed models (no index signature) are accepted
 export function GenericEdit<T extends Record<string, any>>({
   form,
   onSubmit,
@@ -13,7 +14,7 @@ export function GenericEdit<T extends Record<string, any>>({
   Search,
 }: {
   form: FormContext<T>
-  onSubmit: (values: T, closeModal: () => void) => any
+  onSubmit: (values: T, closeModal: () => void) => void
   title: string
   InformationDisplay: FC
   Search: FC<{ onSelect: () => void }>
@@ -37,7 +38,7 @@ export function GenericEdit<T extends Record<string, any>>({
                 <Tab as={Fragment}>
                   {({ selected }) => (
                     <button
-                      className={`w-1/2 rounded-l-md p-2 transition-colors focus:bg-active ${selected ? "bg-active-light" : ""}`}
+                      className={`focus:bg-active w-1/2 rounded-l-md p-2 transition-colors ${selected ? "bg-active-light" : ""}`}
                     >
                       Information
                     </button>
@@ -46,7 +47,7 @@ export function GenericEdit<T extends Record<string, any>>({
                 <Tab as={Fragment}>
                   {({ selected }) => (
                     <button
-                      className={`w-1/2 rounded-r-md p-2 transition-colors focus:bg-active ${
+                      className={`focus:bg-active w-1/2 rounded-r-md p-2 transition-colors ${
                         selected ? "bg-active-light" : ""
                       }`}
                     >
