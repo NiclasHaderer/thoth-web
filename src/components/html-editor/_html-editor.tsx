@@ -46,7 +46,7 @@ export const _HtmlEditor: FC<{
   }, [editor])
 
   return (
-    <div className="flex flex-grow flex-col rounded-md border border-active">
+    <div className="flex grow flex-col rounded-md border border-active">
       <button type="button" className="hidden" />
       <EditorContent
         editor={editor}

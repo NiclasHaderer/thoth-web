@@ -47,7 +47,7 @@ export const UserManager = () => {
       <div className="mt-4 w-full overflow-y-auto">
         <table className="w-full table-auto overflow-hidden rounded">
           <thead>
-            <tr className="bg-elevate p-2 [&>*]:py-2">
+            <tr className="bg-elevate p-2 *:py-2">
               <th className="pl-2 text-left">
                 <div className="flex items-center">
                   <MdPerson className="mr-4 h-6 w-6" />
@@ -65,7 +65,7 @@ export const UserManager = () => {
               <>
                 {users?.map(user => (
                   <tr
-                    className="group cursor-pointer whitespace-nowrap odd:bg-active-light hover:bg-active [&>*]:py-2"
+                    className="group cursor-pointer whitespace-nowrap odd:bg-active-light hover:bg-active *:py-2"
                     key={user.id}
                     onClick={() => {
                       form.setAllFields({

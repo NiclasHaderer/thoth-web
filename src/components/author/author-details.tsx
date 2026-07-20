@@ -18,7 +18,7 @@ export const AuthorDetails: FC<{ authorId: UUID; libraryId: UUID }> = ({ authorI
 
   return (
     <>
-      <div className="flex flex-grow flex-col items-center pb-6">
+      <div className="flex grow flex-col items-center pb-6">
         {author.imageID ? (
           <img
             className="h-40 w-40 rounded-full border-2 border-active-light object-contain md:h-80 md:w-80"

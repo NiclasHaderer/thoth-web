@@ -8,7 +8,7 @@ export const BottomResourceMenu: FC<{ className?: string; libraryId: UUID }> = (
   return (
     <aside className="bg-surface">
       <div className={`relative flex h-16 items-center justify-between px-4 ${className}`}>
-        <Ripple className="h-full flex-grow cursor-pointer bg-opacity-30" rippleClasses={"bg-primary bg-opacity-80"}>
+        <Ripple className="h-full grow cursor-pointer bg-opacity-30" rippleClasses={"bg-primary bg-opacity-80"}>
           <ActiveLink
             href={`/libraries/${libraryId}/authors`}
             withSubRoutes={true}
@@ -17,7 +17,7 @@ export const BottomResourceMenu: FC<{ className?: string; libraryId: UUID }> = (
             <MdPerson className="aspect-square h-3/5 w-auto" />
           </ActiveLink>
         </Ripple>
-        <Ripple className="h-full flex-grow cursor-pointer" rippleClasses={"bg-primary bg-opacity-80"}>
+        <Ripple className="h-full grow cursor-pointer" rippleClasses={"bg-primary bg-opacity-80"}>
           <ActiveLink
             href={`/libraries/${libraryId}/books`}
             withSubRoutes={true}
@@ -26,7 +26,7 @@ export const BottomResourceMenu: FC<{ className?: string; libraryId: UUID }> = (
             <MdBook className="aspect-square h-3/5 w-auto" />
           </ActiveLink>
         </Ripple>
-        <Ripple className="h-full flex-grow cursor-pointer" rippleClasses={"bg-primary bg-opacity-80"}>
+        <Ripple className="h-full grow cursor-pointer" rippleClasses={"bg-primary bg-opacity-80"}>
           <ActiveLink
             href={`/libraries/${libraryId}/series`}
             withSubRoutes={true}

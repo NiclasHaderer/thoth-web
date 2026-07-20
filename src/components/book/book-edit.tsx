@@ -134,7 +134,7 @@ const BookForm: FC<{ form: FormContext<BookUpdate> }> = ({ form }) => {
       </div>
       <label className="flex items-center">
         <HtmlEditor
-          className="flex-grow"
+          className="grow"
           placeholder="Description"
           value={form.fields.description}
           onChange={description => form.setFields({ description: description ?? "" })}
