@@ -18,9 +18,9 @@ export const LibraryResourceView: FC<LibraryResourceViewProps> = ({ children, li
 
   return (
     <>
-      <div className={`flex-grow overflow-y-auto ${isMD ? "" : "flex"}`}>
+      <div className={`grow overflow-y-auto ${isMD ? "" : "flex"}`}>
         {isMD ? null : <LeftResourceMenu libraryId={libraryId} />}
-        <main tabIndex={-1} className={`flex-grow overflow-y-auto overflow-x-hidden px-5 ${isMD ? "mt-4" : "mt-10"}`}>
+        <main tabIndex={-1} className={`grow overflow-y-auto overflow-x-hidden px-5 ${isMD ? "mt-4" : "mt-10"}`}>
           {children}
         </main>
       </div>

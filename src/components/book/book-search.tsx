@@ -37,7 +37,7 @@ export const BookSearch: FC<{
         <Input wrapperClassName="grow" label="Book" onValue={setBook} defaultValue={book} onEnter={search} />
         <ColoredButton
           className="ml-2 h-10 w-10 min-w-10"
-          innerClassName="!p-2 items-center justify-around"
+          innerClassName="p-2! items-center justify-around"
           color="secondary"
           onClick={search}
         >

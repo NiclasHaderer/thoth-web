@@ -49,7 +49,7 @@ export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId, lib
             <CiImageOff className="h-40 w-40 rounded-md border-2 border-active-light md:h-80 md:w-80" />
           )}
         </div>
-        <div className="flex flex-grow flex-col justify-between pl-4 md:pl-10">
+        <div className="flex grow flex-col justify-between pl-4 md:pl-10">
           <div>
             <h2 className="pb-3 text-2xl">{book.title}</h2>
             {book.releaseDate ? (

@@ -60,14 +60,14 @@ export const LibraryManager = () => {
       <div className="mt-4 w-full overflow-y-auto">
         <table className="w-full overflow-hidden rounded">
           <thead>
-            <tr className="bg-elevate p-2 [&>*]:py-2">
+            <tr className="bg-elevate p-2 *:py-2">
               <th className="overflow-hidden pl-2 text-left">
-                <div className="flex items-center overflow-ellipsis text-nowrap">
+                <div className="flex items-center text-ellipsis text-nowrap">
                   <MdLocalLibrary className="mr-4 min-h-6 min-w-6" />
                   Library
                 </div>
               </th>
-              <th className="overflow-ellipsis pl-2 text-left">
+              <th className="text-ellipsis pl-2 text-left">
                 <div className="flex items-center text-nowrap">
                   <MdAutoAwesome className="mr-4 min-h-6 min-w-6" />
                   Metadata preference
@@ -99,7 +99,7 @@ export const LibraryManager = () => {
               <>
                 {libraries?.map(library => (
                   <tr
-                    className="group cursor-pointer whitespace-nowrap odd:bg-active-light hover:bg-active [&>*]:py-2"
+                    className="group cursor-pointer whitespace-nowrap odd:bg-active-light hover:bg-active *:py-2"
                     key={library.id}
                     onClick={() => {
                       form.setAllFields({ ...library, mode: "edit" })
