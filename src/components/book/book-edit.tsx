@@ -1,129 +1,93 @@
-import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react"
-import { FC, Fragment, useEffect, useRef } from "react"
+import { FC, useRef } from "react"
 import { CiImageOff } from "react-icons/ci"
-import {
-  MdCollectionsBookmark,
-  MdEdit,
-  MdEvent,
-  MdFormatListNumbered,
-  MdLanguage,
-  MdPerson,
-  MdSearch,
-} from "react-icons/md"
+import { MdCollectionsBookmark, MdEvent, MdFormatListNumbered, MdLanguage, MdPerson, MdSearch } from "react-icons/md"
 import { Book, BookUpdate, MetadataBook } from "@thoth/client"
 import { ColoredButton } from "@thoth/components/colored-button"
-import { Dialog, DialogButtons } from "@thoth/components/dialog"
+import { GenericEdit } from "@thoth/components/generic/generic-edit.tsx"
 import { ManagedInput } from "@thoth/components/input/managed-input"
 import { ResponsiveImage } from "@thoth/components/responsive-image"
-import { Form, useField, useForm } from "../../hooks/form"
+import { FormContext, useForm } from "../../hooks/form"
 import { useAudiobookState } from "../../state/audiobook.state"
-import { toBase64 } from "../../utils/utils"
+import { isUUID, toBase64, toFormDate } from "../../utils/utils"
 import { HtmlEditor } from "../html-editor"
 import { BookSearch } from "./book-search"
 
 const mergeMetaIntoBook = ({ ...book }: BookUpdate, meta: MetadataBook): BookUpdate => {
-  // TODO fix
   book.title = meta.title || book.title
-  // book.author = meta.author?.name || book.author
-  // book.cover = meta.image || book.cover
+  book.cover = meta.coverURL || book.cover
   book.description = meta.description || book.description
   book.narrator = meta.narrator || book.narrator
-  // book.providerID = meta.id || book.providerID
-  // book.series = meta.series?.name || book.series
-  // book.seriesIndex = meta.series?.index || book.seriesIndex
+  book.language = meta.language || book.language
+  book.releaseDate = meta.releaseDate || book.releaseDate
+  book.isbn = meta.isbn || book.isbn
+  book.publisher = meta.publisher || book.publisher
+  book.providerRating = meta.providerRating ?? book.providerRating
+  book.provider = meta.id.provider
+  book.providerID = meta.id.itemID
   return book
 }
 
-const toPatchBook = (book: Book): BookUpdate => {
-  // TODO
-  throw new Error("toPatchBook not implemented")
+const bookToUpdate = (book: Book): BookUpdate => {
+  return {
+    authors: book.authors.map(a => a.id),
+    cover: book.coverID,
+    description: book.description,
+    isbn: book.isbn,
+    language: book.language,
+    narrator: book.narrator,
+    provider: book.provider,
+    providerID: book.providerID,
+    providerRating: book.providerRating,
+    publisher: book.publisher,
+    releaseDate: book.releaseDate,
+    series: book.series.map(s => s.id),
+    title: book.title,
+  }
 }
 
 export const BookEdit: FC<{ book: Book }> = ({ book }) => {
   const updateBook = useAudiobookState(s => s.updateBook)
-  const form = useForm(book)
-
-  useEffect(() => setBook(toPatchBook(_bookProp)), [_bookProp])
-
-  const closeModal = () => setIsOpen(false)
-  const openModal = () => setIsOpen(true)
+  const form = useForm(bookToUpdate(book), {
+    toForm: {
+      releaseDate: value => value && toFormDate(value),
+    },
+  })
 
   return (
-    <>
-      <ColoredButton color="secondary" onClick={openModal}>
-        <MdEdit className="mr-2" /> Edit
-      </ColoredButton>
-      <Dialog closeModal={closeModal} isOpen={isOpen} dialogClass="min-h-[510px]" title="Edit Book">
-        <Form
-          form={form}
-          onSubmit={async values => {
-            await updateBook({ libraryId, id: bookId }, values)
-            closeModal()
+    <GenericEdit
+      title="Edit Book"
+      form={form}
+      onSubmit={async (values, closeModal) => {
+        await updateBook({ libraryId: book.library.id, id: book.id }, values)
+        closeModal()
+      }}
+      InformationDisplay={() => <BookForm form={form} />}
+      Search={({ onSelect }) => (
+        <BookSearch
+          libraryId={book.library.id}
+          book={book.title}
+          authors={book.authors.map(a => a.name)}
+          onSelect={bookMeta => {
+            form.setAllFields(mergeMetaIntoBook(form.fields, bookMeta))
+            onSelect()
           }}
-        >
-          <TabGroup selectedIndex={selectedTabIndex} onChange={index => setSelectedTabIndex(index)}>
-            <TabList className="p-2-solid w-full rounded-md border-2 border-primary border-opacity-50">
-              <Tab as={Fragment}>
-                {({ selected }) => (
-                  <button
-                    className={`w-1/2 p-2 transition-colors focus:bg-active ${selected ? "bg-active-light" : ""}`}
-                  >
-                    Tags
-                  </button>
-                )}
-              </Tab>
-              <Tab as={Fragment}>
-                {({ selected }) => (
-                  <button
-                    className={`w-1/2 border-l-2 border-primary border-opacity-50 p-2 transition-colors focus:bg-active ${
-                      selected ? "bg-active-light" : ""
-                    }`}
-                  >
-                    Lookup information
-                  </button>
-                )}
-              </Tab>
-            </TabList>
-            <TabPanels className="mt-2">
-              <TabPanel className="rounded-md border-2 border-primary border-opacity-0 focus:border-opacity-20">
-                <BookForm />
-              </TabPanel>
-              <TabPanel>
-                <BookSearch
-                  book={book.title}
-                  authors={book.authors}
-                  select={bookMeta => {
-                    setBook(mergeMetaIntoBook(book, bookMeta))
-                    setSelectedTabIndex(0)
-                  }}
-                />
-              </TabPanel>
-            </TabPanels>
-          </TabGroup>
-          <DialogButtons closeModal={closeModal} />
-        </Form>
-      </Dialog>
-    </>
+        />
+      )}
+    />
   )
 }
 
-const BookForm = () => {
+const BookForm: FC<{ form: FormContext<BookUpdate> }> = ({ form }) => {
   const imageRef = useRef<HTMLInputElement>(null)
-
-  const { value: descriptionValue, formSetValue: setDescriptionValue } = useField<PartialBookApiModel, "description">(
-    "description"
-  )
-  const { value: imageValue, formSetValue: setImageValue } = useField<PartialBookApiModel, "cover">("cover")
-
   return (
     <>
       <div className="flex flex-col md:flex-row">
         <div className="flex cursor-pointer items-center justify-center pr-2">
           <div className="flex flex-col justify-center">
-            {imageValue ? (
+            {form.fields.cover ? (
               <ResponsiveImage
                 className="h-52 min-h-52 w-52 min-w-52 rounded-md"
-                src={imageValue}
+                src={isUUID(form.fields.cover) ? `/api/stream/images/${form.fields.cover}` : form.fields.cover}
                 alt="book"
                 onClick={() => imageRef.current && imageRef.current.click()}
               />
@@ -141,7 +105,7 @@ const BookForm = () => {
               onChange={async () => {
                 const file = imageRef.current!.files![0]
                 const base64 = await toBase64(file)
-                setImageValue(base64)
+                form.setFields({ cover: base64 })
               }}
             />
             <ColoredButton
@@ -155,28 +119,29 @@ const BookForm = () => {
         </div>
         <div>
           <ManagedInput name="title" labelClassName="w-28" label="Title" leftIcon={<MdSearch />} />
-          <ManagedInput name="author" labelClassName="w-28" label="Author" leftIcon={<MdPerson />} />
-          <ManagedInput name="language" labelClassName="w-28" label="Language" leftIcon={<MdLanguage />} />
           <ManagedInput name="narrator" labelClassName="w-28" label="Narrator" leftIcon={<MdPerson />} />
-          <ManagedInput name="series" labelClassName="w-28" label="Series" leftIcon={<MdCollectionsBookmark />} />
-          <ManagedInput name="year" labelClassName="w-28" type="number" label="Year" leftIcon={<MdEvent />} />
+          <ManagedInput name="language" labelClassName="w-28" label="Language" leftIcon={<MdLanguage />} />
           <ManagedInput
-            name="seriesIndex"
+            name="releaseDate"
             labelClassName="w-28"
-            type="number"
-            label="Series Index"
-            leftIcon={<MdFormatListNumbered />}
+            type="date"
+            label="Release Date"
+            leftIcon={<MdEvent />}
           />
+          <ManagedInput name="isbn" labelClassName="w-28" label="ISBN" leftIcon={<MdFormatListNumbered />} />
+          <ManagedInput name="publisher" labelClassName="w-28" label="Publisher" leftIcon={<MdCollectionsBookmark />} />
         </div>
       </div>
       <label className="flex items-center">
         <HtmlEditor
           className="flex-grow"
           placeholder="Description"
-          value={descriptionValue}
-          onChange={setDescriptionValue}
+          value={form.fields.description}
+          onChange={description => form.setFields({ description: description ?? "" })}
         />
       </label>
     </>
   )
 }
+
+export default BookEdit
