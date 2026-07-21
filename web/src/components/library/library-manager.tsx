@@ -8,10 +8,12 @@ import { FormContext, useForm } from "@thoth/hooks/form"
 import { useOnMount } from "@thoth/hooks/lifecycle"
 import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
 import { useAudiobookState } from "@thoth/state/audiobook.state"
+import { apiErrorMessage } from "@thoth/utils/utils"
 
 export const LibraryManager = () => {
   const libraries = useAudiobookState(AudiobookSelectors.libraries)
   const [isOpen, setIsOpen] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
   const createLibrary = useAudiobookState(s => s.createLibrary)
   const updateLibrary = useAudiobookState(s => s.updateLibrary)
   const fetchLibraries = useAudiobookState(s => s.fetchLibraries)
@@ -42,11 +44,12 @@ export const LibraryManager = () => {
   )
 
   const onSubmit = async (values: LibraryFormValues) => {
-    setIsOpen(false)
-    if (values.mode === "create") {
-      await createLibrary(values)
+    const res = values.mode === "create" ? await createLibrary(values) : await updateLibrary(values.id!, values)
+    if (res.success) {
+      setSubmitError(null)
+      setIsOpen(false)
     } else {
-      await updateLibrary(values.id!, values)
+      setSubmitError(apiErrorMessage(res.error))
     }
   }
 
@@ -62,12 +65,12 @@ export const LibraryManager = () => {
           <thead>
             <tr className="bg-elevate p-2 *:py-2">
               <th className="overflow-hidden pl-2 text-left">
-                <div className="flex items-center text-ellipsis text-nowrap">
+                <div className="flex items-center text-nowrap text-ellipsis">
                   <MdLocalLibrary className="mr-4 min-h-6 min-w-6" />
                   Library
                 </div>
               </th>
-              <th className="text-ellipsis pl-2 text-left">
+              <th className="pl-2 text-left text-ellipsis">
                 <div className="flex items-center text-nowrap">
                   <MdAutoAwesome className="mr-4 min-h-6 min-w-6" />
                   Metadata preference
@@ -99,10 +102,11 @@ export const LibraryManager = () => {
               <>
                 {libraries?.map(library => (
                   <tr
-                    className="group cursor-pointer whitespace-nowrap odd:bg-active-light hover:bg-active *:py-2"
+                    className="group odd:bg-active-light hover:bg-active cursor-pointer whitespace-nowrap *:py-2"
                     key={library.id}
                     onClick={() => {
                       form.setAllFields({ ...library, mode: "edit" })
+                      setSubmitError(null)
                       setIsOpen(true)
                     }}
                   >
@@ -139,14 +143,14 @@ export const LibraryManager = () => {
         <ColoredButton
           onClick={() => {
             form.restoreInitial()
+            setSubmitError(null)
             setIsOpen(true)
           }}
-          innerClassName="!p-.5"
         >
           Create new Library
         </ColoredButton>
       </div>
-      <LibraryDialog onSubmit={onSubmit} isOpen={isOpen} setIsOpen={setIsOpen} form={form} />
+      <LibraryDialog onSubmit={onSubmit} isOpen={isOpen} setIsOpen={setIsOpen} form={form} submitError={submitError} />
     </>
   )
 }

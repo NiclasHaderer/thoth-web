@@ -27,9 +27,9 @@ export const Playback: FC<{ className?: string }> = ({ className }) => {
   if (!track) return <></>
 
   return (
-    <div className={`relative flex justify-between bg-elevate p-2 md:p-3 ${className}`}>
+    <div className={`bg-elevate relative flex justify-between p-2 md:p-3 ${className}`}>
       <ProgressBar
-        className="absolute left-0 right-0 top-0 w-full -translate-y-1/2"
+        className="absolute top-0 right-0 left-0 w-full -translate-y-1/2"
         percentage={percentage}
         onChange={setPercentage}
       />
@@ -60,7 +60,7 @@ export const Playback: FC<{ className?: string }> = ({ className }) => {
           <div className="line-clamp-1">
             {track.authors.map((author, index) => (
               <Link
-                className="pr-2 hover:underline no-touch:focus:underline"
+                className="no-touch:focus:underline pr-2 hover:underline"
                 href={`/libraries/${track.library.id}/authors/${author.id}`}
                 key={index}
               >
@@ -68,7 +68,7 @@ export const Playback: FC<{ className?: string }> = ({ className }) => {
               </Link>
             ))}
             -
-            <Link className="pl-2 hover:underline no-touch:focus:underline" href={`/books/${track.book.id}`}>
+            <Link className="no-touch:focus:underline pl-2 hover:underline" href={`/books/${track.book.id}`}>
               {track.book.title}
             </Link>
           </div>
@@ -83,40 +83,43 @@ export const Playback: FC<{ className?: string }> = ({ className }) => {
       <audio />
       <div className="flex items-center">
         <Ripple>
-          <button
+          <IconButton
+            icon={<MdSkipPrevious className="h-full w-full" />}
+            label="Previous track"
             onClick={playback.previous}
             disabled={playback.history.length === 0}
-            className={`h-10 w-10 rounded-full p-1 no-touch:focus:bg-active-light ${
-              playback.history.length === 0 ? "text-elevate" : ""
-            }`}
-          >
-            <MdSkipPrevious className="h-full w-full" />
-          </button>
+            className={`h-10 w-10 rounded-full ${playback.history.length === 0 ? "text-elevate" : ""}`}
+            innerClassName="p-1"
+          />
         </Ripple>
         <Ripple>
-          <button
-            className="h-10 w-10 rounded-full p-1 no-touch:focus:bg-active-light"
-            onClick={() => setPlaying(!playing)}
+          <IconButton
             ref={initialFocus}
-          >
-            {playing ? <MdPauseCircle className="h-full w-full" /> : <MdPlayCircle className="h-full w-full" />}
-          </button>
+            icon={playing ? <MdPauseCircle className="h-full w-full" /> : <MdPlayCircle className="h-full w-full" />}
+            label={playing ? "Pause" : "Play"}
+            onClick={() => setPlaying(!playing)}
+            className="h-10 w-10 rounded-full"
+            innerClassName="p-1"
+          />
         </Ripple>
         <Ripple>
-          <button
+          <IconButton
+            icon={<MdSkipNext className="h-full w-full" />}
+            label="Next track"
             onClick={playback.next}
             disabled={playback.queue.length === 0}
-            className={`h-10 w-10 rounded-full p-1 no-touch:focus:bg-active-light ${
-              playback.queue.length === 0 ? "text-elevate" : ""
-            }`}
-          >
-            <MdSkipNext className="h-full w-full" />
-          </button>
+            className={`h-10 w-10 rounded-full ${playback.queue.length === 0 ? "text-elevate" : ""}`}
+            innerClassName="p-1"
+          />
         </Ripple>
         <Ripple>
-          <button onClick={playback.stop} className="h-10 w-10 rounded-full p-1 no-touch:focus:bg-active-light">
-            <MdStop className="h-full w-full" />
-          </button>
+          <IconButton
+            icon={<MdStop className="h-full w-full" />}
+            label="Stop"
+            onClick={playback.stop}
+            className="h-10 w-10 rounded-full"
+            innerClassName="p-1"
+          />
         </Ripple>
       </div>
     </div>

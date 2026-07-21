@@ -1,5 +1,6 @@
 import { createContext, FC, PropsWithChildren, ReactElement, useContext, useRef, useState } from "react"
 import { MdClose } from "react-icons/md"
+import { IconButton } from "@thoth/components/icon-button"
 
 type SnackbarOptions = {
   closable?: boolean
@@ -58,9 +59,13 @@ export const SnackbarProvider: FC<PropsWithChildren> = ({ children }) => {
             <div key={key} className="bg-surface mb-3 overflow-hidden rounded-md">
               <div className={`bg-active relative p-2 ${classes[value.type]}`}>
                 {value.closable ? (
-                  <button className="absolute top-2 right-2 cursor-pointer" onClick={() => removeElement(key)}>
-                    <MdClose className="h-6 w-6" />
-                  </button>
+                  <IconButton
+                    icon={<MdClose className="h-6 w-6" />}
+                    label="Dismiss notification"
+                    className="absolute top-2 right-2"
+                    innerClassName="p-0"
+                    onClick={() => removeElement(key)}
+                  />
                 ) : null}
                 <div className="pr-8">{value.element}</div>
               </div>

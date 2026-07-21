@@ -118,7 +118,7 @@ export const useAudiobookState = createWithEqualityFn(
     },
     updateLibrary: async (id: UUID, library: LibraryUpdate) => {
       const res = await Api.updateLibrary({ libraryId: id }, library)
-      if (!res.success) return
+      if (!res.success) return res
       mutate.setState(state => ({
         ...state,
         libraryMap: {
@@ -126,10 +126,11 @@ export const useAudiobookState = createWithEqualityFn(
           [id]: res.body,
         },
       }))
+      return res
     },
     createLibrary: async (library: LibraryCreate) => {
       const res = await Api.createLibrary(library)
-      if (!res.success) return
+      if (!res.success) return res
       mutate.setState(state => ({
         ...state,
         libraryMap: {
@@ -137,6 +138,7 @@ export const useAudiobookState = createWithEqualityFn(
           [res.body.id]: res.body,
         },
       }))
+      return res
     },
     clearLibrary: () => {
       mutate.setState(state => ({
