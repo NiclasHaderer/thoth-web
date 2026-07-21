@@ -1,8 +1,9 @@
-import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react"
-import { FC, Fragment, useState } from "react"
+import { FC, useState } from "react"
+import { Key } from "react-aria-components"
 import { MdEdit } from "react-icons/md"
-import { ColoredButton } from "@thoth/components/colored-button.tsx"
-import { Dialog, DialogActions, DialogBody, DialogButtons } from "@thoth/components/dialog.tsx"
+import { Dialog, DialogBody, DialogButtons, DialogFooter } from "@thoth/components/dialog.tsx"
+import { Button } from "@thoth/components/ui/button"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@thoth/components/ui/tabs"
 import { Form, FormContext } from "@thoth/hooks/form.tsx"
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- matches FormContext's Record<string, any> so interface-typed models (no index signature) are accepted
@@ -20,56 +21,40 @@ export function GenericEdit<T extends Record<string, any>>({
   Search: FC<{ onSelect: () => void }>
 }) {
   const [isOpen, setIsOpen] = useState(false)
-  const [selectedTabIndex, setSelectedTabIndex] = useState(0)
+  const [selectedTab, setSelectedTab] = useState<Key>("information")
 
   const closeModal = () => setIsOpen(false)
   const openModal = () => setIsOpen(true)
 
   return (
     <>
-      <ColoredButton color="secondary" onClick={openModal}>
+      <Button variant="secondary" onPress={openModal}>
         <MdEdit className="mr-2" /> Edit
-      </ColoredButton>
+      </Button>
       <Dialog closeModal={closeModal} isOpen={isOpen} dialogClass="min-h-[510px]" title={title}>
-        <DialogBody>
-          <Form form={form} onSubmit={values => onSubmit(values, closeModal)}>
-            <TabGroup selectedIndex={selectedTabIndex} onChange={index => setSelectedTabIndex(index)}>
-              <TabList className="p-2-solid w-full">
-                <Tab as={Fragment}>
-                  {({ selected }) => (
-                    <button
-                      className={`focus:bg-active w-1/2 rounded-l-md p-2 transition-colors ${selected ? "bg-active-light" : ""}`}
-                    >
-                      Information
-                    </button>
-                  )}
-                </Tab>
-                <Tab as={Fragment}>
-                  {({ selected }) => (
-                    <button
-                      className={`focus:bg-active w-1/2 rounded-r-md p-2 transition-colors ${
-                        selected ? "bg-active-light" : ""
-                      }`}
-                    >
-                      Lookup Information
-                    </button>
-                  )}
-                </Tab>
-              </TabList>
-              <TabPanels className="mt-2">
-                <TabPanel tabIndex={-1}>
-                  <InformationDisplay />
-                </TabPanel>
-                <TabPanel tabIndex={-1}>
-                  <Search onSelect={() => setSelectedTabIndex(0)} />
-                </TabPanel>
-              </TabPanels>
-            </TabGroup>
-            <DialogActions>
-              <DialogButtons closeModal={closeModal} />
-            </DialogActions>
-          </Form>
-        </DialogBody>
+        <Form form={form} onSubmit={values => onSubmit(values, closeModal)}>
+          <DialogBody>
+            <Tabs selectedKey={selectedTab} onSelectionChange={setSelectedTab}>
+              <TabsList className="w-full">
+                <TabsTrigger id="information" className="w-1/2">
+                  Information
+                </TabsTrigger>
+                <TabsTrigger id="lookup" className="w-1/2">
+                  Lookup Information
+                </TabsTrigger>
+              </TabsList>
+              <TabsContent id="information" className="mt-2">
+                <InformationDisplay />
+              </TabsContent>
+              <TabsContent id="lookup" className="mt-2">
+                <Search onSelect={() => setSelectedTab("information")} />
+              </TabsContent>
+            </Tabs>
+          </DialogBody>
+          <DialogFooter>
+            <DialogButtons closeModal={closeModal} />
+          </DialogFooter>
+        </Form>
       </Dialog>
     </>
   )

@@ -1,9 +1,9 @@
 import { useState } from "react"
 import { MdAutoAwesome, MdEdit, MdLanguage, MdLocalLibrary, MdRadar } from "react-icons/md"
 import { FileScanner, NamedMetadataAgent, UUID } from "@thoth/client"
-import { ColoredButton } from "@thoth/components/colored-button"
 import { MdScan } from "@thoth/components/icons/scan"
 import { LibraryDialog, LibraryFormValues } from "@thoth/components/library/library-dialog"
+import { Button } from "@thoth/components/ui/button"
 import { FormContext, useForm } from "@thoth/hooks/form"
 import { useOnMount } from "@thoth/hooks/lifecycle"
 import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
@@ -63,7 +63,7 @@ export const LibraryManager = () => {
       <div className="mt-4 w-full overflow-y-auto">
         <table className="w-full overflow-hidden rounded">
           <thead>
-            <tr className="bg-elevate p-2 *:py-2">
+            <tr className="bg-card p-2 *:py-2">
               <th className="overflow-hidden pl-2 text-left">
                 <div className="flex items-center text-nowrap text-ellipsis">
                   <MdLocalLibrary className="mr-4 min-h-6 min-w-6" />
@@ -102,7 +102,7 @@ export const LibraryManager = () => {
               <>
                 {libraries?.map(library => (
                   <tr
-                    className="group odd:bg-active-light hover:bg-active cursor-pointer whitespace-nowrap *:py-2"
+                    className="group odd:bg-muted hover:bg-accent cursor-pointer whitespace-nowrap *:py-2"
                     key={library.id}
                     onClick={() => {
                       form.setAllFields({ ...library, mode: "edit" })
@@ -123,7 +123,7 @@ export const LibraryManager = () => {
                   </tr>
                 ))}
                 {(!libraries || libraries.length === 0) && (
-                  <tr className="odd:bg-active-light">
+                  <tr className="odd:bg-muted">
                     <td className="pl-2" colSpan={6}>
                       No library yet
                     </td>
@@ -140,15 +140,15 @@ export const LibraryManager = () => {
         </table>
       </div>
       <div className="flex justify-end pt-2">
-        <ColoredButton
-          onClick={() => {
+        <Button
+          onPress={() => {
             form.restoreInitial()
             setSubmitError(null)
             setIsOpen(true)
           }}
         >
           Create new Library
-        </ColoredButton>
+        </Button>
       </div>
       <LibraryDialog onSubmit={onSubmit} isOpen={isOpen} setIsOpen={setIsOpen} form={form} submitError={submitError} />
     </>

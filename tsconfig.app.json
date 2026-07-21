@@ -23,7 +23,8 @@
     "noUncheckedSideEffectImports": true,
 
     "paths": {
-      "@thoth/*": ["./src/*"]
+      "@thoth/*": ["./src/*"],
+      "@/*": ["./src/*"]
     },
     "types": ["./src/global.d.ts"]
   },

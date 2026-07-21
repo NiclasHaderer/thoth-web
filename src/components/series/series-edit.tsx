@@ -1,9 +1,9 @@
 import { FC } from "react"
 import { MdNumbers, MdSearch } from "react-icons/md"
+import { toast } from "sonner"
 import { MetadataSeries, Series, SeriesUpdate } from "@thoth/client"
 import { GenericEdit } from "@thoth/components/generic/generic-edit.tsx"
 import { ManagedInput } from "@thoth/components/input/managed-input"
-import { useSnackbar } from "@thoth/components/snackbar"
 import { apiErrorMessage } from "@thoth/utils/utils"
 import { FormContext, useForm } from "../../hooks/form"
 import { useAudiobookState } from "../../state/audiobook.state"
@@ -36,7 +36,6 @@ const seriesToUpdate = (series: Series): SeriesUpdate => {
 
 export const SeriesEdit: FC<{ series: Series }> = ({ series }) => {
   const updateSeries = useAudiobookState(s => s.updateSeries)
-  const { show } = useSnackbar()
   const form = useForm(seriesToUpdate(series))
 
   return (
@@ -45,7 +44,7 @@ export const SeriesEdit: FC<{ series: Series }> = ({ series }) => {
       onSubmit={async (values, closeModal) => {
         const result = await updateSeries({ libraryId: series.library.id, id: series.id }, values)
         if (result && !result.success) {
-          show(apiErrorMessage(result.error), { type: "error" })
+          toast.error(apiErrorMessage(result.error))
           return
         }
         closeModal()

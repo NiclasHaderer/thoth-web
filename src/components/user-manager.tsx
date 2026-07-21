@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { MdDelete, MdEdit, MdPerson } from "react-icons/md"
+import { toast } from "sonner"
 import { Api } from "@thoth/client"
-import { useSnackbar } from "@thoth/components/snackbar"
 import { UserDialog, UserFormValues } from "@thoth/components/user-dialog"
 import { useHttpRequest } from "@thoth/hooks/async-response"
 import { useForm } from "@thoth/hooks/form.tsx"
@@ -12,14 +12,13 @@ import { apiErrorMessage } from "@thoth/utils/utils"
 export const UserManager = () => {
   const loggedInUserId = useAuthState(s => s.accessToken?.payload.sub)
   const [isOpen, setIsOpen] = useState(false)
-  const { show } = useSnackbar()
   const { result: users, invoke: listUsers } = useHttpRequest(Api.listUsers)
   useOnMount(() => listUsers())
 
   const updateUser = async (user: UserFormValues) => {
     const rename = await Api.updateUsername({ id: user.id! }, { username: user.username })
     if (!rename.success) {
-      show(apiErrorMessage(rename.error), { type: "error" })
+      toast.error(apiErrorMessage(rename.error))
       return
     }
     const permissions = await Api.updatePermissions(
@@ -35,7 +34,7 @@ export const UserManager = () => {
       }
     )
     if (!permissions.success) {
-      show(apiErrorMessage(permissions.error), { type: "error" })
+      toast.error(apiErrorMessage(permissions.error))
       return
     }
     await listUsers()
@@ -59,7 +58,7 @@ export const UserManager = () => {
       <div className="mt-4 w-full overflow-y-auto">
         <table className="w-full table-auto overflow-hidden rounded">
           <thead>
-            <tr className="bg-elevate p-2 *:py-2">
+            <tr className="bg-card p-2 *:py-2">
               <th className="pl-2 text-left">
                 <div className="flex items-center">
                   <MdPerson className="mr-4 h-6 w-6" />
@@ -77,7 +76,7 @@ export const UserManager = () => {
               <>
                 {users?.map(user => (
                   <tr
-                    className="group odd:bg-active-light hover:bg-active cursor-pointer whitespace-nowrap *:py-2"
+                    className="group odd:bg-muted hover:bg-accent cursor-pointer whitespace-nowrap *:py-2"
                     key={user.id}
                     onClick={() => {
                       form.setAllFields({

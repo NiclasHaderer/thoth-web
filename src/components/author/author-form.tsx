@@ -40,7 +40,7 @@ export const AuthorForm: FC<{ form: FormContext<AuthorUpdate> }> = ({ form }) =>
                 form.setFields({ image: base64 })
               }}
             />
-            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-elevate p-2 opacity-0 transition-all group-hover:opacity-70">
+            <div className="bg-card absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full p-2 opacity-0 transition-all group-hover:opacity-70">
               <CiSaveUp1 className="h-6 w-6" />
             </div>
           </div>

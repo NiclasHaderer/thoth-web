@@ -13,7 +13,7 @@ export const InputError: FC<InputErrorProps> = ({ errors, show = true, className
   return (
     <div className={`flex h-[1lh] items-center justify-end overflow-hidden ${className ?? ""}`}>
       {visible ? (
-        <div className="animate-slide-in-top truncate whitespace-nowrap text-right text-sm text-error">
+        <div className="animate-slide-in-top text-destructive truncate text-right text-sm whitespace-nowrap">
           {messages.join(", ")}
         </div>
       ) : null}

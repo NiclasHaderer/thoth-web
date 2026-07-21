@@ -2,10 +2,10 @@ import { FC, useRef } from "react"
 import { CiImageOff } from "react-icons/ci"
 import { MdCollectionsBookmark, MdEvent, MdFormatListNumbered, MdLanguage, MdPerson, MdSearch } from "react-icons/md"
 import { Book, BookUpdate, MetadataBook } from "@thoth/client"
-import { ColoredButton } from "@thoth/components/colored-button"
 import { GenericEdit } from "@thoth/components/generic/generic-edit.tsx"
 import { ManagedInput } from "@thoth/components/input/managed-input"
 import { ResponsiveImage } from "@thoth/components/responsive-image"
+import { Button } from "@thoth/components/ui/button"
 import { FormContext, useForm } from "../../hooks/form"
 import { useAudiobookState } from "../../state/audiobook.state"
 import { isUUID, toBase64, toFormDate } from "../../utils/utils"
@@ -108,13 +108,13 @@ const BookForm: FC<{ form: FormContext<BookUpdate> }> = ({ form }) => {
                 form.setFields({ cover: base64 })
               }}
             />
-            <ColoredButton
-              color="secondary"
+            <Button
+              variant="secondary"
               className="mt-2 self-center"
-              onClick={() => imageRef.current && imageRef.current.click()}
+              onPress={() => imageRef.current && imageRef.current.click()}
             >
               Upload image
-            </ColoredButton>
+            </Button>
           </div>
         </div>
         <div>

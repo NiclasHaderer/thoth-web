@@ -1,40 +1,33 @@
 import { FC } from "react"
 import { MdBook, MdCollectionsBookmark, MdPerson } from "react-icons/md"
+import { Link, useLocation } from "wouter"
 import { UUID } from "@thoth/client"
-import { ActiveLink } from "@thoth/components/active-link"
 import { Ripple } from "@thoth/components/ripple"
+import { buttonVariants } from "@thoth/components/ui/button"
 
 export const BottomResourceMenu: FC<{ className?: string; libraryId: UUID }> = ({ className = "", libraryId }) => {
+  const [pathname] = useLocation()
+  const items = [
+    { href: `/libraries/${libraryId}/authors`, Icon: MdPerson },
+    { href: `/libraries/${libraryId}/books`, Icon: MdBook },
+    { href: `/libraries/${libraryId}/series`, Icon: MdCollectionsBookmark },
+  ]
   return (
-    <aside className="bg-surface">
+    <aside className="bg-background">
       <div className={`relative flex h-16 items-center justify-between px-4 ${className}`}>
-        <Ripple className="h-full grow cursor-pointer bg-opacity-30" rippleClasses={"bg-primary bg-opacity-80"}>
-          <ActiveLink
-            href={`/libraries/${libraryId}/authors`}
-            withSubRoutes={true}
-            className="flex h-full items-center justify-center"
-          >
-            <MdPerson className="aspect-square h-3/5 w-auto" />
-          </ActiveLink>
-        </Ripple>
-        <Ripple className="h-full grow cursor-pointer" rippleClasses={"bg-primary bg-opacity-80"}>
-          <ActiveLink
-            href={`/libraries/${libraryId}/books`}
-            withSubRoutes={true}
-            className="flex h-full items-center justify-center"
-          >
-            <MdBook className="aspect-square h-3/5 w-auto" />
-          </ActiveLink>
-        </Ripple>
-        <Ripple className="h-full grow cursor-pointer" rippleClasses={"bg-primary bg-opacity-80"}>
-          <ActiveLink
-            href={`/libraries/${libraryId}/series`}
-            withSubRoutes={true}
-            className="flex h-full items-center justify-center"
-          >
-            <MdCollectionsBookmark className="aspect-square h-3/5 w-auto" />
-          </ActiveLink>
-        </Ripple>
+        {items.map(({ href, Icon }) => (
+          <Ripple key={href} className="h-full grow cursor-pointer" rippleClasses={"bg-primary bg-opacity-80"}>
+            <Link
+              href={href}
+              className={buttonVariants({
+                variant: "ghost",
+                className: `h-full w-full rounded-none ${pathname.startsWith(href) ? "text-primary" : ""}`,
+              })}
+            >
+              <Icon className="size-9" />
+            </Link>
+          </Ripple>
+        ))}
       </div>
     </aside>
   )
