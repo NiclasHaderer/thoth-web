@@ -14,8 +14,12 @@ export const SearchBar: FC = () => {
   useOnMount(() => invoke())
   return (
     <div className="bg-elevate m-3 flex h-20 min-h-20 items-center rounded-xl pr-3">
-      <Link href={"/libraries"} className="flex overflow-hidden rounded-l-xl" aria-label={"HOME"}>
-        <div className="no-touch:group-focus:bg-active-light inline-flex cursor-pointer items-center pr-2">
+      <Link
+        href={"/libraries"}
+        className="focus-visible:bg-active flex overflow-hidden rounded-l-xl transition-colors"
+        aria-label="Thoth home"
+      >
+        <div className="inline-flex cursor-pointer items-center pr-2">
           <Logo className="h-20 w-auto p-3" />
           <h1 className="font-serif text-3xl font-extrabold">THOTH</h1>
         </div>
@@ -27,7 +31,7 @@ export const SearchBar: FC = () => {
             <>
               <MenuButton
                 id="user-account-menu"
-                className="hover:bg-active-light focus:bg-active-light no-touch:focus:bg-active-light h-12 w-12 cursor-pointer rounded-full p-2 transition-colors"
+                className="hover:bg-active focus-visible:bg-active h-12 w-12 cursor-pointer rounded-full p-2 transition-colors"
               >
                 <MdAccountCircle className="h-full w-full" />
               </MenuButton>

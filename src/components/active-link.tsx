@@ -17,7 +17,7 @@ export const ActiveLink = forwardRef<HTMLAnchorElement, ActiveLinkProps>(
     return (
       <Link href={href} asChild onClick={onClick}>
         {createElement(as, {
-          className: `group cursor-pointer transition-colors hover:bg-active-light ${isActive ? "text-primary" : ""} ${className ?? ""}`,
+          className: `group cursor-pointer transition-colors hover:bg-active-light focus-visible:bg-active-light ${isActive ? "text-primary" : ""} ${className ?? ""}`,
           ref,
           children,
         })}
