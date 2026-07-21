@@ -2,6 +2,7 @@ import { FC, useEffect, useRef, useState } from "react"
 import { MdAutorenew, MdLock, MdPerson, MdVisibility, MdVisibilityOff } from "react-icons/md"
 import { Link, useLocation, useSearch } from "wouter"
 import { ColoredButton } from "@thoth/components/colored-button"
+import { IconButton } from "@thoth/components/icon-button"
 import { Logo } from "@thoth/components/icons/logo"
 import { InputError } from "@thoth/components/input/input-error"
 import { ManagedInput } from "@thoth/components/input/managed-input"
@@ -97,15 +98,14 @@ export const LoginRegister: FC<{ type: "register" | "login"; redirectPath?: stri
             leftIcon={<MdLock />}
             autoComplete={isRegister ? "new-password" : "current-password"}
             rightIcon={
-              <button
-                type="button"
+              <IconButton
                 tabIndex={-1}
-                aria-label={passwordVisible ? "Hide password" : "Show password"}
+                label={passwordVisible ? "Hide password" : "Show password"}
+                icon={passwordVisible ? <MdVisibilityOff /> : <MdVisibility />}
                 className="my-2 ml-2 block h-full"
+                innerClassName="p-1"
                 onClick={() => setPasswordVisible(prev => !prev)}
-              >
-                {passwordVisible ? <MdVisibilityOff /> : <MdVisibility />}
-              </button>
+              />
             }
           />
           {isRegister ? (
@@ -124,7 +124,10 @@ export const LoginRegister: FC<{ type: "register" | "login"; redirectPath?: stri
           <div className="mt-2 flex items-center justify-between">
             <p>
               {isRegister ? "Already have an account?" : "Don't have an account?"}{" "}
-              <Link href={isRegister ? `/login?${search}` : `/register?${search}`} className="underline">
+              <Link
+                href={isRegister ? `/login?${search}` : `/register?${search}`}
+                className="focus-visible:ring-primary/60 rounded underline focus-visible:ring-2 focus-visible:outline-none"
+              >
                 {isRegister ? "Login" : "Register"}
               </Link>
             </p>

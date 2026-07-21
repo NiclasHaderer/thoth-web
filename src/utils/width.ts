@@ -1,12 +1,12 @@
 export const getSizing = (size: "small" | "normal") => {
   return {
     widthClasses: {
-      small: "w-32",
-      normal: "w-52",
+      small: "w-44",
+      normal: "w-64",
     }[size],
     heightClasses: {
-      small: "h-32",
-      normal: "h-52",
+      small: "h-44",
+      normal: "h-64",
     }[size],
   }
 }

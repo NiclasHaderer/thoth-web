@@ -33,7 +33,7 @@ input[type="number"] {
 }
 
 :focus-visible {
-  outline: none !important;
+  outline: none;
 }
 
 [disabled=""] {
