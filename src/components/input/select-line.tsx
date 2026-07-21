@@ -25,16 +25,15 @@ export function SelectLine<T, MULTIPLE extends boolean = false>({
     <>
       <label className={`flex items-center ${wrapperClassName ?? ""}`}>
         {label ? <div className={`mt-2 px-2 ${labelClassName ?? ""}`}>{label}</div> : null}
-        <div className="relative mt-2 grow">
-          {icon ? <div className={`absolute top-1/2 left-0 z-10 -translate-y-1/2 p-2`}>{icon}</div> : null}
+        <div className="mt-2 grow">
           <Select
             onBlur={() => setTouched(true)}
             {...props}
+            leftIcon={icon}
             value={value as SelectProps<T, MULTIPLE>["value"]}
-            placeholderButtonClassName={"pl-8 hover:bg-elevate w-full"}
+            placeholderButtonClassName="w-full"
             placeholderClassName="w-full"
             outerClassName="w-full"
-            optionListClassName="w-full border-solid border-active border-1"
             onChange={v => {
               const extract = (val: unknown): unknown =>
                 typeof val === "object" && val !== null && "value" in val ? val.value : val

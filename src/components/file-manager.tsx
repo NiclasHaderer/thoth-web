@@ -1,9 +1,17 @@
-import { FC, Fragment, useEffect, useState } from "react"
+import { FC, useEffect, useState } from "react"
 import { MdAdd, MdCheck, MdFolder, MdHome } from "react-icons/md"
 import { Api } from "@thoth/client"
-import { ColoredButton } from "@thoth/components/colored-button"
-import { IconButton } from "@thoth/components/icon-button"
 import { InputError } from "@thoth/components/input/input-error"
+import {
+  Breadcrumb,
+  BreadcrumbEllipsis,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+} from "@thoth/components/ui/breadcrumb"
+import { Button } from "@thoth/components/ui/button"
+import { DropdownMenu, DropdownMenuItem, DropdownMenuTrigger } from "@thoth/components/ui/dropdown-menu"
 import { useHttpRequest } from "@thoth/hooks/async-response"
 
 export const FolderManager: FC<{
@@ -20,62 +28,82 @@ export const FolderManager: FC<{
 
   const selected = new Set(selectedFolders ?? [])
 
+  const segments = currentPath.split("/").filter(path => path !== "")
+  const pathAt = (index: number) => "/" + segments.slice(0, index + 1).join("/")
+  const MAX_TRAILING = 2
+  const collapse = segments.length > MAX_TRAILING
+  const trailingStart = collapse ? segments.length - MAX_TRAILING : 0
+  const collapsed = segments.slice(0, trailingStart)
+  const trailing = segments.slice(trailingStart)
+
   return (
     <div className={`flex flex-col ${className ?? ""}`}>
-      <div className="flex max-w-full justify-between overflow-hidden">
-        <div className="flex">
-          <IconButton
-            icon={<MdHome className="h-4 w-4" />}
-            label="Go to root folder"
-            onClick={() => setCurrentPath("/")}
-          />
-          {currentPath
-            .split("/")
-            .filter(path => path !== "")
-            .map((path, index, array) => (
-              <Fragment key={index}>
-                <ColoredButton
-                  color="ghost"
-                  aria-label={`Go to ${path}`}
-                  onClick={() => {
-                    const newPath = "/" + array.slice(0, index + 1).join("/")
-                    setCurrentPath(newPath)
-                  }}
-                  innerClassName="p-2"
-                >
-                  {path}
-                </ColoredButton>
-                <span className="flex items-center">/</span>
-              </Fragment>
-            ))}
-        </div>
-      </div>
+      <Breadcrumb className="max-w-full overflow-hidden p-2">
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <Button variant="ghost" size="icon-sm" aria-label="Go to root folder" onPress={() => setCurrentPath("/")}>
+              <MdHome className="size-4" />
+            </Button>
+          </BreadcrumbItem>
+          {collapse && (
+            <BreadcrumbItem>
+              <DropdownMenuTrigger>
+                <Button variant="ghost" size="icon-sm" aria-label="Show collapsed folders">
+                  <BreadcrumbEllipsis />
+                </Button>
+                <DropdownMenu placement="bottom start">
+                  {collapsed.map((path, index) => (
+                    <DropdownMenuItem key={index} onAction={() => setCurrentPath(pathAt(index))}>
+                      {path}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenu>
+              </DropdownMenuTrigger>
+            </BreadcrumbItem>
+          )}
+          {trailing.map((path, index) => {
+            const realIndex = trailingStart + index
+            const isLast = realIndex === segments.length - 1
+            return (
+              <BreadcrumbItem key={realIndex}>
+                {isLast ? (
+                  <BreadcrumbPage>{path}</BreadcrumbPage>
+                ) : (
+                  <BreadcrumbLink onPress={() => setCurrentPath(pathAt(realIndex))}>{path}</BreadcrumbLink>
+                )}
+              </BreadcrumbItem>
+            )
+          })}
+        </BreadcrumbList>
+      </Breadcrumb>
       <div tabIndex={-1} className={`flex flex-col pr-2 ${contentClassName ?? ""}`}>
         {folders.result?.length === 0 && <div className="p-2 text-sm opacity-60">No subfolders</div>}
         {folders.result?.map(folder => {
           const added = selected.has(folder.path)
           return (
             <div key={folder.path} className="flex items-center">
-              <ColoredButton
-                color="ghost"
-                onClick={() => setCurrentPath(folder.path)}
+              <Button
+                variant="ghost"
+                onPress={() => setCurrentPath(folder.path)}
                 aria-label={`Open folder ${folder.name}`}
-                className="grow rounded-none"
-                innerClassName="justify-start gap-2 overflow-hidden p-2"
+                className="grow justify-start overflow-hidden rounded-none"
               >
                 <MdFolder className="shrink-0" aria-hidden />
                 <span className="truncate">{folder.name}</span>
-              </ColoredButton>
+              </Button>
               {added ? (
                 <span className="text-primary flex p-2" role="img" aria-label={`${folder.name} already added`}>
                   <MdCheck aria-hidden />
                 </span>
               ) : (
-                <IconButton
-                  icon={<MdAdd />}
-                  label={`Add folder ${folder.name}`}
-                  onClick={() => onSelectFolder?.(folder.path)}
-                />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  aria-label={`Add folder ${folder.name}`}
+                  onPress={() => onSelectFolder?.(folder.path)}
+                >
+                  <MdAdd />
+                </Button>
               )}
             </div>
           )

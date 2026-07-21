@@ -1,10 +1,10 @@
 import { FC, Fragment, useState } from "react"
 import { MdSearch } from "react-icons/md"
 import { Api, MetadataAuthor, UUID } from "@thoth/client"
-import { ColoredButton } from "@thoth/components/colored-button"
 import { Input } from "@thoth/components/input/input"
 import { LoadingCards } from "@thoth/components/loading-card"
 import { ResponsiveImage } from "@thoth/components/responsive-image"
+import { Button } from "@thoth/components/ui/button"
 import { useHttpRequest } from "@thoth/hooks/async-response"
 
 export const AuthorSearch: FC<{
@@ -25,14 +25,9 @@ export const AuthorSearch: FC<{
     <>
       <div className="mb-4 flex items-center">
         <Input wrapperClassName="grow pr-2" label="Author" onEnter={search} onValue={setAuthor} defaultValue={author} />
-        <ColoredButton
-          className="ml-2 h-10 w-10 min-w-10"
-          innerClassName="p-2! items-center justify-around"
-          color="secondary"
-          onClick={search}
-        >
-          <MdSearch className="h-5 w-5" />
-        </ColoredButton>
+        <Button variant="secondary" size="icon" className="ml-2 h-10 w-10" onPress={search}>
+          <MdSearch className="size-5" />
+        </Button>
       </div>
       <div className="max-h-96 overflow-y-auto">
         {result ? <AuthorSearchResult results={result} select={onSelect} /> : null}
@@ -53,11 +48,11 @@ const AuthorSearchResult: FC<{ results: MetadataAuthor[]; select: (result: Metad
         <Fragment key={i}>
           <div
             onClick={() => select(author)}
-            className="flex cursor-pointer items-stretch justify-between rounded-md p-2 transition-colors hover:bg-active-light focus:bg-active-light"
+            className="hover:bg-muted focus:bg-muted flex cursor-pointer items-stretch justify-between rounded-md p-2 transition-colors"
             tabIndex={0}
           >
             <div>
-              <h3 className="pb-2 pr-2 text-xl">{author.name || "Unknown"}</h3>
+              <h3 className="pr-2 pb-2 text-xl">{author.name || "Unknown"}</h3>
               <p className="line-clamp-4 pr-2">{author.biography}</p>
             </div>
             {author.imageURL ? (
@@ -68,7 +63,7 @@ const AuthorSearchResult: FC<{ results: MetadataAuthor[]; select: (result: Metad
               />
             ) : null}
           </div>
-          {results.length - 1 !== i ? <hr className="my-4 border-elevate" /> : null}
+          {results.length - 1 !== i ? <hr className="border-border my-4" /> : null}
         </Fragment>
       ))}
     </>

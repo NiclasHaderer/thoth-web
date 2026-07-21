@@ -1,5 +1,6 @@
 import { ComponentProps, FC, KeyboardEvent, memo, ReactNode, RefObject, useEffect, useRef, useState } from "react"
 import { InputError } from "@thoth/components/input/input-error"
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@thoth/components/ui/input-group"
 
 export type InputProps = Omit<Omit<ComponentProps<"input">, "defaultValue">, "value"> & {
   label?: string | undefined
@@ -9,6 +10,7 @@ export type InputProps = Omit<Omit<ComponentProps<"input">, "defaultValue">, "va
   defaultValue?: string | number | ReadonlyArray<string> | undefined | null
   value?: string | ReadonlyArray<string> | number | undefined | null
   wrapperClassName?: string | undefined
+  groupClassName?: string | undefined
   touched?: boolean | undefined
   errors?: string[] | undefined
   hideError?: boolean | undefined
@@ -24,6 +26,7 @@ export const Input: FC<InputProps> = memo(
     rightIcon,
     label,
     wrapperClassName,
+    groupClassName,
     placeholder = label,
     labelClassName,
     defaultValue,
@@ -51,35 +54,35 @@ export const Input: FC<InputProps> = memo(
     return (
       <>
         <label className={`flex items-center ${wrapperClassName ?? ""}`}>
-          {label ? <div className={`whitespace-nowrap px-2 ${labelClassName ?? ""}`}>{label}</div> : null}
-          <div className="relative grow">
-            {leftIcon ? <div className={`absolute left-0 top-1/2 -translate-y-1/2 p-2`}>{leftIcon}</div> : null}
-            {rightIcon ? <div className={`absolute right-0 top-1/2 -translate-y-1/2 p-2`}>{rightIcon}</div> : null}
-            <input
-              onKeyDown={event => {
-                if (event.key === "Enter") {
-                  if (preventSubmit) event.preventDefault()
-                  if (onEnter) onEnter(event)
-                }
-                if (onKeyDown) onKeyDown(event)
-              }}
-              onChange={event => {
-                if (onValue) onValue(event.target.value)
-                if (onChange) onChange(event)
-                setCursor(event.target.selectionStart)
-              }}
-              placeholder={placeholder}
-              defaultValue={defaultValue ?? undefined}
-              value={value ?? undefined}
-              {...props}
-              ref={instance => {
-                if (inputRef) inputRef.current = instance
-                ref.current = instance
-              }}
-              className={`box-border w-full rounded-md bg-elevate p-2 transition-colors focus:bg-active ${
-                leftIcon !== undefined && "pl-8"
-              } ${rightIcon !== undefined && "pr-8"} ${className ?? ""}`}
-            />
+          {label ? <div className={`px-2 whitespace-nowrap ${labelClassName ?? ""}`}>{label}</div> : null}
+          <div className="grow">
+            <InputGroup className={groupClassName}>
+              {leftIcon ? <InputGroupAddon>{leftIcon}</InputGroupAddon> : null}
+              <InputGroupInput
+                onKeyDown={event => {
+                  if (event.key === "Enter") {
+                    if (preventSubmit) event.preventDefault()
+                    if (onEnter) onEnter(event)
+                  }
+                  if (onKeyDown) onKeyDown(event)
+                }}
+                onChange={event => {
+                  if (onValue) onValue(event.target.value)
+                  if (onChange) onChange(event)
+                  setCursor(event.target.selectionStart)
+                }}
+                placeholder={placeholder}
+                defaultValue={defaultValue ?? undefined}
+                value={value ?? undefined}
+                {...props}
+                ref={instance => {
+                  if (inputRef) inputRef.current = instance
+                  ref.current = instance
+                }}
+                className={className}
+              />
+              {rightIcon ? <InputGroupAddon align="inline-end">{rightIcon}</InputGroupAddon> : null}
+            </InputGroup>
           </div>
         </label>
         {hideError ? null : <InputError errors={errors} show={touched} />}
