@@ -9,6 +9,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "@thoth": path.resolve(import.meta.dirname, "src"),
+      "@": path.resolve(import.meta.dirname, "src"),
     },
   },
   plugins: [buildRoutesPlugin(), tailwindcss(), react()],

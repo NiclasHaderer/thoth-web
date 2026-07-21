@@ -1,9 +1,9 @@
 import { FC } from "react"
 import { MdBadge } from "react-icons/md"
+import { toast } from "sonner"
 import { Api, ThothUserWithPermissions, UserPermissions } from "@thoth/client"
-import { ColoredButton } from "@thoth/components/colored-button.tsx"
 import { ManagedInput } from "@thoth/components/input/managed-input.tsx"
-import { useSnackbar } from "@thoth/components/snackbar.tsx"
+import { Button } from "@thoth/components/ui/button"
 import { Form, useForm } from "@thoth/hooks/form.tsx"
 import { useOnMount } from "@thoth/hooks/lifecycle.ts"
 import { useAudiobookState } from "@thoth/state/audiobook.state.ts"
@@ -11,7 +11,6 @@ import { apiErrorMessage } from "@thoth/utils/utils.ts"
 
 export const User: FC<{ user: ThothUserWithPermissions<UserPermissions> }> = ({ user }) => {
   const fetchLibraries = useAudiobookState(s => s.fetchLibraries)
-  const { show } = useSnackbar()
 
   const form = useForm({
     username: user.username,
@@ -24,7 +23,7 @@ export const User: FC<{ user: ThothUserWithPermissions<UserPermissions> }> = ({ 
       form={form}
       onSubmit={async values => {
         const result = await Api.updateUsername({ id: user.id }, { username: values.username })
-        if (!result.success) show(apiErrorMessage(result.error), { type: "error" })
+        if (!result.success) toast.error(apiErrorMessage(result.error))
       }}
     >
       <h2 className="mb-4 text-2xl font-bold">User Profile</h2>
@@ -49,7 +48,7 @@ export const User: FC<{ user: ThothUserWithPermissions<UserPermissions> }> = ({ 
         <b className="inline-block w-36 px-2 font-bold">Library Access</b>
         <span>
           {user.permissions.libraries.length === 0 ? (
-            <span className="text-font-secondary">No library access</span>
+            <span className="text-foreground">No library access</span>
           ) : (
             user.permissions.libraries.map(library => (
               <span key={library.id} className="mr-2">
@@ -60,12 +59,12 @@ export const User: FC<{ user: ThothUserWithPermissions<UserPermissions> }> = ({ 
         </span>
       </div>
       <div className="flex justify-between">
-        <ColoredButton onClick={() => form.restoreInitial()} color="secondary">
+        <Button onPress={() => form.restoreInitial()} variant="secondary">
           Cancel
-        </ColoredButton>
-        <ColoredButton type="submit" className="ml-2">
+        </Button>
+        <Button type="submit" className="ml-2">
           Save
-        </ColoredButton>
+        </Button>
       </div>
     </Form>
   )

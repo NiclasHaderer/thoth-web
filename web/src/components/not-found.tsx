@@ -1,5 +1,5 @@
 import { Link } from "wouter"
-import { ColoredButton } from "@thoth/components/colored-button.tsx"
+import { buttonVariants } from "@thoth/components/ui/button"
 
 export const NotFound = () => {
   return (
@@ -13,12 +13,9 @@ export const NotFound = () => {
           Looks like the signal was lost. We can't seem to find the page you're looking for.
         </p>
 
-        <ColoredButton
-          className="transition-all hover:scale-105"
-          innerClassName="inline-block transform rounded-lg font-bold shadow-lg px-4 py-2"
-        >
-          <Link href="/">Go Back Home</Link>
-        </ColoredButton>
+        <Link href="/" className={buttonVariants({ className: "font-bold shadow-lg" })}>
+          Go Back Home
+        </Link>
       </div>
     </div>
   )

@@ -29,15 +29,15 @@ export const LeftTabs: FC<LeftTabsProps> = ({
 
   return (
     <div className={`flex ${className ?? ""}`}>
-      <div className={`min-w-1/4 overflow-hidden rounded bg-elevate ${leftClassname ?? ""}`}>
+      <div className={`bg-card min-w-1/4 overflow-hidden rounded ${leftClassname ?? ""}`}>
         <ul className="flex flex-col">
           {tabs.map((tab, index) => (
             <li key={index}>
               <button
                 type="button"
                 onClick={() => setActiveTab(index)}
-                className={`w-full p-2 hover:bg-active-light focus:bg-active ${
-                  activeTab === index ? "bg-active text-primary" : ""
+                className={`hover:bg-muted focus:bg-accent w-full p-2 ${
+                  activeTab === index ? "bg-accent text-primary" : ""
                 }`}
               >
                 {tab}
