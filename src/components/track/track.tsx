@@ -26,7 +26,7 @@ export const Track: FC<TrackProps> = ({
   authors,
   startPlayback,
 }) => (
-  <div className="even:bg-active-light mr-3 flex rounded-md p-2">
+  <div className="even:bg-muted mr-3 flex rounded-md p-2">
     <div
       className="group relative cursor-pointer"
       onClick={() => startPlayback(index)}
@@ -45,7 +45,7 @@ export const Track: FC<TrackProps> = ({
       <button
         type="button"
         aria-label={`Play ${title}`}
-        className="bg-opacity-0 group-hover:bg-surface group-hover:bg-opacity-40 absolute top-0 left-0 flex h-full w-full items-center justify-center rounded-md opacity-0 transition-all duration-300 group-hover:opacity-100 focus:opacity-100"
+        className="bg-opacity-0 group-hover:bg-background group-hover:bg-opacity-40 absolute top-0 left-0 flex h-full w-full items-center justify-center rounded-md opacity-0 transition-all duration-300 group-hover:opacity-100 focus:opacity-100"
       >
         <MdPlayCircle className="h-6 w-6" aria-hidden />
       </button>

@@ -1,11 +1,10 @@
 import { FC, useEffect, useRef, useState } from "react"
 import { MdAutorenew, MdLock, MdPerson, MdVisibility, MdVisibilityOff } from "react-icons/md"
 import { Link, useLocation, useSearch } from "wouter"
-import { ColoredButton } from "@thoth/components/colored-button"
-import { IconButton } from "@thoth/components/icon-button"
 import { Logo } from "@thoth/components/icons/logo"
 import { InputError } from "@thoth/components/input/input-error"
 import { ManagedInput } from "@thoth/components/input/managed-input"
+import { Button } from "@thoth/components/ui/button"
 import { Form, useForm } from "@thoth/hooks/form"
 import { useAuthState } from "@thoth/state/auth.state"
 
@@ -77,11 +76,11 @@ export const LoginRegister: FC<{ type: "register" | "login"; redirectPath?: stri
         </div>
       </div>
       <Form form={form} onSubmit={loginOrRegister}>
-        <div className="bg-elevate inline-block w-3/4 rounded p-4 md:w-1/2 xl:w-1/4">
+        <div className="bg-card inline-block w-3/4 rounded p-4 md:w-1/2 xl:w-1/4">
           <ManagedInput
             name="username"
             labelClassName="w-28"
-            className="bg-elevate-2"
+            className="bg-popover"
             label="Username"
             placeholder={isRegister ? "Choose a username" : "Your username"}
             leftIcon={<MdPerson />}
@@ -92,20 +91,22 @@ export const LoginRegister: FC<{ type: "register" | "login"; redirectPath?: stri
             name="password"
             type={passwordVisible ? "text" : "password"}
             labelClassName="w-28"
-            className="bg-elevate-2"
+            className="bg-popover"
             label="Password"
             placeholder={isRegister ? "At least 6 characters" : "Your password"}
             leftIcon={<MdLock />}
             autoComplete={isRegister ? "new-password" : "current-password"}
             rightIcon={
-              <IconButton
-                tabIndex={-1}
-                label={passwordVisible ? "Hide password" : "Show password"}
-                icon={passwordVisible ? <MdVisibilityOff /> : <MdVisibility />}
-                className="my-2 ml-2 block h-full"
-                innerClassName="p-1"
-                onClick={() => setPasswordVisible(prev => !prev)}
-              />
+              <Button
+                excludeFromTabOrder
+                variant="ghost"
+                size="icon"
+                aria-label={passwordVisible ? "Hide password" : "Show password"}
+                className="my-2 ml-2 h-full"
+                onPress={() => setPasswordVisible(prev => !prev)}
+              >
+                {passwordVisible ? <MdVisibilityOff /> : <MdVisibility />}
+              </Button>
             }
           />
           {isRegister ? (
@@ -113,7 +114,7 @@ export const LoginRegister: FC<{ type: "register" | "login"; redirectPath?: stri
               name="confirmPassword"
               type={passwordVisible ? "text" : "password"}
               labelClassName="w-28"
-              className="bg-elevate-2"
+              className="bg-popover"
               label="Confirm"
               placeholder="Re-enter your password"
               leftIcon={<MdLock />}
@@ -131,9 +132,9 @@ export const LoginRegister: FC<{ type: "register" | "login"; redirectPath?: stri
                 {isRegister ? "Login" : "Register"}
               </Link>
             </p>
-            <ColoredButton type="submit" disabled={submitting} className="disabled:opacity-60">
+            <Button type="submit" isDisabled={submitting} className="disabled:opacity-60">
               {submitting ? <MdAutorenew className="animate-spin" /> : isRegister ? "Register" : "Login"}
-            </ColoredButton>
+            </Button>
           </div>
         </div>
       </Form>

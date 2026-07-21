@@ -29,7 +29,7 @@ export const GenericPreview = forwardRef<HTMLAnchorElement, GenericPreviewProps>
           aria-label={item.label}
         >
           <div
-            className={`${widthClasses} ${heightClasses} ${roundedClasses} bg-elevate-2 relative overflow-hidden shadow-md transition-shadow duration-200 group-hover:shadow-xl group-focus-visible:shadow-xl`}
+            className={`${widthClasses} ${heightClasses} ${roundedClasses} bg-popover relative overflow-hidden shadow-md transition-shadow duration-200 group-hover:shadow-xl group-focus-visible:shadow-xl`}
           >
             {item.imageId ? (
               <img
@@ -39,19 +39,19 @@ export const GenericPreview = forwardRef<HTMLAnchorElement, GenericPreviewProps>
                 alt={item.label}
               />
             ) : (
-              <CiImageOff className="text-elevate-4 absolute top-1/2 left-1/2 h-6 w-6 -translate-x-1/2 -translate-y-1/2" />
+              <CiImageOff className="text-muted-foreground absolute top-1/2 left-1/2 h-6 w-6 -translate-x-1/2 -translate-y-1/2" />
             )}
           </div>
 
           <span
-            className={`${widthClasses} ${labelCenter} text-font block overflow-hidden pt-1 pl-1 text-sm text-ellipsis whitespace-nowrap group-hover:underline group-focus-visible:underline`}
+            className={`${widthClasses} ${labelCenter} text-foreground block overflow-hidden pt-1 pl-1 text-sm text-ellipsis whitespace-nowrap group-hover:underline group-focus-visible:underline`}
           >
             {item.label}
           </span>
         </Link>
         {subtitle ? (
           <span
-            className={`${widthClasses} ${labelCenter} text-font block overflow-hidden pl-1 text-xs text-ellipsis whitespace-nowrap opacity-55`}
+            className={`${widthClasses} ${labelCenter} text-foreground block overflow-hidden pl-1 text-xs text-ellipsis whitespace-nowrap opacity-55`}
           >
             {subtitle}
           </span>

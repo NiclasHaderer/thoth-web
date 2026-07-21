@@ -4,6 +4,7 @@ import { MdPauseCircle, MdPlayCircle, MdSkipNext, MdSkipPrevious, MdStop } from 
 import { Link } from "wouter"
 import { ProgressBar } from "@thoth/components/progress-bar"
 import { Ripple } from "@thoth/components/ripple"
+import { Button } from "@thoth/components/ui/button"
 import { useAudio, useDuration, useOnEnded, usePercentage, usePlayState, usePosition } from "../hooks/playback"
 import { usePlaybackState } from "../state/playback.state"
 import { toReadableTime } from "./track/helpers"
@@ -27,7 +28,7 @@ export const Playback: FC<{ className?: string }> = ({ className }) => {
   if (!track) return <></>
 
   return (
-    <div className={`bg-elevate relative flex justify-between p-2 md:p-3 ${className}`}>
+    <div className={`bg-card relative flex justify-between p-2 md:p-3 ${className}`}>
       <ProgressBar
         className="absolute top-0 right-0 left-0 w-full -translate-y-1/2"
         percentage={percentage}
@@ -83,43 +84,51 @@ export const Playback: FC<{ className?: string }> = ({ className }) => {
       <audio />
       <div className="flex items-center">
         <Ripple>
-          <IconButton
-            icon={<MdSkipPrevious className="h-full w-full" />}
-            label="Previous track"
-            onClick={playback.previous}
-            disabled={playback.history.length === 0}
-            className={`h-10 w-10 rounded-full ${playback.history.length === 0 ? "text-elevate" : ""}`}
-            innerClassName="p-1"
-          />
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label="Previous track"
+            onPress={playback.previous}
+            isDisabled={playback.history.length === 0}
+            className={`h-10 w-10 rounded-full ${playback.history.length === 0 ? "text-muted-foreground" : ""}`}
+          >
+            <MdSkipPrevious className="size-full" />
+          </Button>
         </Ripple>
         <Ripple>
-          <IconButton
+          <Button
             ref={initialFocus}
-            icon={playing ? <MdPauseCircle className="h-full w-full" /> : <MdPlayCircle className="h-full w-full" />}
-            label={playing ? "Pause" : "Play"}
-            onClick={() => setPlaying(!playing)}
+            variant="ghost"
+            size="icon"
+            aria-label={playing ? "Pause" : "Play"}
+            onPress={() => setPlaying(!playing)}
             className="h-10 w-10 rounded-full"
-            innerClassName="p-1"
-          />
+          >
+            {playing ? <MdPauseCircle className="size-full" /> : <MdPlayCircle className="size-full" />}
+          </Button>
         </Ripple>
         <Ripple>
-          <IconButton
-            icon={<MdSkipNext className="h-full w-full" />}
-            label="Next track"
-            onClick={playback.next}
-            disabled={playback.queue.length === 0}
-            className={`h-10 w-10 rounded-full ${playback.queue.length === 0 ? "text-elevate" : ""}`}
-            innerClassName="p-1"
-          />
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label="Next track"
+            onPress={playback.next}
+            isDisabled={playback.queue.length === 0}
+            className={`h-10 w-10 rounded-full ${playback.queue.length === 0 ? "text-muted-foreground" : ""}`}
+          >
+            <MdSkipNext className="size-full" />
+          </Button>
         </Ripple>
         <Ripple>
-          <IconButton
-            icon={<MdStop className="h-full w-full" />}
-            label="Stop"
-            onClick={playback.stop}
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label="Stop"
+            onPress={playback.stop}
             className="h-10 w-10 rounded-full"
-            innerClassName="p-1"
-          />
+          >
+            <MdStop className="size-full" />
+          </Button>
         </Ripple>
       </div>
     </div>

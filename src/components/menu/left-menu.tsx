@@ -1,30 +1,34 @@
 import { FC } from "react"
 import { MdBook, MdCollectionsBookmark, MdPerson } from "react-icons/md"
+import { Link, useLocation } from "wouter"
 import { UUID } from "@thoth/client"
-import { ActiveLink } from "@thoth/components/active-link"
+import { buttonVariants } from "@thoth/components/ui/button"
 
 export const LeftResourceMenu: FC<{ libraryId: UUID }> = ({ libraryId }) => {
+  const [pathname] = useLocation()
+  const items = [
+    { href: `/libraries/${libraryId}/books`, Icon: MdBook, label: "Books" },
+    { href: `/libraries/${libraryId}/series`, Icon: MdCollectionsBookmark, label: "Series" },
+    { href: `/libraries/${libraryId}/authors`, Icon: MdPerson, label: "Authors" },
+  ]
   return (
-    <aside className="my-10 ml-10 inline-block min-w-80 max-w-80 overflow-hidden rounded-xl bg-elevate">
-      <ul>
-        <ActiveLink href={`/libraries/${libraryId}/books`} withSubRoutes={true}>
-          <li className="flex w-full items-center px-3 transition-colors duration-300 hover:bg-active-light group-focus:bg-active-light">
-            <MdBook className="ml-3" />
-            <span className="m-3 inline-block">Books</span>
+    <aside className="bg-card my-10 ml-10 inline-block max-w-80 min-w-80 overflow-hidden rounded-xl">
+      <ul className="flex flex-col gap-1 p-2">
+        {items.map(({ href, Icon, label }) => (
+          <li key={href}>
+            <Link
+              href={href}
+              className={buttonVariants({
+                variant: "ghost",
+                size: "lg",
+                className: `w-full justify-start gap-3 ${pathname.startsWith(href) ? "text-primary" : ""}`,
+              })}
+            >
+              <Icon />
+              {label}
+            </Link>
           </li>
-        </ActiveLink>
-        <ActiveLink href={`/libraries/${libraryId}/series`} withSubRoutes={true}>
-          <li className="flex w-full items-center px-3 transition-colors duration-300 hover:bg-active-light group-focus:bg-active-light">
-            <MdCollectionsBookmark className="ml-3" />
-            <span className="m-3 inline-block">Series</span>
-          </li>
-        </ActiveLink>
-        <ActiveLink href={`/libraries/${libraryId}/authors`} withSubRoutes={true}>
-          <li className="flex w-full items-center px-3 transition-colors duration-300 hover:bg-active-light group-focus:bg-active-light">
-            <MdPerson className="ml-3" />
-            <span className="m-3 inline-block">Authors</span>
-          </li>
-        </ActiveLink>
+        ))}
       </ul>
     </aside>
   )

@@ -22,7 +22,7 @@ export const SeriesDetails: FC<{ seriesId: UUID; libraryId: UUID }> = ({ seriesI
     <>
       <div className="flex pb-6">
         <div className="flex flex-col justify-around">
-          <CiImageOff className="h-40 w-40 rounded-md border-2 border-active-light md:h-80 md:w-80" />
+          <CiImageOff className="border-border h-40 w-40 rounded-md border-2 md:h-80 md:w-80" />
         </div>
         <div className="flex grow flex-col justify-between pl-4 md:pl-10">
           <div>
@@ -34,16 +34,16 @@ export const SeriesDetails: FC<{ seriesId: UUID; libraryId: UUID }> = ({ seriesI
             ) : null}
             <div>
               <div className="flex pb-3">
-                <h3 className="min-w-40 pr-3 uppercase text-font-secondary">Author</h3>
+                <h3 className="text-foreground min-w-40 pr-3 uppercase">Author</h3>
                 {series.authors.map(author => (
                   <Link href={`/libraries/${libraryId}/authors/${author.id}`} key={author.id}>
-                    <h3 className="text-xl hover:underline no-touch:group-focus:underline">{author.name}</h3>
+                    <h3 className="no-touch:group-focus:underline text-xl hover:underline">{author.name}</h3>
                   </Link>
                 ))}
               </div>
               {isDetailedSeries(series) && series.narrators.length > 0 ? (
                 <div className="flex pb-3">
-                  <h3 className="min-w-40 pr-3 uppercase text-font-secondary">Narrators</h3>
+                  <h3 className="text-foreground min-w-40 pr-3 uppercase">Narrators</h3>
                   <div className="flex flex-wrap">
                     {series.narrators.map((narrator, i) => (
                       <h3 className="pr-2 text-xl" key={i}>
@@ -55,19 +55,19 @@ export const SeriesDetails: FC<{ seriesId: UUID; libraryId: UUID }> = ({ seriesI
               ) : null}
               {isDetailedSeries(series) ? (
                 <div className="flex pb-3">
-                  <h3 className="min-w-40 pr-3 uppercase text-font-secondary">Book count</h3>
+                  <h3 className="text-foreground min-w-40 pr-3 uppercase">Book count</h3>
                   <h3 className="text-xl">{series.books.length}</h3>
                 </div>
               ) : null}
               {series.totalBooks ? (
                 <div className="flex pb-3">
-                  <h3 className="min-w-40 pr-3 uppercase text-font-secondary">Total works</h3>
+                  <h3 className="text-foreground min-w-40 pr-3 uppercase">Total works</h3>
                   <h3 className="text-xl">{series.totalBooks}</h3>
                 </div>
               ) : null}
               {series.primaryWorks ? (
                 <div className="flex pb-3">
-                  <h3 className="min-w-40 pr-3 uppercase text-font-secondary">Primary works</h3>
+                  <h3 className="text-foreground min-w-40 pr-3 uppercase">Primary works</h3>
                   <h3 className="text-xl">{series.primaryWorks}</h3>
                 </div>
               ) : null}

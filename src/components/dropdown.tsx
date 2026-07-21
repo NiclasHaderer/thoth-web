@@ -1,5 +1,6 @@
-import { Menu, MenuButton, MenuItem, MenuItems, Transition } from "@headlessui/react"
-import { Fragment, ReactNode } from "react"
+import { ReactNode } from "react"
+import { Button, MenuTrigger } from "react-aria-components"
+import { DropdownMenu, DropdownMenuItem } from "@thoth/components/ui/dropdown-menu"
 
 type DropdownProps<T> = {
   options: {
@@ -21,50 +22,21 @@ export function Dropdown<T>({
   onChange,
   valueDisplay,
 }: DropdownProps<T>) {
+  const placement = `${vDir === "top" ? "top" : "bottom"} ${hDir === "right" ? "end" : "start"}` as const
+
   return (
-    <Menu as="div" className="relative inline-block h-fit text-left">
-      <MenuButton className="group cursor-pointer overflow-hidden rounded">
-        <span className="group-hover:bg-active-light group-focus:bg-active-light h-full w-full p-1">{title}</span>
-      </MenuButton>
-      <Transition
-        as={Fragment}
-        enter="transition ease-out duration-100"
-        enterFrom="transform opacity-0 scale-95"
-        enterTo="transform opacity-100 scale-100"
-        leave="transition ease-in duration-75"
-        leaveFrom="transform opacity-100 scale-100"
-        leaveTo="transform opacity-0 scale-95"
-      >
-        <MenuItems
-          className={`${hDir === "right" ? "right-0" : "left-0"} ${
-            vDir === "top" ? "top-0 mb-2 -translate-y-full" : "mt-2"
-          } bg-surface absolute z-10 w-56 origin-top-right overflow-hidden rounded-md`}
-        >
-          <div className="bg-elevate">
-            <div className="px-1 py-1">
-              {options.map(({ value, disabled }, i) => (
-                <MenuItem key={i} disabled={disabled}>
-                  {({ focus, disabled }) => (
-                    <button
-                      onClick={() => {
-                        onChange && onChange(value)
-                      }}
-                      type="button"
-                      disabled={disabled}
-                      className={`${focus && !disabled ? "bg-active-light" : ""} ${
-                        disabled ? "text-active" : "hover:bg-active-light"
-                      } group flex w-full items-center rounded-md px-2 py-2 transition-colors`}
-                    >
-                      {/* eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-explicit-any,@typescript-eslint/no-unsafe-call */}
-                      {valueDisplay ? valueDisplay(value) : (value as any).toString()}
-                    </button>
-                  )}
-                </MenuItem>
-              ))}
-            </div>
-          </div>
-        </MenuItems>
-      </Transition>
-    </Menu>
+    <MenuTrigger>
+      <Button className="group h-fit cursor-pointer overflow-hidden rounded outline-none">
+        <span className="group-hover:bg-muted group-focus:bg-muted block h-full w-full p-1">{title}</span>
+      </Button>
+      <DropdownMenu placement={placement} className="w-56">
+        {options.map(({ value, disabled }, i) => (
+          <DropdownMenuItem key={i} isDisabled={disabled} onAction={() => onChange?.(value)}>
+            {/* eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-explicit-any,@typescript-eslint/no-unsafe-call */}
+            {valueDisplay ? (valueDisplay(value) as ReactNode) : (value as any).toString()}
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenu>
+    </MenuTrigger>
   )
 }

@@ -1,6 +1,13 @@
-import { Listbox, ListboxButton, ListboxOption, ListboxOptions, Transition } from "@headlessui/react"
-import { Fragment, useMemo } from "react"
-import { MdDone } from "react-icons/md"
+import { ReactNode, useMemo } from "react"
+import { Key, Selection } from "react-aria-components"
+import {
+  Select as ShadSelect,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue as SelectValueDisplay,
+} from "@thoth/components/ui/select"
+import { cn } from "@thoth/lib/utils"
 import { deepEquals } from "@thoth/utils/equals"
 
 type SelectValue<T> = {
@@ -15,6 +22,7 @@ export type SelectProps<T, MULTIPLE extends boolean = false> = {
   options: readonly SelectValue<T>[] | readonly T[]
   title: string
   displayValue?: (v: ExtractedSelectValue<T>) => string
+  leftIcon?: ReactNode | undefined
   disabled?: boolean
   vDir?: "top" | "bottom"
   hDir?: "right" | "left"
@@ -59,10 +67,15 @@ function getSelectedValue<T>(
   return selectedValue?.[0]
 }
 
+function isDisabledOption<T>(option: SelectValue<T> | T): boolean {
+  return typeof option === "object" && option !== null && "disabled" in option ? !!option.disabled : false
+}
+
 export function Select<T, MULTIPLE extends boolean = false>({
   options,
   disabled,
   title,
+  leftIcon,
   vDir = "bottom",
   hDir = "left",
   value,
@@ -76,6 +89,8 @@ export function Select<T, MULTIPLE extends boolean = false>({
   onBlur,
   displayValue = (v: ExtractedSelectValue<T>) => v?.toString() ?? "",
 }: SelectProps<T, MULTIPLE>) {
+  const opts = options as readonly (SelectValue<T> | T)[]
+
   const toDisplayValue = (value: SelectValue<T> | T): string => {
     if (typeof value === "object" && value !== null && "label" in value && value.label) {
       return value.label
@@ -84,88 +99,56 @@ export function Select<T, MULTIPLE extends boolean = false>({
     }
   }
 
-  const selected = useMemo(() => getSelectedValue(options, value, multiple), [options, value, multiple])
+  const selectedIndices = useMemo(() => {
+    const selected = getSelectedValue(opts, value, multiple)
+    const list = Array.isArray(selected) ? selected : selected ? [selected] : []
+    return list.map(s => opts.indexOf(s)).filter(i => i >= 0)
+  }, [opts, value, multiple])
+
+  const placement = `${vDir === "top" ? "top" : "bottom"} ${hDir === "right" ? "end" : "start"}` as const
+
+  const emit = (indices: number[]) => {
+    const selectedOptions = indices.map(i => opts[i])
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument,@typescript-eslint/no-explicit-any
+    onChange?.((multiple ? selectedOptions : selectedOptions[0]) as any)
+  }
+
+  const selectionProps = multiple
+    ? {
+        selectionMode: "multiple" as const,
+        selectedKeys: new Set(selectedIndices.map(String)),
+        onSelectionChange: (keys: Selection) => {
+          const indices = keys === "all" ? opts.map((_, i) => i) : [...keys].map(k => Number(k))
+          emit(indices)
+        },
+      }
+    : {
+        selectedKey: selectedIndices[0] != null ? String(selectedIndices[0]) : null,
+        onSelectionChange: (key: Key | null) => {
+          if (key == null) return
+          emit([Number(key)])
+        },
+      }
 
   return (
-    <Listbox
-      disabled={disabled}
-      value={selected ?? null}
-      onChange={value => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument,@typescript-eslint/no-explicit-any
-        onChange?.(value as any)
-      }}
-      multiple={multiple}
-      as="div"
-      className={`relative inline-block h-fit ${outerClassName ?? ""}`}
+    <ShadSelect
+      isDisabled={disabled}
+      placeholder={title}
+      className={cn("h-fit", outerClassName)}
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      {...(selectionProps as any)}
     >
-      <ListboxButton
-        onBlur={onBlur}
-        className={`bg-elevate hover:bg-active-light focus:bg-active-light flex min-w-32 cursor-pointer items-center overflow-hidden rounded p-1 text-left ${
-          placeholderButtonClassName ?? ""
-        }`}
-      >
-        <span className={`h-full w-full p-1 ${placeholderClassName || ""}`}>
-          {selected === undefined || (Array.isArray(selected) && selected.length === 0)
-            ? title
-            : multiple
-              ? (selected as SelectValue<T>[]).map(toDisplayValue).join(", ")
-              : toDisplayValue(selected as SelectValue<T>)}
-        </span>
-        <SelectIcon />
-      </ListboxButton>
-      <Transition
-        as={Fragment}
-        enter="transition ease-out duration-100"
-        enterFrom="transform opacity-0"
-        enterTo="transform opacity-100"
-        leave="transition ease-in duration-75"
-        leaveFrom="transform opacity-100"
-        leaveTo="transform opacity-0"
-      >
-        <ListboxOptions
-          className={`${hDir === "right" ? "right-0" : "left-0"} ${
-            vDir === "top" ? "top-0 mb-2 -translate-y-full" : "mt-2"
-          } bg-surface absolute z-20 w-56 origin-top-right overflow-hidden rounded-md ${optionListClassName ?? ""}`}
-        >
-          <div className="bg-elevate">
-            <div className="px-1 py-1">
-              {options.map((value, i) => {
-                return (
-                  <ListboxOption
-                    key={i}
-                    disabled={disabled}
-                    value={value}
-                    className={({ focus }) =>
-                      `relative flex overflow-hidden rounded pl-7 ${focus ? "bg-active-light" : ""} ${
-                        optionClassName ?? ""
-                      }`
-                    }
-                  >
-                    {({ selected, disabled }) => (
-                      <>
-                        {selected ? <MdDone className="absolute top-1/2 left-1 h-7 w-7 -translate-y-1/2 p-1" /> : null}
-                        <button
-                          type="button"
-                          disabled={disabled}
-                          className={`group flex w-full items-center rounded-md px-2 py-2`}
-                        >
-                          {toDisplayValue(value)}
-                        </button>
-                      </>
-                    )}
-                  </ListboxOption>
-                )
-              })}
-            </div>
-          </div>
-        </ListboxOptions>
-      </Transition>
-    </Listbox>
+      <SelectTrigger onBlur={onBlur} className={cn("min-w-32", placeholderButtonClassName)}>
+        {leftIcon}
+        <SelectValueDisplay className={placeholderClassName} />
+      </SelectTrigger>
+      <SelectContent placement={placement} className={optionListClassName}>
+        {opts.map((option, i) => (
+          <SelectItem key={i} id={String(i)} isDisabled={isDisabledOption(option)} className={optionClassName}>
+            {toDisplayValue(option)}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </ShadSelect>
   )
 }
-
-const SelectIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
-  </svg>
-)

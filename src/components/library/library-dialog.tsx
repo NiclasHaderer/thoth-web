@@ -1,14 +1,14 @@
 import { FC, useEffect, useState } from "react"
 import { MdAutoAwesome, MdClose, MdFolder, MdLanguage, MdLocalLibrary, MdRadar, MdSettings } from "react-icons/md"
 import { Api, FileScanner, MetadataLanguage, NamedMetadataAgent, UUID } from "@thoth/client"
-import { Dialog, DialogActions, DialogBody, DialogButtons } from "@thoth/components/dialog"
+import { Dialog, DialogBody, DialogButtons, DialogFooter } from "@thoth/components/dialog"
 import { FolderManager } from "@thoth/components/file-manager"
-import { IconButton } from "@thoth/components/icon-button"
 import { MdScan } from "@thoth/components/icons/scan"
 import { InputError } from "@thoth/components/input/input-error"
 import { ManagedInput } from "@thoth/components/input/managed-input"
 import { SelectLine } from "@thoth/components/input/select-line"
 import { LeftTabs, TabContent } from "@thoth/components/left-tabs"
+import { Button } from "@thoth/components/ui/button"
 import { useHttpRequest } from "@thoth/hooks/async-response"
 import { Form, FormContext, SubmitError } from "@thoth/hooks/form"
 import { useOnMount } from "@thoth/hooks/lifecycle"
@@ -86,7 +86,8 @@ export const LibraryDialog: FC<LibraryDialogProps> = ({ isOpen, setIsOpen, form,
       isOpen={isOpen}
       closeModal={() => setIsOpen(false)}
       title={form.fields.mode === "create" ? "Create new Library" : "Edit Library"}
-      outerDialogClass="h-3/5 w-3/5 lg:max-w-[75%]! xl:max-w-[50%]! max-w-[95%]!"
+      outerDialogClass="w-3/5 lg:max-w-[75%]! xl:max-w-[50%]! max-w-[95%]!"
+      dialogClass="h-[70vh]"
     >
       <Form form={form} onSubmit={onSubmit} onSubmitError={switchToRightTab}>
         <DialogBody>
@@ -173,21 +174,24 @@ export const LibraryDialog: FC<LibraryDialogProps> = ({ isOpen, setIsOpen, form,
                       <div className="text-sm opacity-60">No folders added yet</div>
                     ) : (
                       form.fields.folders.map((folder, index) => (
-                        <div key={index} className="bg-elevate flex items-center gap-2 rounded p-1 pl-2">
+                        <div key={index} className="bg-card flex items-center gap-2 rounded p-1 pl-2">
                           <MdFolder className="shrink-0" aria-hidden />
                           <span className="grow truncate" title={folder}>
                             {folder}
                           </span>
-                          <IconButton
+                          <Button
+                            variant="ghost"
+                            size="icon"
                             className="shrink-0"
-                            icon={<MdClose />}
-                            label={`Remove folder ${folder}`}
-                            onClick={() => {
+                            aria-label={`Remove folder ${folder}`}
+                            onPress={() => {
                               const folders = [...form.fields.folders]
                               folders.splice(index, 1)
                               form.setFields({ folders })
                             }}
-                          />
+                          >
+                            <MdClose />
+                          </Button>
                         </div>
                       ))
                     )}
@@ -207,9 +211,9 @@ export const LibraryDialog: FC<LibraryDialogProps> = ({ isOpen, setIsOpen, form,
           </LeftTabs>
         </DialogBody>
         <InputError errors={submitError} className="justify-start" />
-        <DialogActions>
+        <DialogFooter>
           <DialogButtons closeModal={() => setIsOpen(false)} />
-        </DialogActions>
+        </DialogFooter>
       </Form>
     </Dialog>
   )
