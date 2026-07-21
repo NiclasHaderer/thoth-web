@@ -3,7 +3,9 @@ import { MdAutoAwesome, MdClose, MdFolder, MdLanguage, MdLocalLibrary, MdRadar, 
 import { Api, FileScanner, MetadataLanguage, NamedMetadataAgent, UUID } from "@thoth/client"
 import { Dialog, DialogActions, DialogBody, DialogButtons } from "@thoth/components/dialog"
 import { FolderManager } from "@thoth/components/file-manager"
+import { IconButton } from "@thoth/components/icon-button"
 import { MdScan } from "@thoth/components/icons/scan"
+import { InputError } from "@thoth/components/input/input-error"
 import { ManagedInput } from "@thoth/components/input/managed-input"
 import { SelectLine } from "@thoth/components/input/select-line"
 import { LeftTabs, TabContent } from "@thoth/components/left-tabs"
@@ -44,9 +46,10 @@ interface LibraryDialogProps {
   setIsOpen: (open: boolean) => void
   onSubmit: (library: LibraryFormValues) => void
   form: FormContext<LibraryFormValues>
+  submitError?: string | null
 }
 
-export const LibraryDialog: FC<LibraryDialogProps> = ({ isOpen, setIsOpen, form, onSubmit }) => {
+export const LibraryDialog: FC<LibraryDialogProps> = ({ isOpen, setIsOpen, form, onSubmit, submitError }) => {
   const metadataAgents = useHttpRequest(Api.listMetadataAgents)
   const fileScanners = useHttpRequest(Api.listFileScanners)
   const [activeTab, setActiveTab] = useState(0)
@@ -162,24 +165,33 @@ export const LibraryDialog: FC<LibraryDialogProps> = ({ isOpen, setIsOpen, form,
               />
             </TabContent>
             <TabContent>
-              <div className="flex h-full">
-                <div className="h-full min-w-1/2 overflow-auto">
+              <div className="flex h-full gap-4">
+                <div className="flex h-full min-w-1/2 flex-col overflow-hidden">
                   <h3 className="mb-3 text-xl">Library folders</h3>
-                  {form.fields.folders.map((folder, index) => (
-                    <div key={index} className="bg-elevate mb-2 flex items-center justify-between rounded p-2">
-                      {folder}
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const folders = [...form.fields.folders]
-                          folders.splice(index, 1)
-                          form.setFields({ folders })
-                        }}
-                      >
-                        <MdClose />
-                      </button>
-                    </div>
-                  ))}
+                  <div className="flex grow flex-col gap-2 overflow-y-auto">
+                    {form.fields.folders.length === 0 ? (
+                      <div className="text-sm opacity-60">No folders added yet</div>
+                    ) : (
+                      form.fields.folders.map((folder, index) => (
+                        <div key={index} className="bg-elevate flex items-center gap-2 rounded p-1 pl-2">
+                          <MdFolder className="shrink-0" aria-hidden />
+                          <span className="grow truncate" title={folder}>
+                            {folder}
+                          </span>
+                          <IconButton
+                            className="shrink-0"
+                            icon={<MdClose />}
+                            label={`Remove folder ${folder}`}
+                            onClick={() => {
+                              const folders = [...form.fields.folders]
+                              folders.splice(index, 1)
+                              form.setFields({ folders })
+                            }}
+                          />
+                        </div>
+                      ))
+                    )}
+                  </div>
                 </div>
                 <FolderManager
                   className="min-w-1/2 grow justify-between"
@@ -188,11 +200,13 @@ export const LibraryDialog: FC<LibraryDialogProps> = ({ isOpen, setIsOpen, form,
                     form.setFields({ folders: unique([...form.fields.folders, path]) })
                   }}
                   errors={form.errors["folders"]}
+                  selectedFolders={form.fields.folders}
                 />
               </div>
             </TabContent>
           </LeftTabs>
         </DialogBody>
+        <InputError errors={submitError} className="justify-start" />
         <DialogActions>
           <DialogButtons closeModal={() => setIsOpen(false)} />
         </DialogActions>

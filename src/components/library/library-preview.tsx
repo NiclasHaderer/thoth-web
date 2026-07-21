@@ -15,12 +15,18 @@ export const LibraryPreview: FC<{ library: Library; libraryCount: number }> = ({
   return (
     <div className={`p-2`}>
       {libraryCount > 1 && (
-        <Link className="mt-4 block text-2xl font-medium hover:underline" href={`/libraries/${library.id}`}>
+        <Link
+          className="mt-4 block text-2xl font-bold decoration-1 hover:underline focus-visible:underline focus-visible:outline-none"
+          href={`/libraries/${library.id}`}
+        >
           {library.name}
         </Link>
       )}
 
-      <Link className="mb-2 mt-4 block text-xl hover:underline" href={`/libraries/${library.id}/books`}>
+      <Link
+        className="mt-8 mb-2 block text-xl font-bold decoration-1 hover:underline focus-visible:underline focus-visible:outline-none"
+        href={`/libraries/${library.id}/books`}
+      >
         Books
       </Link>
       <div className="overflow-auto whitespace-nowrap">
@@ -29,7 +35,10 @@ export const LibraryPreview: FC<{ library: Library; libraryCount: number }> = ({
         ))}
       </div>
 
-      <Link className="mb-2 mt-4 block text-xl hover:underline" href={`/libraries/${library.id}/series`}>
+      <Link
+        className="mt-8 mb-2 block text-xl font-bold decoration-1 hover:underline focus-visible:underline focus-visible:outline-none"
+        href={`/libraries/${library.id}/series`}
+      >
         Series
       </Link>
       <div className="overflow-auto whitespace-nowrap">
@@ -38,7 +47,10 @@ export const LibraryPreview: FC<{ library: Library; libraryCount: number }> = ({
         ))}
       </div>
 
-      <Link className="mb-2 mt-4 block text-xl hover:underline" href={`/libraries/${library.id}/authors`}>
+      <Link
+        className="mt-8 mb-2 block text-xl font-bold decoration-1 hover:underline focus-visible:underline focus-visible:outline-none"
+        href={`/libraries/${library.id}/authors`}
+      >
         Authors
       </Link>
       <div className="overflow-auto whitespace-nowrap">

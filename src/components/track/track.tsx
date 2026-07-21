@@ -26,7 +26,7 @@ export const Track: FC<TrackProps> = ({
   authors,
   startPlayback,
 }) => (
-  <div className="mr-3 flex rounded-md p-2 even:bg-active-light">
+  <div className="even:bg-active-light mr-3 flex rounded-md p-2">
     <div
       className="group relative cursor-pointer"
       onClick={() => startPlayback(index)}
@@ -42,8 +42,12 @@ export const Track: FC<TrackProps> = ({
       ) : (
         <CiImageOff className="h-16 w-16 rounded-md" />
       )}
-      <button className="absolute left-0 top-0 flex h-full w-full items-center justify-center rounded-md bg-opacity-0 opacity-0 transition-all duration-300 focus:opacity-100 group-hover:bg-surface group-hover:bg-opacity-40 group-hover:opacity-100">
-        <MdPlayCircle className="h-6 w-6" />
+      <button
+        type="button"
+        aria-label={`Play ${title}`}
+        className="bg-opacity-0 group-hover:bg-surface group-hover:bg-opacity-40 absolute top-0 left-0 flex h-full w-full items-center justify-center rounded-md opacity-0 transition-all duration-300 group-hover:opacity-100 focus:opacity-100"
+      >
+        <MdPlayCircle className="h-6 w-6" aria-hidden />
       </button>
     </div>
     <div className="flex grow items-center justify-between pl-6">
@@ -53,7 +57,7 @@ export const Track: FC<TrackProps> = ({
           <span>{title}</span>
           {authors.map(author => (
             <Link href={`/libraries/${libraryId}/authors/${author.id}`} tabIndex={-1} key={author.id}>
-              <span className="cursor-pointer hover:underline group-focus:underline">{author.name}</span>
+              <span className="cursor-pointer group-focus:underline hover:underline">{author.name}</span>
             </Link>
           ))}
         </div>

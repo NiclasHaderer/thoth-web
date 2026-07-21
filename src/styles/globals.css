@@ -77,7 +77,6 @@
 @layer base {
   input {
     @apply focus:bg-active-light border-0 bg-transparent shadow-none transition-all;
-    outline: none !important;
   }
 }
 
