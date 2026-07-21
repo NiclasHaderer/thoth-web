@@ -1,5 +1,5 @@
-import { preact } from "@preact/preset-vite"
 import tailwindcss from "@tailwindcss/vite"
+import react from "@vitejs/plugin-react"
 import path from "node:path"
 import { defineConfig } from "vite"
 import { buildRoutesPlugin } from "./build-routes.ts"
@@ -11,7 +11,7 @@ export default defineConfig({
       "@thoth": path.resolve(import.meta.dirname, "src"),
     },
   },
-  plugins: [buildRoutesPlugin(), tailwindcss(), preact()],
+  plugins: [buildRoutesPlugin(), tailwindcss(), react()],
   server: {
     proxy: {
       "/api": "http://localhost:8080",
