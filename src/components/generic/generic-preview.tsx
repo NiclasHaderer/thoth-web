@@ -1,5 +1,5 @@
+import { ImageOffIcon } from "lucide-react"
 import { forwardRef, ReactNode } from "react"
-import { CiImageOff } from "react-icons/ci"
 import { Link } from "wouter"
 import { getSizing } from "@thoth/utils/width.ts"
 
@@ -29,7 +29,11 @@ export const GenericPreview = forwardRef<HTMLAnchorElement, GenericPreviewProps>
           aria-label={item.label}
         >
           <div
-            className={`${widthClasses} ${heightClasses} ${roundedClasses} bg-popover relative overflow-hidden shadow-md transition-shadow duration-200 group-hover:shadow-xl group-focus-visible:shadow-xl`}
+            className={`${widthClasses} ${heightClasses} ${roundedClasses} relative overflow-hidden transition-shadow duration-200 ${
+              item.imageId
+                ? "bg-popover shadow-md group-hover:shadow-xl group-focus-visible:shadow-xl"
+                : "bg-black/45 shadow-[0_1px_5px_rgba(0,0,0,0.4)]"
+            }`}
           >
             {item.imageId ? (
               <img
@@ -39,7 +43,7 @@ export const GenericPreview = forwardRef<HTMLAnchorElement, GenericPreviewProps>
                 alt={item.label}
               />
             ) : (
-              <CiImageOff className="text-muted-foreground absolute top-1/2 left-1/2 h-6 w-6 -translate-x-1/2 -translate-y-1/2" />
+              <ImageOffIcon className="text-muted-foreground absolute top-1/2 left-1/2 h-6 w-6 -translate-x-1/2 -translate-y-1/2" />
             )}
           </div>
 

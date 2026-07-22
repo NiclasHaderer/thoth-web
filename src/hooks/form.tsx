@@ -187,7 +187,11 @@ export const useForm = <T extends Record<string, any>>(
     setTouched: (newValue: Partial<Record<keyof T, boolean>>) => {
       setTouched({ ...currentTouched.current, ...newValue })
     },
-    restoreInitial: () => setFields(initialState),
+    restoreInitial: () => {
+      setFields(initialState)
+      setTouched(getFilledObject<keyof T, boolean>(Object.keys(initialState), false))
+      validateFields(initialState)
+    },
     fromFormTransformers: options.fromForm || {},
     toFormTransformers: options.toForm || {},
     formValidators: options.validate || {},
