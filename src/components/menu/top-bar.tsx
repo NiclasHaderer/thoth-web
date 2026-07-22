@@ -92,7 +92,7 @@ export const SearchBar: FC = () => {
           </AvatarFallback>
         </Avatar>
       ),
-      action: () => navigate("/account"),
+      action: () => navigate("/settings/account"),
     },
     ...(result?.permissions?.isAdmin
       ? [
@@ -100,7 +100,7 @@ export const SearchBar: FC = () => {
             key: "settings",
             label: "Server Settings",
             icon: <SettingsIcon className="size-5" />,
-            action: () => navigate("/settings"),
+            action: () => navigate("/settings/libraries"),
           },
         ]
       : []),
@@ -118,7 +118,7 @@ export const SearchBar: FC = () => {
   ]
 
   return (
-    <div className="bg-card m-3 flex h-20 min-h-20 items-center rounded-xl pr-3">
+    <div className="bg-card mx-3 mt-3 flex h-20 min-h-20 items-center rounded-xl pr-3">
       <Link
         href={"/libraries"}
         className="focus-visible:bg-accent flex overflow-hidden rounded-l-xl transition-colors outline-none"
