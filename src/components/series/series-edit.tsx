@@ -1,5 +1,5 @@
+import { HashIcon, SearchIcon } from "lucide-react"
 import { FC } from "react"
-import { MdNumbers, MdSearch } from "react-icons/md"
 import { toast } from "sonner"
 import { MetadataSeries, Series, SeriesUpdate } from "@thoth/client"
 import { GenericEdit } from "@thoth/components/generic/generic-edit.tsx"
@@ -69,13 +69,13 @@ export const SeriesEdit: FC<{ series: Series }> = ({ series }) => {
 const SeriesForm: FC<{ form: FormContext<SeriesUpdate> }> = ({ form }) => {
   return (
     <>
-      <ManagedInput className="pt-2" name="title" labelClassName="w-28" label="Title" leftIcon={<MdSearch />} />
+      <ManagedInput className="pt-2" name="title" labelClassName="w-28" label="Title" leftIcon={<SearchIcon />} />
       <ManagedInput
         wrapperClassName="py-2"
         name="primaryWorks"
         labelClassName="min-w-28"
         label="Primary Works"
-        leftIcon={<MdNumbers />}
+        leftIcon={<HashIcon />}
       />
 
       <HtmlEditor

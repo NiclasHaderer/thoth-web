@@ -22,10 +22,10 @@ export function SelectLine<T, MULTIPLE extends boolean = false>({
   const { value, touched, setValue, setTouched, errors } = useField<Record<string, unknown>, string>(name)
 
   return (
-    <>
+    <div className="pb-4">
       <label className={`flex items-center ${wrapperClassName ?? ""}`}>
-        {label ? <div className={`mt-2 px-2 ${labelClassName ?? ""}`}>{label}</div> : null}
-        <div className="mt-2 grow">
+        {label ? <div className={`shrink-0 px-2 whitespace-nowrap ${labelClassName ?? ""}`}>{label}</div> : null}
+        <div className="grow">
           <Select
             onBlur={() => setTouched(true)}
             {...props}
@@ -44,6 +44,6 @@ export function SelectLine<T, MULTIPLE extends boolean = false>({
         </div>
       </label>
       <InputError errors={errors} show={touched} />
-    </>
+    </div>
   )
 }

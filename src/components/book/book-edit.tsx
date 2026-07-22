@@ -1,6 +1,13 @@
+import {
+  BookMarkedIcon,
+  CalendarIcon,
+  ListOrderedIcon,
+  LanguagesIcon,
+  UserIcon,
+  SearchIcon,
+  ImageOffIcon,
+} from "lucide-react"
 import { FC, useRef } from "react"
-import { CiImageOff } from "react-icons/ci"
-import { MdCollectionsBookmark, MdEvent, MdFormatListNumbered, MdLanguage, MdPerson, MdSearch } from "react-icons/md"
 import { Book, BookUpdate, MetadataBook } from "@thoth/client"
 import { GenericEdit } from "@thoth/components/generic/generic-edit.tsx"
 import { ManagedInput } from "@thoth/components/input/managed-input"
@@ -92,7 +99,7 @@ const BookForm: FC<{ form: FormContext<BookUpdate> }> = ({ form }) => {
                 onClick={() => imageRef.current && imageRef.current.click()}
               />
             ) : (
-              <CiImageOff
+              <ImageOffIcon
                 className="h-52 w-52 cursor-pointer rounded-md"
                 onClick={() => imageRef.current && imageRef.current.click()}
               />
@@ -118,18 +125,18 @@ const BookForm: FC<{ form: FormContext<BookUpdate> }> = ({ form }) => {
           </div>
         </div>
         <div>
-          <ManagedInput name="title" labelClassName="w-28" label="Title" leftIcon={<MdSearch />} />
-          <ManagedInput name="narrator" labelClassName="w-28" label="Narrator" leftIcon={<MdPerson />} />
-          <ManagedInput name="language" labelClassName="w-28" label="Language" leftIcon={<MdLanguage />} />
+          <ManagedInput name="title" labelClassName="w-28" label="Title" leftIcon={<SearchIcon />} />
+          <ManagedInput name="narrator" labelClassName="w-28" label="Narrator" leftIcon={<UserIcon />} />
+          <ManagedInput name="language" labelClassName="w-28" label="Language" leftIcon={<LanguagesIcon />} />
           <ManagedInput
             name="releaseDate"
             labelClassName="w-28"
             type="date"
             label="Release Date"
-            leftIcon={<MdEvent />}
+            leftIcon={<CalendarIcon />}
           />
-          <ManagedInput name="isbn" labelClassName="w-28" label="ISBN" leftIcon={<MdFormatListNumbered />} />
-          <ManagedInput name="publisher" labelClassName="w-28" label="Publisher" leftIcon={<MdCollectionsBookmark />} />
+          <ManagedInput name="isbn" labelClassName="w-28" label="ISBN" leftIcon={<ListOrderedIcon />} />
+          <ManagedInput name="publisher" labelClassName="w-28" label="Publisher" leftIcon={<BookMarkedIcon />} />
         </div>
       </div>
       <label className="flex items-center">

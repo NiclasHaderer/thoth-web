@@ -13,10 +13,10 @@ export const LibraryPreview: FC<{ library: Library; libraryCount: number }> = ({
   const libraryAuthors = useAudiobookState(AudiobookSelectors.selectAuthors(library.id))
 
   return (
-    <div className={`p-2`}>
+    <div>
       {libraryCount > 1 && (
         <Link
-          className="mt-4 block text-2xl font-bold decoration-1 hover:underline focus-visible:underline focus-visible:outline-none"
+          className="block text-2xl font-bold decoration-1 hover:underline focus-visible:underline focus-visible:outline-none"
           href={`/libraries/${library.id}`}
         >
           {library.name}
@@ -24,7 +24,7 @@ export const LibraryPreview: FC<{ library: Library; libraryCount: number }> = ({
       )}
 
       <Link
-        className="mt-8 mb-2 block text-xl font-bold decoration-1 hover:underline focus-visible:underline focus-visible:outline-none"
+        className="mt-8 mb-2 block w-fit text-xl font-bold decoration-1 hover:underline focus-visible:underline focus-visible:outline-none"
         href={`/libraries/${library.id}/books`}
       >
         Books
@@ -36,7 +36,7 @@ export const LibraryPreview: FC<{ library: Library; libraryCount: number }> = ({
       </div>
 
       <Link
-        className="mt-8 mb-2 block text-xl font-bold decoration-1 hover:underline focus-visible:underline focus-visible:outline-none"
+        className="mt-8 mb-2 block w-fit text-xl font-bold decoration-1 hover:underline focus-visible:underline focus-visible:outline-none"
         href={`/libraries/${library.id}/series`}
       >
         Series
@@ -48,7 +48,7 @@ export const LibraryPreview: FC<{ library: Library; libraryCount: number }> = ({
       </div>
 
       <Link
-        className="mt-8 mb-2 block text-xl font-bold decoration-1 hover:underline focus-visible:underline focus-visible:outline-none"
+        className="mt-8 mb-2 block w-fit text-xl font-bold decoration-1 hover:underline focus-visible:underline focus-visible:outline-none"
         href={`/libraries/${library.id}/authors`}
       >
         Authors

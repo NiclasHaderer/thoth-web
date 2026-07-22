@@ -1,5 +1,5 @@
+import { PlusIcon, CheckIcon, XIcon, FolderIcon } from "lucide-react"
 import { FC, useEffect, useState } from "react"
-import { MdAdd, MdCheck, MdFolder, MdHome } from "react-icons/md"
 import { Api } from "@thoth/client"
 import { InputError } from "@thoth/components/input/input-error"
 import {
@@ -11,16 +11,18 @@ import {
   BreadcrumbPage,
 } from "@thoth/components/ui/breadcrumb"
 import { Button } from "@thoth/components/ui/button"
+import { ButtonGroup } from "@thoth/components/ui/button-group"
 import { DropdownMenu, DropdownMenuItem, DropdownMenuTrigger } from "@thoth/components/ui/dropdown-menu"
 import { useHttpRequest } from "@thoth/hooks/async-response"
 
 export const FolderManager: FC<{
   onSelectFolder?: (path: string) => void
+  onRemoveFolder?: (path: string) => void
   contentClassName?: string
   className?: string
   errors: string[] | undefined
   selectedFolders?: string[]
-}> = ({ onSelectFolder, contentClassName, className, errors, selectedFolders }) => {
+}> = ({ onSelectFolder, onRemoveFolder, contentClassName, className, errors, selectedFolders }) => {
   const [currentPath, setCurrentPath] = useState("/")
   const folders = useHttpRequest(Api.listFoldersAtACertainPath)
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -42,7 +44,7 @@ export const FolderManager: FC<{
         <BreadcrumbList>
           <BreadcrumbItem>
             <Button variant="ghost" size="icon-sm" aria-label="Go to root folder" onPress={() => setCurrentPath("/")}>
-              <MdHome className="size-4" />
+              /
             </Button>
           </BreadcrumbItem>
           {collapse && (
@@ -76,25 +78,32 @@ export const FolderManager: FC<{
           })}
         </BreadcrumbList>
       </Breadcrumb>
-      <div tabIndex={-1} className={`flex flex-col pr-2 ${contentClassName ?? ""}`}>
+      <div tabIndex={-1} className={`flex flex-col py-1 pr-2 pl-1 ${contentClassName ?? ""}`}>
         {folders.result?.length === 0 && <div className="p-2 text-sm opacity-60">No subfolders</div>}
         {folders.result?.map(folder => {
           const added = selected.has(folder.path)
           return (
-            <div key={folder.path} className="flex items-center">
+            <ButtonGroup key={folder.path} className="w-full">
               <Button
                 variant="ghost"
                 onPress={() => setCurrentPath(folder.path)}
                 aria-label={`Open folder ${folder.name}`}
-                className="grow justify-start overflow-hidden rounded-none"
+                className="grow justify-start overflow-hidden"
               >
-                <MdFolder className="shrink-0" aria-hidden />
+                <FolderIcon className="shrink-0" aria-hidden />
                 <span className="truncate">{folder.name}</span>
               </Button>
               {added ? (
-                <span className="text-primary flex p-2" role="img" aria-label={`${folder.name} already added`}>
-                  <MdCheck aria-hidden />
-                </span>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="group text-primary hover:bg-destructive/10 hover:text-destructive"
+                  aria-label={`Remove folder ${folder.name}`}
+                  onPress={() => onRemoveFolder?.(folder.path)}
+                >
+                  <CheckIcon className="group-hover:hidden" aria-hidden />
+                  <XIcon className="hidden group-hover:block" aria-hidden />
+                </Button>
               ) : (
                 <Button
                   variant="ghost"
@@ -102,10 +111,10 @@ export const FolderManager: FC<{
                   aria-label={`Add folder ${folder.name}`}
                   onPress={() => onSelectFolder?.(folder.path)}
                 >
-                  <MdAdd />
+                  <PlusIcon />
                 </Button>
               )}
-            </div>
+            </ButtonGroup>
           )
         })}
       </div>

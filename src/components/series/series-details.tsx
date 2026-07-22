@@ -1,5 +1,5 @@
+import { ImageOffIcon } from "lucide-react"
 import { FC, useEffect } from "react"
-import { CiImageOff } from "react-icons/ci"
 import { Link } from "wouter"
 import { UUID } from "@thoth/client"
 import { BookPreview } from "@thoth/components/book/book-preview.tsx"
@@ -22,7 +22,7 @@ export const SeriesDetails: FC<{ seriesId: UUID; libraryId: UUID }> = ({ seriesI
     <>
       <div className="flex pb-6">
         <div className="flex flex-col justify-around">
-          <CiImageOff className="border-border h-40 w-40 rounded-md border-2 md:h-80 md:w-80" />
+          <ImageOffIcon className="border-border h-40 w-40 rounded-md border-2 md:h-80 md:w-80" />
         </div>
         <div className="flex grow flex-col justify-between pl-4 md:pl-10">
           <div>

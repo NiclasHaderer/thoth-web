@@ -1,7 +1,10 @@
-import { useState } from "react"
-import { MdAutoAwesome, MdEdit, MdLanguage, MdLocalLibrary, MdRadar } from "react-icons/md"
-import { FileScanner, NamedMetadataAgent, UUID } from "@thoth/client"
-import { MdScan } from "@thoth/components/icons/scan"
+import { PlusIcon } from "lucide-react"
+import { useMemo, useState } from "react"
+import { toast } from "sonner"
+import { FileScanner, Library, NamedMetadataAgent, UUID } from "@thoth/client"
+import { DataTable } from "@thoth/components/data-table/data-table"
+import { DataTableToolbar } from "@thoth/components/data-table/data-table-toolbar"
+import { libraryColumns } from "@thoth/components/library/library-columns"
 import { LibraryDialog, LibraryFormValues } from "@thoth/components/library/library-dialog"
 import { Button } from "@thoth/components/ui/button"
 import { FormContext, useForm } from "@thoth/hooks/form"
@@ -13,7 +16,6 @@ import { apiErrorMessage } from "@thoth/utils/utils"
 export const LibraryManager = () => {
   const libraries = useAudiobookState(AudiobookSelectors.libraries)
   const [isOpen, setIsOpen] = useState(false)
-  const [submitError, setSubmitError] = useState<string | null>(null)
   const createLibrary = useAudiobookState(s => s.createLibrary)
   const updateLibrary = useAudiobookState(s => s.updateLibrary)
   const fetchLibraries = useAudiobookState(s => s.fetchLibraries)
@@ -46,111 +48,58 @@ export const LibraryManager = () => {
   const onSubmit = async (values: LibraryFormValues) => {
     const res = values.mode === "create" ? await createLibrary(values) : await updateLibrary(values.id!, values)
     if (res.success) {
-      setSubmitError(null)
       setIsOpen(false)
     } else {
-      setSubmitError(apiErrorMessage(res.error))
+      toast.error(apiErrorMessage(res.error))
     }
   }
 
+  const openEdit = (library: Library) => {
+    form.setAllFields({ ...library, mode: "edit" })
+    setIsOpen(true)
+  }
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const columns = useMemo(() => libraryColumns({ onEdit: openEdit }), [])
+
+  // TEMP: mock 100 libraries to preview the table/pagination layout.
+  const mockLibraries = useMemo<Library[]>(() => {
+    const real = libraries ?? []
+    if (real.length === 0) return real
+    return Array.from({ length: 100 }, (_, i) => ({
+      ...real[i % real.length],
+      id: `mock-${i}` as UUID,
+      name: `${real[i % real.length].name} ${i}`,
+    }))
+  }, [libraries])
+
   return (
     <>
-      <p>
-        As a user of our audiobook website, you can now browse and listen to audiobooks in multiple languages. As an
-        admin, you have the ability to create separate audiobook libraries for different languages, allowing users to
-        easily find and listen to audiobooks in their preferred language.
-      </p>
-      <div className="mt-4 w-full overflow-y-auto">
-        <table className="w-full overflow-hidden rounded">
-          <thead>
-            <tr className="bg-card p-2 *:py-2">
-              <th className="overflow-hidden pl-2 text-left">
-                <div className="flex items-center text-nowrap text-ellipsis">
-                  <MdLocalLibrary className="mr-4 min-h-6 min-w-6" />
-                  Library
-                </div>
-              </th>
-              <th className="pl-2 text-left text-ellipsis">
-                <div className="flex items-center text-nowrap">
-                  <MdAutoAwesome className="mr-4 min-h-6 min-w-6" />
-                  Metadata preference
-                </div>
-              </th>
-              <th className="pl-2 text-left">
-                <div className="flex items-center text-nowrap">
-                  <MdRadar className="mr-4 min-h-6 min-w-6" />
-                  Metadata scanners
-                </div>
-              </th>
-              <th className="pl-2 text-left">
-                <div className="flex items-center text-nowrap">
-                  <MdScan className="mr-4 min-h-6 min-w-6" />
-                  File scanners
-                </div>
-              </th>
-              <th className="pl-2 text-left">
-                <div className="flex items-center text-nowrap">
-                  <MdLanguage className="mr-4 min-h-6 min-w-6" />
-                  Language
-                </div>
-              </th>
-              <th className="w-0"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {
-              <>
-                {libraries?.map(library => (
-                  <tr
-                    className="group odd:bg-muted hover:bg-accent cursor-pointer whitespace-nowrap *:py-2"
-                    key={library.id}
-                    onClick={() => {
-                      form.setAllFields({ ...library, mode: "edit" })
-                      setSubmitError(null)
-                      setIsOpen(true)
-                    }}
-                  >
-                    <td className="pl-2">{library.name}</td>
-                    <td className="pl-2">{library.preferEmbeddedMetadata ? "Embedded" : "External"}</td>
-                    <td className="pl-2">{library.metadataScanners.map(s => s.name).join(", ")}</td>
-                    <td className="pl-2">{library.fileScanners.map(s => s.name).join(", ")}</td>
-                    <td className="pl-2">{library.language}</td>
-                    <td className="pr-2">
-                      <div className="flex items-center">
-                        <MdEdit className="h-4 w-4 opacity-0 transition-opacity group-hover:opacity-100" />
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-                {(!libraries || libraries.length === 0) && (
-                  <tr className="odd:bg-muted">
-                    <td className="pl-2" colSpan={6}>
-                      No library yet
-                    </td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                  </tr>
-                )}
-              </>
-            }
-          </tbody>
-        </table>
+      <div className="mt-4">
+        <DataTable
+          columns={columns}
+          data={mockLibraries}
+          onRowClick={openEdit}
+          emptyState="No library yet"
+          toolbar={table => (
+            <DataTableToolbar table={table} searchColumnId="name" searchPlaceholder="Filter libraries...">
+              <Button
+                size="sm"
+                className="h-8"
+                aria-label="Create new Library"
+                onPress={() => {
+                  form.restoreInitial()
+                  setIsOpen(true)
+                }}
+              >
+                <PlusIcon />
+                <span className="hidden sm:inline">Create new Library</span>
+              </Button>
+            </DataTableToolbar>
+          )}
+        />
       </div>
-      <div className="flex justify-end pt-2">
-        <Button
-          onPress={() => {
-            form.restoreInitial()
-            setSubmitError(null)
-            setIsOpen(true)
-          }}
-        >
-          Create new Library
-        </Button>
-      </div>
-      <LibraryDialog onSubmit={onSubmit} isOpen={isOpen} setIsOpen={setIsOpen} form={form} submitError={submitError} />
+      <LibraryDialog onSubmit={onSubmit} isOpen={isOpen} setIsOpen={setIsOpen} form={form} />
     </>
   )
 }

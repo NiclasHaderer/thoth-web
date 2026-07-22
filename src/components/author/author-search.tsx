@@ -1,5 +1,5 @@
+import { SearchIcon } from "lucide-react"
 import { FC, Fragment, useState } from "react"
-import { MdSearch } from "react-icons/md"
 import { Api, MetadataAuthor, UUID } from "@thoth/client"
 import { Input } from "@thoth/components/input/input"
 import { LoadingCards } from "@thoth/components/loading-card"
@@ -26,7 +26,7 @@ export const AuthorSearch: FC<{
       <div className="mb-4 flex items-center">
         <Input wrapperClassName="grow pr-2" label="Author" onEnter={search} onValue={setAuthor} defaultValue={author} />
         <Button variant="secondary" size="icon" className="ml-2 h-10 w-10" onPress={search}>
-          <MdSearch className="size-5" />
+          <SearchIcon className="size-5" />
         </Button>
       </div>
       <div className="max-h-96 overflow-y-auto">

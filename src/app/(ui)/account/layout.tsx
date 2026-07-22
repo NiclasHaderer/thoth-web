@@ -1,5 +1,5 @@
 import { FC, ReactNode } from "react"
 
 export const AccountLayout: FC<{ children: ReactNode }> = ({ children }) => {
-  return <div className="mx-auto w-full p-2 sm:max-w-4/5 sm:p-0 lg:max-w-3/5 xl:max-w-1/2">{children}</div>
+  return <div className="mx-auto flex w-full max-w-xl flex-col gap-4 p-2 sm:p-0">{children}</div>
 }

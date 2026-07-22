@@ -1,6 +1,5 @@
+import { CircleCheckIcon, CirclePlayIcon, CircleIcon, ImageOffIcon } from "lucide-react"
 import { FC, useEffect } from "react"
-import { CiImageOff } from "react-icons/ci"
-import { MdCheckCircle, MdPlayCircle, MdRadioButtonUnchecked } from "react-icons/md"
 import { Link } from "wouter"
 import { BookDetailed, UUID } from "@thoth/client"
 import { HtmlViewer } from "@thoth/components/html-editor"
@@ -46,7 +45,7 @@ export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId, lib
               src={`/api/stream/images/${book.coverID}`}
             />
           ) : (
-            <CiImageOff className="border-border h-40 w-40 rounded-md border-2 md:h-80 md:w-80" />
+            <ImageOffIcon className="border-border h-40 w-40 rounded-md border-2 md:h-80 md:w-80" />
           )}
         </div>
         <div className="flex grow flex-col justify-between pl-4 md:pl-10">
@@ -98,13 +97,13 @@ export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId, lib
           </div>
           <div className="mt-2">
             <Button className="mr-3" onPress={() => startPlayback(0)}>
-              <MdPlayCircle className="mr-2" /> Play
+              <CirclePlayIcon className="mr-2" /> Play
             </Button>
 
             <Button variant="secondary" className="mr-3">
-              <MdCheckCircle className="mr-2" />
+              <CircleCheckIcon className="mr-2" />
               Done
-              <MdRadioButtonUnchecked className="ml-2" />
+              <CircleIcon className="ml-2" />
             </Button>
 
             <BookEdit book={book} />

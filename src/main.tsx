@@ -6,6 +6,6 @@ import { Routes } from "@thoth/routes.tsx"
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <Routes />
-    <Toaster />
+    <Toaster position="top-center" />
   </StrictMode>
 )

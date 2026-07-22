@@ -1,5 +1,5 @@
+import { BookIcon, BookMarkedIcon, UserIcon } from "lucide-react"
 import { FC } from "react"
-import { MdBook, MdCollectionsBookmark, MdPerson } from "react-icons/md"
 import { Link, useLocation } from "wouter"
 import { UUID } from "@thoth/client"
 import { buttonVariants } from "@thoth/components/ui/button"
@@ -7,9 +7,9 @@ import { buttonVariants } from "@thoth/components/ui/button"
 export const LeftResourceMenu: FC<{ libraryId: UUID }> = ({ libraryId }) => {
   const [pathname] = useLocation()
   const items = [
-    { href: `/libraries/${libraryId}/books`, Icon: MdBook, label: "Books" },
-    { href: `/libraries/${libraryId}/series`, Icon: MdCollectionsBookmark, label: "Series" },
-    { href: `/libraries/${libraryId}/authors`, Icon: MdPerson, label: "Authors" },
+    { href: `/libraries/${libraryId}/books`, Icon: BookIcon, label: "Books" },
+    { href: `/libraries/${libraryId}/series`, Icon: BookMarkedIcon, label: "Series" },
+    { href: `/libraries/${libraryId}/authors`, Icon: UserIcon, label: "Authors" },
   ]
   return (
     <aside className="bg-card my-10 ml-10 inline-block max-w-80 min-w-80 overflow-hidden rounded-xl">

@@ -1,6 +1,5 @@
+import { CirclePlayIcon, ImageOffIcon } from "lucide-react"
 import { FC } from "react"
-import { CiImageOff } from "react-icons/ci"
-import { MdPlayCircle } from "react-icons/md"
 import { Link } from "wouter"
 import { NamedId, UUID } from "@thoth/client"
 import { toReadableTime } from "./helpers"
@@ -40,14 +39,14 @@ export const Track: FC<TrackProps> = ({
           loading="lazy"
         />
       ) : (
-        <CiImageOff className="h-16 w-16 rounded-md" />
+        <ImageOffIcon className="h-16 w-16 rounded-md" />
       )}
       <button
         type="button"
         aria-label={`Play ${title}`}
         className="bg-opacity-0 group-hover:bg-background group-hover:bg-opacity-40 absolute top-0 left-0 flex h-full w-full items-center justify-center rounded-md opacity-0 transition-all duration-300 group-hover:opacity-100 focus:opacity-100"
       >
-        <MdPlayCircle className="h-6 w-6" aria-hidden />
+        <CirclePlayIcon className="h-6 w-6" aria-hidden />
       </button>
     </div>
     <div className="flex grow items-center justify-between pl-6">
