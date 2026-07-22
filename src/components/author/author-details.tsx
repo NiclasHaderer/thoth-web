@@ -1,5 +1,5 @@
+import { UserIcon } from "lucide-react"
 import { FC, useEffect } from "react"
-import { MdPerson } from "react-icons/md"
 import { UUID } from "@thoth/client"
 import { BookPreview } from "@thoth/components/book/book-preview.tsx"
 import { HtmlViewer } from "@thoth/components/html-editor"
@@ -27,7 +27,7 @@ export const AuthorDetails: FC<{ authorId: UUID; libraryId: UUID }> = ({ authorI
             loading="lazy"
           />
         ) : (
-          <MdPerson className="border-border h-40 w-40 rounded-full border-2 md:h-80 md:w-80" />
+          <UserIcon className="border-border h-40 w-40 rounded-full border-2 md:h-80 md:w-80" />
         )}
         <h2 className="flex items-center py-3 text-2xl">{author.name}</h2>
         {author.bornIn ? (

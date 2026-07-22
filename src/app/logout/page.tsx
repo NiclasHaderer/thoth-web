@@ -1,13 +1,13 @@
-import { useLocation } from "wouter"
 import { useOnMount } from "@thoth/hooks/lifecycle"
 import { useAuthState } from "@thoth/state/auth.state"
 
 export const LogoutOutlet = () => {
   const auth = useAuthState()
-  const [, navigate] = useLocation()
   useOnMount(async () => {
     await auth.logout()
-    navigate("/login")
+    // Full reload to drop all in-memory state (current user, audiobook cache, ...).
+    window.location.replace("/#/login")
+    window.location.reload()
   })
 
   return <></>

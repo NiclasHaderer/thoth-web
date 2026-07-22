@@ -17,7 +17,11 @@ const authInterceptor: ApiInterceptor = async (data: ApiCallData): Promise<ApiCa
       }
       executor = (...args) =>
         data.executor(...args).then(e => {
-          if (e instanceof Response && e.status === 401) {
+          // Only treat a 401 as a dead session when our token is actually expired
+          // (i.e. the pre-request refresh failed). A 401 on a still-valid token is an
+          // authorization failure (e.g. an admin-only endpoint), not a reason to log out.
+          const token = useAuthState.getState().accessToken
+          if (e instanceof Response && e.status === 401 && token && isExpired(token)) {
             return unstable_batchedUpdates(() => useAuthState.getState().logout()).then(() => e)
           }
           return e

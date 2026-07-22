@@ -1,6 +1,5 @@
+import { UserIcon, SearchIcon, ImageOffIcon } from "lucide-react"
 import { FC, KeyboardEvent, useEffect, useRef, useState } from "react"
-import { CiImageOff } from "react-icons/ci"
-import { MdPerson, MdSearch } from "react-icons/md"
 import { Link } from "wouter"
 import { Api, LibrarySearchResult } from "@thoth/client"
 import { Input } from "@thoth/components/input/input"
@@ -61,7 +60,7 @@ export const Search: FC = () => {
       <Input
         hideError
         groupClassName="bg-popover dark:bg-popover focus-within:bg-accent dark:focus-within:bg-accent rounded-3xl! h-auto py-1 border-0 transition-colors has-[[data-slot=input-group-control]:focus-visible]:ring-0 has-[[data-slot=input-group-control]:focus-visible]:border-0"
-        leftIcon={<MdSearch className="mx-1 h-6 w-6" />}
+        leftIcon={<SearchIcon className="mx-1 h-6 w-6" />}
         placeholder="Search ..."
         inputRef={inputElement}
         onKeyUp={event => setInput((event.target as HTMLInputElement).value)}
@@ -136,7 +135,7 @@ const AuthorSearchResult: FC<{ authors: LibrarySearchResult["authors"]; onClose:
               loading="lazy"
             />
           ) : (
-            <MdPerson className="h-8 w-8 rounded-full" />
+            <UserIcon className="h-8 w-8 rounded-full" />
           )}
           <h4 className="pl-3">{author.name}</h4>
         </div>
@@ -164,7 +163,7 @@ const BookSearchResult: FC<{ books: LibrarySearchResult["books"]; onClose: () =>
               loading="lazy"
             />
           ) : (
-            <CiImageOff className="h-8 w-8 rounded-full" />
+            <ImageOffIcon className="h-8 w-8 rounded-full" />
           )}
           <h4 className="pl-3">{book.title}</h4>
         </div>
@@ -187,7 +186,7 @@ const SeriesSearchResult: FC<{ series: LibrarySearchResult["series"]; onClose: (
         className="hover:bg-muted no-touch:focus:bg-muted block rounded-md transition-colors"
       >
         <div className="flex items-center p-2">
-          <CiImageOff className="h-8 w-8 rounded-md" />
+          <ImageOffIcon className="h-8 w-8 rounded-md" />
           <h4 className="pl-3">{series.title}</h4>
         </div>
       </Link>

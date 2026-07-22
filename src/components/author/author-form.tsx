@@ -1,13 +1,11 @@
+import { LinkIcon, PartyPopperIcon, SkullIcon, UserIcon, UploadIcon } from "lucide-react"
 import { FC, useRef } from "react"
-import { CiSaveUp1 } from "react-icons/ci"
-import { MdAddLink, MdCelebration, MdPerson } from "react-icons/md"
 import { AuthorUpdate } from "@thoth/client"
 import { ManagedInput } from "@thoth/components/input/managed-input"
 import { ResponsiveImage } from "@thoth/components/responsive-image"
 import { FormContext } from "../../hooks/form"
 import { isUUID, toBase64 } from "../../utils/utils"
 import { HtmlEditor } from "../html-editor"
-import { MdDeceased } from "../icons/deceased"
 
 export const AuthorForm: FC<{ form: FormContext<AuthorUpdate> }> = ({ form }) => {
   const imageInputRef = useRef<HTMLInputElement>(null)
@@ -24,7 +22,7 @@ export const AuthorForm: FC<{ form: FormContext<AuthorUpdate> }> = ({ form }) =>
                 onClick={() => imageInputRef.current && imageInputRef.current.click()}
               />
             ) : (
-              <MdPerson
+              <UserIcon
                 className="m-2 h-52 w-52 cursor-pointer rounded-full"
                 onClick={() => imageInputRef.current && imageInputRef.current.click()}
               />
@@ -41,7 +39,7 @@ export const AuthorForm: FC<{ form: FormContext<AuthorUpdate> }> = ({ form }) =>
               }}
             />
             <div className="bg-card absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full p-2 opacity-0 transition-all group-hover:opacity-70">
-              <CiSaveUp1 className="h-6 w-6" />
+              <UploadIcon className="h-6 w-6" />
             </div>
           </div>
         </div>
@@ -51,7 +49,7 @@ export const AuthorForm: FC<{ form: FormContext<AuthorUpdate> }> = ({ form }) =>
             name="name"
             labelClassName="w-28"
             label="Name"
-            leftIcon={<MdPerson />}
+            leftIcon={<UserIcon />}
           />
           <ManagedInput
             wrapperClassName="pt-2"
@@ -59,7 +57,7 @@ export const AuthorForm: FC<{ form: FormContext<AuthorUpdate> }> = ({ form }) =>
             type="date"
             labelClassName="w-28"
             label="Born"
-            leftIcon={<MdCelebration />}
+            leftIcon={<PartyPopperIcon />}
           />
           <ManagedInput
             wrapperClassName="pt-2"
@@ -67,14 +65,14 @@ export const AuthorForm: FC<{ form: FormContext<AuthorUpdate> }> = ({ form }) =>
             type="date"
             labelClassName="w-28"
             label="Died"
-            leftIcon={<MdDeceased />}
+            leftIcon={<SkullIcon />}
           />
           <ManagedInput
             wrapperClassName="pt-2"
             name="website"
             labelClassName="w-28"
             label="Website"
-            leftIcon={<MdAddLink />}
+            leftIcon={<LinkIcon />}
           />
         </div>
       </div>

@@ -1,18 +1,122 @@
-import { FC } from "react"
+import { ChevronDownIcon, LogOutIcon, MaximizeIcon, MinimizeIcon, UserIcon, SettingsIcon } from "lucide-react"
+import { FC, ReactNode, useEffect, useRef, useState } from "react"
+import { useMove } from "react-aria"
 import { Button, MenuTrigger } from "react-aria-components"
-import { MdAccountCircle, MdLogout, MdPerson, MdTune } from "react-icons/md"
 import { Link, useLocation } from "wouter"
-import { Api } from "@thoth/client"
 import { Logo } from "@thoth/components/icons/logo"
 import { Search } from "@thoth/components/menu/search"
+import { Avatar, AvatarFallback } from "@thoth/components/ui/avatar"
+import { Button as UIButton } from "@thoth/components/ui/button"
+import { ButtonGroup } from "@thoth/components/ui/button-group"
 import { DropdownMenu, DropdownMenuItem } from "@thoth/components/ui/dropdown-menu"
-import { useHttpRequest } from "@thoth/hooks/async-response.ts"
+import { Sheet, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@thoth/components/ui/sheet"
 import { useOnMount } from "@thoth/hooks/lifecycle.ts"
+import { useCurrentUserState } from "@thoth/state/current-user.state"
+
+interface AccountMenuItem {
+  key: string
+  label: string
+  icon: ReactNode
+  action: () => void
+}
 
 export const SearchBar: FC = () => {
-  const { result, invoke } = useHttpRequest(Api.getCurrentUser)
+  const result = useCurrentUserState(s => s.user)
+  const fetchCurrentUser = useCurrentUserState(s => s.fetchCurrentUser)
   const [, navigate] = useLocation()
-  useOnMount(() => invoke())
+  const [isFullscreen, setIsFullscreen] = useState(false)
+  useOnMount(() => void fetchCurrentUser())
+
+  useEffect(() => {
+    const onChange = () => setIsFullscreen(Boolean(document.fullscreenElement))
+    document.addEventListener("fullscreenchange", onChange)
+    return () => document.removeEventListener("fullscreenchange", onChange)
+  }, [])
+
+  const toggleFullscreen = () => {
+    if (document.fullscreenElement) void document.exitFullscreen()
+    else void document.documentElement.requestFullscreen()
+  }
+
+  const [sheetOpen, setSheetOpen] = useState(false)
+  const sheetContentRef = useRef<HTMLDivElement>(null)
+  const dragX = useRef(0)
+  const panel = () => sheetContentRef.current?.closest<HTMLElement>("[data-slot=sheet-content]") ?? null
+
+  const { moveProps } = useMove({
+    onMoveStart: () => {
+      dragX.current = 0
+      const el = panel()
+      if (el) el.style.transition = "none"
+    },
+    onMove: e => {
+      // Follow the finger, but only rightward (the edge it slid in from).
+      dragX.current = Math.max(0, dragX.current + e.deltaX)
+      const el = panel()
+      if (el) el.style.transform = `translateX(${dragX.current}px)`
+    },
+    onMoveEnd: () => {
+      const el = panel()
+      if (!el) return
+      if (dragX.current > 80) {
+        el.style.transition = ""
+        el.style.transform = ""
+        setSheetOpen(false)
+      } else {
+        // Snap back into place, then drop the inline styles so the normal
+        // open/close animation classes work again.
+        el.style.transition = "transform 0.2s ease"
+        el.style.transform = "translateX(0px)"
+        el.addEventListener(
+          "transitionend",
+          () => {
+            el.style.transition = ""
+            el.style.transform = ""
+          },
+          { once: true }
+        )
+      }
+    },
+  })
+
+  const bigInitial = result?.username ? result.username.charAt(0).toUpperCase() : <UserIcon className="h-5 w-5" />
+
+  const menuItems: AccountMenuItem[] = [
+    {
+      key: "account",
+      label: "Account",
+      icon: (
+        <Avatar className="size-5">
+          <AvatarFallback className="text-xs">
+            {result?.username ? result.username.charAt(0).toUpperCase() : <UserIcon className="h-3.5 w-3.5" />}
+          </AvatarFallback>
+        </Avatar>
+      ),
+      action: () => navigate("/account"),
+    },
+    ...(result?.permissions?.isAdmin
+      ? [
+          {
+            key: "settings",
+            label: "Server Settings",
+            icon: <SettingsIcon className="size-5" />,
+            action: () => navigate("/settings"),
+          },
+        ]
+      : []),
+    { key: "logout", label: "Logout", icon: <LogOutIcon className="size-5" />, action: () => navigate("/logout") },
+    ...(import.meta.env.DEV
+      ? [
+          {
+            key: "fullscreen",
+            label: isFullscreen ? "Exit fullscreen" : "Fullscreen",
+            icon: isFullscreen ? <MinimizeIcon className="size-5" /> : <MaximizeIcon className="size-5" />,
+            action: toggleFullscreen,
+          },
+        ]
+      : []),
+  ]
+
   return (
     <div className="bg-card m-3 flex h-20 min-h-20 items-center rounded-xl pr-3">
       <Link
@@ -20,36 +124,79 @@ export const SearchBar: FC = () => {
         className="focus-visible:bg-accent flex overflow-hidden rounded-l-xl transition-colors outline-none"
         aria-label="Thoth home"
       >
-        <div className="inline-flex cursor-pointer items-center pr-2">
+        <div className="inline-flex cursor-pointer items-center sm:pr-2">
           <Logo className="h-20 w-auto p-3" />
-          <h1 className="font-serif text-3xl font-extrabold">THOTH</h1>
+          <h1 className="hidden font-serif text-3xl font-extrabold sm:block">THOTH</h1>
         </div>
       </Link>
       <Search />
-      <MenuTrigger>
-        <Button
-          id="user-account-menu"
-          className="bg-popover hover:bg-accent focus-visible:bg-accent h-12 w-12 cursor-pointer rounded-full p-2 transition-colors outline-none"
-        >
-          <MdAccountCircle className="h-full w-full" />
-        </Button>
-        <DropdownMenu placement="bottom end" className="w-56">
-          <DropdownMenuItem onAction={() => navigate("/account")}>
-            <MdPerson className="mr-3 h-6 w-6" />
-            Account
-          </DropdownMenuItem>
-          {result?.permissions?.isAdmin && (
-            <DropdownMenuItem onAction={() => navigate("/settings")}>
-              <MdTune className="mr-3 h-6 w-6" />
-              Server Settings
-            </DropdownMenuItem>
-          )}
-          <DropdownMenuItem onAction={() => navigate("/logout")}>
-            <MdLogout className="mr-3 h-6 w-6" />
-            Logout
-          </DropdownMenuItem>
-        </DropdownMenu>
-      </MenuTrigger>
+
+      {/* Desktop: dropdown menu */}
+      <div className="hidden sm:block">
+        <MenuTrigger>
+          <Button
+            id="user-account-menu"
+            className="group bg-popover hover:bg-accent focus-visible:bg-accent flex h-12 cursor-pointer items-center gap-1.5 rounded-full p-1 transition-colors outline-none sm:pr-3"
+          >
+            <Avatar size="lg">
+              <AvatarFallback>{bigInitial}</AvatarFallback>
+            </Avatar>
+            <ChevronDownIcon className="text-muted-foreground h-4 w-4 transition-transform duration-200 group-aria-expanded:rotate-180" />
+          </Button>
+          <DropdownMenu placement="bottom end" className="w-60">
+            {menuItems.map(item => (
+              <DropdownMenuItem key={item.key} className="gap-2.5 px-2.5 py-2 text-sm" onAction={item.action}>
+                {item.icon}
+                {item.label}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenu>
+        </MenuTrigger>
+      </div>
+
+      {/* Mobile: slide-in sheet */}
+      <div className="sm:hidden">
+        <SheetTrigger isOpen={sheetOpen} onOpenChange={setSheetOpen}>
+          <Button
+            aria-label="Open account menu"
+            className="bg-popover hover:bg-accent focus-visible:bg-accent flex h-12 cursor-pointer items-center rounded-full p-1 transition-colors outline-none"
+          >
+            <Avatar size="lg">
+              <AvatarFallback>{bigInitial}</AvatarFallback>
+            </Avatar>
+          </Button>
+          <Sheet
+            side="right"
+            className="data-[side=right]:w-full data-[side=right]:data-entering:translate-x-full data-[side=right]:data-exiting:translate-x-full"
+          >
+            <div ref={sheetContentRef} className="flex h-full touch-none flex-col gap-4" {...moveProps}>
+              <SheetHeader className="items-center gap-2 pt-8 text-center">
+                <Avatar className="size-16">
+                  <AvatarFallback className="text-xl font-medium">{bigInitial}</AvatarFallback>
+                </Avatar>
+                <SheetTitle className="text-lg">{result?.username ? `Hi, ${result.username}!` : "Account"}</SheetTitle>
+                <SheetDescription>{result?.permissions?.isAdmin ? "Admin" : "User"}</SheetDescription>
+              </SheetHeader>
+              <div className="px-4 pb-4">
+                <ButtonGroup orientation="vertical" className="w-full">
+                  {menuItems.map(item => (
+                    <UIButton
+                      key={item.key}
+                      slot="close"
+                      variant="outline"
+                      onPress={item.action}
+                      className="h-14 justify-start gap-4 px-4 text-base font-normal [&_svg:not([class*='size-'])]:size-5"
+                    >
+                      {item.icon}
+                      {item.label}
+                    </UIButton>
+                  ))}
+                </ButtonGroup>
+              </div>
+            </div>
+          </Sheet>
+        </SheetTrigger>
+      </div>
     </div>
   )
 }

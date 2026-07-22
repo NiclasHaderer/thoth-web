@@ -1,6 +1,5 @@
+import { CirclePauseIcon, CirclePlayIcon, SkipForwardIcon, SkipBackIcon, SquareIcon, ImageOffIcon } from "lucide-react"
 import { FC, useEffect, useRef } from "react"
-import { CiImageOff } from "react-icons/ci"
-import { MdPauseCircle, MdPlayCircle, MdSkipNext, MdSkipPrevious, MdStop } from "react-icons/md"
 import { Link } from "wouter"
 import { ProgressBar } from "@thoth/components/progress-bar"
 import { Ripple } from "@thoth/components/ripple"
@@ -50,7 +49,7 @@ export const Playback: FC<{ className?: string }> = ({ className }) => {
               src={`/api/stream/images/${track.coverID}`}
             />
           ) : (
-            <CiImageOff className="h-10 w-10 rounded-md md:h-20 md:w-20" />
+            <ImageOffIcon className="h-10 w-10 rounded-md md:h-20 md:w-20" />
           )}
         </Link>
 
@@ -92,7 +91,7 @@ export const Playback: FC<{ className?: string }> = ({ className }) => {
             isDisabled={playback.history.length === 0}
             className={`h-10 w-10 rounded-full ${playback.history.length === 0 ? "text-muted-foreground" : ""}`}
           >
-            <MdSkipPrevious className="size-full" />
+            <SkipBackIcon className="size-full" />
           </Button>
         </Ripple>
         <Ripple>
@@ -104,7 +103,7 @@ export const Playback: FC<{ className?: string }> = ({ className }) => {
             onPress={() => setPlaying(!playing)}
             className="h-10 w-10 rounded-full"
           >
-            {playing ? <MdPauseCircle className="size-full" /> : <MdPlayCircle className="size-full" />}
+            {playing ? <CirclePauseIcon className="size-full" /> : <CirclePlayIcon className="size-full" />}
           </Button>
         </Ripple>
         <Ripple>
@@ -116,7 +115,7 @@ export const Playback: FC<{ className?: string }> = ({ className }) => {
             isDisabled={playback.queue.length === 0}
             className={`h-10 w-10 rounded-full ${playback.queue.length === 0 ? "text-muted-foreground" : ""}`}
           >
-            <MdSkipNext className="size-full" />
+            <SkipForwardIcon className="size-full" />
           </Button>
         </Ripple>
         <Ripple>
@@ -127,7 +126,7 @@ export const Playback: FC<{ className?: string }> = ({ className }) => {
             onPress={playback.stop}
             className="h-10 w-10 rounded-full"
           >
-            <MdStop className="size-full" />
+            <SquareIcon className="size-full" />
           </Button>
         </Ripple>
       </div>

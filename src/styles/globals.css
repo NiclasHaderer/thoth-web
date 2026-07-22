@@ -82,9 +82,23 @@
   }
   html {
     @apply font-sans;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
   }
   form {
     display: contents;
+  }
+}
+
+/* Bump only the font-size tokens on phones so text reads at a comfortable, native
+   size without scaling spacing or control heights. Unlayered so it overrides the
+   @theme defaults. Tune the values below to taste. */
+@media (width < theme(--breakpoint-sm)) {
+  :root {
+    --text-xs: 0.8125rem; /* 13px */
+    --text-sm: 0.9375rem; /* 15px */
+    --text-base: 1.0625rem; /* 17px */
+    --text-lg: 1.1875rem; /* 19px */
   }
 }
 

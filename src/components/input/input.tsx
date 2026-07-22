@@ -1,6 +1,7 @@
 import { ComponentProps, FC, KeyboardEvent, memo, ReactNode, RefObject, useEffect, useRef, useState } from "react"
 import { InputError } from "@thoth/components/input/input-error"
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@thoth/components/ui/input-group"
+import { cn } from "@thoth/lib/utils"
 
 export type InputProps = Omit<Omit<ComponentProps<"input">, "defaultValue">, "value"> & {
   label?: string | undefined
@@ -52,9 +53,9 @@ export const Input: FC<InputProps> = memo(
     }, [ref, cursor, value])
 
     return (
-      <>
+      <div className={hideError ? undefined : "pb-4"}>
         <label className={`flex items-center ${wrapperClassName ?? ""}`}>
-          {label ? <div className={`px-2 whitespace-nowrap ${labelClassName ?? ""}`}>{label}</div> : null}
+          {label ? <div className={`shrink-0 px-2 whitespace-nowrap ${labelClassName ?? ""}`}>{label}</div> : null}
           <div className="grow">
             <InputGroup className={groupClassName}>
               {leftIcon ? <InputGroupAddon>{leftIcon}</InputGroupAddon> : null}
@@ -79,14 +80,14 @@ export const Input: FC<InputProps> = memo(
                   if (inputRef) inputRef.current = instance
                   ref.current = instance
                 }}
-                className={className}
+                className={cn("placeholder:text-[0.9em]", className)}
               />
               {rightIcon ? <InputGroupAddon align="inline-end">{rightIcon}</InputGroupAddon> : null}
             </InputGroup>
           </div>
         </label>
         {hideError ? null : <InputError errors={errors} show={touched} />}
-      </>
+      </div>
     )
   }
 )

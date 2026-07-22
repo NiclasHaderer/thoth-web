@@ -1,10 +1,12 @@
 import { UUID } from "crypto"
+import { FolderCogIcon, LibraryIcon, UserIcon } from "lucide-react"
 import { FC, useMemo } from "react"
-import { MdLocalLibrary, MdPerson } from "react-icons/md"
-import { Dialog, DialogBody, DialogButtons, DialogFooter } from "@thoth/components/dialog"
-import { MdFolderManaged } from "@thoth/components/icons/managed"
+import { Dialog } from "@thoth/components/dialog"
 import { ManagedInput } from "@thoth/components/input/managed-input"
 import { SelectLine } from "@thoth/components/input/select-line"
+import { Button } from "@thoth/components/ui/button"
+import { DialogFooter } from "@thoth/components/ui/dialog"
+import { Tooltip, TooltipTrigger } from "@thoth/components/ui/tooltip"
 import { Form, FormContext } from "@thoth/hooks/form"
 import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
 import { useAudiobookState } from "@thoth/state/audiobook.state"
@@ -26,37 +28,52 @@ export const UserDialog: FC<{
   const libraries = useMemo(() => _libraries.map(l => ({ label: l.name, value: l.id })), [_libraries])
 
   return (
-    <Dialog isOpen={isOpen} closeModal={() => setIsOpen(false)} title={"Edit User"}>
+    <Dialog isOpen={isOpen} onOpenChange={setIsOpen} title="Edit User">
       <Form form={form} onSubmit={(user: UserFormValues) => onSubmit(user)}>
-        <DialogBody>
-          <ManagedInput required={true} name="username" labelClassName="w-28" label="Name" leftIcon={<MdPerson />} />
+        <ManagedInput required={true} name="username" labelClassName="w-28" label="Name" leftIcon={<UserIcon />} />
+        <SelectLine
+          options={[
+            { value: true, label: "Yes" },
+            { value: false, label: "No" },
+          ]}
+          title="Is Admin"
+          name="admin"
+          labelClassName="w-28"
+          label="Admin"
+          icon={<FolderCogIcon />}
+        />
+        {form.fields.admin ? (
+          <TooltipTrigger>
+            <div>
+              <SelectLine
+                options={libraries}
+                multiple={true}
+                title="All libraries"
+                name="libraries"
+                labelClassName="w-28"
+                label="Libraries"
+                icon={<LibraryIcon />}
+                disabled
+              />
+            </div>
+            <Tooltip>Admins have access to all libraries.</Tooltip>
+          </TooltipTrigger>
+        ) : (
           <SelectLine
-            options={[
-              { value: true, label: "Yes" },
-              { value: false, label: "No" },
-            ]}
-            title="Is Admin"
-            name="admin"
+            options={libraries}
+            multiple={true}
+            title="Libraries"
+            name="libraries"
             labelClassName="w-28"
-            label="Admin"
-            icon={<MdFolderManaged />}
+            label="Libraries"
+            icon={<LibraryIcon />}
           />
-          {form.fields.admin ? (
-            <></>
-          ) : (
-            <SelectLine
-              options={libraries}
-              multiple={true}
-              title={"Libraries"}
-              name="libraries"
-              labelClassName="w-28"
-              label="Libraries"
-              icon={<MdLocalLibrary />}
-            />
-          )}
-        </DialogBody>
+        )}
         <DialogFooter>
-          <DialogButtons closeModal={() => setIsOpen(false)} />
+          <Button type="button" variant="secondary" onPress={() => setIsOpen(false)}>
+            Cancel
+          </Button>
+          <Button type="submit">Submit</Button>
         </DialogFooter>
       </Form>
     </Dialog>
