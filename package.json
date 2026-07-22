@@ -10,6 +10,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "build-routes": "tsx build-routes.ts --write-routes",
+    "gen-licenses": "tsx gen-licenses.ts",
     "prepare": "husky"
   },
   "dependencies": {

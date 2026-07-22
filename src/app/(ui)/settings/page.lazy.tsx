@@ -1,14 +1,11 @@
-import { UserManager } from "@thoth/components/user-manager"
-import { LibraryManager } from "@thoth/components/library/library-manager"
+import { Redirect } from "wouter"
+import { useOnMount } from "@thoth/hooks/lifecycle"
+import { useCurrentUserState } from "@thoth/state/current-user.state"
 
 export const SettingsOutlet = () => {
-  return (
-    <>
-      <h2 className="mb-2 mt-4 text-xl">Manage Libraries</h2>
-      <LibraryManager />
-
-      <h2 className="mb-2 text-xl">Manage Users</h2>
-      <UserManager />
-    </>
-  )
+  const user = useCurrentUserState(s => s.user)
+  const fetchCurrentUser = useCurrentUserState(s => s.fetchCurrentUser)
+  useOnMount(() => void fetchCurrentUser())
+  if (!user) return null
+  return <Redirect to={user.permissions.isAdmin ? "/settings/libraries" : "/settings/account"} />
 }
