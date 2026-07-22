@@ -9,6 +9,7 @@
 
     /* Bundler mode */
     "moduleResolution": "bundler",
+    "resolveJsonModule": true,
     "allowImportingTsExtensions": true,
     "isolatedModules": true,
     "moduleDetection": "force",
@@ -28,5 +29,5 @@
     },
     "types": ["./src/global.d.ts"]
   },
-  "include": ["src", "build-routes.ts"]
+  "include": ["src", "build-routes.ts", "gen-licenses.ts"]
 }
