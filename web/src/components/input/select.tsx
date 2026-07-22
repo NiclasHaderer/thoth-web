@@ -1,5 +1,5 @@
 import { ReactNode, useMemo } from "react"
-import { Key, Selection } from "react-aria-components"
+import { Key } from "react-aria-components"
 import {
   Select as ShadSelect,
   SelectContent,
@@ -113,14 +113,13 @@ export function Select<T, MULTIPLE extends boolean = false>({
     onChange?.((multiple ? selectedOptions : selectedOptions[0]) as any)
   }
 
+  // react-aria's Select uses different props per selection mode: multiple is
+  // controlled via `value`/`onChange`, single via `selectedKey`/`onSelectionChange`.
   const selectionProps = multiple
     ? {
         selectionMode: "multiple" as const,
-        selectedKeys: new Set(selectedIndices.map(String)),
-        onSelectionChange: (keys: Selection) => {
-          const indices = keys === "all" ? opts.map((_, i) => i) : [...keys].map(k => Number(k))
-          emit(indices)
-        },
+        value: selectedIndices.map(String),
+        onChange: (keys: Key[]) => emit(keys.map(Number)),
       }
     : {
         selectedKey: selectedIndices[0] != null ? String(selectedIndices[0]) : null,
@@ -140,7 +139,7 @@ export function Select<T, MULTIPLE extends boolean = false>({
     >
       <SelectTrigger onBlur={onBlur} className={cn("min-w-32", placeholderButtonClassName)}>
         {leftIcon}
-        <SelectValueDisplay className={placeholderClassName} />
+        <SelectValueDisplay className={cn("data-placeholder:text-[0.9em]", placeholderClassName)} />
       </SelectTrigger>
       <SelectContent placement={placement} className={optionListClassName}>
         {opts.map((option, i) => (

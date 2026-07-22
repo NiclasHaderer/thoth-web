@@ -1,17 +1,29 @@
+import {
+  ChevronsRightIcon,
+  ChevronsLeftIcon,
+  SparklesIcon,
+  XIcon,
+  FolderIcon,
+  LanguagesIcon,
+  LibraryIcon,
+  ChevronLeftIcon,
+  RadarIcon,
+  ScanLineIcon,
+} from "lucide-react"
+import { AnimatePresence, motion } from "motion/react"
 import { FC, useEffect, useState } from "react"
-import { MdAutoAwesome, MdClose, MdFolder, MdLanguage, MdLocalLibrary, MdRadar, MdSettings } from "react-icons/md"
 import { Api, FileScanner, MetadataLanguage, NamedMetadataAgent, UUID } from "@thoth/client"
-import { Dialog, DialogBody, DialogButtons, DialogFooter } from "@thoth/components/dialog"
+import { Dialog } from "@thoth/components/dialog"
 import { FolderManager } from "@thoth/components/file-manager"
-import { MdScan } from "@thoth/components/icons/scan"
 import { InputError } from "@thoth/components/input/input-error"
 import { ManagedInput } from "@thoth/components/input/managed-input"
 import { SelectLine } from "@thoth/components/input/select-line"
-import { LeftTabs, TabContent } from "@thoth/components/left-tabs"
 import { Button } from "@thoth/components/ui/button"
+import { DialogFooter } from "@thoth/components/ui/dialog"
 import { useHttpRequest } from "@thoth/hooks/async-response"
-import { Form, FormContext, SubmitError } from "@thoth/hooks/form"
+import { Form, FormContext } from "@thoth/hooks/form"
 import { useOnMount } from "@thoth/hooks/lifecycle"
+import { useBreakpoint } from "@thoth/hooks/use-media-query"
 import { unique } from "@thoth/utils/utils"
 
 // The `satisfies Record<MetadataLanguage, ...>` forces every union member to be
@@ -46,13 +58,13 @@ interface LibraryDialogProps {
   setIsOpen: (open: boolean) => void
   onSubmit: (library: LibraryFormValues) => void
   form: FormContext<LibraryFormValues>
-  submitError?: string | null
 }
 
-export const LibraryDialog: FC<LibraryDialogProps> = ({ isOpen, setIsOpen, form, onSubmit, submitError }) => {
+export const LibraryDialog: FC<LibraryDialogProps> = ({ isOpen, setIsOpen, form, onSubmit }) => {
   const metadataAgents = useHttpRequest(Api.listMetadataAgents)
   const fileScanners = useHttpRequest(Api.listFileScanners)
-  const [activeTab, setActiveTab] = useState(0)
+  const [browserOpen, setBrowserOpen] = useState(false)
+  const isDesktop = useBreakpoint("sm")
   useOnMount(() => {
     void fileScanners.invoke()
   })
@@ -72,147 +84,198 @@ export const LibraryDialog: FC<LibraryDialogProps> = ({ isOpen, setIsOpen, form,
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [metadataAgents.result])
 
-  const switchToRightTab = (errors: SubmitError<LibraryFormValues>) => {
-    const errorFields = Object.keys(errors)
-    if (errorFields.length === 1 && errorFields[0] === "folders") {
-      setActiveTab(1)
-    } else if (!errorFields.includes("folders")) {
-      setActiveTab(0)
-    }
-  }
+  const formFields = (
+    <>
+      <ManagedInput
+        labelClassName="w-28"
+        label="Library name"
+        name="name"
+        leftIcon={<LibraryIcon />}
+        placeholder="Enter a name for the library"
+        autoFocus
+      />
+      <SelectLine
+        labelClassName="w-28"
+        label="Language"
+        icon={<LanguagesIcon />}
+        name="language"
+        title={"Language"}
+        options={LANGUAGES}
+      />
+      <SelectLine
+        labelClassName="w-28"
+        title="Metadata preference"
+        label="Metadata"
+        name="preferEmbeddedMetadata"
+        icon={<SparklesIcon />}
+        options={[
+          { label: "Embedded", value: true },
+          { label: "External", value: false },
+        ]}
+      />
+      <SelectLine
+        title={"Metadata scanners"}
+        labelClassName="w-28"
+        label="Metadata"
+        name="metadataScanners"
+        icon={<RadarIcon />}
+        multiple={true}
+        options={metadataAgents?.result?.map(a => ({ value: a, label: a.name })) ?? []}
+      />
+      <SelectLine
+        labelClassName="w-28"
+        label="File"
+        icon={<ScanLineIcon />}
+        name="fileScanners"
+        title={"File scanners"}
+        multiple={true}
+        options={fileScanners?.result?.map(a => ({ value: a, label: a.name })) ?? []}
+      />
+
+      <div className="mt-4 flex flex-col gap-2">
+        <div className="flex items-center justify-between">
+          <h3 className="text-muted-foreground text-sm font-medium">Folders</h3>
+          <Button
+            variant="secondary"
+            size="icon-sm"
+            aria-label={browserOpen ? "Close folder browser" : "Add folder"}
+            onPress={() => setBrowserOpen(!browserOpen)}
+          >
+            {browserOpen ? <ChevronsLeftIcon /> : <ChevronsRightIcon />}
+          </Button>
+        </div>
+        {form.fields.folders.length === 0 ? (
+          <Button
+            variant="ghost"
+            isDisabled={browserOpen}
+            onPress={() => setBrowserOpen(true)}
+            className="text-muted-foreground h-32 w-full rounded-lg text-sm font-normal"
+          >
+            No folders added yet
+          </Button>
+        ) : (
+          <div className="h-32 overflow-auto">
+            <div className="flex w-max min-w-full flex-col gap-1.5">
+              {form.fields.folders.map((folder, index) => (
+                <div
+                  key={index}
+                  className="bg-card flex items-center gap-2 rounded px-2 py-1 text-sm whitespace-nowrap"
+                >
+                  <FolderIcon className="size-4 shrink-0" aria-hidden />
+                  <span className="grow" title={folder}>
+                    {folder}
+                  </span>
+                  <Button
+                    variant="ghost"
+                    size="icon-sm"
+                    className="shrink-0"
+                    aria-label={`Remove folder ${folder}`}
+                    onPress={() => {
+                      const folders = [...form.fields.folders]
+                      folders.splice(index, 1)
+                      form.setFields({ folders })
+                    }}
+                  >
+                    <XIcon />
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        <InputError errors={form.errors["folders"]} show={form.touched.folders} className="justify-start" />
+      </div>
+    </>
+  )
+
+  const folderBrowser = (
+    <>
+      {/* Desktop: chevron sitting on the column divider. */}
+      <Button
+        variant="outline"
+        size="icon-sm"
+        aria-label="Close folder browser"
+        onPress={() => setBrowserOpen(false)}
+        className="bg-popover hover:bg-accent dark:bg-popover dark:hover:bg-accent absolute top-1/2 left-0 z-10 hidden size-6 -translate-x-1/2 -translate-y-1/2 rounded-full sm:flex"
+      >
+        <ChevronLeftIcon />
+      </Button>
+      {/* Mobile: back button. */}
+      <Button variant="ghost" size="sm" onPress={() => setBrowserOpen(false)} className="mb-2 self-start sm:hidden">
+        <ChevronLeftIcon />
+        Back
+      </Button>
+      <FolderManager
+        contentClassName="h-80 overflow-y-auto"
+        onSelectFolder={path => {
+          form.setFields({ folders: unique([...form.fields.folders, path]) })
+        }}
+        onRemoveFolder={path => {
+          form.setFields({ folders: form.fields.folders.filter(folder => folder !== path) })
+        }}
+        errors={undefined}
+        selectedFolders={form.fields.folders}
+      />
+    </>
+  )
 
   return (
     <Dialog
       isOpen={isOpen}
-      closeModal={() => setIsOpen(false)}
+      onOpenChange={setIsOpen}
       title={form.fields.mode === "create" ? "Create new Library" : "Edit Library"}
-      outerDialogClass="w-3/5 lg:max-w-[75%]! xl:max-w-[50%]! max-w-[95%]!"
-      dialogClass="h-[70vh]"
+      className={browserOpen ? "sm:max-w-[min(95vw,72rem)]" : undefined}
     >
-      <Form form={form} onSubmit={onSubmit} onSubmitError={switchToRightTab}>
-        <DialogBody>
-          <LeftTabs
-            activeTab={activeTab}
-            setActiveTab={setActiveTab}
-            rightClassname="h-full"
-            tabs={[
-              <div className="flex items-center" key={1}>
-                <MdSettings className="mr-2" />
-                Settings
-              </div>,
-              <div className="flex items-center" key={2}>
-                <MdFolder className="mr-2" />
-                Folders
-              </div>,
-            ]}
-            className="h-full"
-          >
-            <TabContent>
-              <ManagedInput
-                labelClassName="w-28"
-                label="Library name"
-                name="name"
-                leftIcon={<MdLocalLibrary />}
-                placeholder="Enter a name for the library"
-                autoFocus
-              />
-
-              <SelectLine
-                labelClassName="w-28"
-                label="Language"
-                icon={<MdLanguage />}
-                name="language"
-                title={"Language"}
-                options={LANGUAGES}
-              />
-              <SelectLine
-                labelClassName="w-28"
-                title="Metadata preference"
-                label="Metadata"
-                name="preferEmbeddedMetadata"
-                icon={<MdAutoAwesome />}
-                options={[
-                  { label: "Embedded", value: true },
-                  { label: "External", value: false },
-                ]}
-              />
-              <SelectLine
-                title={"Metadata scanners"}
-                labelClassName="w-28"
-                label="Metadata"
-                name="metadataScanners"
-                icon={<MdRadar />}
-                multiple={true}
-                options={
-                  metadataAgents?.result?.map(a => ({
-                    value: a,
-                    label: a.name,
-                  })) ?? []
-                }
-              />
-              <SelectLine
-                labelClassName="w-28"
-                label="File"
-                icon={<MdScan />}
-                name="fileScanners"
-                title={"File scanners"}
-                multiple={true}
-                options={
-                  fileScanners?.result?.map(a => ({
-                    value: a,
-                    label: a.name,
-                  })) ?? []
-                }
-              />
-            </TabContent>
-            <TabContent>
-              <div className="flex h-full gap-4">
-                <div className="flex h-full min-w-1/2 flex-col overflow-hidden">
-                  <h3 className="mb-3 text-xl">Library folders</h3>
-                  <div className="flex grow flex-col gap-2 overflow-y-auto">
-                    {form.fields.folders.length === 0 ? (
-                      <div className="text-sm opacity-60">No folders added yet</div>
-                    ) : (
-                      form.fields.folders.map((folder, index) => (
-                        <div key={index} className="bg-card flex items-center gap-2 rounded p-1 pl-2">
-                          <MdFolder className="shrink-0" aria-hidden />
-                          <span className="grow truncate" title={folder}>
-                            {folder}
-                          </span>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="shrink-0"
-                            aria-label={`Remove folder ${folder}`}
-                            onPress={() => {
-                              const folders = [...form.fields.folders]
-                              folders.splice(index, 1)
-                              form.setFields({ folders })
-                            }}
-                          >
-                            <MdClose />
-                          </Button>
-                        </div>
-                      ))
-                    )}
-                  </div>
-                </div>
-                <FolderManager
-                  className="min-w-1/2 grow justify-between"
-                  contentClassName="h-4/5 overflow-y-auto"
-                  onSelectFolder={path => {
-                    form.setFields({ folders: unique([...form.fields.folders, path]) })
-                  }}
-                  errors={form.errors["folders"]}
-                  selectedFolders={form.fields.folders}
-                />
+      <Form
+        form={form}
+        onSubmit={onSubmit}
+        onSubmitError={errors => {
+          if ("folders" in errors) setBrowserOpen(true)
+        }}
+      >
+        {isDesktop ? (
+          <div className="flex max-h-[70vh] min-w-0 gap-4 overflow-y-auto p-1">
+            <div className={`flex min-w-0 flex-col ${browserOpen ? "w-2/5 shrink-0" : "grow"}`}>{formFields}</div>
+            {browserOpen && (
+              <div className="border-border animate-in fade-in slide-in-from-right-4 relative flex min-w-0 flex-1 flex-col border-l pl-4 duration-200">
+                {folderBrowser}
               </div>
-            </TabContent>
-          </LeftTabs>
-        </DialogBody>
-        <InputError errors={submitError} className="justify-start" />
+            )}
+          </div>
+        ) : (
+          <div className="relative min-w-0 overflow-hidden">
+            <AnimatePresence initial={false} mode="popLayout">
+              {browserOpen ? (
+                <motion.div
+                  key="browser"
+                  initial={{ x: "100%" }}
+                  animate={{ x: 0 }}
+                  exit={{ x: "100%" }}
+                  transition={{ duration: 0.2 }}
+                  className="relative flex max-h-[70vh] min-w-0 flex-col overflow-y-auto p-1"
+                >
+                  {folderBrowser}
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="form"
+                  initial={{ x: "-100%" }}
+                  animate={{ x: 0 }}
+                  exit={{ x: "-100%" }}
+                  transition={{ duration: 0.2 }}
+                  className="flex max-h-[70vh] min-w-0 flex-col overflow-y-auto p-1"
+                >
+                  {formFields}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        )}
         <DialogFooter>
-          <DialogButtons closeModal={() => setIsOpen(false)} />
+          <Button type="button" variant="secondary" onPress={() => setIsOpen(false)}>
+            Cancel
+          </Button>
+          <Button type="submit">Submit</Button>
         </DialogFooter>
       </Form>
     </Dialog>

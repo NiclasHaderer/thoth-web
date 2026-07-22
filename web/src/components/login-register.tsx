@@ -1,8 +1,8 @@
+import { RefreshCwIcon, LockIcon, UserIcon, EyeIcon, EyeOffIcon } from "lucide-react"
 import { FC, useEffect, useRef, useState } from "react"
-import { MdAutorenew, MdLock, MdPerson, MdVisibility, MdVisibilityOff } from "react-icons/md"
+import { toast } from "sonner"
 import { Link, useLocation, useSearch } from "wouter"
 import { Logo } from "@thoth/components/icons/logo"
-import { InputError } from "@thoth/components/input/input-error"
 import { ManagedInput } from "@thoth/components/input/managed-input"
 import { Button } from "@thoth/components/ui/button"
 import { Form, useForm } from "@thoth/hooks/form"
@@ -48,17 +48,15 @@ export const LoginRegister: FC<{ type: "register" | "login"; redirectPath?: stri
 
   const [passwordVisible, setPasswordVisible] = useState(false)
   const [submitting, setSubmitting] = useState(false)
-  const [error, setError] = useState<string | null>(null)
   const userState = useAuthState()
 
   const loginOrRegister = async ({ confirmPassword: _confirmPassword, ...credentials }: (typeof form)["fields"]) => {
-    setError(null)
     setSubmitting(true)
     try {
       const cb = isRegister ? userState.register : userState.login
       const result = await cb(credentials)
       if (!result.success) {
-        setError(errorMessage(result.error))
+        toast.error(errorMessage(result.error))
         return
       }
       navigate(redirectPath || "/libraries", { replace: true })
@@ -68,33 +66,32 @@ export const LoginRegister: FC<{ type: "register" | "login"; redirectPath?: stri
   }
 
   return (
-    <div className="flex h-screen w-screen flex-col items-center justify-center">
-      <div className="relative flex w-3/4 md:w-1/2 xl:w-1/4">
+    <div className="flex min-h-dvh w-full flex-col items-center justify-center gap-4 p-6">
+      <div className="relative flex w-full max-w-sm">
         <h1 className="mb-4 font-serif text-3xl font-extrabold">{isRegister ? "Register" : "Login"}</h1>
         <div>
           <Logo className="absolute right-0 bottom-0 h-auto w-1/6" />
         </div>
       </div>
       <Form form={form} onSubmit={loginOrRegister}>
-        <div className="bg-card inline-block w-3/4 rounded p-4 md:w-1/2 xl:w-1/4">
+        <div className="sm:bg-card flex w-full max-w-sm flex-col gap-3 sm:rounded-xl sm:p-6">
           <ManagedInput
             name="username"
-            labelClassName="w-28"
-            className="bg-popover"
-            label="Username"
+            groupClassName="bg-popover"
             placeholder={isRegister ? "Choose a username" : "Your username"}
-            leftIcon={<MdPerson />}
+            leftIcon={<UserIcon />}
             autoComplete="username"
+            autoCapitalize="none"
+            autoCorrect="off"
+            spellCheck={false}
             autoFocus={true}
           />
           <ManagedInput
             name="password"
             type={passwordVisible ? "text" : "password"}
-            labelClassName="w-28"
-            className="bg-popover"
-            label="Password"
+            groupClassName="bg-popover"
             placeholder={isRegister ? "At least 6 characters" : "Your password"}
-            leftIcon={<MdLock />}
+            leftIcon={<LockIcon />}
             autoComplete={isRegister ? "new-password" : "current-password"}
             rightIcon={
               <Button
@@ -105,7 +102,7 @@ export const LoginRegister: FC<{ type: "register" | "login"; redirectPath?: stri
                 className="my-2 ml-2 h-full"
                 onPress={() => setPasswordVisible(prev => !prev)}
               >
-                {passwordVisible ? <MdVisibilityOff /> : <MdVisibility />}
+                {passwordVisible ? <EyeOffIcon /> : <EyeIcon />}
               </Button>
             }
           />
@@ -113,29 +110,24 @@ export const LoginRegister: FC<{ type: "register" | "login"; redirectPath?: stri
             <ManagedInput
               name="confirmPassword"
               type={passwordVisible ? "text" : "password"}
-              labelClassName="w-28"
-              className="bg-popover"
-              label="Confirm"
+              groupClassName="bg-popover"
               placeholder="Re-enter your password"
-              leftIcon={<MdLock />}
+              leftIcon={<LockIcon />}
               autoComplete="new-password"
             />
           ) : null}
-          <InputError errors={error} />
-          <div className="mt-2 flex items-center justify-between">
-            <p>
-              {isRegister ? "Already have an account?" : "Don't have an account?"}{" "}
-              <Link
-                href={isRegister ? `/login?${search}` : `/register?${search}`}
-                className="focus-visible:ring-primary/60 rounded underline focus-visible:ring-2 focus-visible:outline-none"
-              >
-                {isRegister ? "Login" : "Register"}
-              </Link>
-            </p>
-            <Button type="submit" isDisabled={submitting} className="disabled:opacity-60">
-              {submitting ? <MdAutorenew className="animate-spin" /> : isRegister ? "Register" : "Login"}
-            </Button>
-          </div>
+          <Button type="submit" size="lg" isDisabled={submitting} className="w-full disabled:opacity-60">
+            {submitting ? <RefreshCwIcon className="animate-spin" /> : isRegister ? "Register" : "Login"}
+          </Button>
+          <p className="text-muted-foreground text-center text-sm">
+            {isRegister ? "Already have an account?" : "Don't have an account?"}{" "}
+            <Link
+              href={isRegister ? `/login?${search}` : `/register?${search}`}
+              className="text-foreground focus-visible:ring-primary/60 rounded font-medium underline focus-visible:ring-2 focus-visible:outline-none"
+            >
+              {isRegister ? "Login" : "Register"}
+            </Link>
+          </p>
         </div>
       </Form>
     </div>

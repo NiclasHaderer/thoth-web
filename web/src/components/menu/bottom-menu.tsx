@@ -1,5 +1,5 @@
+import { BookIcon, BookMarkedIcon, UserIcon } from "lucide-react"
 import { FC } from "react"
-import { MdBook, MdCollectionsBookmark, MdPerson } from "react-icons/md"
 import { Link, useLocation } from "wouter"
 import { UUID } from "@thoth/client"
 import { Ripple } from "@thoth/components/ripple"
@@ -8,9 +8,9 @@ import { buttonVariants } from "@thoth/components/ui/button"
 export const BottomResourceMenu: FC<{ className?: string; libraryId: UUID }> = ({ className = "", libraryId }) => {
   const [pathname] = useLocation()
   const items = [
-    { href: `/libraries/${libraryId}/authors`, Icon: MdPerson },
-    { href: `/libraries/${libraryId}/books`, Icon: MdBook },
-    { href: `/libraries/${libraryId}/series`, Icon: MdCollectionsBookmark },
+    { href: `/libraries/${libraryId}/authors`, Icon: UserIcon },
+    { href: `/libraries/${libraryId}/books`, Icon: BookIcon },
+    { href: `/libraries/${libraryId}/series`, Icon: BookMarkedIcon },
   ]
   return (
     <aside className="bg-background">
