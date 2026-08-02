@@ -47,7 +47,7 @@ export type LibraryFormValues = {
   language: string
   preferEmbeddedMetadata: boolean
   folders: string[]
-  metadataScanners: NamedMetadataAgent[]
+  metadataAgents: NamedMetadataAgent[]
   fileScanners: FileScanner[]
   mode: "create" | "edit"
   icon: string | undefined
@@ -61,7 +61,7 @@ interface LibraryDialogProps {
 }
 
 export const LibraryDialog: FC<LibraryDialogProps> = ({ isOpen, setIsOpen, form, onSubmit }) => {
-  const metadataAgents = useHttpRequest(Api.listMetadataAgents)
+  const availableAgents = useHttpRequest(Api.listMetadataAgents)
   const fileScanners = useHttpRequest(Api.listFileScanners)
   const [browserOpen, setBrowserOpen] = useState(false)
   const isDesktop = useBreakpoint("sm")
@@ -69,20 +69,20 @@ export const LibraryDialog: FC<LibraryDialogProps> = ({ isOpen, setIsOpen, form,
     void fileScanners.invoke()
   })
   useEffect(() => {
-    void metadataAgents.invoke({ language: form.fields.language })
+    void availableAgents.invoke({ language: form.fields.language })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.fields.language])
 
   // Drop selected scanners that the newly fetched language no longer offers.
   useEffect(() => {
-    if (!metadataAgents.result) return
-    const available = new Set(metadataAgents.result.map(a => a.name))
-    const filtered = form.fields.metadataScanners.filter(a => available.has(a.name))
-    if (filtered.length !== form.fields.metadataScanners.length) {
-      form.setFields({ metadataScanners: filtered })
+    if (!availableAgents.result) return
+    const available = new Set(availableAgents.result.map(a => a.name))
+    const filtered = form.fields.metadataAgents.filter(a => available.has(a.name))
+    if (filtered.length !== form.fields.metadataAgents.length) {
+      form.setFields({ metadataAgents: filtered })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [metadataAgents.result])
+  }, [availableAgents.result])
 
   const formFields = (
     <>
@@ -117,10 +117,10 @@ export const LibraryDialog: FC<LibraryDialogProps> = ({ isOpen, setIsOpen, form,
         title={"Metadata scanners"}
         labelClassName="w-28"
         label="Metadata"
-        name="metadataScanners"
+        name="metadataAgents"
         icon={<RadarIcon />}
         multiple={true}
-        options={metadataAgents?.result?.map(a => ({ value: a, label: a.name })) ?? []}
+        options={availableAgents?.result?.map(a => ({ value: a, label: a.name })) ?? []}
       />
       <SelectLine
         labelClassName="w-28"

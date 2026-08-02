@@ -1,7 +1,6 @@
-import "./ripple.css"
-
 import { FC, HTMLAttributes, MouseEvent, useRef, useState } from "react"
 import { useOnUnMount } from "@thoth/hooks/lifecycle"
+import "./ripple.css"
 
 type RippleProps = HTMLAttributes<HTMLInputElement> & {
   duration?: number

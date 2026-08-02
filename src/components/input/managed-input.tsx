@@ -1,6 +1,6 @@
 import { FC } from "react"
-import { Input, InputProps } from "./input"
 import { useField, useFieldUpdater } from "@thoth/hooks/form"
+import { Input, InputProps } from "./input"
 
 export const ManagedInput: FC<{ name: string } & InputProps> = ({ name, ...rest }) => {
   const updater = useFieldUpdater(name)

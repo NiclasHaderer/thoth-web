@@ -20,14 +20,14 @@ export const LibraryResourceView: FC<LibraryResourceViewProps> = ({ children, li
     <>
       <div className={`grow overflow-y-auto ${isMD ? "" : "flex"}`}>
         {isMD ? null : <LeftResourceMenu libraryId={libraryId} />}
-        <main tabIndex={-1} className={`grow overflow-y-auto overflow-x-hidden px-5 ${isMD ? "mt-4" : "mt-10"}`}>
+        <main tabIndex={-1} className={`grow overflow-x-hidden overflow-y-auto px-5 ${isMD ? "mt-4" : "mt-10"}`}>
           {children}
         </main>
       </div>
 
       {isMD ? <BottomResourceMenu libraryId={libraryId} /> : null}
       {isPlaying ? (
-        <Playback className={isMD ? "border-b-2 border-solid border-primary border-opacity-25" : ""} />
+        <Playback className={isMD ? "border-primary border-opacity-25 border-b-2 border-solid" : ""} />
       ) : null}
     </>
   )
