@@ -99,28 +99,28 @@ export interface Library {
   icon: string | undefined
   id: UUID
   language: string
-  metadataScanners: Array<NamedMetadataAgent>
+  metadataAgents: Array<NamedMetadataAgent>
   name: string
   preferEmbeddedMetadata: boolean
   scanIndex: number
 }
 
-export interface LibraryCreate {
+export interface UpdateLibrary {
   fileScanners: Array<FileScanner>
   folders: Array<string>
   icon: string | undefined
   language: string
-  metadataScanners: Array<NamedMetadataAgent>
+  metadataAgents: Array<NamedMetadataAgent>
   name: string
   preferEmbeddedMetadata: boolean
 }
 
-export interface LibraryUpdate {
+export interface PartialUpdateLibrary {
   fileScanners: Array<FileScanner> | undefined
   folders: Array<string> | undefined
   icon: string | undefined
   language: string | undefined
-  metadataScanners: Array<NamedMetadataAgent> | undefined
+  metadataAgents: Array<NamedMetadataAgent> | undefined
   name: string | undefined
   preferEmbeddedMetadata: boolean | undefined
 }
@@ -186,6 +186,11 @@ export interface LibrarySearchResult {
   authors: Array<Author>
   books: Array<Book>
   series: Array<Series>
+}
+
+export interface MetadataAgentApiModel {
+  name: string
+  supportedCountryCodes: Array<string>
 }
 
 export interface PaginatedResponse<T> {
@@ -306,16 +311,7 @@ export interface MetadataSearchBook {
 }
 
 export type MetadataLanguage =
-  | "Spanish"
-  | "English"
-  | "German"
-  | "French"
-  | "Italian"
-  | "Danish"
-  | "Finnish"
-  | "Norwegian"
-  | "Swedish"
-  | "Russian"
+  "Spanish" | "English" | "German" | "French" | "Italian" | "Danish" | "Finnish" | "Norwegian" | "Swedish" | "Russian"
 
 export type MetadataSearchCount = "Small" | "Medium" | "Large" | "ExtraLarge"
 
@@ -345,4 +341,13 @@ export interface MetadataSeries {
   primaryWorks: number | undefined
   title: string | undefined
   totalBooks: number | undefined
+}
+
+export interface ThirdPartyLicense {
+  license: string
+  licenseUrl: string | undefined
+  name: string
+  repository: string | undefined
+  text: string | undefined
+  version: string
 }

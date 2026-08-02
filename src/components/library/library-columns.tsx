@@ -24,8 +24,8 @@ export const libraryColumns = ({ onEdit }: LibraryColumnsOptions): ColumnDef<Lib
     filterFn: (row, id, value: string[]) => value.includes(row.getValue(id)),
   },
   {
-    id: "metadataScanners",
-    accessorFn: row => row.metadataScanners.map(s => s.name).join(", "),
+    id: "metadataAgents",
+    accessorFn: row => row.metadataAgents.map(s => s.name).join(", "),
     meta: { label: "Metadata scanners" },
     header: "Metadata scanners",
     enableSorting: false,
