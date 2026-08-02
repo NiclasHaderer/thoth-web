@@ -8,11 +8,11 @@ import {
   Book,
   BookDetailed,
   Library,
-  LibraryCreate,
-  LibraryUpdate,
+  PartialUpdateLibrary,
   Series,
   SeriesDetailed,
   UUID,
+  UpdateLibrary,
 } from "@thoth/client"
 import {
   wrapClear,
@@ -116,7 +116,7 @@ export const useAudiobookState = createWithEqualityFn(
       }))
       return lib
     },
-    updateLibrary: async (id: UUID, library: LibraryUpdate) => {
+    updateLibrary: async (id: UUID, library: PartialUpdateLibrary) => {
       const res = await Api.updateLibrary({ libraryId: id }, library)
       if (!res.success) return res
       mutate.setState(state => ({
@@ -128,7 +128,7 @@ export const useAudiobookState = createWithEqualityFn(
       }))
       return res
     },
-    createLibrary: async (library: LibraryCreate) => {
+    createLibrary: async (library: UpdateLibrary) => {
       const res = await Api.createLibrary(library)
       if (!res.success) return res
       mutate.setState(state => ({

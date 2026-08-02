@@ -28,7 +28,7 @@ export const LibraryManager = () => {
       language: "",
       preferEmbeddedMetadata: false as boolean,
       folders: [] as string[],
-      metadataScanners: [] as NamedMetadataAgent[],
+      metadataAgents: [] as NamedMetadataAgent[],
       fileScanners: [] as FileScanner[],
       mode: "create" as "create" | "edit",
       icon: undefined as string | undefined,
