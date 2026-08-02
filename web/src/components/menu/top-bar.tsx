@@ -1,5 +1,5 @@
-import { ChevronDownIcon, LogOutIcon, MaximizeIcon, MinimizeIcon, UserIcon, SettingsIcon } from "lucide-react"
-import { FC, ReactNode, useEffect, useRef, useState } from "react"
+import { ChevronDownIcon, LogOutIcon, UserIcon, SettingsIcon } from "lucide-react"
+import { FC, ReactNode, useRef, useState } from "react"
 import { useMove } from "react-aria"
 import { Button, MenuTrigger } from "react-aria-components"
 import { Link, useLocation } from "wouter"
@@ -24,19 +24,7 @@ export const SearchBar: FC = () => {
   const result = useCurrentUserState(s => s.user)
   const fetchCurrentUser = useCurrentUserState(s => s.fetchCurrentUser)
   const [, navigate] = useLocation()
-  const [isFullscreen, setIsFullscreen] = useState(false)
   useOnMount(() => void fetchCurrentUser())
-
-  useEffect(() => {
-    const onChange = () => setIsFullscreen(Boolean(document.fullscreenElement))
-    document.addEventListener("fullscreenchange", onChange)
-    return () => document.removeEventListener("fullscreenchange", onChange)
-  }, [])
-
-  const toggleFullscreen = () => {
-    if (document.fullscreenElement) void document.exitFullscreen()
-    else void document.documentElement.requestFullscreen()
-  }
 
   const [sheetOpen, setSheetOpen] = useState(false)
   const sheetContentRef = useRef<HTMLDivElement>(null)
@@ -105,16 +93,6 @@ export const SearchBar: FC = () => {
         ]
       : []),
     { key: "logout", label: "Logout", icon: <LogOutIcon className="size-5" />, action: () => navigate("/logout") },
-    ...(import.meta.env.DEV
-      ? [
-          {
-            key: "fullscreen",
-            label: isFullscreen ? "Exit fullscreen" : "Fullscreen",
-            icon: isFullscreen ? <MinimizeIcon className="size-5" /> : <MaximizeIcon className="size-5" />,
-            action: toggleFullscreen,
-          },
-        ]
-      : []),
   ]
 
   return (
