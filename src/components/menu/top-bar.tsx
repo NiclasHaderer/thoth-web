@@ -5,6 +5,7 @@ import { Button, MenuTrigger } from "react-aria-components"
 import { Link, useLocation } from "wouter"
 import { Logo } from "@thoth/components/icons/logo"
 import { Search } from "@thoth/components/menu/search"
+import { NavItem, accountItem, adminItems, licensesItem } from "@thoth/components/menu/settings-nav"
 import { Avatar, AvatarFallback } from "@thoth/components/ui/avatar"
 import { Button as UIButton } from "@thoth/components/ui/button"
 import { ButtonGroup } from "@thoth/components/ui/button-group"
@@ -69,19 +70,33 @@ export const SearchBar: FC = () => {
 
   const bigInitial = result?.username ? result.username.charAt(0).toUpperCase() : <UserIcon className="h-5 w-5" />
 
+  const accountMenuItem: AccountMenuItem = {
+    key: "account",
+    label: "Account",
+    icon: (
+      <Avatar className="size-5">
+        <AvatarFallback className="text-xs">
+          {result?.username ? result.username.charAt(0).toUpperCase() : <UserIcon className="h-3.5 w-3.5" />}
+        </AvatarFallback>
+      </Avatar>
+    ),
+    action: () => navigate(accountItem.href),
+  }
+  const logoutMenuItem: AccountMenuItem = {
+    key: "logout",
+    label: "Logout",
+    icon: <LogOutIcon className="size-5" />,
+    action: () => navigate("/logout"),
+  }
+  const toMenuItem = ({ href, Icon, label }: NavItem): AccountMenuItem => ({
+    key: href,
+    label,
+    icon: <Icon className="size-5" />,
+    action: () => navigate(href),
+  })
+
   const menuItems: AccountMenuItem[] = [
-    {
-      key: "account",
-      label: "Account",
-      icon: (
-        <Avatar className="size-5">
-          <AvatarFallback className="text-xs">
-            {result?.username ? result.username.charAt(0).toUpperCase() : <UserIcon className="h-3.5 w-3.5" />}
-          </AvatarFallback>
-        </Avatar>
-      ),
-      action: () => navigate("/settings/account"),
-    },
+    accountMenuItem,
     ...(result?.permissions?.isAdmin
       ? [
           {
@@ -92,8 +107,16 @@ export const SearchBar: FC = () => {
           },
         ]
       : []),
-    { key: "logout", label: "Logout", icon: <LogOutIcon className="size-5" />, action: () => navigate("/logout") },
+    logoutMenuItem,
   ]
+
+  // Mobile has no settings sidebar, so the sections live in this menu.
+  const mobileMenuItems: AccountMenuItem[] = [
+    accountMenuItem,
+    ...(result?.permissions?.isAdmin ? adminItems.map(toMenuItem) : []),
+    logoutMenuItem,
+  ]
+  const licensesMenuItem = toMenuItem(licensesItem)
 
   return (
     <div className="bg-card mx-3 mt-3 flex h-20 min-h-20 items-center rounded-xl pr-3">
@@ -110,7 +133,7 @@ export const SearchBar: FC = () => {
       <Search />
 
       {/* Desktop: dropdown menu */}
-      <div className="hidden sm:block">
+      <div className="hidden md:block">
         <MenuTrigger>
           <Button
             id="user-account-menu"
@@ -133,7 +156,7 @@ export const SearchBar: FC = () => {
       </div>
 
       {/* Mobile: slide-in sheet */}
-      <div className="sm:hidden">
+      <div className="md:hidden">
         <SheetTrigger isOpen={sheetOpen} onOpenChange={setSheetOpen}>
           <Button
             aria-label="Open account menu"
@@ -155,9 +178,9 @@ export const SearchBar: FC = () => {
                 <SheetTitle className="text-lg">{result?.username ? `Hi, ${result.username}!` : "Account"}</SheetTitle>
                 <SheetDescription>{result?.permissions?.isAdmin ? "Admin" : "User"}</SheetDescription>
               </SheetHeader>
-              <div className="px-4 pb-4">
+              <div className="px-4">
                 <ButtonGroup orientation="vertical" className="w-full">
-                  {menuItems.map(item => (
+                  {mobileMenuItems.map(item => (
                     <UIButton
                       key={item.key}
                       slot="close"
@@ -170,6 +193,17 @@ export const SearchBar: FC = () => {
                     </UIButton>
                   ))}
                 </ButtonGroup>
+              </div>
+              <div className="mt-auto px-4 pb-4">
+                <UIButton
+                  slot="close"
+                  variant="ghost"
+                  onPress={licensesMenuItem.action}
+                  className="text-muted-foreground h-14 w-full justify-start gap-4 px-4 text-base font-normal [&_svg:not([class*='size-'])]:size-5"
+                >
+                  {licensesMenuItem.icon}
+                  {licensesMenuItem.label}
+                </UIButton>
               </div>
             </div>
           </Sheet>
