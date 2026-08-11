@@ -110,7 +110,6 @@ export const SearchBar: FC = () => {
     logoutMenuItem,
   ]
 
-  // Mobile has no settings sidebar, so the sections live in this menu.
   const mobileMenuItems: AccountMenuItem[] = [
     accountMenuItem,
     ...(result?.permissions?.isAdmin ? adminItems.map(toMenuItem) : []),

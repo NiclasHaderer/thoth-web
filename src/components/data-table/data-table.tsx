@@ -10,12 +10,10 @@ import {
   getFacetedRowModel,
   getFacetedUniqueValues,
   getFilteredRowModel,
-  getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
 import { ReactNode, useState } from "react"
-import { DataTablePagination } from "@thoth/components/data-table/data-table-pagination"
 import { cn } from "@thoth/lib/utils"
 
 interface DataTableProps<TData, TValue> {
@@ -26,7 +24,6 @@ interface DataTableProps<TData, TValue> {
   /** Called when a body row is clicked (skips clicks originating from interactive cell content). */
   onRowClick?: (row: TData) => void
   emptyState?: ReactNode
-  pageSize?: number
 }
 
 export function DataTable<TData, TValue>({
@@ -35,7 +32,6 @@ export function DataTable<TData, TValue>({
   toolbar,
   onRowClick,
   emptyState = "No results.",
-  pageSize = 10,
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
@@ -47,7 +43,6 @@ export function DataTable<TData, TValue>({
     columns,
     // eslint-disable-next-line react-hooks/incompatible-library -- TanStack Table manages its own mutable instance
     state: { sorting, columnVisibility, rowSelection, columnFilters },
-    initialState: { pagination: { pageSize } },
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
@@ -55,25 +50,24 @@ export function DataTable<TData, TValue>({
     onColumnVisibilityChange: setColumnVisibility,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
   })
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex h-full min-h-0 flex-col gap-4">
       {toolbar?.(table)}
-      <div className="relative w-full overflow-x-auto rounded-lg border">
+      <div className="relative min-h-0 w-full flex-1 overflow-auto rounded-lg border">
         <table className="w-full caption-bottom text-sm">
-          <thead className="[&_tr]:border-b">
+          <thead>
             {table.getHeaderGroups().map(headerGroup => (
               <tr key={headerGroup.id} className="bg-card">
                 {headerGroup.headers.map(header => (
                   <th
                     key={header.id}
                     colSpan={header.colSpan}
-                    className="text-muted-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0"
+                    className="text-muted-foreground bg-card sticky top-0 z-10 h-10 border-b px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0"
                   >
                     {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                   </th>
@@ -110,7 +104,6 @@ export function DataTable<TData, TValue>({
           </tbody>
         </table>
       </div>
-      <DataTablePagination table={table} />
     </div>
   )
 }
