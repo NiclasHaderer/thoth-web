@@ -234,8 +234,7 @@
     "name": "@esbuild/darwin-arm64",
     "version": "0.28.1",
     "license": "MIT",
-    "repository": "https://github.com/evanw/esbuild",
-    "text": null
+    "repository": "https://github.com/evanw/esbuild"
   },
   {
     "name": "@floating-ui/core",
@@ -339,8 +338,7 @@
     "name": "@napi-rs/wasm-runtime",
     "version": "1.1.6",
     "license": "MIT",
-    "repository": "https://github.com/napi-rs/napi-rs",
-    "text": null
+    "repository": "https://github.com/napi-rs/napi-rs"
   },
   {
     "name": "@nodelib/fs.scandir",
@@ -521,8 +519,7 @@
     "name": "@tybys/wasm-util",
     "version": "0.10.3",
     "license": "MIT",
-    "repository": "https://github.com/toyobayashi/wasm-util",
-    "text": null
+    "repository": "https://github.com/toyobayashi/wasm-util"
   },
   {
     "name": "@types/react",
@@ -752,8 +749,7 @@
     "name": "client-only",
     "version": "0.0.1",
     "license": "MIT",
-    "repository": "https://reactjs.org/",
-    "text": null
+    "repository": "https://reactjs.org/"
   },
   {
     "name": "clsx",
@@ -2663,8 +2659,7 @@
     "name": "wouter",
     "version": "3.10.0",
     "license": "Unlicense",
-    "repository": "https://github.com/molefrog/wouter",
-    "text": null
+    "repository": "https://github.com/molefrog/wouter"
   },
   {
     "name": "wrappy",

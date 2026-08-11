@@ -23,17 +23,17 @@ const normalizeLicense = (pkg: PackageJson): string => {
   return "UNKNOWN"
 }
 
-const readLicenseText = (dir: string): string | null => {
+const readLicenseText = (dir: string): string | undefined => {
   const entries = fs.readdirSync(dir, { withFileTypes: true })
   const match = entries.find(e => e.isFile() && /^(licen[cs]e|copying|notice)/i.test(e.name))
-  if (!match) return null
+  if (!match) return undefined
   return fs.readFileSync(path.join(dir, match.name), "utf-8").trim()
 }
 
-const repoUrl = (pkg: PackageJson): string | null => {
+const repoUrl = (pkg: PackageJson): string | undefined => {
   const r = pkg.repository
   const url = typeof r === "string" ? r : r?.url
-  return (url ?? pkg.homepage ?? "").replace(/^git\+/, "").replace(/\.git$/, "") || null
+  return (url ?? pkg.homepage ?? "").replace(/^git\+/, "").replace(/\.git$/, "") || undefined
 }
 
 const paths = execSync("npm ls --omit=dev --all --parseable", { cwd: rootDir, encoding: "utf-8" })
