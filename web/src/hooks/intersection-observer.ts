@@ -7,7 +7,7 @@ export const useIntersectionObserver = (target: RefObject<HTMLElement | null>, s
     const element = target.current
     if (!element) return
     const observer = new IntersectionObserver(([entry]) => setVisible(entry.intersectionRatio > 0), {
-      root: scrollElement ?? document.body,
+      root: scrollElement ?? null,
       threshold: [0, 0.01],
     })
     observer.observe(element)
