@@ -1,43 +1,37 @@
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 
 type Breakpoints = "sm" | "md" | "lg" | "xl" | "2xl"
 export const CHANGE_LAYOUT = "md"
+
+const SIZES: Record<Breakpoints, number> = {
+  sm: 640,
+  md: 768,
+  lg: 1024,
+  xl: 1280,
+  "2xl": Number.POSITIVE_INFINITY,
+}
 
 interface Breakpoint {
   matchDown(size: Breakpoints): boolean
 }
 
-const getDeviceConfig = (): Breakpoint => {
-  const width = typeof window !== "undefined" ? window.innerWidth : 0
-  return {
-    matchDown(size: Breakpoints) {
-      switch (size) {
-        case "sm":
-          return width < 640
-        case "md":
-          return width < 768
-        case "lg":
-          return width < 1024
-        case "xl":
-          return width < 1280
-        case "2xl":
-          return true
-      }
-    },
-  }
-}
+const getWidth = () => (typeof window !== "undefined" ? window.innerWidth : 0)
 
-export const useBreakpoint = () => {
-  const [breakPoint, setBreakPoint] = useState(() => getDeviceConfig())
+const crossesBreakpoint = (width: number, newWidth: number) =>
+  Object.values(SIZES).some(size => width < size !== newWidth < size)
+
+export const useBreakpoint = (): Breakpoint => {
+  const [width, setWidth] = useState(getWidth)
 
   useEffect(() => {
     const calcWidth = () => {
-      setBreakPoint(getDeviceConfig())
+      const newWidth = getWidth()
+      setWidth(current => (crossesBreakpoint(current, newWidth) ? newWidth : current))
     }
 
     window.addEventListener("resize", calcWidth)
     return () => window.removeEventListener("resize", calcWidth)
-  })
+  }, [])
 
-  return breakPoint
+  return useMemo(() => ({ matchDown: (size: Breakpoints) => width < SIZES[size] }), [width])
 }

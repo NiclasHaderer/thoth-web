@@ -10,7 +10,10 @@ export const useInfinityScroll = (
   const index = useRef(startIndex)
   const visible = useIntersectionObserver(target)
 
-  useOnMount(() => fetchNext(index.current))
+  useOnMount(() => {
+    fetchNext(index.current)
+    index.current += 1
+  })
 
   useEffect(() => {
     if (!visible) return

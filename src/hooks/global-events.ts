@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+import { useEffect, useRef } from "react"
 
 export function useGlobalEvent<T extends keyof WindowEventMap>(
   type: T,
@@ -6,15 +6,21 @@ export function useGlobalEvent<T extends keyof WindowEventMap>(
   filter?: (event: WindowEventMap[T]) => boolean,
   options?: boolean | AddEventListenerOptions
 ) {
+  const currentListener = useRef(listener)
+  const currentFilter = useRef(filter)
+
+  useEffect(() => {
+    currentListener.current = listener
+    currentFilter.current = filter
+  })
+
   useEffect(() => {
     const handler = (event: WindowEventMap[T]) => {
-      if (!filter) return listener(event)
-      if (filter(event)) {
-        listener(event)
-      }
+      if (currentFilter.current && !currentFilter.current(event)) return
+      currentListener.current(event)
     }
 
     window.addEventListener(type, handler, options)
     return () => window.removeEventListener(type, handler, options)
-  }, [type, listener, filter, options])
+  }, [type, options])
 }
