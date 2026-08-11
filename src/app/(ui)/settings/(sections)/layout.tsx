@@ -1,6 +1,7 @@
 import { FC, ReactNode, useEffect } from "react"
 import { useLocation } from "wouter"
-import { NavItem, accountItem, adminItems, adminPaths, licensesItem } from "@thoth/components/menu/settings-nav"
+import { NavItem } from "@thoth/components/menu/nav-item"
+import { NavEntry, accountItem, adminItems, adminPaths, licensesItem } from "@thoth/components/menu/settings-nav"
 import {
   Sidebar,
   SidebarContent,
@@ -9,7 +10,6 @@ import {
   SidebarGroupContent,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
   SidebarProvider,
 } from "@thoth/components/ui/sidebar"
@@ -17,12 +17,7 @@ import { useOnMount } from "@thoth/hooks/lifecycle"
 import { useIsMobile } from "@thoth/hooks/use-mobile"
 import { useCurrentUserState } from "@thoth/state/current-user.state"
 
-const menuButtonClassName =
-  "text-muted-foreground [&_svg]:text-muted-foreground/70 hover:text-foreground data-active:bg-primary/10! data-active:text-foreground! data-active:[&_svg]:text-primary gap-3 rounded-lg px-3 font-medium"
-
-const SettingsSidebar: FC<{ navItems: NavItem[] }> = ({ navItems }) => {
-  const [pathname, navigate] = useLocation()
-
+const SettingsSidebar: FC<{ navItems: NavEntry[] }> = ({ navItems }) => {
   return (
     <Sidebar collapsible="none" className="bg-card m-3 h-auto w-56 rounded-xl">
       <SidebarHeader className="px-4 pt-4">
@@ -32,17 +27,9 @@ const SettingsSidebar: FC<{ navItems: NavItem[] }> = ({ navItems }) => {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu className="gap-2">
-              {navItems.map(({ href, Icon, label }) => (
-                <SidebarMenuItem key={href}>
-                  <SidebarMenuButton
-                    size="lg"
-                    isActive={pathname.startsWith(href)}
-                    onPress={() => navigate(href)}
-                    className={menuButtonClassName}
-                  >
-                    <Icon />
-                    {label}
-                  </SidebarMenuButton>
+              {navItems.map(item => (
+                <SidebarMenuItem key={item.href}>
+                  <NavItem {...item} />
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
@@ -52,15 +39,7 @@ const SettingsSidebar: FC<{ navItems: NavItem[] }> = ({ navItems }) => {
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton
-              size="lg"
-              isActive={pathname.startsWith(licensesItem.href)}
-              onPress={() => navigate(licensesItem.href)}
-              className={menuButtonClassName}
-            >
-              <licensesItem.Icon />
-              {licensesItem.label}
-            </SidebarMenuButton>
+            <NavItem {...licensesItem} />
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>

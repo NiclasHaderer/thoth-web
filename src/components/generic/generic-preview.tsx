@@ -18,13 +18,13 @@ interface GenericPreviewProps {
 
 export const GenericPreview = forwardRef<HTMLDivElement, GenericPreviewProps>(
   ({ size, roundedPicture = false, className, subtitle, onPlay, ...item }, ref) => {
-    const { widthClasses, heightClasses } = getSizing(size)
+    const { containerClasses, widthClasses, heightClasses } = getSizing(size)
     const roundedClasses = roundedPicture ? "rounded-full" : "rounded-xl"
     const labelCenter = roundedPicture ? "text-center" : "text-left"
     const href = `/libraries/${item.libraryId}/${item.type}/${item.id}`
     return (
-      <div className={`${className} inline-block`} ref={ref}>
-        <div className={`${widthClasses} group relative`}>
+      <div className={`${className} ${containerClasses}`} ref={ref}>
+        <div className="group relative w-full">
           <Link className="block focus-visible:outline-none" href={href} aria-label={item.label}>
             <div
               className={`${widthClasses} ${heightClasses} ${roundedClasses} group-hover:ring-primary group-focus-within:ring-primary relative overflow-hidden transition-shadow duration-200 group-focus-within:ring-2 group-hover:ring-2 ${

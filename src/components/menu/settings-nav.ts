@@ -1,10 +1,10 @@
 import { BookMarkedIcon, LucideIcon, ScaleIcon, UserIcon, UsersIcon } from "lucide-react"
 
-export type NavItem = { href: string; Icon: LucideIcon; label: string }
+export type NavEntry = { href: string; Icon: LucideIcon; label: string }
 
-export const accountItem: NavItem = { href: "/settings/account", Icon: UserIcon, label: "Account" }
-export const licensesItem: NavItem = { href: "/settings/licenses", Icon: ScaleIcon, label: "Open source licenses" }
-export const adminItems: NavItem[] = [
+export const accountItem: NavEntry = { href: "/settings/account", Icon: UserIcon, label: "Account" }
+export const licensesItem: NavEntry = { href: "/settings/licenses", Icon: ScaleIcon, label: "Open source licenses" }
+export const adminItems: NavEntry[] = [
   { href: "/settings/libraries", Icon: BookMarkedIcon, label: "Libraries" },
   { href: "/settings/users", Icon: UsersIcon, label: "Users" },
 ]

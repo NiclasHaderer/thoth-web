@@ -2,12 +2,12 @@ import { ChevronDownIcon, LogOutIcon, UserIcon, SettingsIcon } from "lucide-reac
 import { FC, ReactNode, useRef, useState } from "react"
 import { useMove } from "react-aria"
 import { Button, MenuTrigger } from "react-aria-components"
-import { Link, useLocation } from "wouter"
+import { Link } from "wouter"
 import { Logo } from "@thoth/components/icons/logo"
 import { Search } from "@thoth/components/menu/search"
-import { NavItem, accountItem, adminItems, licensesItem } from "@thoth/components/menu/settings-nav"
+import { NavEntry, accountItem, adminItems, licensesItem } from "@thoth/components/menu/settings-nav"
 import { Avatar, AvatarFallback } from "@thoth/components/ui/avatar"
-import { Button as UIButton } from "@thoth/components/ui/button"
+import { buttonVariants } from "@thoth/components/ui/button"
 import { ButtonGroup } from "@thoth/components/ui/button-group"
 import { DropdownMenu, DropdownMenuItem } from "@thoth/components/ui/dropdown-menu"
 import { Sheet, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@thoth/components/ui/sheet"
@@ -18,13 +18,12 @@ interface AccountMenuItem {
   key: string
   label: string
   icon: ReactNode
-  action: () => void
+  href: string
 }
 
 export const SearchBar: FC = () => {
   const result = useCurrentUserState(s => s.user)
   const fetchCurrentUser = useCurrentUserState(s => s.fetchCurrentUser)
-  const [, navigate] = useLocation()
   useOnMount(() => void fetchCurrentUser())
 
   const [sheetOpen, setSheetOpen] = useState(false)
@@ -80,19 +79,19 @@ export const SearchBar: FC = () => {
         </AvatarFallback>
       </Avatar>
     ),
-    action: () => navigate(accountItem.href),
+    href: accountItem.href,
   }
   const logoutMenuItem: AccountMenuItem = {
     key: "logout",
     label: "Logout",
     icon: <LogOutIcon className="size-5" />,
-    action: () => navigate("/logout"),
+    href: "/logout",
   }
-  const toMenuItem = ({ href, Icon, label }: NavItem): AccountMenuItem => ({
+  const toMenuItem = ({ href, Icon, label }: NavEntry): AccountMenuItem => ({
     key: href,
     label,
     icon: <Icon className="size-5" />,
-    action: () => navigate(href),
+    href,
   })
 
   const menuItems: AccountMenuItem[] = [
@@ -103,7 +102,7 @@ export const SearchBar: FC = () => {
             key: "settings",
             label: "Server Settings",
             icon: <SettingsIcon className="size-5" />,
-            action: () => navigate("/settings/libraries"),
+            href: "/settings/libraries",
           },
         ]
       : []),
@@ -145,7 +144,7 @@ export const SearchBar: FC = () => {
           </Button>
           <DropdownMenu placement="bottom end" className="w-60">
             {menuItems.map(item => (
-              <DropdownMenuItem key={item.key} className="gap-2.5 px-2.5 py-2 text-sm" onAction={item.action}>
+              <DropdownMenuItem key={item.key} className="gap-2.5 px-2.5 py-2 text-sm" href={item.href}>
                 {item.icon}
                 {item.label}
               </DropdownMenuItem>
@@ -180,29 +179,35 @@ export const SearchBar: FC = () => {
               <div className="px-4">
                 <ButtonGroup orientation="vertical" className="w-full">
                   {mobileMenuItems.map(item => (
-                    <UIButton
+                    <Link
                       key={item.key}
-                      slot="close"
-                      variant="outline"
-                      onPress={item.action}
-                      className="h-14 justify-start gap-4 px-4 text-base font-normal [&_svg:not([class*='size-'])]:size-5"
+                      href={item.href}
+                      onClick={() => setSheetOpen(false)}
+                      className={buttonVariants({
+                        variant: "outline",
+                        className:
+                          "h-14 justify-start gap-4 px-4 text-base font-normal [&_svg:not([class*='size-'])]:size-5",
+                      })}
                     >
                       {item.icon}
                       {item.label}
-                    </UIButton>
+                    </Link>
                   ))}
                 </ButtonGroup>
               </div>
               <div className="mt-auto px-4 pb-4">
-                <UIButton
-                  slot="close"
-                  variant="ghost"
-                  onPress={licensesMenuItem.action}
-                  className="text-muted-foreground h-14 w-full justify-start gap-4 px-4 text-base font-normal [&_svg:not([class*='size-'])]:size-5"
+                <Link
+                  href={licensesMenuItem.href}
+                  onClick={() => setSheetOpen(false)}
+                  className={buttonVariants({
+                    variant: "ghost",
+                    className:
+                      "text-muted-foreground h-14 w-full justify-start gap-4 px-4 text-base font-normal [&_svg:not([class*='size-'])]:size-5",
+                  })}
                 >
                   {licensesMenuItem.icon}
                   {licensesMenuItem.label}
-                </UIButton>
+                </Link>
               </div>
             </div>
           </Sheet>
