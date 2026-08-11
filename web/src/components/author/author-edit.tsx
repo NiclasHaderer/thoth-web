@@ -48,13 +48,13 @@ export const AuthorEdit: FC<{ author: Author }> = ({ author }) => {
       title="Edit Author"
       form={form}
       onSubmit={async (values, closeModal) => {
-        await updateAuthor({ libraryId: author.library.id, id: author.id }, values)
+        await updateAuthor({ libraryId: author.libraryId, id: author.id }, values)
         closeModal()
       }}
       InformationDisplay={() => <AuthorForm form={form} />}
       Search={({ onSelect }) => (
         <AuthorSearch
-          libraryId={author.library.id}
+          libraryId={author.libraryId}
           authorSearch={form.fields.name}
           onSelect={authorMeta => {
             form.setAllFields(mergeMetaIntoAuthor(form.fields, authorMeta))
