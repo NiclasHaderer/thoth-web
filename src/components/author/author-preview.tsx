@@ -7,7 +7,7 @@ interface AuthorProps extends Author {
   className?: string
 }
 
-export const AuthorPreview = forwardRef<HTMLAnchorElement, AuthorProps>(
+export const AuthorPreview = forwardRef<HTMLDivElement, AuthorProps>(
   ({ size = "normal", className = "", ...author }, ref) => {
     return (
       <GenericPreview

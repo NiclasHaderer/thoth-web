@@ -2,14 +2,16 @@ import { forwardRef, Fragment } from "react"
 import { Link } from "wouter"
 import { Book } from "@thoth/client"
 import { GenericPreview } from "@thoth/components/generic/generic-preview.tsx"
+import { usePlayBook } from "@thoth/hooks/playback"
 
 interface BookPreviewProps extends Book {
   size?: "small" | "normal"
   className?: string
 }
 
-export const BookPreview = forwardRef<HTMLAnchorElement, BookPreviewProps>(
+export const BookPreview = forwardRef<HTMLDivElement, BookPreviewProps>(
   ({ size = "normal", className = "", ...book }, ref) => {
+    const playBook = usePlayBook()
     return (
       <GenericPreview
         size={size}
@@ -31,6 +33,7 @@ export const BookPreview = forwardRef<HTMLAnchorElement, BookPreviewProps>(
         ref={ref}
         className={className}
         type="books"
+        onPlay={() => void playBook(book.libraryId, book.id)}
       />
     )
   }
