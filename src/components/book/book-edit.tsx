@@ -65,13 +65,13 @@ export const BookEdit: FC<{ book: Book }> = ({ book }) => {
       title="Edit Book"
       form={form}
       onSubmit={async (values, closeModal) => {
-        await updateBook({ libraryId: book.library.id, id: book.id }, values)
+        await updateBook({ libraryId: book.libraryId, id: book.id }, values)
         closeModal()
       }}
       InformationDisplay={() => <BookForm form={form} />}
       Search={({ onSelect }) => (
         <BookSearch
-          libraryId={book.library.id}
+          libraryId={book.libraryId}
           book={book.title}
           authors={book.authors.map(a => a.name)}
           onSelect={bookMeta => {
