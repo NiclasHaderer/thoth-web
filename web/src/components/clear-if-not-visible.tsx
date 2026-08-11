@@ -19,23 +19,15 @@ export const ClearIfNotVisible = <T extends object, REF extends HTMLElement>({
     const childElement = childRef.current
     if (!childElement) return
 
-    const newState = {
-      height: childElement.clientHeight,
-      width: childElement.clientWidth,
-    }
+    const newState = { height: childElement.clientHeight }
 
-    setPlaceHolderStyle(currentState => {
-      if (currentState?.height === newState.height && currentState?.width === newState.width) {
-        return currentState
-      }
-      return newState
-    })
+    setPlaceHolderStyle(currentState => (currentState?.height === newState.height ? currentState : newState))
   }
 
   useEffect(setPlaceholderStyles, [visible])
 
   return (
-    <div className="inline-block" style={visible ? undefined : placeHolderStyle} ref={wrapperRef}>
+    <div className="w-full" style={visible ? undefined : placeHolderStyle} ref={wrapperRef}>
       {visible ? <Component {...childProps} ref={childRef} /> : null}
     </div>
   )
