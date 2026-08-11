@@ -1,6 +1,6 @@
 import { unstable_batchedUpdates } from "react-dom"
 import { Mutate, StoreApi, StoreMutatorIdentifier } from "zustand"
-import { ApiResponse, PaginatedResponse, Position, UUID } from "@thoth/client"
+import { ApiResponse, Order, PaginatedResponse, Position, UUID } from "@thoth/client"
 import { ChangeEvent } from "@thoth/models/ws"
 import { AudiobookState } from "@thoth/state/audiobook.state"
 import { WebsocketConnection } from "@thoth/websocket"
@@ -31,12 +31,13 @@ export const wrapFetch = <K extends AssetsToUpdate>(
     libraryId: UUID
     limit?: number
     offset?: number
+    order?: Order
   }) => Promise<ApiResponse<PaginatedResponse<AudiobookState["content"][UUID][`${K}Map`][UUID]>>>
 ) => {
-  return async ({ libraryId, offset }: { libraryId: UUID; offset: number }) => {
+  return async ({ libraryId, offset, order }: { libraryId: UUID; offset: number; order?: Order }) => {
     const limit = 30
     const offsetCount = offset * limit
-    const response = await fetchFunction({ libraryId, limit, offset: offsetCount })
+    const response = await fetchFunction({ libraryId, limit, offset: offsetCount, order })
     if (!response.success) return
 
     const state = { ...mutate.getState() }
