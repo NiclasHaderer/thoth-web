@@ -36,7 +36,7 @@ export const Playback: FC<{ className?: string }> = ({ className }) => {
 
       <div className="flex items-center">
         <Link
-          href={`/libraries/${track.library.id}/books/${track.book.id}`}
+          href={`/libraries/${track.libraryId}/books/${track.book.id}`}
           className="mr-3"
           aria-label={track.title}
           tabIndex={-1}
@@ -61,7 +61,7 @@ export const Playback: FC<{ className?: string }> = ({ className }) => {
             {track.authors.map((author, index) => (
               <Link
                 className="no-touch:focus:underline pr-2 hover:underline"
-                href={`/libraries/${track.library.id}/authors/${author.id}`}
+                href={`/libraries/${track.libraryId}/authors/${author.id}`}
                 key={index}
               >
                 {author.name}

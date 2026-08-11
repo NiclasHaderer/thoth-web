@@ -23,13 +23,16 @@ export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId, lib
   const startPlayback = (position: number) => {
     const tracks = (book as BookDetailed).tracks
 
-    const start = { ...tracks[position], authors: book.authors, coverID: book.coverID }
+    const start = { ...tracks[position], authors: book.authors, coverID: book.coverID, libraryId }
     const queue = tracks.slice(position + 1, tracks.length).map(q => ({
       ...q,
       authors: book.authors,
       coverID: book.coverID,
+      libraryId,
     }))
-    const history = tracks.slice(0, position).map(q => ({ ...q, authors: book.authors, coverID: book.coverID }))
+    const history = tracks
+      .slice(0, position)
+      .map(q => ({ ...q, authors: book.authors, coverID: book.coverID, libraryId }))
 
     play(start, queue, history)
   }

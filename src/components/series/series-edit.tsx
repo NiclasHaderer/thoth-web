@@ -29,7 +29,6 @@ const seriesToUpdate = (series: Series): SeriesUpdate => {
     providerID: series.providerID,
     title: series.title,
     totalBooks: series.totalBooks,
-    authors: undefined,
     books: undefined,
   }
 }
@@ -42,7 +41,7 @@ export const SeriesEdit: FC<{ series: Series }> = ({ series }) => {
     <GenericEdit
       form={form}
       onSubmit={async (values, closeModal) => {
-        const result = await updateSeries({ libraryId: series.library.id, id: series.id }, values)
+        const result = await updateSeries({ libraryId: series.libraryId, id: series.id }, values)
         if (result && !result.success) {
           toast.error(apiErrorMessage(result.error))
           return
@@ -53,7 +52,7 @@ export const SeriesEdit: FC<{ series: Series }> = ({ series }) => {
       InformationDisplay={() => <SeriesForm form={form} />}
       Search={({ onSelect }) => (
         <SeriesSearch
-          libraryId={series.library.id}
+          libraryId={series.libraryId}
           series={form.fields.title}
           authors={series.authors.map(a => a.name)}
           onSelect={seriesMeta => {

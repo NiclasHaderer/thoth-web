@@ -12,7 +12,7 @@ export const SeriesPreview = forwardRef<HTMLAnchorElement, SeriesPreviewProps>(
     return (
       <GenericPreview
         label={series.title}
-        libraryId={series.library.id}
+        libraryId={series.libraryId}
         id={series.id}
         size={size}
         imageId={series.coverID}
