@@ -1,7 +1,8 @@
 import { ChevronRightIcon } from "lucide-react"
 import { FC } from "react"
-import webLicenses from "@thoth/assets/third-party-licenses.json"
+import webLicensesUrl from "@thoth/assets/third-party-licenses.json?url"
 import { Api, ThirdPartyLicense } from "@thoth/client"
+import { _request } from "@thoth/client/generated/client"
 import { Badge } from "@thoth/components/ui/badge"
 import { useHttpRequest } from "@thoth/hooks/async-response"
 import { useOnMount } from "@thoth/hooks/lifecycle"
@@ -50,16 +51,25 @@ const LicenseList: FC<{ licenses: ThirdPartyLicense[] }> = ({ licenses }) => (
   </div>
 )
 
-const web: ThirdPartyLicense[] = webLicenses.map(pkg => ({
-  ...pkg,
-  licenseUrl: undefined,
-  repository: pkg.repository ?? undefined,
-  text: pkg.text ?? undefined,
-}))
+const fetchWebLicenses = () =>
+  _request<ThirdPartyLicense[]>(
+    webLicensesUrl,
+    "GET",
+    "json",
+    new Headers(),
+    undefined,
+    [],
+    data => fetch(data.route),
+    false
+  )
 
 export const SettingsLicensesOutlet = () => {
   const server = useHttpRequest(Api.listThirdPartyLicenses)
-  useOnMount(() => void server.invoke())
+  const web = useHttpRequest(fetchWebLicenses)
+  useOnMount(() => {
+    void server.invoke()
+    void web.invoke()
+  })
 
   return (
     <>
@@ -68,8 +78,14 @@ export const SettingsLicensesOutlet = () => {
         Thoth is built on open source software. Thank you to their authors.
       </p>
 
-      <h3 className="mb-3 text-lg">Web ({web.length})</h3>
-      <LicenseList licenses={web} />
+      <h3 className="mb-3 text-lg">Web{web.result ? ` (${web.result.length})` : ""}</h3>
+      {web.error ? (
+        <p className="text-muted-foreground text-sm">Could not load the web licenses.</p>
+      ) : web.result ? (
+        <LicenseList licenses={web.result} />
+      ) : (
+        <p className="text-muted-foreground text-sm">Loading...</p>
+      )}
 
       <h3 className="mt-8 mb-3 text-lg">Server{server.result ? ` (${server.result.length})` : ""}</h3>
       {server.error ? (
