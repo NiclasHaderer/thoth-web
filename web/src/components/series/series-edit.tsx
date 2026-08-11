@@ -12,10 +12,10 @@ import { SeriesSearch } from "./series-search"
 
 const mergeMetaIntoSeries = ({ ...series }: SeriesUpdate, seriesMetadata: MetadataSeries): SeriesUpdate => {
   series.description = seriesMetadata.description ?? series.description
-  series.title = seriesMetadata.description ?? series.title
+  series.title = seriesMetadata.title ?? series.title
   series.cover = seriesMetadata.coverURL ?? series.cover
   series.primaryWorks = seriesMetadata.primaryWorks ?? series.primaryWorks
-  series.provider = seriesMetadata.id.provider ?? series.providerID
+  series.provider = seriesMetadata.id.provider ?? series.provider
   series.providerID = seriesMetadata.id.itemID ?? series.providerID
   return series
 }
