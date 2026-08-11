@@ -120,7 +120,7 @@ const AuthorSearchResult: FC<{ authors: LibrarySearchResult["authors"]; onClose:
   <>
     {authors.map((author, i) => (
       <Link
-        href={`/libraries/${author.library.id}/authors/${author.id}`}
+        href={`/libraries/${author.libraryId}/authors/${author.id}`}
         onClick={onClose}
         key={i}
         aria-label={author.name}
@@ -148,7 +148,7 @@ const BookSearchResult: FC<{ books: LibrarySearchResult["books"]; onClose: () =>
   <>
     {books.map((book, i) => (
       <Link
-        href={`/libraries/${book.library.id}/books/${book.id}`}
+        href={`/libraries/${book.libraryId}/books/${book.id}`}
         onClick={onClose}
         key={i}
         aria-label={book.title}
@@ -179,7 +179,7 @@ const SeriesSearchResult: FC<{ series: LibrarySearchResult["series"]; onClose: (
   <>
     {series.map((series, i) => (
       <Link
-        href={`/libraries/${series.library.id}/series/${series.id}`}
+        href={`/libraries/${series.libraryId}/series/${series.id}`}
         onClick={onClose}
         key={i}
         aria-label={series.title}

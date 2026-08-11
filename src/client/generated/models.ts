@@ -131,6 +131,7 @@ export interface Author {
   deathDate: string | undefined
   id: UUID
   imageID: UUID | undefined
+  libraryId: UUID
   name: string
   provider: string | undefined
   providerID: string | undefined
@@ -155,6 +156,7 @@ export interface Book {
   id: UUID
   isbn: string | undefined
   language: string | undefined
+  libraryId: UUID
   narrator: string | undefined
   provider: string | undefined
   providerID: string | undefined
@@ -171,6 +173,7 @@ export interface Series {
   description: string | undefined
   genres: Array<string>
   id: UUID
+  libraryId: UUID
   primaryWorks: number | undefined
   provider: string | undefined
   providerID: string | undefined

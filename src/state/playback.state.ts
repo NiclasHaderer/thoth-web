@@ -1,7 +1,9 @@
 import { create } from "zustand"
-import { NamedId, Track } from "@thoth/client"
+import { NamedId, Track, UUID } from "@thoth/client"
 
-export type PlaybackTrack = Track & { authors: NamedId[] } & { coverID: string | null | undefined }
+export type PlaybackTrack = Track & { authors: NamedId[] } & { coverID: string | null | undefined } & {
+  libraryId: UUID
+}
 
 interface PlaybackState {
   isPlaying: boolean

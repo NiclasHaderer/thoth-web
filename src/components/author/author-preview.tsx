@@ -13,7 +13,7 @@ export const AuthorPreview = forwardRef<HTMLAnchorElement, AuthorProps>(
       <GenericPreview
         size={size}
         label={author.name}
-        libraryId={author.library.id}
+        libraryId={author.libraryId}
         id={author.id}
         imageId={author.imageID}
         ref={ref}
