@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react"
+import { useMemo, useRef, useState } from "react"
 import { ApiResponse } from "@thoth/client"
 
 type AsyncResponse<T, ARGS extends unknown[]> = (
@@ -27,17 +27,20 @@ export const useHttpRequest = <T, ARGS extends unknown[]>(
   const [loading, setLoading] = useState<boolean | null>(null)
   const [result, setResult] = useState<T | null>(null)
   const [error, setError] = useState<boolean | null>(null)
+  const latestCall = useRef(0)
 
   const invoke = useMemo(() => {
-    return ((...args: ARGS) => {
+    return (async (...args: ARGS) => {
+      latestCall.current += 1
+      const call = latestCall.current
       setLoading(true)
       setResult(null)
-      return apiCall(...args).then(result => {
-        setLoading(false)
-        setError(!result.success)
-        setResult(result.success ? result.body : null)
-        return result
-      })
+      const result = await apiCall(...args)
+      if (call !== latestCall.current) return result
+      setLoading(false)
+      setError(!result.success)
+      setResult(result.success ? result.body : null)
+      return result
     }) satisfies AsyncResponse<T, ARGS>[`invoke`]
   }, [apiCall])
 
