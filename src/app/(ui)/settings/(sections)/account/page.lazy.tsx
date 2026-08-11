@@ -12,7 +12,7 @@ export const SettingsAccountOutlet = () => {
   return (
     user && (
       <SettingsSection title="Account">
-        <div className="mx-auto flex w-full max-w-xl flex-col gap-4">
+        <div className="flex flex-col gap-4">
           <User user={user} />
         </div>
       </SettingsSection>

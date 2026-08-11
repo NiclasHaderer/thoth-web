@@ -147,81 +147,83 @@ export const User: FC<{ user: ThothUserWithPermissions<UserPermissions> }> = ({ 
         </div>
       </div>
 
-      <Form
-        form={usernameForm}
-        className="bg-card flex flex-col gap-2 rounded-xl p-4"
-        onSubmit={async values => {
-          const result = await Api.updateUsername({ id: user.id }, { username: values.username })
-          if (!result.success) {
-            toast.error(apiErrorMessage(result.error))
-            return
-          }
-          setUsername(values.username)
-          toast.success("Username updated")
-        }}
-      >
-        <h3 className="text-muted-foreground text-sm font-medium">Username</h3>
-        <ManagedInput name="username" leftIcon={<IdCardIcon />} placeholder="Username" />
-        <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-          <Button onPress={() => usernameForm.restoreInitial()} variant="secondary" className="w-full sm:w-auto">
-            Cancel
-          </Button>
-          <Button type="submit" className="w-full sm:w-auto">
-            Save
-          </Button>
-        </div>
-      </Form>
+      <div className="grid gap-4 lg:grid-cols-2">
+        <Form
+          form={usernameForm}
+          className="bg-card flex flex-col gap-2 rounded-xl p-4"
+          onSubmit={async values => {
+            const result = await Api.updateUsername({ id: user.id }, { username: values.username })
+            if (!result.success) {
+              toast.error(apiErrorMessage(result.error))
+              return
+            }
+            setUsername(values.username)
+            toast.success("Username updated")
+          }}
+        >
+          <h3 className="text-muted-foreground text-sm font-medium">Username</h3>
+          <ManagedInput name="username" leftIcon={<IdCardIcon />} placeholder="Username" />
+          <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+            <Button onPress={() => usernameForm.restoreInitial()} variant="secondary" className="w-full sm:w-auto">
+              Cancel
+            </Button>
+            <Button type="submit" className="w-full sm:w-auto">
+              Save
+            </Button>
+          </div>
+        </Form>
 
-      <Form
-        form={passwordForm}
-        className="bg-card flex flex-col gap-2 rounded-xl p-4"
-        onSubmit={async values => {
-          const result = await Api.updatePassword(
-            { id: user.id },
-            { currentPassword: values.currentPassword, newPassword: values.newPassword }
-          )
-          if (!result.success) {
-            toast.error(apiErrorMessage(result.error))
-            return
-          }
-          passwordForm.restoreInitial()
-          toast.success("Password updated")
-        }}
-      >
-        <h3 className="text-muted-foreground text-sm font-medium">Password</h3>
-        <ManagedInput
-          name="currentPassword"
-          type={passwordVisible ? "text" : "password"}
-          leftIcon={<LockIcon />}
-          placeholder="Current password"
-          autoComplete="current-password"
-          rightIcon={passwordToggle}
-        />
-        <ManagedInput
-          name="newPassword"
-          type={passwordVisible ? "text" : "password"}
-          leftIcon={<LockIcon />}
-          placeholder="New password"
-          autoComplete="new-password"
-          rightIcon={passwordToggle}
-        />
-        <ManagedInput
-          name="confirmPassword"
-          type={passwordVisible ? "text" : "password"}
-          leftIcon={<LockIcon />}
-          placeholder="Confirm new password"
-          autoComplete="new-password"
-          rightIcon={passwordToggle}
-        />
-        <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-          <Button onPress={() => passwordForm.restoreInitial()} variant="secondary" className="w-full sm:w-auto">
-            Cancel
-          </Button>
-          <Button type="submit" className="w-full sm:w-auto">
-            Update password
-          </Button>
-        </div>
-      </Form>
+        <Form
+          form={passwordForm}
+          className="bg-card flex flex-col gap-2 rounded-xl p-4"
+          onSubmit={async values => {
+            const result = await Api.updatePassword(
+              { id: user.id },
+              { currentPassword: values.currentPassword, newPassword: values.newPassword }
+            )
+            if (!result.success) {
+              toast.error(apiErrorMessage(result.error))
+              return
+            }
+            passwordForm.restoreInitial()
+            toast.success("Password updated")
+          }}
+        >
+          <h3 className="text-muted-foreground text-sm font-medium">Password</h3>
+          <ManagedInput
+            name="currentPassword"
+            type={passwordVisible ? "text" : "password"}
+            leftIcon={<LockIcon />}
+            placeholder="Current password"
+            autoComplete="current-password"
+            rightIcon={passwordToggle}
+          />
+          <ManagedInput
+            name="newPassword"
+            type={passwordVisible ? "text" : "password"}
+            leftIcon={<LockIcon />}
+            placeholder="New password"
+            autoComplete="new-password"
+            rightIcon={passwordToggle}
+          />
+          <ManagedInput
+            name="confirmPassword"
+            type={passwordVisible ? "text" : "password"}
+            leftIcon={<LockIcon />}
+            placeholder="Confirm new password"
+            autoComplete="new-password"
+            rightIcon={passwordToggle}
+          />
+          <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+            <Button onPress={() => passwordForm.restoreInitial()} variant="secondary" className="w-full sm:w-auto">
+              Cancel
+            </Button>
+            <Button type="submit" className="w-full sm:w-auto">
+              Update password
+            </Button>
+          </div>
+        </Form>
+      </div>
 
       <div className="border-destructive/30 flex flex-col gap-3 rounded-xl border p-4">
         <div className="flex flex-col gap-0.5">
