@@ -91,9 +91,8 @@ export const SettingsLayout: FC<{ children: ReactNode }> = ({ children }) => {
 
   return (
     <SidebarProvider className="h-full min-h-0!">
-      {/* On mobile the sections live in the top-bar account menu instead. */}
       {isMobile ? null : <SettingsSidebar navItems={navItems} />}
-      <main className="min-w-0 grow overflow-y-auto p-4 sm:p-8">{children}</main>
+      <main className="flex min-w-0 grow flex-col overflow-y-auto p-4 sm:p-8">{children}</main>
     </SidebarProvider>
   )
 }
