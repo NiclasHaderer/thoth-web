@@ -1,5 +1,6 @@
 import { useEffect } from "react"
 import { User } from "@thoth/components/account/account"
+import { SettingsSection } from "@thoth/components/settings/settings-section"
 import { useAuthState } from "@thoth/state/auth.state"
 import { useCurrentUserState } from "@thoth/state/current-user.state"
 
@@ -10,12 +11,11 @@ export const SettingsAccountOutlet = () => {
   useEffect(() => void fetchCurrentUser(true), [jwt, fetchCurrentUser])
   return (
     user && (
-      <>
-        <h2 className="mb-4 text-xl">Account</h2>
+      <SettingsSection title="Account">
         <div className="mx-auto flex w-full max-w-xl flex-col gap-4">
           <User user={user} />
         </div>
-      </>
+      </SettingsSection>
     )
   )
 }

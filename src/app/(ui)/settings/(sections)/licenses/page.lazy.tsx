@@ -3,6 +3,7 @@ import { FC } from "react"
 import webLicensesUrl from "@thoth/assets/third-party-licenses.json?url"
 import { Api, ThirdPartyLicense } from "@thoth/client"
 import { _request } from "@thoth/client/generated/client"
+import { SettingsSection } from "@thoth/components/settings/settings-section"
 import { Badge } from "@thoth/components/ui/badge"
 import { useHttpRequest } from "@thoth/hooks/async-response"
 import { useOnMount } from "@thoth/hooks/lifecycle"
@@ -72,12 +73,10 @@ export const SettingsLicensesOutlet = () => {
   })
 
   return (
-    <>
-      <h2 className="mb-1 text-xl">Open source licenses</h2>
-      <p className="text-muted-foreground mb-6 text-sm">
-        Thoth is built on open source software. Thank you to their authors.
-      </p>
-
+    <SettingsSection
+      title="Open source licenses"
+      description="Thoth is built on open source software. Thank you to their authors."
+    >
       <h3 className="mb-3 text-lg">Web{web.result ? ` (${web.result.length})` : ""}</h3>
       {web.error ? (
         <p className="text-muted-foreground text-sm">Could not load the web licenses.</p>
@@ -95,6 +94,6 @@ export const SettingsLicensesOutlet = () => {
       ) : (
         <p className="text-muted-foreground text-sm">Loading...</p>
       )}
-    </>
+    </SettingsSection>
   )
 }
