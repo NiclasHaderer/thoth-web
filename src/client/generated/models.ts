@@ -37,11 +37,11 @@ export interface ThothJWKs {
   keys: Array<JWK>
 }
 
-export type UpdatePermissions = "READONLY" | "READ_WRITE"
+export type LibraryPermissionLevel = "READONLY" | "READ_WRITE"
 
 export interface UpdateLibraryPermissions {
   id: UUID
-  permissions: UpdatePermissions
+  permissions: LibraryPermissionLevel
 }
 
 export interface UpdateUserPermissions {
@@ -56,7 +56,7 @@ export interface ThothModifyPermissions<PERMISSIONS> {
 export interface LibraryPermissions {
   id: UUID
   name: string
-  permissions: UpdatePermissions
+  permissions: LibraryPermissionLevel
 }
 
 export interface UserPermissions {
@@ -102,7 +102,6 @@ export interface Library {
   metadataAgents: Array<NamedMetadataAgent>
   name: string
   preferEmbeddedMetadata: boolean
-  scanIndex: number
 }
 
 export interface UpdateLibrary {
@@ -125,11 +124,6 @@ export interface PartialUpdateLibrary {
   preferEmbeddedMetadata: boolean | undefined
 }
 
-export interface NamedId {
-  id: UUID
-  name: string
-}
-
 export interface Author {
   biography: string | undefined
   birthDate: string | undefined
@@ -137,11 +131,15 @@ export interface Author {
   deathDate: string | undefined
   id: UUID
   imageID: UUID | undefined
-  library: NamedId
   name: string
   provider: string | undefined
   providerID: string | undefined
   website: string | undefined
+}
+
+export interface NamedId {
+  id: UUID
+  name: string
 }
 
 export interface TitledId {
@@ -153,11 +151,10 @@ export interface Book {
   authors: Array<NamedId>
   coverID: UUID | undefined
   description: string | undefined
-  genres: Array<NamedId>
+  genres: Array<string>
   id: UUID
   isbn: string | undefined
   language: string | undefined
-  library: NamedId
   narrator: string | undefined
   provider: string | undefined
   providerID: string | undefined
@@ -172,9 +169,8 @@ export interface Series {
   authors: Array<NamedId>
   coverID: UUID | undefined
   description: string | undefined
-  genres: Array<NamedId>
+  genres: Array<string>
   id: UUID
-  library: NamedId
   primaryWorks: number | undefined
   provider: string | undefined
   providerID: string | undefined
@@ -209,15 +205,12 @@ export interface Position {
 }
 
 export interface Track {
-  accessTime: number
   book: TitledId
   duration: number
+  fileModifiedAt: number
   id: UUID
-  library: NamedId
-  path: string
   title: string
   trackNr: number | undefined
-  updateTime: string
 }
 
 export interface BookDetailed extends Book {
@@ -252,7 +245,6 @@ export interface SeriesDetailed extends Series {
 }
 
 export interface SeriesUpdate {
-  authors: Array<UUID> | undefined
   books: Array<UUID> | undefined
   cover: string | undefined
   description: string | undefined
