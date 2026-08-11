@@ -1,4 +1,8 @@
 import { useCallback, useEffect, useState, useSyncExternalStore } from "react"
+import { toast } from "sonner"
+import { Api, UUID } from "@thoth/client"
+import { usePlaybackState } from "@thoth/state/playback.state"
+import { apiErrorMessage } from "@thoth/utils/utils"
 
 export const useAudio = (
   url: string | undefined | null,
@@ -111,4 +115,26 @@ export const useOnEnded = (audio: HTMLAudioElement | undefined | null, callback:
       audio.removeEventListener("ended", ended)
     }
   }, [audio, callback])
+}
+
+export const usePlayBook = () => {
+  const play = usePlaybackState(s => s.start)
+
+  return async (libraryId: UUID, bookId: UUID) => {
+    const response = await Api.getBook({ libraryId, id: bookId })
+    if (!response.success) {
+      toast.error(apiErrorMessage(response.error))
+      return
+    }
+
+    const book = response.body
+    const [first, ...queue] = book.tracks.map(track => ({
+      ...track,
+      authors: book.authors,
+      coverID: book.coverID,
+      libraryId,
+    }))
+    if (!first) return
+    play(first, queue)
+  }
 }
