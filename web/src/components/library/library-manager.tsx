@@ -62,23 +62,12 @@ export const LibraryManager = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const columns = useMemo(() => libraryColumns({ onEdit: openEdit }), [])
 
-  // TEMP: mock 100 libraries to preview the table/pagination layout.
-  const mockLibraries = useMemo<Library[]>(() => {
-    const real = libraries ?? []
-    if (real.length === 0) return real
-    return Array.from({ length: 100 }, (_, i) => ({
-      ...real[i % real.length],
-      id: `mock-${i}` as UUID,
-      name: `${real[i % real.length].name} ${i}`,
-    }))
-  }, [libraries])
-
   return (
     <>
-      <div className="mt-4">
+      <div className="mt-4 flex min-h-0 flex-1 flex-col">
         <DataTable
           columns={columns}
-          data={mockLibraries}
+          data={libraries ?? []}
           onRowClick={openEdit}
           emptyState="No library yet"
           toolbar={table => (

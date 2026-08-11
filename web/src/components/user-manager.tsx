@@ -78,7 +78,7 @@ export const UserManager = () => {
 
   return (
     <>
-      <div className="mt-4">
+      <div className="mt-4 flex min-h-0 flex-1 flex-col">
         <DataTable
           columns={columns}
           data={users ?? []}
