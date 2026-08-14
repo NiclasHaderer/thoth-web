@@ -1,25 +1,26 @@
 import { FC, useRef, useState } from "react"
 import { Order, UUID } from "@thoth/client"
+import { BookPreview } from "@thoth/components/book/book-preview.tsx"
 import { ClearIfNotVisible } from "@thoth/components/clear-if-not-visible.tsx"
 import { ResourceListHeader } from "@thoth/components/resource-list-header"
 import { ResponsiveGrid } from "@thoth/components/responsive-grid"
-import { SeriesPreview } from "@thoth/components/series/series-preview.tsx"
 import { useInfinityScroll } from "@thoth/hooks/infinity-scroll"
 import { useScrollTo } from "@thoth/hooks/scroll-to-top"
 import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
 import { useAudiobookState } from "@thoth/state/audiobook.state"
+import { pluralize } from "@thoth/utils/utils"
 
-const SeriesGrid: FC<{ libraryId: UUID; order: Order }> = ({ libraryId, order }) => {
-  const getSeries = useAudiobookState(s => s.fetchSeries)
+const BookGrid: FC<{ libraryId: UUID; order: Order }> = ({ libraryId, order }) => {
+  const getBooks = useAudiobookState(s => s.fetchBooks)
   const loading = useRef<HTMLDivElement>(null)
   useScrollTo("main")
-  useInfinityScroll(loading, offset => getSeries({ libraryId, offset, order }))
-  const series = useAudiobookState(AudiobookSelectors.selectSeriesList(libraryId))
+  useInfinityScroll(loading, offset => getBooks({ libraryId, offset, order }))
+  const books = useAudiobookState(AudiobookSelectors.selectBooks(libraryId))
 
   return (
     <ResponsiveGrid>
-      {series.map((series, k) => (
-        <ClearIfNotVisible key={k} component={SeriesPreview} childProps={series} />
+      {books.map((book, k) => (
+        <ClearIfNotVisible key={k} component={BookPreview} childProps={book} />
       ))}
       <div className="col-span-full text-center opacity-0" ref={loading}>
         Loading ...
@@ -28,22 +29,23 @@ const SeriesGrid: FC<{ libraryId: UUID; order: Order }> = ({ libraryId, order })
   )
 }
 
-export const SeriesListOutlet = ({ libraryId }: { libraryId: UUID }) => {
+export const BookListOutlet = ({ libraryId }: { libraryId: UUID }) => {
   const [order, setOrder] = useState<Order>("ASC")
-  const clearSeries = useAudiobookState(s => s.clearSeries)
-  const seriesCount = useAudiobookState(AudiobookSelectors.selectSeriesCount(libraryId))
+  const clearBooks = useAudiobookState(s => s.clearBook)
+  const bookCount = useAudiobookState(AudiobookSelectors.selectBookCount(libraryId))
 
   return (
     <>
       <ResourceListHeader
-        title={`${seriesCount} Series`}
+        title="Books"
+        subtitle={pluralize(bookCount, "book")}
         order={order}
         onOrderChange={next => {
-          clearSeries(libraryId)
+          clearBooks(libraryId)
           setOrder(next)
         }}
       />
-      <SeriesGrid key={order} libraryId={libraryId} order={order} />
+      <BookGrid key={order} libraryId={libraryId} order={order} />
     </>
   )
 }

@@ -39,7 +39,7 @@ export const ScrollRow: FC<PropsWithChildren<{ title: string; href: string }>> =
 
   return (
     <>
-      <div className="mt-8 mb-2 flex items-center gap-1">
+      <div className="mt-8 mb-2 flex items-center gap-1 first:mt-0">
         <Link
           className="block w-fit text-xl font-bold decoration-1 hover:underline focus-visible:underline focus-visible:outline-none"
           href={href}

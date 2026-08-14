@@ -29,7 +29,7 @@ import { useOnMount } from "@thoth/hooks/lifecycle.ts"
 import { useAudiobookState } from "@thoth/state/audiobook.state.ts"
 import { useAuthState } from "@thoth/state/auth.state"
 import { useCurrentUserState } from "@thoth/state/current-user.state"
-import { apiErrorMessage } from "@thoth/utils/utils.ts"
+import { apiErrorMessage, pluralize } from "@thoth/utils/utils.ts"
 
 export const User: FC<{ user: ThothUserWithPermissions<UserPermissions> }> = ({ user }) => {
   const fetchLibraries = useAudiobookState(s => s.fetchLibraries)
@@ -115,7 +115,7 @@ export const User: FC<{ user: ThothUserWithPermissions<UserPermissions> }> = ({ 
             <p className="text-muted-foreground text-sm">
               {libraries.length === 0
                 ? "No library access"
-                : `Access to ${libraries.length} librar${libraries.length === 1 ? "y" : "ies"}`}
+                : `Access to ${pluralize(libraries.length, "library", "libraries")}`}
             </p>
           </div>
         </div>

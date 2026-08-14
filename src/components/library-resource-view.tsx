@@ -1,34 +1,34 @@
-import { FC, PropsWithChildren } from "react"
+import { FC, PropsWithChildren, useEffect } from "react"
 import { UUID } from "@thoth/client"
-import { BottomResourceMenu } from "@thoth/components/menu/bottom-menu"
 import { LeftResourceMenu } from "@thoth/components/menu/left-menu"
-import { Playback } from "@thoth/components/playback.tsx"
-import { CHANGE_LAYOUT, useBreakpoint } from "@thoth/hooks/breakpoints"
-import { usePlaybackState } from "@thoth/state/playback.state.ts"
+import { useAudiobookState } from "@thoth/state/audiobook.state"
 
 interface LibraryResourceViewProps extends PropsWithChildren {
   libraryId: UUID
 }
 
 export const LibraryResourceView: FC<LibraryResourceViewProps> = ({ children, libraryId }) => {
-  const breakPoint = useBreakpoint()
-  const isMD = breakPoint.matchDown(CHANGE_LAYOUT)
+  const fetchLibraries = useAudiobookState(s => s.fetchLibraries)
+  const fetchBooks = useAudiobookState(s => s.fetchBooks)
+  const fetchSeries = useAudiobookState(s => s.fetchSeries)
+  const fetchAuthors = useAudiobookState(s => s.fetchAuthors)
 
-  const isPlaying = usePlaybackState(state => state.isPlaying)
+  useEffect(() => {
+    void fetchLibraries()
+    void fetchBooks({ libraryId, offset: 0 })
+    void fetchSeries({ libraryId, offset: 0 })
+    void fetchAuthors({ libraryId, offset: 0 })
+  }, [libraryId, fetchLibraries, fetchBooks, fetchSeries, fetchAuthors])
 
   return (
-    <>
-      <div className={`grow overflow-y-auto ${isMD ? "" : "flex"}`}>
-        {isMD ? null : <LeftResourceMenu libraryId={libraryId} />}
-        <main tabIndex={-1} className={`grow overflow-x-hidden overflow-y-auto px-5 ${isMD ? "mt-4" : "mt-10"}`}>
-          {children}
-        </main>
-      </div>
-
-      {isMD ? <BottomResourceMenu libraryId={libraryId} /> : null}
-      {isPlaying ? (
-        <Playback className={isMD ? "border-primary border-opacity-25 border-b-2 border-solid" : ""} />
-      ) : null}
-    </>
+    <div className="flex min-h-0 grow overflow-hidden">
+      <LeftResourceMenu libraryId={libraryId} className="hidden md:flex" />
+      <main
+        tabIndex={-1}
+        className="min-w-0 grow overflow-x-hidden overflow-y-auto px-5 pb-[calc(var(--dock-height,3.5rem)+env(safe-area-inset-bottom))] md:mt-10 md:pb-0"
+      >
+        {children}
+      </main>
+    </div>
   )
 }

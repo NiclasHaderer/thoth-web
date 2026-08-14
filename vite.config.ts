@@ -14,7 +14,7 @@ export default defineConfig({
   },
   plugins: [buildRoutesPlugin(), tailwindcss(), react()],
   server: {
-    host: "0.0.0.0",
+    //    host: "0.0.0.0",
     proxy: {
       "/api": "http://localhost:8080",
     },
