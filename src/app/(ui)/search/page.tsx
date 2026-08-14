@@ -3,7 +3,7 @@ import { Link } from "wouter"
 import { Logo } from "@thoth/components/icons/logo"
 import { Input } from "@thoth/components/input/input"
 import { SearchResults } from "@thoth/components/menu/search-results"
-import { useLibrarySearch } from "@thoth/hooks/library-search"
+import { useLibrarySearch } from "@thoth/queries/library-search"
 
 // TODO: add recent searches
 export const SearchOutlet = () => {

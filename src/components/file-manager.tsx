@@ -1,6 +1,7 @@
+import { useQuery } from "@tanstack/react-query"
 import { PlusIcon, CheckIcon, XIcon, FolderIcon } from "lucide-react"
-import { FC, useEffect, useState } from "react"
-import { Api } from "@thoth/client"
+import { FC, useState } from "react"
+import { Api, unwrap } from "@thoth/client"
 import { InputError } from "@thoth/components/input/input-error"
 import {
   Breadcrumb,
@@ -13,7 +14,7 @@ import {
 import { Button } from "@thoth/components/ui/button"
 import { ButtonGroup } from "@thoth/components/ui/button-group"
 import { DropdownMenu, DropdownMenuItem, DropdownMenuTrigger } from "@thoth/components/ui/dropdown-menu"
-import { useHttpRequest } from "@thoth/hooks/async-response"
+import { queryKeys } from "@thoth/queries/keys"
 
 export const FolderManager: FC<{
   onSelectFolder?: (path: string) => void
@@ -24,9 +25,10 @@ export const FolderManager: FC<{
   selectedFolders?: string[]
 }> = ({ onSelectFolder, onRemoveFolder, contentClassName, className, errors, selectedFolders }) => {
   const [currentPath, setCurrentPath] = useState("/")
-  const folders = useHttpRequest(Api.listFoldersAtACertainPath)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => void folders.invoke({ path: currentPath }), [currentPath])
+  const { data: folders } = useQuery({
+    queryKey: queryKeys.folders(currentPath),
+    queryFn: () => unwrap(Api.listFoldersAtACertainPath({ path: currentPath })),
+  })
 
   const selected = new Set(selectedFolders ?? [])
 
@@ -79,8 +81,8 @@ export const FolderManager: FC<{
         </BreadcrumbList>
       </Breadcrumb>
       <div tabIndex={-1} className={`flex flex-col py-1 pr-2 pl-1 ${contentClassName ?? ""}`}>
-        {folders.result?.length === 0 && <div className="p-2 text-sm opacity-60">No subfolders</div>}
-        {folders.result?.map(folder => {
+        {folders?.length === 0 && <div className="p-2 text-sm opacity-60">No subfolders</div>}
+        {folders?.map(folder => {
           const added = selected.has(folder.path)
           return (
             <ButtonGroup key={folder.path} className="w-full">

@@ -1,19 +1,16 @@
-import { AudiobookSelectors } from "@/state/audiobook.selectors"
-import { useAudiobookState } from "@/state/audiobook.state"
 import { UserIcon } from "lucide-react"
-import { FC, useEffect } from "react"
+import { FC } from "react"
 import { UUID } from "@thoth/client"
 import { BookPreview } from "@thoth/components/book/book-preview.tsx"
 import { HtmlViewer } from "@thoth/components/html-editor"
 import { ResponsiveGrid } from "@thoth/components/responsive-grid"
 import { isDetailedAuthor } from "@thoth/models/typeguards"
+import { useAuthor } from "@thoth/queries/resources"
 import { formatDate, pluralize } from "../../utils/utils"
 import AuthorEdit from "./author-edit"
 
 export const AuthorDetails: FC<{ authorId: UUID; libraryId: UUID }> = ({ authorId, libraryId }) => {
-  const author = useAudiobookState(AudiobookSelectors.selectAuthor(libraryId, authorId))
-  const getAuthorDetails = useAudiobookState(s => s.fetchAuthorDetails)
-  useEffect(() => void getAuthorDetails({ libraryId, id: authorId }), [authorId, libraryId, getAuthorDetails])
+  const { data: author } = useAuthor(libraryId, authorId)
   if (!author) return <></>
 
   return (

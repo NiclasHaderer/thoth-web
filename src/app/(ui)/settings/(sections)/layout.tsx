@@ -3,15 +3,11 @@ import { FC, ReactNode, useEffect } from "react"
 import { useLocation } from "wouter"
 import { accountItem, adminItems, adminPaths, licensesItem } from "@thoth/components/menu/settings-nav"
 import { SideMenu } from "@thoth/components/menu/side-menu"
-import { useOnMount } from "@thoth/hooks/lifecycle"
-import { useCurrentUserState } from "@thoth/state/current-user.state"
+import { useCurrentUser } from "@thoth/queries/current-user"
 
 export const SettingsLayout: FC<{ children: ReactNode }> = ({ children }) => {
-  const user = useCurrentUserState(s => s.user)
-  const fetchCurrentUser = useCurrentUserState(s => s.fetchCurrentUser)
+  const { data: user } = useCurrentUser()
   const [pathname, navigate] = useLocation()
-
-  useOnMount(() => void fetchCurrentUser())
 
   const isAdmin = user?.permissions.isAdmin ?? false
 

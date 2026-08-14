@@ -5,10 +5,10 @@ import { Logo } from "@thoth/components/icons/logo"
 import { LibraryPicker } from "@thoth/components/menu/library-picker"
 import { ResourceChips } from "@thoth/components/menu/resource-chips"
 import { cn } from "@thoth/lib/utils"
-import { useAudiobookState } from "@thoth/state/audiobook.state"
+import { useLibrary } from "@thoth/queries/libraries"
 
 export const LibraryScreenHeader: FC<{ libraryId: UUID; className?: string }> = ({ libraryId, className }) => {
-  const library = useAudiobookState(state => state.libraryMap[libraryId])
+  const library = useLibrary(libraryId)
 
   return (
     <div className={cn("bg-background/75 sticky top-0 z-10 -mx-5 px-5 pt-4 pb-4 backdrop-blur-xl", className)}>

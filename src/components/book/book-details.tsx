@@ -1,24 +1,20 @@
 import { CircleCheckIcon, CirclePlayIcon, CircleIcon, ImageOffIcon } from "lucide-react"
-import { FC, useEffect } from "react"
+import { FC } from "react"
 import { Link } from "wouter"
 import { BookDetailed, UUID } from "@thoth/client"
 import { HtmlViewer } from "@thoth/components/html-editor"
 import { Button } from "@thoth/components/ui/button"
 import { isDetailedBook } from "@thoth/models/typeguards"
-import { AudiobookSelectors } from "../../state/audiobook.selectors"
-import { useAudiobookState } from "../../state/audiobook.state"
+import { useBook } from "@thoth/queries/resources"
 import { usePlaybackState } from "../../state/playback.state"
 import { pluralize } from "../../utils/utils"
 import { Track } from "../track/track"
 import { BookEdit } from "./book-edit"
 
 export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId, libraryId }) => {
-  const getBookWithTracks = useAudiobookState(s => s.fetchBookDetails)
   const play = usePlaybackState(state => state.start)
+  const { data: book } = useBook(libraryId, bookId)
 
-  const book = useAudiobookState(AudiobookSelectors.selectBook(libraryId, bookId))
-
-  useEffect(() => void getBookWithTracks({ libraryId, id: bookId }), [bookId, libraryId, getBookWithTracks])
   if (!book) return <></>
 
   const startPlayback = (position: number) => {
