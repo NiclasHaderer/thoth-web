@@ -77,7 +77,7 @@ export const SettingsLicensesOutlet = () => {
       title="Open source licenses"
       description="Thoth is built on open source software. Thank you to their authors."
     >
-      <h3 className="mb-3 text-lg">Web{web.result ? ` (${web.result.length})` : ""}</h3>
+      <h3 className="mb-3 text-lg">Web ({web.result?.length ?? 0})</h3>
       {web.error ? (
         <p className="text-muted-foreground text-sm">Could not load the web licenses.</p>
       ) : web.result ? (
@@ -86,7 +86,7 @@ export const SettingsLicensesOutlet = () => {
         <p className="text-muted-foreground text-sm">Loading...</p>
       )}
 
-      <h3 className="mt-8 mb-3 text-lg">Server{server.result ? ` (${server.result.length})` : ""}</h3>
+      <h3 className="mt-8 mb-3 text-lg">Server ({server.result?.length ?? 0})</h3>
       {server.error ? (
         <p className="text-muted-foreground text-sm">Could not load the server licenses.</p>
       ) : server.result ? (

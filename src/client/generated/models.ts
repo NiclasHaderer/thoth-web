@@ -157,7 +157,7 @@ export interface Book {
   isbn: string | undefined
   language: string | undefined
   libraryId: UUID
-  narrator: string | undefined
+  narrators: Array<string>
   provider: string | undefined
   providerID: string | undefined
   providerRating: number | undefined
@@ -226,7 +226,7 @@ export interface BookUpdate {
   description: string | undefined
   isbn: string | undefined
   language: string | undefined
-  narrator: string | undefined
+  narrators: Array<string> | undefined
   provider: string | undefined
   providerID: string | undefined
   providerRating: number | undefined
@@ -275,6 +275,26 @@ export interface AuthorUpdate {
   website: string | undefined
 }
 
+export interface Narrator {
+  bookCount: number
+  name: string
+}
+
+export interface NarratorDetailed {
+  books: Array<Book>
+  name: string
+}
+
+export interface Genre {
+  bookCount: number
+  name: string
+}
+
+export interface GenreDetailed {
+  books: Array<Book>
+  name: string
+}
+
 export interface MetadataAgentID {
   itemID: string
   provider: string
@@ -299,7 +319,7 @@ export interface MetadataSearchBook {
   id: MetadataAgentID
   language: string | undefined
   link: string | undefined
-  narrator: string | undefined
+  narrators: Array<string>
   releaseDate: string | undefined
   series: Array<MetadataBookSeries>
   title: string | undefined

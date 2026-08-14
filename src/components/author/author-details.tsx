@@ -1,3 +1,5 @@
+import { AudiobookSelectors } from "@/state/audiobook.selectors"
+import { useAudiobookState } from "@/state/audiobook.state"
 import { UserIcon } from "lucide-react"
 import { FC, useEffect } from "react"
 import { UUID } from "@thoth/client"
@@ -5,9 +7,7 @@ import { BookPreview } from "@thoth/components/book/book-preview.tsx"
 import { HtmlViewer } from "@thoth/components/html-editor"
 import { ResponsiveGrid } from "@thoth/components/responsive-grid"
 import { isDetailedAuthor } from "@thoth/models/typeguards"
-import { AudiobookSelectors } from "../../state/audiobook.selectors"
-import { useAudiobookState } from "../../state/audiobook.state"
-import { formatDate } from "../../utils/utils"
+import { formatDate, pluralize } from "../../utils/utils"
 import AuthorEdit from "./author-edit"
 
 export const AuthorDetails: FC<{ authorId: UUID; libraryId: UUID }> = ({ authorId, libraryId }) => {
@@ -70,7 +70,7 @@ export const AuthorDetails: FC<{ authorId: UUID; libraryId: UUID }> = ({ authorI
 
       {isDetailedAuthor(author) ? (
         <>
-          <h2 className="p-2 pb-6 text-2xl"> {author.books.length} Books</h2>
+          <h2 className="p-2 pb-6 text-2xl">{pluralize(author.books.length, "Book")}</h2>
           <ResponsiveGrid>
             {author.books.map((book, k) => (
               <BookPreview {...book} key={k} />

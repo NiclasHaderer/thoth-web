@@ -8,6 +8,7 @@ import { isDetailedBook } from "@thoth/models/typeguards"
 import { AudiobookSelectors } from "../../state/audiobook.selectors"
 import { useAudiobookState } from "../../state/audiobook.state"
 import { usePlaybackState } from "../../state/playback.state"
+import { pluralize } from "../../utils/utils"
 import { Track } from "../track/track"
 import { BookEdit } from "./book-edit"
 
@@ -43,7 +44,7 @@ export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId, lib
         <div className="flex flex-col justify-around">
           {book.coverID ? (
             <img
-              className="border-border h-40 w-40 rounded-md border-2 object-contain md:h-80 md:w-80"
+              className="border-border w-40 rounded-md border-2 md:w-80"
               alt={book.title}
               src={`/api/stream/images/${book.coverID}`}
             />
@@ -68,10 +69,36 @@ export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId, lib
                 </Link>
               ))}
             </div>
-            {book.narrator ? (
+            {book.narrators.length > 0 ? (
               <div className="flex pb-3">
-                <h3 className="text-foreground min-w-40 pr-3 uppercase">Narrator</h3>
-                <h3>{book.narrator}</h3>
+                <h3 className="text-foreground min-w-40 pr-3 uppercase">Narrators</h3>
+                <h3 className="flex flex-wrap gap-x-2">
+                  {book.narrators.map(narrator => (
+                    <Link
+                      href={`/libraries/${libraryId}/narrators/${encodeURIComponent(narrator)}`}
+                      key={narrator}
+                      className="hover:underline focus:underline"
+                    >
+                      {narrator}
+                    </Link>
+                  ))}
+                </h3>
+              </div>
+            ) : null}
+            {book.genres.length > 0 ? (
+              <div className="flex pb-3">
+                <h3 className="text-foreground min-w-40 pr-3 uppercase">Genres</h3>
+                <h3 className="flex flex-wrap gap-x-2">
+                  {book.genres.map(genre => (
+                    <Link
+                      href={`/libraries/${libraryId}/genres/${encodeURIComponent(genre)}`}
+                      key={genre}
+                      className="hover:underline focus:underline"
+                    >
+                      {genre}
+                    </Link>
+                  ))}
+                </h3>
               </div>
             ) : null}
             {book.series ? (
@@ -117,7 +144,7 @@ export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId, lib
       <div>
         {isDetailedBook(book) ? (
           <>
-            <h3 className="p-2 pb-6 text-xl">{book.tracks.length} Tracks</h3>
+            <h3 className="p-2 pb-6 text-xl">{pluralize(book.tracks.length, "Track")}</h3>
             {book.tracks.map((track, k) => (
               <Track
                 authors={book.authors}

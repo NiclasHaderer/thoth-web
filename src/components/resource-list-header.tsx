@@ -3,13 +3,17 @@ import { FC } from "react"
 import { Order } from "@thoth/client"
 import { Button } from "@thoth/components/ui/button"
 
-export const ResourceListHeader: FC<{ title: string; order: Order; onOrderChange: (order: Order) => void }> = ({
-  title,
-  order,
-  onOrderChange,
-}) => (
-  <div className="mb-4 flex items-center justify-between gap-3">
-    <h2 className="text-2xl">{title}</h2>
+export const ResourceListHeader: FC<{
+  title: string
+  subtitle?: string
+  order: Order
+  onOrderChange: (order: Order) => void
+}> = ({ title, subtitle, order, onOrderChange }) => (
+  <div className="mb-4 flex items-end justify-between gap-3">
+    <div className="min-w-0">
+      <h2 className="hidden truncate text-2xl font-bold md:block">{title}</h2>
+      {subtitle ? <p className="text-muted-foreground text-xs md:text-sm">{subtitle}</p> : null}
+    </div>
     <Button
       variant="ghost"
       size="sm"

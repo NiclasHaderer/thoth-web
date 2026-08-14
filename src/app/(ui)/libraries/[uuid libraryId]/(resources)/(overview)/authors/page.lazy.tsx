@@ -8,6 +8,7 @@ import { useInfinityScroll } from "@thoth/hooks/infinity-scroll"
 import { useScrollTo } from "@thoth/hooks/scroll-to-top"
 import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
 import { useAudiobookState } from "@thoth/state/audiobook.state"
+import { pluralize } from "@thoth/utils/utils"
 
 const AuthorGrid: FC<{ libraryId: UUID; order: Order }> = ({ libraryId, order }) => {
   const getAuthors = useAudiobookState(s => s.fetchAuthors)
@@ -36,7 +37,8 @@ export const AuthorListOutlet = ({ libraryId }: { libraryId: UUID }) => {
   return (
     <>
       <ResourceListHeader
-        title={`${authorCount} Authors`}
+        title="Authors"
+        subtitle={pluralize(authorCount, "author")}
         order={order}
         onOrderChange={next => {
           clearAuthors(libraryId)

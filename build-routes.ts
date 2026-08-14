@@ -276,6 +276,10 @@ const buildRoutes = (paths: Path) => {
   const resolveAllPossibleChildPaths = (baseUrl: string, p: Path, topLevel = true): string[] => {
     let possibleUrls: string[] = []
 
+    if (topLevel && p.page) {
+      possibleUrls.push(cleanupPath(`^(${baseUrl})$`))
+    }
+
     for (const [, child] of Object.entries(p.children)) {
       const childPath = joinUrlPaths(baseUrl, child)
       if (child.layout || child.page) {

@@ -13,6 +13,8 @@ import type {
   Empty,
   FileScanner,
   FileSystemItem,
+  Genre,
+  GenreDetailed,
   JWK,
   Library,
   LibraryPermissionLevel,
@@ -30,6 +32,8 @@ import type {
   MetadataSeries,
   NamedId,
   NamedMetadataAgent,
+  Narrator,
+  NarratorDetailed,
   Order,
   PaginatedResponse,
   PartialUpdateLibrary,
@@ -328,6 +332,22 @@ export const createApi = (
         "json",
         _mergeHeaders(defaultHeadersImpl, headers),
         body,
+        [...defaultInterceptors, ...interceptors],
+        executor,
+        true
+      )
+    },
+    deleteLibrary: (
+      { libraryId }: { libraryId: UUID },
+      headers: HeadersInit = {},
+      interceptors: ApiInterceptor[] = []
+    ): Promise<ApiResponse<Empty>> => {
+      return _request(
+        `/api/libraries/${libraryId}`,
+        "DELETE",
+        "text",
+        _mergeHeaders(defaultHeadersImpl, headers),
+        undefined,
         [...defaultInterceptors, ...interceptors],
         executor,
         true
@@ -693,6 +713,70 @@ export const createApi = (
     ): Promise<ApiResponse<Array<NamedId>>> => {
       return _request(
         _createUrl(`/api/libraries/${libraryId}/authors/autocomplete`, { q }),
+        "GET",
+        "json",
+        _mergeHeaders(defaultHeadersImpl, headers),
+        undefined,
+        [...defaultInterceptors, ...interceptors],
+        executor,
+        true
+      )
+    },
+    listNarrators: (
+      { limit, offset, order, libraryId }: { limit?: number; offset?: number; order?: Order; libraryId: UUID },
+      headers: HeadersInit = {},
+      interceptors: ApiInterceptor[] = []
+    ): Promise<ApiResponse<PaginatedResponse<Narrator>>> => {
+      return _request(
+        _createUrl(`/api/libraries/${libraryId}/narrators`, { limit, offset, order }),
+        "GET",
+        "json",
+        _mergeHeaders(defaultHeadersImpl, headers),
+        undefined,
+        [...defaultInterceptors, ...interceptors],
+        executor,
+        true
+      )
+    },
+    getNarrator: (
+      { name, libraryId }: { name: string; libraryId: UUID },
+      headers: HeadersInit = {},
+      interceptors: ApiInterceptor[] = []
+    ): Promise<ApiResponse<NarratorDetailed>> => {
+      return _request(
+        `/api/libraries/${libraryId}/narrators/${name}`,
+        "GET",
+        "json",
+        _mergeHeaders(defaultHeadersImpl, headers),
+        undefined,
+        [...defaultInterceptors, ...interceptors],
+        executor,
+        true
+      )
+    },
+    listGenres: (
+      { limit, offset, order, libraryId }: { limit?: number; offset?: number; order?: Order; libraryId: UUID },
+      headers: HeadersInit = {},
+      interceptors: ApiInterceptor[] = []
+    ): Promise<ApiResponse<PaginatedResponse<Genre>>> => {
+      return _request(
+        _createUrl(`/api/libraries/${libraryId}/genres`, { limit, offset, order }),
+        "GET",
+        "json",
+        _mergeHeaders(defaultHeadersImpl, headers),
+        undefined,
+        [...defaultInterceptors, ...interceptors],
+        executor,
+        true
+      )
+    },
+    getGenre: (
+      { name, libraryId }: { name: string; libraryId: UUID },
+      headers: HeadersInit = {},
+      interceptors: ApiInterceptor[] = []
+    ): Promise<ApiResponse<GenreDetailed>> => {
+      return _request(
+        `/api/libraries/${libraryId}/genres/${name}`,
         "GET",
         "json",
         _mergeHeaders(defaultHeadersImpl, headers),

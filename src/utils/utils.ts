@@ -79,3 +79,7 @@ export const toRealURL = (baseUrl: string): string => {
 export const unique = <T>(list?: T[]): T[] => {
   return [...new Set(list)]
 }
+
+export const pluralize = (count: number, singular: string, plural = `${singular}s`): string => {
+  return `${count} ${count === 1 ? singular : plural}`
+}
