@@ -8,6 +8,7 @@ import { ResponsiveGrid } from "@thoth/components/responsive-grid"
 import { isDetailedSeries } from "@thoth/models/typeguards"
 import { AudiobookSelectors } from "../../state/audiobook.selectors"
 import { useAudiobookState } from "../../state/audiobook.state"
+import { pluralize } from "../../utils/utils"
 import SeriesEdit from "./series-edit"
 
 export const SeriesDetails: FC<{ seriesId: UUID; libraryId: UUID }> = ({ seriesId, libraryId }) => {
@@ -80,7 +81,7 @@ export const SeriesDetails: FC<{ seriesId: UUID; libraryId: UUID }> = ({ seriesI
 
       {isDetailedSeries(series) ? (
         <>
-          <h2 className="p-2 pb-6 text-2xl">{series.books.length} Books</h2>
+          <h2 className="p-2 pb-6 text-2xl">{pluralize(series.books.length, "Book")}</h2>
           <ResponsiveGrid>
             {series.books.map((book, k) => (
               <BookPreview {...book} key={k} />
