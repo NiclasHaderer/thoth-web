@@ -1,5 +1,5 @@
 import { ColumnDef } from "@tanstack/react-table"
-import { PencilIcon } from "lucide-react"
+import { PencilIcon, Trash2Icon } from "lucide-react"
 import { Library } from "@thoth/client"
 import { DataTableColumnHeader } from "@thoth/components/data-table/data-table-column-header"
 import { DataTableRowActions } from "@thoth/components/data-table/data-table-row-actions"
@@ -7,9 +7,10 @@ import { DropdownMenuItem } from "@thoth/components/ui/dropdown-menu"
 
 interface LibraryColumnsOptions {
   onEdit: (library: Library) => void
+  onDelete: (library: Library) => void
 }
 
-export const libraryColumns = ({ onEdit }: LibraryColumnsOptions): ColumnDef<Library>[] => [
+export const libraryColumns = ({ onEdit, onDelete }: LibraryColumnsOptions): ColumnDef<Library>[] => [
   {
     accessorKey: "name",
     meta: { label: "Library" },
@@ -51,10 +52,10 @@ export const libraryColumns = ({ onEdit }: LibraryColumnsOptions): ColumnDef<Lib
           <PencilIcon className="text-muted-foreground" />
           Edit
         </DropdownMenuItem>
-        {/* TODO: add a Delete action once the backend exposes a delete-library route.
-            The DELETE /libraries/{id} route is annotated in Api.kt but not implemented
-            (no handler in Library.kt, no LibraryRepository.delete), so it's absent from
-            the generated client. Wire it here after the backend + client regen land. */}
+        <DropdownMenuItem variant="destructive" onAction={() => onDelete(row.original)}>
+          <Trash2Icon />
+          Delete
+        </DropdownMenuItem>
       </DataTableRowActions>
     ),
     enableSorting: false,

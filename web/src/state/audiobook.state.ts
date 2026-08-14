@@ -140,6 +140,16 @@ export const useAudiobookState = createWithEqualityFn(
       }))
       return res
     },
+    deleteLibrary: async (id: UUID) => {
+      const res = await Api.deleteLibrary({ libraryId: id })
+      if (!res.success) return res
+      mutate.setState(state => {
+        const { [id]: _library, ...libraryMap } = state.libraryMap
+        const { [id]: _content, ...content } = state.content
+        return { ...state, libraryMap, content }
+      })
+      return res
+    },
     clearLibrary: () => {
       mutate.setState(state => ({
         ...state,

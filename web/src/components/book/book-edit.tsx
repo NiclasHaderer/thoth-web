@@ -23,7 +23,7 @@ const mergeMetaIntoBook = ({ ...book }: BookUpdate, meta: MetadataBook): BookUpd
   book.title = meta.title || book.title
   book.cover = meta.coverURL || book.cover
   book.description = meta.description || book.description
-  book.narrator = meta.narrator || book.narrator
+  book.narrators = meta.narrators.length > 0 ? meta.narrators : book.narrators
   book.language = meta.language || book.language
   book.releaseDate = meta.releaseDate || book.releaseDate
   book.isbn = meta.isbn || book.isbn
@@ -41,7 +41,7 @@ const bookToUpdate = (book: Book): BookUpdate => {
     description: book.description,
     isbn: book.isbn,
     language: book.language,
-    narrator: book.narrator,
+    narrators: book.narrators,
     provider: book.provider,
     providerID: book.providerID,
     providerRating: book.providerRating,
@@ -57,6 +57,14 @@ export const BookEdit: FC<{ book: Book }> = ({ book }) => {
   const form = useForm(bookToUpdate(book), {
     toForm: {
       releaseDate: value => value && toFormDate(value),
+      narrators: value => value?.join(", "),
+    },
+    fromForm: {
+      narrators: value =>
+        value
+          ?.split(",")
+          .map(narrator => narrator.trim())
+          .filter(Boolean) ?? [],
     },
   })
 
@@ -126,7 +134,7 @@ const BookForm: FC<{ form: FormContext<BookUpdate> }> = ({ form }) => {
         </div>
         <div>
           <ManagedInput name="title" labelClassName="w-28" label="Title" leftIcon={<SearchIcon />} />
-          <ManagedInput name="narrator" labelClassName="w-28" label="Narrator" leftIcon={<UserIcon />} />
+          <ManagedInput name="narrators" labelClassName="w-28" label="Narrators" leftIcon={<UserIcon />} />
           <ManagedInput name="language" labelClassName="w-28" label="Language" leftIcon={<LanguagesIcon />} />
           <ManagedInput
             name="releaseDate"
