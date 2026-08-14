@@ -71,7 +71,7 @@ const AccountMenu: FC = () => {
       ? [
           {
             key: "settings",
-            label: "Server Settings",
+            label: "Settings",
             icon: <SettingsIcon className="size-5" />,
             href: "/settings/libraries",
           },
