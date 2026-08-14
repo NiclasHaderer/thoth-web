@@ -4,9 +4,8 @@ import { toast } from "sonner"
 import { MetadataSeries, Series, SeriesUpdate } from "@thoth/client"
 import { GenericEdit } from "@thoth/components/generic/generic-edit.tsx"
 import { ManagedInput } from "@thoth/components/input/managed-input"
-import { apiErrorMessage } from "@thoth/utils/utils"
+import { useUpdateSeries } from "@thoth/queries/resources"
 import { FormContext, useForm } from "../../hooks/form"
-import { useAudiobookState } from "../../state/audiobook.state"
 import { HtmlEditor } from "../html-editor"
 import { SeriesSearch } from "./series-search"
 
@@ -34,19 +33,17 @@ const seriesToUpdate = (series: Series): SeriesUpdate => {
 }
 
 export const SeriesEdit: FC<{ series: Series }> = ({ series }) => {
-  const updateSeries = useAudiobookState(s => s.updateSeries)
+  const updateSeries = useUpdateSeries()
   const form = useForm(seriesToUpdate(series))
 
   return (
     <GenericEdit
       form={form}
-      onSubmit={async (values, closeModal) => {
-        const result = await updateSeries({ libraryId: series.libraryId, id: series.id }, values)
-        if (result && !result.success) {
-          toast.error(apiErrorMessage(result.error))
-          return
-        }
-        closeModal()
+      onSubmit={(values, closeModal) => {
+        updateSeries.mutate(
+          { libraryId: series.libraryId, id: series.id, data: values },
+          { onSuccess: () => closeModal(), onError: error => toast.error(error.message) }
+        )
       }}
       title="Edit Series"
       InformationDisplay={() => <SeriesForm form={form} />}

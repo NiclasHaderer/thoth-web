@@ -5,6 +5,7 @@ export const GenreListOutlet = ({ libraryId }: { libraryId: UUID }) => {
   return (
     <NameList
       libraryId={libraryId}
+      resource="genres"
       title="Genres"
       unit="genre"
       basePath={`/libraries/${libraryId}/genres`}

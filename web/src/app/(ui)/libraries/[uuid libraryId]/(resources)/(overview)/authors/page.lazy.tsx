@@ -6,16 +6,14 @@ import { ResourceListHeader } from "@thoth/components/resource-list-header"
 import { ResponsiveGrid } from "@thoth/components/responsive-grid"
 import { useInfinityScroll } from "@thoth/hooks/infinity-scroll"
 import { useScrollTo } from "@thoth/hooks/scroll-to-top"
-import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
-import { useAudiobookState } from "@thoth/state/audiobook.state"
+import { useAuthors } from "@thoth/queries/resources"
 import { pluralize } from "@thoth/utils/utils"
 
 const AuthorGrid: FC<{ libraryId: UUID; order: Order }> = ({ libraryId, order }) => {
-  const getAuthors = useAudiobookState(s => s.fetchAuthors)
   const loading = useRef<HTMLDivElement>(null)
   useScrollTo("main")
-  useInfinityScroll(loading, offset => getAuthors({ libraryId, offset, order }))
-  const authors = useAudiobookState(AudiobookSelectors.selectAuthors(libraryId))
+  const { items: authors, fetchNextPage, hasNextPage, isFetchingNextPage } = useAuthors(libraryId, order)
+  useInfinityScroll(loading, fetchNextPage, hasNextPage && !isFetchingNextPage)
 
   return (
     <ResponsiveGrid>
@@ -31,19 +29,15 @@ const AuthorGrid: FC<{ libraryId: UUID; order: Order }> = ({ libraryId, order })
 
 export const AuthorListOutlet = ({ libraryId }: { libraryId: UUID }) => {
   const [order, setOrder] = useState<Order>("ASC")
-  const clearAuthors = useAudiobookState(s => s.clearAuthor)
-  const authorCount = useAudiobookState(AudiobookSelectors.selectAuthorCount(libraryId))
+  const { total } = useAuthors(libraryId, order)
 
   return (
     <>
       <ResourceListHeader
         title="Authors"
-        subtitle={pluralize(authorCount, "author")}
+        subtitle={pluralize(total, "author")}
         order={order}
-        onOrderChange={next => {
-          clearAuthors(libraryId)
-          setOrder(next)
-        }}
+        onOrderChange={setOrder}
       />
       <AuthorGrid key={order} libraryId={libraryId} order={order} />
     </>

@@ -1,3 +1,4 @@
+import { useQueryClient } from "@tanstack/react-query"
 import { CheckIcon, LibraryIcon } from "lucide-react"
 import { FC, useState } from "react"
 import { Button } from "react-aria-components"
@@ -6,8 +7,8 @@ import { UUID } from "@thoth/client"
 import { Sheet, SheetHeader, SheetTitle, SheetTrigger } from "@thoth/components/ui/sheet"
 import { rowInteraction } from "@thoth/lib/interactive"
 import { cn } from "@thoth/lib/utils"
-import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
-import { useAudiobookState } from "@thoth/state/audiobook.state"
+import { useLibraries } from "@thoth/queries/libraries"
+import { cachedResourceTotal } from "@thoth/queries/resources"
 import { pluralize } from "@thoth/utils/utils"
 
 export const LibraryPicker: FC<{ libraryId: UUID; name: string; className?: string }> = ({
@@ -15,8 +16,8 @@ export const LibraryPicker: FC<{ libraryId: UUID; name: string; className?: stri
   name,
   className,
 }) => {
-  const libraries = useAudiobookState(AudiobookSelectors.libraries)
-  const content = useAudiobookState(state => state.content)
+  const libraries = useLibraries().data ?? []
+  const queryClient = useQueryClient()
   const [isOpen, setIsOpen] = useState(false)
 
   if (libraries.length <= 1) {
@@ -38,7 +39,7 @@ export const LibraryPicker: FC<{ libraryId: UUID; name: string; className?: stri
         </SheetHeader>
         <div className="pb-2">
           {libraries.map(entry => {
-            const bookCount = content[entry.id]?.bookTotal
+            const bookCount = cachedResourceTotal(queryClient, "books", entry.id)
             const current = entry.id === libraryId
             return (
               <Link

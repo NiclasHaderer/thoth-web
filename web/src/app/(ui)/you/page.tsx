@@ -3,15 +3,12 @@ import { Link } from "wouter"
 import { Logo } from "@thoth/components/icons/logo"
 import { accountItem, adminItems, licensesItem } from "@thoth/components/menu/settings-nav"
 import { Avatar, AvatarFallback } from "@thoth/components/ui/avatar"
-import { useOnMount } from "@thoth/hooks/lifecycle"
 import { rowInteraction } from "@thoth/lib/interactive"
 import { cn } from "@thoth/lib/utils"
-import { useCurrentUserState } from "@thoth/state/current-user.state"
+import { useCurrentUser } from "@thoth/queries/current-user"
 
 export const YouOutlet = () => {
-  const user = useCurrentUserState(s => s.user)
-  const fetchCurrentUser = useCurrentUserState(s => s.fetchCurrentUser)
-  useOnMount(() => void fetchCurrentUser())
+  const { data: user } = useCurrentUser()
 
   const isAdmin = user?.permissions?.isAdmin ?? false
   const entries = [accountItem, ...(isAdmin ? adminItems : [])]
