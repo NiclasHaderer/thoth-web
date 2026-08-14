@@ -1,57 +1,15 @@
+import { SettingsIcon } from "lucide-react"
 import { FC, ReactNode, useEffect } from "react"
 import { useLocation } from "wouter"
-import { NavItem } from "@thoth/components/menu/nav-item"
-import { NavEntry, accountItem, adminItems, adminPaths, licensesItem } from "@thoth/components/menu/settings-nav"
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarProvider,
-} from "@thoth/components/ui/sidebar"
+import { accountItem, adminItems, adminPaths, licensesItem } from "@thoth/components/menu/settings-nav"
+import { SideMenu } from "@thoth/components/menu/side-menu"
 import { useOnMount } from "@thoth/hooks/lifecycle"
-import { useIsMobile } from "@thoth/hooks/use-mobile"
 import { useCurrentUserState } from "@thoth/state/current-user.state"
-
-const SettingsSidebar: FC<{ navItems: NavEntry[] }> = ({ navItems }) => {
-  return (
-    <Sidebar collapsible="none" className="bg-card m-3 h-auto w-56 rounded-xl">
-      <SidebarHeader className="px-4 pt-4">
-        <h1 className="text-2xl font-semibold">Settings</h1>
-      </SidebarHeader>
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu className="gap-2">
-              {navItems.map(item => (
-                <SidebarMenuItem key={item.href}>
-                  <NavItem {...item} />
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-      <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <NavItem {...licensesItem} />
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter>
-    </Sidebar>
-  )
-}
 
 export const SettingsLayout: FC<{ children: ReactNode }> = ({ children }) => {
   const user = useCurrentUserState(s => s.user)
   const fetchCurrentUser = useCurrentUserState(s => s.fetchCurrentUser)
   const [pathname, navigate] = useLocation()
-  const isMobile = useIsMobile()
 
   useOnMount(() => void fetchCurrentUser())
 
@@ -69,9 +27,21 @@ export const SettingsLayout: FC<{ children: ReactNode }> = ({ children }) => {
   const navItems = isAdmin ? [accountItem, ...adminItems] : [accountItem]
 
   return (
-    <SidebarProvider className="h-full min-h-0!">
-      {isMobile ? null : <SettingsSidebar navItems={navItems} />}
+    <div className="flex min-h-0 grow overflow-hidden">
+      <SideMenu
+        className="hidden md:flex"
+        items={[...navItems, licensesItem]}
+        header={collapsed => (
+          <div className="flex h-12 items-center justify-center">
+            {collapsed ? (
+              <SettingsIcon className="text-muted-foreground size-4 shrink-0" />
+            ) : (
+              <span className="truncate text-sm font-medium">Settings</span>
+            )}
+          </div>
+        )}
+      />
       <main className="flex min-w-0 grow flex-col overflow-y-auto p-4 sm:p-8">{children}</main>
-    </SidebarProvider>
+    </div>
   )
 }

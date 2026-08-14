@@ -1,6 +1,6 @@
 import { FC, PropsWithChildren, useEffect } from "react"
 import { UUID } from "@thoth/client"
-import { LeftResourceMenu } from "@thoth/components/menu/left-menu"
+import { LibraryMenu } from "@thoth/components/menu/library-menu"
 import { useAudiobookState } from "@thoth/state/audiobook.state"
 
 interface LibraryResourceViewProps extends PropsWithChildren {
@@ -22,7 +22,7 @@ export const LibraryResourceView: FC<LibraryResourceViewProps> = ({ children, li
 
   return (
     <div className="flex min-h-0 grow overflow-hidden">
-      <LeftResourceMenu libraryId={libraryId} className="hidden md:flex" />
+      <LibraryMenu libraryId={libraryId} className="hidden md:flex" />
       <main
         tabIndex={-1}
         className="min-w-0 grow overflow-x-hidden overflow-y-auto px-5 pb-[calc(var(--dock-height,3.5rem)+env(safe-area-inset-bottom))] md:mt-10 md:pb-0"
