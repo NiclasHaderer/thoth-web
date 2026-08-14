@@ -1,3 +1,4 @@
+import { useQuery } from "@tanstack/react-query"
 import {
   ChevronsRightIcon,
   ChevronsLeftIcon,
@@ -12,7 +13,7 @@ import {
 } from "lucide-react"
 import { AnimatePresence, motion } from "motion/react"
 import { FC, useEffect, useState } from "react"
-import { Api, FileScanner, MetadataLanguage, NamedMetadataAgent, UUID } from "@thoth/client"
+import { Api, FileScanner, MetadataLanguage, NamedMetadataAgent, UUID, unwrap } from "@thoth/client"
 import { Dialog } from "@thoth/components/dialog"
 import { FolderManager } from "@thoth/components/file-manager"
 import { InputError } from "@thoth/components/input/input-error"
@@ -20,10 +21,9 @@ import { ManagedInput } from "@thoth/components/input/managed-input"
 import { SelectLine } from "@thoth/components/input/select-line"
 import { Button } from "@thoth/components/ui/button"
 import { DialogFooter } from "@thoth/components/ui/dialog"
-import { useHttpRequest } from "@thoth/hooks/async-response"
 import { Form, FormContext } from "@thoth/hooks/form"
-import { useOnMount } from "@thoth/hooks/lifecycle"
 import { useBreakpoint } from "@thoth/hooks/use-media-query"
+import { queryKeys } from "@thoth/queries/keys"
 import { unique } from "@thoth/utils/utils"
 
 // The `satisfies Record<MetadataLanguage, ...>` forces every union member to be
@@ -61,28 +61,27 @@ interface LibraryDialogProps {
 }
 
 export const LibraryDialog: FC<LibraryDialogProps> = ({ isOpen, setIsOpen, form, onSubmit }) => {
-  const availableAgents = useHttpRequest(Api.listMetadataAgents)
-  const fileScanners = useHttpRequest(Api.listFileScanners)
+  const { data: availableAgents } = useQuery({
+    queryKey: queryKeys.metadataAgents(form.fields.language),
+    queryFn: () => unwrap(Api.listMetadataAgents({ language: form.fields.language })),
+  })
+  const { data: fileScanners } = useQuery({
+    queryKey: queryKeys.fileScanners,
+    queryFn: () => unwrap(Api.listFileScanners()),
+  })
   const [browserOpen, setBrowserOpen] = useState(false)
   const isDesktop = useBreakpoint("sm")
-  useOnMount(() => {
-    void fileScanners.invoke()
-  })
-  useEffect(() => {
-    void availableAgents.invoke({ language: form.fields.language })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [form.fields.language])
 
   // Drop selected scanners that the newly fetched language no longer offers.
   useEffect(() => {
-    if (!availableAgents.result) return
-    const available = new Set(availableAgents.result.map(a => a.name))
+    if (!availableAgents) return
+    const available = new Set(availableAgents.map(a => a.name))
     const filtered = form.fields.metadataAgents.filter(a => available.has(a.name))
     if (filtered.length !== form.fields.metadataAgents.length) {
       form.setFields({ metadataAgents: filtered })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [availableAgents.result])
+  }, [availableAgents])
 
   const formFields = (
     <>
@@ -120,7 +119,7 @@ export const LibraryDialog: FC<LibraryDialogProps> = ({ isOpen, setIsOpen, form,
         name="metadataAgents"
         icon={<RadarIcon />}
         multiple={true}
-        options={availableAgents?.result?.map(a => ({ value: a, label: a.name })) ?? []}
+        options={availableAgents?.map(a => ({ value: a, label: a.name })) ?? []}
       />
       <SelectLine
         labelClassName="w-28"
@@ -129,7 +128,7 @@ export const LibraryDialog: FC<LibraryDialogProps> = ({ isOpen, setIsOpen, form,
         name="fileScanners"
         title={"File scanners"}
         multiple={true}
-        options={fileScanners?.result?.map(a => ({ value: a, label: a.name })) ?? []}
+        options={fileScanners?.map(a => ({ value: a, label: a.name })) ?? []}
       />
 
       <div className="mt-4 flex flex-col gap-2">

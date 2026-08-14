@@ -4,13 +4,12 @@ import { AuthorPreview } from "@thoth/components/author/author-preview.tsx"
 import { BookPreview } from "@thoth/components/book/book-preview.tsx"
 import { ScrollRow } from "@thoth/components/scroll-row"
 import { SeriesPreview } from "@thoth/components/series/series-preview.tsx"
-import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
-import { useAudiobookState } from "@thoth/state/audiobook.state"
+import { useAuthors, useBooks, useSeriesList } from "@thoth/queries/resources"
 
 export const LibraryPreview: FC<{ libraryId: UUID }> = ({ libraryId }) => {
-  const libraryBooks = useAudiobookState(AudiobookSelectors.selectBooks(libraryId))
-  const librarySeries = useAudiobookState(AudiobookSelectors.selectSeriesList(libraryId))
-  const libraryAuthors = useAudiobookState(AudiobookSelectors.selectAuthors(libraryId))
+  const { items: libraryBooks } = useBooks(libraryId)
+  const { items: librarySeries } = useSeriesList(libraryId)
+  const { items: libraryAuthors } = useAuthors(libraryId)
 
   return (
     <div>

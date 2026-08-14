@@ -1,36 +1,3 @@
-export const toIdRecord = <T extends { id: string }>(itemList: T[]) => {
-  return itemList.reduce(
-    (previousValue, currentValue) => {
-      previousValue[currentValue.id] = currentValue
-      return previousValue
-    },
-    {} as Record<string, T>
-  )
-}
-
-export const replaceRangeInList = <T extends string, R extends T | { id: T }>(
-  [...originalList]: T[] | Readonly<T[]>,
-  startIndex: number,
-  replaceList: R[]
-): T[] => {
-  const mappedReplaceList = replaceList.map(e => {
-    if (typeof e === "string") return e
-    return e.id
-  }) as T[]
-  originalList.splice(startIndex, 0, ...mappedReplaceList)
-  return [...new Set(originalList)]
-}
-
-export const insertAtPosition = <T>(list: T[], item: T, position: number): T[] => {
-  list = list.filter(i => i !== item)
-  if (position >= list.length) {
-    list.push(item)
-  } else {
-    list.splice(position, 0, item)
-  }
-  return list
-}
-
 export const toBase64 = (file: File) =>
   new Promise<string>((resolve, reject) => {
     const reader = new FileReader()

@@ -1,61 +1,36 @@
 import { ChevronRightIcon } from "lucide-react"
 import { FC, useRef, useState } from "react"
 import { Link } from "wouter"
-import { ApiResponse, Order, PaginatedResponse, UUID } from "@thoth/client"
+import { Order, UUID } from "@thoth/client"
 import { ResourceListHeader } from "@thoth/components/resource-list-header"
 import { Skeleton } from "@thoth/components/ui/skeleton"
 import { useInfinityScroll } from "@thoth/hooks/infinity-scroll"
 import { useScrollTo } from "@thoth/hooks/scroll-to-top"
 import { rowInteraction } from "@thoth/lib/interactive"
 import { cn } from "@thoth/lib/utils"
+import { NameListCall, NameListResource, useNameList } from "@thoth/queries/name-lists"
 import { pluralize } from "@thoth/utils/utils"
-
-const PAGE_SIZE = 50
-
-type NamedCount = { name: string; bookCount: number }
-
-type ListCall = (params: {
-  limit?: number
-  offset?: number
-  order?: Order
-  libraryId: UUID
-}) => Promise<ApiResponse<PaginatedResponse<NamedCount>>>
 
 interface NameListProps {
   libraryId: UUID
+  resource: NameListResource
   title: string
   unit: string
   unitPlural?: string
   basePath: string
-  list: ListCall
+  list: NameListCall
 }
 
-const NameItems: FC<NameListProps & { order: Order; onTotal: (total: number) => void }> = ({
-  libraryId,
-  unit,
-  unitPlural,
-  basePath,
-  list,
-  order,
-  onTotal,
-}) => {
-  const [items, setItems] = useState<NamedCount[]>([])
-  const [loading, setLoading] = useState(true)
-  const complete = useRef(false)
+const NameItems: FC<NameListProps & { order: Order }> = props => {
+  const { unit, unitPlural, basePath, order } = props
   const sentinel = useRef<HTMLDivElement>(null)
   useScrollTo("main")
 
-  useInfinityScroll(sentinel, async page => {
-    if (complete.current) return
-    setLoading(true)
-    const res = await list({ libraryId, limit: PAGE_SIZE, offset: page * PAGE_SIZE, order })
-    setLoading(false)
-    if (!res.success) return
-    onTotal(res.body.total)
-    setItems(current => [...current, ...res.body.items])
-    complete.current = res.body.offset + res.body.items.length >= res.body.total
-  })
+  const query = useNameList(props.resource, props.list, props.libraryId, order)
+  useInfinityScroll(sentinel, query.fetchNextPage, query.hasNextPage && !query.isFetchingNextPage)
 
+  const items = query.data?.pages.flatMap(page => page.items) ?? []
+  const loading = query.isFetching
   const empty = !loading && items.length === 0
 
   return (
@@ -103,7 +78,7 @@ const NameItems: FC<NameListProps & { order: Order; onTotal: (total: number) => 
 
 export const NameList: FC<NameListProps> = props => {
   const [order, setOrder] = useState<Order>("ASC")
-  const [total, setTotal] = useState<number>()
+  const total = useNameList(props.resource, props.list, props.libraryId, order).data?.pages[0]?.total
 
   return (
     <>
@@ -113,7 +88,7 @@ export const NameList: FC<NameListProps> = props => {
         order={order}
         onOrderChange={setOrder}
       />
-      <NameItems key={order} {...props} order={order} onTotal={setTotal} />
+      <NameItems key={order} {...props} order={order} />
     </>
   )
 }

@@ -13,8 +13,8 @@ import { GenericEdit } from "@thoth/components/generic/generic-edit.tsx"
 import { ManagedInput } from "@thoth/components/input/managed-input"
 import { ResponsiveImage } from "@thoth/components/responsive-image"
 import { Button } from "@thoth/components/ui/button"
+import { useUpdateBook } from "@thoth/queries/resources"
 import { FormContext, useForm } from "../../hooks/form"
-import { useAudiobookState } from "../../state/audiobook.state"
 import { isUUID, toBase64, toFormDate } from "../../utils/utils"
 import { HtmlEditor } from "../html-editor"
 import { BookSearch } from "./book-search"
@@ -53,7 +53,7 @@ const bookToUpdate = (book: Book): BookUpdate => {
 }
 
 export const BookEdit: FC<{ book: Book }> = ({ book }) => {
-  const updateBook = useAudiobookState(s => s.updateBook)
+  const updateBook = useUpdateBook()
   const form = useForm(bookToUpdate(book), {
     toForm: {
       releaseDate: value => value && toFormDate(value),
@@ -73,7 +73,7 @@ export const BookEdit: FC<{ book: Book }> = ({ book }) => {
       title="Edit Book"
       form={form}
       onSubmit={async (values, closeModal) => {
-        await updateBook({ libraryId: book.libraryId, id: book.id }, values)
+        await updateBook.mutateAsync({ libraryId: book.libraryId, id: book.id, data: values })
         closeModal()
       }}
       InformationDisplay={() => <BookForm form={form} />}

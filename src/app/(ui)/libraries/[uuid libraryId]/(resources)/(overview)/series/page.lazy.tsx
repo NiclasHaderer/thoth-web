@@ -6,20 +6,18 @@ import { ResponsiveGrid } from "@thoth/components/responsive-grid"
 import { SeriesPreview } from "@thoth/components/series/series-preview.tsx"
 import { useInfinityScroll } from "@thoth/hooks/infinity-scroll"
 import { useScrollTo } from "@thoth/hooks/scroll-to-top"
-import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
-import { useAudiobookState } from "@thoth/state/audiobook.state"
+import { useSeriesList } from "@thoth/queries/resources"
 import { pluralize } from "@thoth/utils/utils"
 
 const SeriesGrid: FC<{ libraryId: UUID; order: Order }> = ({ libraryId, order }) => {
-  const getSeries = useAudiobookState(s => s.fetchSeries)
   const loading = useRef<HTMLDivElement>(null)
   useScrollTo("main")
-  useInfinityScroll(loading, offset => getSeries({ libraryId, offset, order }))
-  const series = useAudiobookState(AudiobookSelectors.selectSeriesList(libraryId))
+  const { items: seriesList, fetchNextPage, hasNextPage, isFetchingNextPage } = useSeriesList(libraryId, order)
+  useInfinityScroll(loading, fetchNextPage, hasNextPage && !isFetchingNextPage)
 
   return (
     <ResponsiveGrid>
-      {series.map((series, k) => (
+      {seriesList.map((series, k) => (
         <ClearIfNotVisible key={k} component={SeriesPreview} childProps={series} />
       ))}
       <div className="col-span-full text-center opacity-0" ref={loading}>
@@ -31,19 +29,15 @@ const SeriesGrid: FC<{ libraryId: UUID; order: Order }> = ({ libraryId, order })
 
 export const SeriesListOutlet = ({ libraryId }: { libraryId: UUID }) => {
   const [order, setOrder] = useState<Order>("ASC")
-  const clearSeries = useAudiobookState(s => s.clearSeries)
-  const seriesCount = useAudiobookState(AudiobookSelectors.selectSeriesCount(libraryId))
+  const { total } = useSeriesList(libraryId, order)
 
   return (
     <>
       <ResourceListHeader
         title="Series"
-        subtitle={pluralize(seriesCount, "series", "series")}
+        subtitle={pluralize(total, "series", "series")}
         order={order}
-        onOrderChange={next => {
-          clearSeries(libraryId)
-          setOrder(next)
-        }}
+        onOrderChange={setOrder}
       />
       <SeriesGrid key={order} libraryId={libraryId} order={order} />
     </>

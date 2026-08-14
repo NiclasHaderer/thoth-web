@@ -1,8 +1,8 @@
 import { FC } from "react"
 import { Author, AuthorUpdate, MetadataAuthor } from "@thoth/client"
 import { GenericEdit } from "@thoth/components/generic/generic-edit.tsx"
+import { useUpdateAuthor } from "@thoth/queries/resources"
 import { useForm } from "../../hooks/form"
-import { useAudiobookState } from "../../state/audiobook.state"
 import { toFormDate } from "../../utils/utils"
 import { AuthorForm } from "./author-form"
 import { AuthorSearch } from "./author-search"
@@ -35,7 +35,7 @@ const authorToUpdateModel = (author: Author): AuthorUpdate => {
 }
 
 export const AuthorEdit: FC<{ author: Author }> = ({ author }) => {
-  const updateAuthor = useAudiobookState(s => s.updateAuthor)
+  const updateAuthor = useUpdateAuthor()
   const form = useForm(authorToUpdateModel(author), {
     toForm: {
       birthDate: value => value && toFormDate(value),
@@ -48,7 +48,7 @@ export const AuthorEdit: FC<{ author: Author }> = ({ author }) => {
       title="Edit Author"
       form={form}
       onSubmit={async (values, closeModal) => {
-        await updateAuthor({ libraryId: author.libraryId, id: author.id }, values)
+        await updateAuthor.mutateAsync({ libraryId: author.libraryId, id: author.id, data: values })
         closeModal()
       }}
       InformationDisplay={() => <AuthorForm form={form} />}

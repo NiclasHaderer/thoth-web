@@ -1,3 +1,4 @@
+import { useQueryClient } from "@tanstack/react-query"
 import {
   EyeIcon,
   EyeOffIcon,
@@ -25,15 +26,14 @@ import {
   DialogTrigger,
 } from "@thoth/components/ui/dialog"
 import { Form, useForm } from "@thoth/hooks/form.tsx"
-import { useOnMount } from "@thoth/hooks/lifecycle.ts"
-import { useAudiobookState } from "@thoth/state/audiobook.state.ts"
+import { useSetUsername } from "@thoth/queries/current-user"
+import { queryKeys } from "@thoth/queries/keys"
 import { useAuthState } from "@thoth/state/auth.state"
-import { useCurrentUserState } from "@thoth/state/current-user.state"
 import { apiErrorMessage, pluralize } from "@thoth/utils/utils.ts"
 
 export const User: FC<{ user: ThothUserWithPermissions<UserPermissions> }> = ({ user }) => {
-  const fetchLibraries = useAudiobookState(s => s.fetchLibraries)
-  const setUsername = useCurrentUserState(s => s.setUsername)
+  const setUsername = useSetUsername()
+  const queryClient = useQueryClient()
   const logout = useAuthState(s => s.logout)
 
   const deleteAccount = async () => {
@@ -76,8 +76,6 @@ export const User: FC<{ user: ThothUserWithPermissions<UserPermissions> }> = ({ 
   useEffect(() => {
     newPasswordRef.current = passwordForm.fields.newPassword
   }, [passwordForm.fields.newPassword])
-
-  useOnMount(() => fetchLibraries())
 
   const [passwordVisible, setPasswordVisible] = useState(false)
   const passwordToggle = (
@@ -158,6 +156,7 @@ export const User: FC<{ user: ThothUserWithPermissions<UserPermissions> }> = ({ 
               return
             }
             setUsername(values.username)
+            await queryClient.invalidateQueries({ queryKey: queryKeys.users })
             toast.success("Username updated")
           }}
         >

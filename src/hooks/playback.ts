@@ -1,8 +1,9 @@
+import { useQueryClient } from "@tanstack/react-query"
 import { useCallback, useEffect, useState, useSyncExternalStore } from "react"
 import { toast } from "sonner"
-import { Api, UUID } from "@thoth/client"
+import { UUID } from "@thoth/client"
+import { bookDetailQuery } from "@thoth/queries/resources"
 import { usePlaybackState } from "@thoth/state/playback.state"
-import { apiErrorMessage } from "@thoth/utils/utils"
 
 export const useAudio = (
   url: string | undefined | null,
@@ -119,15 +120,14 @@ export const useOnEnded = (audio: HTMLAudioElement | undefined | null, callback:
 
 export const usePlayBook = () => {
   const play = usePlaybackState(s => s.start)
+  const queryClient = useQueryClient()
 
   return async (libraryId: UUID, bookId: UUID) => {
-    const response = await Api.getBook({ libraryId, id: bookId })
-    if (!response.success) {
-      toast.error(apiErrorMessage(response.error))
-      return
-    }
-
-    const book = response.body
+    const book = await queryClient.fetchQuery(bookDetailQuery(libraryId, bookId)).catch((error: Error) => {
+      toast.error(error.message)
+      return undefined
+    })
+    if (!book) return
     const [first, ...queue] = book.tracks.map(track => ({
       ...track,
       authors: book.authors,

@@ -1,7 +1,6 @@
 import { BookIcon, BookMarkedIcon, HomeIcon, LucideIcon, MicIcon, TagsIcon, UserIcon } from "lucide-react"
 import { UUID } from "@thoth/client"
-import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
-import { useAudiobookState } from "@thoth/state/audiobook.state"
+import { useAuthors, useBooks, useSeriesList } from "@thoth/queries/resources"
 
 export type LibraryDestination = {
   href: string
@@ -12,9 +11,9 @@ export type LibraryDestination = {
 }
 
 export const useLibraryDestinations = (libraryId: UUID): LibraryDestination[] => {
-  const bookCount = useAudiobookState(AudiobookSelectors.selectBookCount(libraryId))
-  const seriesCount = useAudiobookState(AudiobookSelectors.selectSeriesCount(libraryId))
-  const authorCount = useAudiobookState(AudiobookSelectors.selectAuthorCount(libraryId))
+  const bookCount = useBooks(libraryId).total
+  const seriesCount = useSeriesList(libraryId).total
+  const authorCount = useAuthors(libraryId).total
 
   return [
     { href: `/libraries/${libraryId}`, Icon: HomeIcon, label: "Home", exact: true },

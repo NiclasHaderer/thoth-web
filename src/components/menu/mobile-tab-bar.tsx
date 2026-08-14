@@ -12,8 +12,7 @@ import {
 import { Link, useLocation } from "wouter"
 import { useCurrentLibraryId } from "@thoth/hooks/current-library"
 import { cn } from "@thoth/lib/utils"
-import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
-import { useAudiobookState } from "@thoth/state/audiobook.state"
+import { useLibraries } from "@thoth/queries/libraries"
 
 const scrollContentToTop = () => {
   document.querySelector("main")?.scrollTo({ top: 0, behavior: "smooth" })
@@ -23,7 +22,7 @@ const scrollContentToTop = () => {
 export const MobileTabBar: FC = () => {
   const [pathname] = useLocation()
   const currentLibraryId = useCurrentLibraryId()
-  const libraries = useAudiobookState(AudiobookSelectors.libraries)
+  const libraries = useLibraries().data ?? []
 
   const libraryId = currentLibraryId ?? libraries[0]?.id
   const home = libraryId ? `/libraries/${libraryId}` : "/libraries"
