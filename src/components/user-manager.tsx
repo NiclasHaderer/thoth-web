@@ -1,21 +1,32 @@
+import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { useMemo, useState } from "react"
 import { toast } from "sonner"
-import { Api } from "@thoth/client"
+import { Api, unwrap } from "@thoth/client"
 import { DataTable } from "@thoth/components/data-table/data-table"
 import { DataTableToolbar } from "@thoth/components/data-table/data-table-toolbar"
 import { UserRow, userColumns } from "@thoth/components/user-columns"
 import { UserDialog, UserFormValues } from "@thoth/components/user-dialog"
-import { useHttpRequest } from "@thoth/hooks/async-response"
 import { useForm } from "@thoth/hooks/form.tsx"
-import { useOnMount } from "@thoth/hooks/lifecycle"
+import { queryKeys } from "@thoth/queries/keys"
 import { useAuthState } from "@thoth/state/auth.state"
 import { apiErrorMessage } from "@thoth/utils/utils"
 
 export const UserManager = () => {
   const loggedInUserId = useAuthState(s => s.accessToken?.payload.sub)
   const [isOpen, setIsOpen] = useState(false)
-  const { result: users, invoke: listUsers } = useHttpRequest(Api.listUsers)
-  useOnMount(() => listUsers())
+  const queryClient = useQueryClient()
+  const { data: users } = useQuery({
+    queryKey: queryKeys.users,
+    queryFn: () => unwrap(Api.listUsers()),
+  })
+  // Editing a user can be editing yourself, which changes the current user and
+  // the set of libraries visible to them.
+  const refreshUsers = () =>
+    Promise.all([
+      queryClient.invalidateQueries({ queryKey: queryKeys.users }),
+      queryClient.invalidateQueries({ queryKey: queryKeys.currentUser }),
+      queryClient.invalidateQueries({ queryKey: queryKeys.libraries }),
+    ])
 
   const updateUser = async (user: UserFormValues) => {
     const rename = await Api.updateUsername({ id: user.id! }, { username: user.username })
@@ -39,7 +50,7 @@ export const UserManager = () => {
       toast.error(apiErrorMessage(permissions.error))
       return
     }
-    await listUsers()
+    await refreshUsers()
     setIsOpen(false)
     toast.success("User updated")
   }
@@ -67,7 +78,7 @@ export const UserManager = () => {
       toast.error(apiErrorMessage(res.error))
       return
     }
-    await listUsers()
+    await refreshUsers()
   }
 
   const columns = useMemo(

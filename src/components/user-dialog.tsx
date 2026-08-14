@@ -8,8 +8,7 @@ import { Button } from "@thoth/components/ui/button"
 import { DialogFooter } from "@thoth/components/ui/dialog"
 import { Tooltip, TooltipTrigger } from "@thoth/components/ui/tooltip"
 import { Form, FormContext } from "@thoth/hooks/form"
-import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
-import { useAudiobookState } from "@thoth/state/audiobook.state"
+import { useLibraries } from "@thoth/queries/libraries"
 
 export interface UserFormValues {
   id?: UUID
@@ -24,8 +23,8 @@ export const UserDialog: FC<{
   form: FormContext<UserFormValues>
   onSubmit: (user: UserFormValues) => void
 }> = ({ isOpen, setIsOpen, onSubmit, form }) => {
-  const _libraries = useAudiobookState(AudiobookSelectors.libraries)
-  const libraries = useMemo(() => _libraries.map(l => ({ label: l.name, value: l.id })), [_libraries])
+  const { data: _libraries } = useLibraries()
+  const libraries = useMemo(() => (_libraries ?? []).map(l => ({ label: l.name, value: l.id })), [_libraries])
 
   return (
     <Dialog isOpen={isOpen} onOpenChange={setIsOpen} title="Edit User">

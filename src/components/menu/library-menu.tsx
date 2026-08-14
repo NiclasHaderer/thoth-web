@@ -6,12 +6,11 @@ import { useLibraryDestinations } from "@thoth/components/menu/library-nav"
 import { SideMenu } from "@thoth/components/menu/side-menu"
 import { DropdownMenu, DropdownMenuItem } from "@thoth/components/ui/dropdown-menu"
 import { cn } from "@thoth/lib/utils"
-import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
-import { useAudiobookState } from "@thoth/state/audiobook.state"
+import { useLibraries, useLibrary } from "@thoth/queries/libraries"
 
 export const LibraryMenu: FC<{ libraryId: UUID; className?: string }> = ({ libraryId, className }) => {
-  const libraries = useAudiobookState(AudiobookSelectors.libraries)
-  const library = useAudiobookState(state => state.libraryMap[libraryId])
+  const libraries = useLibraries().data ?? []
+  const library = useLibrary(libraryId)
   const destinations = useLibraryDestinations(libraryId)
 
   const libraryName = library?.name ?? "Library"

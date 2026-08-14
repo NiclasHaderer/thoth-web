@@ -1,12 +1,12 @@
+import { useQuery } from "@tanstack/react-query"
 import { ChevronRightIcon } from "lucide-react"
 import { FC } from "react"
 import webLicensesUrl from "@thoth/assets/third-party-licenses.json?url"
-import { Api, ThirdPartyLicense } from "@thoth/client"
+import { Api, ThirdPartyLicense, unwrap } from "@thoth/client"
 import { _request } from "@thoth/client/generated/client"
 import { SettingsSection } from "@thoth/components/settings/settings-section"
 import { Badge } from "@thoth/components/ui/badge"
-import { useHttpRequest } from "@thoth/hooks/async-response"
-import { useOnMount } from "@thoth/hooks/lifecycle"
+import { queryKeys } from "@thoth/queries/keys"
 
 const LicenseList: FC<{ licenses: ThirdPartyLicense[] }> = ({ licenses }) => (
   <div className="flex flex-col gap-2">
@@ -65,11 +65,14 @@ const fetchWebLicenses = () =>
   )
 
 export const SettingsLicensesOutlet = () => {
-  const server = useHttpRequest(Api.listThirdPartyLicenses)
-  const web = useHttpRequest(fetchWebLicenses)
-  useOnMount(() => {
-    void server.invoke()
-    void web.invoke()
+  const server = useQuery({
+    queryKey: queryKeys.serverLicenses,
+    queryFn: () => unwrap(Api.listThirdPartyLicenses()),
+  })
+  const web = useQuery({
+    queryKey: queryKeys.webLicenses,
+    queryFn: () => unwrap(fetchWebLicenses()),
+    staleTime: Infinity,
   })
 
   return (
@@ -77,20 +80,20 @@ export const SettingsLicensesOutlet = () => {
       title="Open source licenses"
       description="Thoth is built on open source software. Thank you to their authors."
     >
-      <h3 className="mb-3 text-lg">Web ({web.result?.length ?? 0})</h3>
-      {web.error ? (
+      <h3 className="mb-3 text-lg">Web ({web.data?.length ?? 0})</h3>
+      {web.isError ? (
         <p className="text-muted-foreground text-sm">Could not load the web licenses.</p>
-      ) : web.result ? (
-        <LicenseList licenses={web.result} />
+      ) : web.data ? (
+        <LicenseList licenses={web.data} />
       ) : (
         <p className="text-muted-foreground text-sm">Loading...</p>
       )}
 
-      <h3 className="mt-8 mb-3 text-lg">Server ({server.result?.length ?? 0})</h3>
-      {server.error ? (
+      <h3 className="mt-8 mb-3 text-lg">Server ({server.data?.length ?? 0})</h3>
+      {server.isError ? (
         <p className="text-muted-foreground text-sm">Could not load the server licenses.</p>
-      ) : server.result ? (
-        <LicenseList licenses={server.result} />
+      ) : server.data ? (
+        <LicenseList licenses={server.data} />
       ) : (
         <p className="text-muted-foreground text-sm">Loading...</p>
       )}

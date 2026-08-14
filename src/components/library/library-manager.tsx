@@ -10,20 +10,15 @@ import { LibraryDialog, LibraryFormValues } from "@thoth/components/library/libr
 import { Button } from "@thoth/components/ui/button"
 import { DialogClose, DialogDescription, DialogFooter } from "@thoth/components/ui/dialog"
 import { FormContext, useForm } from "@thoth/hooks/form"
-import { useOnMount } from "@thoth/hooks/lifecycle"
-import { AudiobookSelectors } from "@thoth/state/audiobook.selectors"
-import { useAudiobookState } from "@thoth/state/audiobook.state"
-import { apiErrorMessage } from "@thoth/utils/utils"
+import { useCreateLibrary, useDeleteLibrary, useLibraries, useUpdateLibrary } from "@thoth/queries/libraries"
 
 export const LibraryManager = () => {
-  const libraries = useAudiobookState(AudiobookSelectors.libraries)
+  const { data: libraries } = useLibraries()
   const [isOpen, setIsOpen] = useState(false)
   const [libraryToDelete, setLibraryToDelete] = useState<Library | undefined>(undefined)
-  const createLibrary = useAudiobookState(s => s.createLibrary)
-  const updateLibrary = useAudiobookState(s => s.updateLibrary)
-  const deleteLibrary = useAudiobookState(s => s.deleteLibrary)
-  const fetchLibraries = useAudiobookState(s => s.fetchLibraries)
-  useOnMount(() => void fetchLibraries())
+  const createLibrary = useCreateLibrary()
+  const updateLibrary = useUpdateLibrary()
+  const deleteLibrary = useDeleteLibrary()
 
   const form: FormContext<LibraryFormValues> = useForm(
     {
@@ -49,13 +44,13 @@ export const LibraryManager = () => {
     }
   )
 
-  const onSubmit = async (values: LibraryFormValues) => {
-    const res = values.mode === "create" ? await createLibrary(values) : await updateLibrary(values.id!, values)
-    if (res.success) {
-      setIsOpen(false)
-    } else {
-      toast.error(apiErrorMessage(res.error))
+  const onSubmit = (values: LibraryFormValues) => {
+    const handlers = {
+      onSuccess: () => setIsOpen(false),
+      onError: (error: Error) => toast.error(error.message),
     }
+    if (values.mode === "create") createLibrary.mutate(values, handlers)
+    else updateLibrary.mutate({ id: values.id!, library: values }, handlers)
   }
 
   const openEdit = (library: Library) => {
@@ -63,11 +58,10 @@ export const LibraryManager = () => {
     setIsOpen(true)
   }
 
-  const onDelete = async () => {
+  const onDelete = () => {
     if (!libraryToDelete) return
-    const res = await deleteLibrary(libraryToDelete.id)
+    deleteLibrary.mutate(libraryToDelete.id, { onError: error => toast.error(error.message) })
     setLibraryToDelete(undefined)
-    if (!res.success) toast.error(apiErrorMessage(res.error))
   }
 
   // eslint-disable-next-line react-hooks/exhaustive-deps

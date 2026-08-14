@@ -9,14 +9,10 @@ import { accountItem } from "@thoth/components/menu/settings-nav"
 import { Avatar, AvatarFallback } from "@thoth/components/ui/avatar"
 import { DropdownMenu, DropdownMenuItem } from "@thoth/components/ui/dropdown-menu"
 import { useCurrentLibraryId } from "@thoth/hooks/current-library"
-import { useOnMount } from "@thoth/hooks/lifecycle.ts"
 import { cn } from "@thoth/lib/utils"
-import { useCurrentUserState } from "@thoth/state/current-user.state"
+import { useCurrentUser } from "@thoth/queries/current-user"
 
 export const AppBar: FC = () => {
-  const fetchCurrentUser = useCurrentUserState(s => s.fetchCurrentUser)
-  useOnMount(() => void fetchCurrentUser())
-
   const libraryId = useCurrentLibraryId()
 
   return (
@@ -51,7 +47,7 @@ interface AccountMenuItem {
 }
 
 const AccountMenu: FC = () => {
-  const user = useCurrentUserState(s => s.user)
+  const { data: user } = useCurrentUser()
   const initial = user?.username ? user.username.charAt(0).toUpperCase() : <UserIcon className="h-5 w-5" />
 
   const menuItems: AccountMenuItem[] = [

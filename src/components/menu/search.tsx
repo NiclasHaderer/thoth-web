@@ -2,7 +2,7 @@ import { SearchIcon } from "lucide-react"
 import { FC, KeyboardEvent, useRef, useState } from "react"
 import { Input } from "@thoth/components/input/input"
 import { SearchResults } from "@thoth/components/menu/search-results"
-import { useLibrarySearch } from "@thoth/hooks/library-search"
+import { useLibrarySearch } from "@thoth/queries/library-search"
 import { useGlobalEvent } from "../../hooks/global-events"
 import { useFocusTrap } from "../../hooks/trap-focus"
 

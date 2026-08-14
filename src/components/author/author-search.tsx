@@ -1,11 +1,12 @@
+import { useQuery } from "@tanstack/react-query"
 import { SearchIcon } from "lucide-react"
 import { FC, Fragment, useState } from "react"
-import { Api, MetadataAuthor, UUID } from "@thoth/client"
+import { Api, MetadataAuthor, UUID, unwrap } from "@thoth/client"
 import { Input } from "@thoth/components/input/input"
 import { LoadingCards } from "@thoth/components/loading-card"
 import { ResponsiveImage } from "@thoth/components/responsive-image"
 import { Button } from "@thoth/components/ui/button"
-import { useHttpRequest } from "@thoth/hooks/async-response"
+import { queryKeys } from "@thoth/queries/keys"
 
 export const AuthorSearch: FC<{
   authorSearch?: string | null | undefined
@@ -13,12 +14,17 @@ export const AuthorSearch: FC<{
   onSelect: (result: MetadataAuthor) => void
 }> = ({ onSelect, authorSearch, libraryId }) => {
   const [author, setAuthor] = useState(authorSearch)
+  const [submitted, setSubmitted] = useState<{ q: string } | null>(null)
 
-  const { result, loading, invoke } = useHttpRequest(Api.searchAuthorMetadata)
+  const { data: result, isFetching: loading } = useQuery({
+    queryKey: queryKeys.metadataSearch("authors", libraryId, submitted ?? {}),
+    queryFn: () => unwrap(Api.searchAuthorMetadata({ q: submitted!.q, libraryId })),
+    enabled: submitted !== null,
+  })
 
-  const search = async () => {
+  const search = () => {
     if (!author) return
-    await invoke({ q: author, libraryId })
+    setSubmitted({ q: author })
   }
 
   return (

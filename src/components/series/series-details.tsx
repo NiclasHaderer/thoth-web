@@ -1,22 +1,18 @@
 import { ImageOffIcon } from "lucide-react"
-import { FC, useEffect } from "react"
+import { FC } from "react"
 import { Link } from "wouter"
 import { UUID } from "@thoth/client"
 import { BookPreview } from "@thoth/components/book/book-preview.tsx"
 import { HtmlViewer } from "@thoth/components/html-editor"
 import { ResponsiveGrid } from "@thoth/components/responsive-grid"
 import { isDetailedSeries } from "@thoth/models/typeguards"
-import { AudiobookSelectors } from "../../state/audiobook.selectors"
-import { useAudiobookState } from "../../state/audiobook.state"
+import { useSeries } from "@thoth/queries/resources"
 import { pluralize } from "../../utils/utils"
 import SeriesEdit from "./series-edit"
 
 export const SeriesDetails: FC<{ seriesId: UUID; libraryId: UUID }> = ({ seriesId, libraryId }) => {
-  const getSeriesWithBooks = useAudiobookState(s => s.fetchSeriesDetails)
+  const { data: series } = useSeries(libraryId, seriesId)
 
-  const series = useAudiobookState(AudiobookSelectors.selectSeries(libraryId, seriesId))
-
-  useEffect(() => void getSeriesWithBooks({ libraryId, id: seriesId }), [seriesId, libraryId, getSeriesWithBooks])
   if (!series) return <></>
 
   return (
