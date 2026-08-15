@@ -42,6 +42,7 @@ const useResourceList = <T>(resource: Resource, listFn: ListFn<T>, libraryId: UU
   const query = useInfiniteQuery({
     queryKey: queryKeys.resourceList(resource, libraryId, order),
     queryFn: ({ pageParam }) => unwrap(listFn({ libraryId, limit: PAGE_SIZE, offset: pageParam, order })),
+    meta: { action: `load ${resource}` },
     initialPageParam: 0,
     getNextPageParam: lastPage => {
       const next = lastPage.offset + lastPage.items.length
@@ -88,9 +89,10 @@ export const cachedResourceTotal = (
   return lists.find(([, data]) => data !== undefined)?.[1]?.pages[0]?.total
 }
 
-const useResourceUpdate = <U, R>(resource: Resource, updateFn: UpdateFn<U, R>) => {
+const useResourceUpdate = <U, R>(resource: Resource, singular: string, updateFn: UpdateFn<U, R>) => {
   const queryClient = useQueryClient()
   return useMutation({
+    meta: { action: `save the ${singular}` },
     mutationFn: ({ libraryId, id, data }: { libraryId: UUID; id: UUID; data: U }) =>
       unwrap(updateFn({ libraryId, id }, data)),
     onSuccess: (result, { libraryId, id }) => {
@@ -110,6 +112,7 @@ export const useBooks = (libraryId: UUID, order: Order = "ASC") =>
 export const bookDetailQuery = (libraryId: UUID, id: UUID) => ({
   queryKey: queryKeys.resourceDetail("books", libraryId, id),
   queryFn: () => unwrap(Api.getBook({ libraryId, id })),
+  meta: { action: "load the book" },
 })
 
 export const useBook = (libraryId: UUID, id: UUID) => {
@@ -120,7 +123,7 @@ export const useBook = (libraryId: UUID, id: UUID) => {
   })
 }
 
-export const useUpdateBook = () => useResourceUpdate<BookUpdate, Book>("books", Api.updateBook)
+export const useUpdateBook = () => useResourceUpdate<BookUpdate, Book>("books", "book", Api.updateBook)
 
 export const useSeriesList = (libraryId: UUID, order: Order = "ASC") =>
   useResourceList("series", Api.listSeries, libraryId, order)
@@ -130,11 +133,12 @@ export const useSeries = (libraryId: UUID, id: UUID) => {
   return useQuery<Series | SeriesDetailed>({
     queryKey: queryKeys.resourceDetail("series", libraryId, id),
     queryFn: () => unwrap(Api.getSeries({ libraryId, id })),
+    meta: { action: "load the series" },
     placeholderData: () => findCachedListItem<Series>(queryClient, "series", libraryId, id),
   })
 }
 
-export const useUpdateSeries = () => useResourceUpdate<SeriesUpdate, Series>("series", Api.updateSeries)
+export const useUpdateSeries = () => useResourceUpdate<SeriesUpdate, Series>("series", "series", Api.updateSeries)
 
 export const useAuthors = (libraryId: UUID, order: Order = "ASC") =>
   useResourceList("authors", Api.listAuthors, libraryId, order)
@@ -144,8 +148,9 @@ export const useAuthor = (libraryId: UUID, id: UUID) => {
   return useQuery<Author | AuthorDetailed>({
     queryKey: queryKeys.resourceDetail("authors", libraryId, id),
     queryFn: () => unwrap(Api.getAuthor({ libraryId, id })),
+    meta: { action: "load the author" },
     placeholderData: () => findCachedListItem<Author>(queryClient, "authors", libraryId, id),
   })
 }
 
-export const useUpdateAuthor = () => useResourceUpdate<AuthorUpdate, Author>("authors", Api.updateAuthor)
+export const useUpdateAuthor = () => useResourceUpdate<AuthorUpdate, Author>("authors", "author", Api.updateAuthor)

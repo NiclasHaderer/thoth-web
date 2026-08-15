@@ -15,6 +15,7 @@ export const useLibrarySearch = (debounceMs = 100) => {
   const { data } = useQuery({
     queryKey: queryKeys.librarySearch(debounced),
     queryFn: () => unwrap(Api.searchInAllLibraries({ q: debounced })),
+    meta: { action: "run the search" },
     enabled: debounced.trim() !== "",
     placeholderData: keepPreviousData,
   })
