@@ -8,35 +8,43 @@ export * from "./generated/models"
 export * from "./error"
 export type { ApiResponse, ApiError } from "./generated/client"
 
-const authInterceptor: ApiInterceptor = async (data: ApiCallData): Promise<ApiCallData> => {
-  const authState = useAuthState.getState() as AuthState
-  let executor: (callData: ApiCallData) => Promise<Response | ApiResponse<unknown>> = data.executor
-  if (data.requiresAuth) {
-    if (authState.loggedIn) {
-      if (isExpired(authState.accessToken)) {
-        await unstable_batchedUpdates(async () => await useAuthState.getState().refreshAccessToken())
-      }
-      executor = (...args) =>
-        data.executor(...args).then(e => {
-          // Only treat a 401 as a dead session when our token is actually expired
-          // (i.e. the pre-request refresh failed). A 401 on a still-valid token is an
-          // authorization failure (e.g. an admin-only endpoint), not a reason to log out.
-          const token = useAuthState.getState().accessToken
-          if (e instanceof Response && e.status === 401 && token && isExpired(token)) {
-            return unstable_batchedUpdates(() => useAuthState.getState().logout()).then(() => e)
-          }
-          return e
-        })
+const SESSION_EXPIRED: ApiResponse<never> = { success: false, error: "Session expired", status: 401 }
 
-      data.headers.set("Authorization", `Bearer ${useAuthState.getState().accessTokenStr}`)
-    } else {
-      executor = () => Promise.resolve({ success: false, error: "Not logged in" })
+const refreshSession = (): Promise<boolean> =>
+  unstable_batchedUpdates(() => useAuthState.getState().refreshAccessToken())
+
+const endSession = (): Promise<void> => unstable_batchedUpdates(() => useAuthState.getState().logout())
+
+const authorize = (callData: ApiCallData): ApiCallData => {
+  callData.headers.set("Authorization", `Bearer ${useAuthState.getState().accessTokenStr}`)
+  return callData
+}
+
+const authInterceptor: ApiInterceptor = async (data: ApiCallData): Promise<ApiCallData> => {
+  if (!data.requiresAuth) return data
+
+  const authState = useAuthState.getState() as AuthState
+  if (!authState.loggedIn) {
+    return { ...data, executor: () => Promise.resolve({ success: false, error: "Not logged in" }) }
+  }
+
+  if (isExpired(authState.accessToken) && !(await refreshSession())) {
+    await endSession()
+    return { ...data, executor: () => Promise.resolve(SESSION_EXPIRED) }
+  }
+
+  const executor = async (callData: ApiCallData): Promise<Response | ApiResponse<unknown>> => {
+    const response = await data.executor(authorize(callData))
+    if (!(response instanceof Response) || response.status !== 401) return response
+
+    if (!(await refreshSession())) {
+      await endSession()
+      return response
     }
+    return data.executor(authorize(callData))
   }
-  return {
-    ...data,
-    executor,
-  }
+
+  return { ...data, executor }
 }
 
 export const Api = createApi({}, [authInterceptor])

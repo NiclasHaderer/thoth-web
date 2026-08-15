@@ -3,9 +3,11 @@ import { MobileTabBar } from "@thoth/components/menu/mobile-tab-bar"
 import { AppBar } from "@thoth/components/menu/top-bar"
 import { Playback } from "@thoth/components/playback"
 import { RequireLogin } from "@thoth/components/require-login"
+import { useSessionRefresh } from "@thoth/state/auth.state"
 
 export const UiLayout: FC<{ children: ReactNode }> = ({ children }) => {
   const scrollArea = useRef<HTMLDivElement>(null)
+  useSessionRefresh()
 
   const measureDock = useCallback((dock: HTMLDivElement | null) => {
     if (!dock) return

@@ -1,3 +1,4 @@
+import { useEffect } from "react"
 import { toast } from "sonner"
 import { create } from "zustand"
 import { combine, persist } from "zustand/middleware"
@@ -16,6 +17,8 @@ export type AuthState =
       accessToken: Jwt
       accessTokenStr: string
     }
+
+let refreshInFlight: Promise<boolean> | undefined
 
 const INITIAL_USER_STATE: AuthState = {
   loggedIn: false,
@@ -49,18 +52,23 @@ export const useAuthState = create(
         queryClient.clear()
         await Api.logoutUser()
       },
-      refreshAccessToken: async () => {
-        const newAccessToken = await Api.refreshAccessToken()
-        if (!newAccessToken.success) {
-          const message = "Your session expired. Please log in again."
-          toast.error(message, { id: message })
-          return
-        }
-        set({
-          loggedIn: true,
-          accessTokenStr: newAccessToken.body.accessToken,
-          accessToken: decodeJWT(newAccessToken.body.accessToken),
-        })
+      refreshAccessToken: (): Promise<boolean> => {
+        refreshInFlight ??= Api.refreshAccessToken()
+          .then(newAccessToken => {
+            if (!newAccessToken.success) {
+              const message = "Your session expired. Please log in again."
+              toast.error(message, { id: message })
+              return false
+            }
+            set({
+              loggedIn: true,
+              accessTokenStr: newAccessToken.body.accessToken,
+              accessToken: decodeJWT(newAccessToken.body.accessToken),
+            })
+            return true
+          })
+          .finally(() => (refreshInFlight = undefined))
+        return refreshInFlight
       },
     })),
     {
@@ -68,3 +76,39 @@ export const useAuthState = create(
     }
   )
 )
+
+const REFRESH_LEEWAY_MS = 30_000
+const REFRESH_RETRY_MS = 15_000
+
+export const useSessionRefresh = () => {
+  const loggedIn = useAuthState(s => s.loggedIn)
+
+  useEffect(() => {
+    if (!loggedIn) return
+    let timer: ReturnType<typeof setTimeout>
+
+    const schedule = () => {
+      const token = useAuthState.getState().accessToken
+      if (!token) return
+      timer = setTimeout(refresh, Math.max(0, token.payload.exp * 1000 - REFRESH_LEEWAY_MS - Date.now()))
+    }
+
+    const refresh = async () => {
+      if (await useAuthState.getState().refreshAccessToken()) schedule()
+      else timer = setTimeout(refresh, REFRESH_RETRY_MS)
+    }
+
+    const onVisibilityChange = () => {
+      if (document.visibilityState !== "visible") return
+      clearTimeout(timer)
+      schedule()
+    }
+
+    schedule()
+    document.addEventListener("visibilitychange", onVisibilityChange)
+    return () => {
+      clearTimeout(timer)
+      document.removeEventListener("visibilitychange", onVisibilityChange)
+    }
+  }, [loggedIn])
+}
