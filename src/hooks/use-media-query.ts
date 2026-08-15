@@ -18,14 +18,13 @@ const useMediaQuery = (query: string): boolean => {
 
 type Breakpoint = "sm" | "md" | "lg" | "xl" | "2xl"
 
-// Matches when the viewport is at least the given Tailwind breakpoint, read from
-// the actual `--breakpoint-*` token so it stays in sync with the theme.
-export const useBreakpoint = (breakpoint: Breakpoint): boolean => {
-  const [query] = useState(() => {
-    if (typeof window === "undefined") return "(max-width: 0px)"
-    const value = getComputedStyle(document.documentElement).getPropertyValue(`--breakpoint-${breakpoint}`).trim()
-    return value ? `(min-width: ${value})` : "(max-width: 0px)"
-  })
-
-  return useMediaQuery(query)
+const breakpoints: Record<Breakpoint, string> = {
+  sm: "40rem",
+  md: "48rem",
+  lg: "64rem",
+  xl: "80rem",
+  "2xl": "96rem",
 }
+
+export const useBreakpoint = (breakpoint: Breakpoint): boolean =>
+  useMediaQuery(`(min-width: ${breakpoints[breakpoint]})`)

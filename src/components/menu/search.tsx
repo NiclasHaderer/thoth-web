@@ -42,7 +42,7 @@ export const Search: FC = () => {
   }
 
   return (
-    <div className="relative grow px-3 shadow-none" onKeyDown={modifyFocus} ref={setSearchOverlay}>
+    <div className="relative mx-auto w-full max-w-xl px-3 shadow-none" onKeyDown={modifyFocus} ref={setSearchOverlay}>
       <Input
         hideError
         groupClassName="bg-popover dark:bg-popover focus-within:bg-accent dark:focus-within:bg-accent rounded-3xl! h-auto py-1 border-0 transition-colors has-[[data-slot=input-group-control]:focus-visible]:ring-0 has-[[data-slot=input-group-control]:focus-visible]:border-0"
