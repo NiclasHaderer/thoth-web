@@ -60,7 +60,7 @@ export const Playback: FC = () => {
   useAudioSource(track?.id ? `/api/stream/audio/${track.id}` : undefined)
   const [position, setPosition] = usePosition()
   const duration = useDuration()
-  const [percentage, setPercentage] = usePercentage()
+  const { progress, scrub, scrubEnd } = usePercentage()
   const [playing, setPlaying] = usePlayState()
   useOnEnded(playback.next)
   const isDesktop = useBreakpoint("md")
@@ -82,9 +82,10 @@ export const Playback: FC = () => {
             className="border-border/60 md:bg-card relative flex h-16 items-center gap-3 border-b-[0.5px] px-3 md:mx-3 md:mb-3 md:h-24 md:rounded-xl md:border-0"
           >
             <ProgressBar
-              className="absolute top-0 right-0 left-0 w-full"
-              percentage={percentage}
-              onChange={setPercentage}
+              className="absolute top-0 right-0 left-0 z-10 w-full"
+              progress={progress}
+              onScrub={scrub}
+              onScrubEnd={scrubEnd}
             />
 
             <Link
