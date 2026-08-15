@@ -10,6 +10,16 @@
 
 @source "../**/*.{js,ts,jsx,tsx,mdx}";
 
+@keyframes equalizer {
+  0%,
+  100% {
+    transform: scaleY(0.3);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
 @utility no-scrollbar {
   scrollbar-width: none;
   -ms-overflow-style: none;
