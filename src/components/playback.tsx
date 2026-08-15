@@ -14,7 +14,7 @@ import { Link } from "wouter"
 import { ProgressBar } from "@thoth/components/progress-bar"
 import { Button } from "@thoth/components/ui/button"
 import { useBreakpoint } from "@thoth/hooks/use-media-query"
-import { useAudio, useDuration, useOnEnded, usePercentage, usePlayState, usePosition } from "../hooks/playback"
+import { useAudioSource, useDuration, useOnEnded, usePercentage, usePlayState, usePosition } from "../hooks/playback"
 import { usePlaybackState } from "../state/playback.state"
 import { toReadableTime } from "./track/helpers"
 
@@ -57,12 +57,12 @@ export const Playback: FC = () => {
   const playback = usePlaybackState()
   const track = playback.current
 
-  const [audio] = useAudio(track?.id ? `/api/audio/${track.id}` : undefined)
-  const [position, setPosition] = usePosition(audio)
-  const duration = useDuration(audio)
-  const [percentage, setPercentage] = usePercentage(audio)
-  const [playing, setPlaying] = usePlayState(audio)
-  useOnEnded(audio, playback.next)
+  useAudioSource(track?.id ? `/api/stream/audio/${track.id}` : undefined)
+  const [position, setPosition] = usePosition()
+  const duration = useDuration()
+  const [percentage, setPercentage] = usePercentage()
+  const [playing, setPlaying] = usePlayState()
+  useOnEnded(playback.next)
   const isDesktop = useBreakpoint("md")
 
   return (

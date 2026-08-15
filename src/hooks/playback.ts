@@ -1,125 +1,90 @@
 import { useQueryClient } from "@tanstack/react-query"
-import { useCallback, useEffect, useState, useSyncExternalStore } from "react"
+import { useCallback, useEffect, useSyncExternalStore } from "react"
 import { UUID } from "@thoth/client"
 import { bookDetailQuery } from "@thoth/queries/resources"
 import { usePlaybackState } from "@thoth/state/playback.state"
 
-export const useAudio = (
-  url: string | undefined | null,
-  autoplay = true
-): [HTMLAudioElement | null, (url: string) => void] => {
-  const [audio, setAudio] = useState<HTMLAudioElement | null>(null)
+let element: HTMLAudioElement | undefined
+const audio = (): HTMLAudioElement => (element ??= document.createElement("audio"))
 
+export const useAudioSource = (url: string | undefined | null, autoplay = true) => {
   useEffect(() => {
-    if (!url) return
-    const audioElement = document.createElement("audio")
-    audioElement.setAttribute("controls", "true")
-    audioElement.src = url
-    autoplay && void audioElement.play()
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- stores the created element so consumers re-render
-    setAudio(audioElement)
-    return () => {
-      audioElement.pause()
-      audioElement.remove()
+    const media = audio()
+    if (!url) {
+      media.pause()
+      media.removeAttribute("src")
+      media.load()
+      return
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [url])
-
-  return [
-    audio,
-    (url: string) => {
-      if (!audio) return
-      // eslint-disable-next-line react-hooks/immutability -- imperative HTMLAudioElement mutation
-      audio.src = url
-    },
-  ]
+    media.src = url
+    if (autoplay) void media.play().catch(() => {})
+  }, [url, autoplay])
 }
 
-const useAudioEvent = <T>(
-  audio: HTMLAudioElement | undefined | null,
-  events: string[],
-  getSnapshot: (audio: HTMLAudioElement) => T,
-  fallback: T
-): T => {
-  const subscribe = useCallback(
-    (onChange: () => void) => {
-      if (!audio) return () => {}
-      events.forEach(event => audio.addEventListener(event, onChange))
-      return () => events.forEach(event => audio.removeEventListener(event, onChange))
-    },
+const useAudioEvent = <T>(events: string[], getSnapshot: (audio: HTMLAudioElement) => T): T => {
+  const subscribe = useCallback((onChange: () => void) => {
+    const media = audio()
+    events.forEach(event => media.addEventListener(event, onChange))
+    return () => events.forEach(event => media.removeEventListener(event, onChange))
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [audio]
-  )
-  return useSyncExternalStore(subscribe, () => (audio ? getSnapshot(audio) : fallback))
+  }, [])
+  return useSyncExternalStore(subscribe, () => getSnapshot(audio()))
 }
 
-export const usePosition = (
-  audio: HTMLAudioElement | undefined | null
-): [number | undefined, (seconds: number) => void] => {
-  const position = useAudioEvent(audio, ["timeupdate"], a => a.currentTime, undefined)
+export const usePosition = (): [number, (seconds: number) => void] => {
+  const position = useAudioEvent(["timeupdate", "emptied"], a => a.currentTime)
 
   return [
     position,
     (seconds: number) => {
-      if (!audio) return
-      // eslint-disable-next-line react-hooks/immutability -- imperative HTMLAudioElement mutation
-      audio.currentTime = seconds
+      audio().currentTime = seconds
     },
   ]
 }
 
-export const useDuration = (audio: HTMLAudioElement | undefined | null) => {
-  return useAudioEvent(audio, ["durationchange"], a => a.duration, undefined)
-}
+export const useDuration = (): number => useAudioEvent(["durationchange", "emptied"], a => a.duration)
 
-export const usePercentage = (
-  audio: HTMLAudioElement | undefined | null
-): [number | undefined, (percentage: number) => void] => {
-  const percentage = useAudioEvent(
-    audio,
-    ["timeupdate"],
-    a => (Number.isFinite(a.duration) && a.duration > 0 ? a.currentTime / a.duration : undefined),
-    undefined
+export const usePercentage = (): [number | undefined, (percentage: number) => void] => {
+  const percentage = useAudioEvent(["timeupdate", "emptied"], a =>
+    Number.isFinite(a.duration) && a.duration > 0 ? a.currentTime / a.duration : undefined
   )
 
   return [
     percentage,
     (percentage: number) => {
-      if (!audio) return
-      // eslint-disable-next-line react-hooks/immutability -- imperative HTMLAudioElement mutation
-      audio.currentTime = Math.floor(audio.duration * percentage)
-      void audio.play()
+      const media = audio()
+      media.currentTime = Math.floor(media.duration * percentage)
+      void media.play().catch(() => {})
     },
   ]
 }
 
-export const usePlayState = (audio: HTMLAudioElement | undefined | null): [boolean, (shouldPlay: boolean) => void] => {
-  const playing = useAudioEvent(audio, ["play", "pause"], a => !a.paused, false)
+export const usePlayState = (): [boolean, (shouldPlay: boolean) => void] => {
+  const playing = useAudioEvent(["play", "pause", "ended", "emptied"], a => !a.paused)
 
   return [
     playing,
     (shouldPlay: boolean) => {
-      if (!audio) return
+      const media = audio()
       if (shouldPlay) {
-        void audio.play()
+        void media.play().catch(() => {})
       } else {
-        audio.pause()
+        media.pause()
       }
     },
   ]
 }
 
-export const useOnEnded = (audio: HTMLAudioElement | undefined | null, callback: () => void) => {
+export const useOnEnded = (callback: () => void) => {
   useEffect(() => {
-    if (!audio) return
-
+    const media = audio()
     const ended = () => callback()
 
-    audio.addEventListener("ended", ended)
+    media.addEventListener("ended", ended)
     return () => {
-      audio.removeEventListener("ended", ended)
+      media.removeEventListener("ended", ended)
     }
-  }, [audio, callback])
+  }, [callback])
 }
 
 export const usePlayBook = () => {
