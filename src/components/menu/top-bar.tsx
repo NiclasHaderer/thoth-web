@@ -16,8 +16,8 @@ export const AppBar: FC = () => {
   const libraryId = useCurrentLibraryId()
 
   return (
-    <div className="bg-card mx-3 mt-3 hidden h-20 min-h-20 shrink-0 items-center rounded-xl pr-3 md:flex">
-      <LogoLink libraryId={libraryId} className="h-20" />
+    <div className="bg-card mx-3 mt-3 hidden h-16 min-h-16 shrink-0 items-center rounded-xl pr-3 md:flex">
+      <LogoLink libraryId={libraryId} className="h-16" />
       <Search />
       <AccountMenu />
     </div>
@@ -28,14 +28,12 @@ const LogoLink: FC<{ libraryId: UUID | undefined; className?: string }> = ({ lib
   <Link
     href={libraryId ? `/libraries/${libraryId}` : "/libraries"}
     className={cn(
-      "focus-visible:bg-accent flex overflow-hidden rounded-l-xl transition-colors outline-none",
+      "focus-visible:bg-accent flex w-16 shrink-0 items-center justify-center rounded-l-xl transition-colors outline-none",
       className
     )}
     aria-label="Thoth home"
   >
-    <div className="inline-flex cursor-pointer items-center sm:pr-2">
-      <Logo className="h-8 w-auto md:h-20 md:p-3" />
-    </div>
+    <Logo className="h-12 w-auto" />
   </Link>
 )
 
