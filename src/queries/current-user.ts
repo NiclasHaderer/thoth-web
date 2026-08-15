@@ -8,6 +8,7 @@ export const useCurrentUser = () =>
   useQuery({
     queryKey: queryKeys.currentUser,
     queryFn: () => unwrap(Api.getCurrentUser()),
+    meta: { action: "load your profile" },
     staleTime: Infinity,
   })
 

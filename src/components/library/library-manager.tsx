@@ -1,6 +1,5 @@
 import { PlusIcon } from "lucide-react"
 import { useMemo, useState } from "react"
-import { toast } from "sonner"
 import { FileScanner, Library, NamedMetadataAgent, UUID } from "@thoth/client"
 import { DataTable } from "@thoth/components/data-table/data-table"
 import { DataTableToolbar } from "@thoth/components/data-table/data-table-toolbar"
@@ -45,10 +44,7 @@ export const LibraryManager = () => {
   )
 
   const onSubmit = (values: LibraryFormValues) => {
-    const handlers = {
-      onSuccess: () => setIsOpen(false),
-      onError: (error: Error) => toast.error(error.message),
-    }
+    const handlers = { onSuccess: () => setIsOpen(false) }
     if (values.mode === "create") createLibrary.mutate(values, handlers)
     else updateLibrary.mutate({ id: values.id!, library: values }, handlers)
   }
@@ -60,7 +56,7 @@ export const LibraryManager = () => {
 
   const onDelete = () => {
     if (!libraryToDelete) return
-    deleteLibrary.mutate(libraryToDelete.id, { onError: error => toast.error(error.message) })
+    deleteLibrary.mutate(libraryToDelete.id)
     setLibraryToDelete(undefined)
   }
 

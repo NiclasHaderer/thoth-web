@@ -1,30 +1,12 @@
 import { unstable_batchedUpdates } from "react-dom"
 import { AuthState, useAuthState } from "@thoth/state/auth.state"
 import { isExpired } from "@thoth/utils/jwt"
-import { apiErrorMessage } from "@thoth/utils/utils"
 import { createApi } from "./generated/api-client"
-import { ApiCallData, ApiError, ApiInterceptor, ApiResponse } from "./generated/client"
+import { ApiCallData, ApiInterceptor, ApiResponse } from "./generated/client"
 
 export * from "./generated/models"
+export * from "./error"
 export type { ApiResponse, ApiError } from "./generated/client"
-
-export class ThothApiError extends Error {
-  readonly status: number | undefined
-  readonly error: ApiError["error"]
-
-  constructor(response: ApiError) {
-    super(apiErrorMessage(response.error))
-    this.name = "ThothApiError"
-    this.status = response.status
-    this.error = response.error
-  }
-}
-
-export const unwrap = async <T>(response: Promise<ApiResponse<T>>): Promise<T> => {
-  const result = await response
-  if (!result.success) throw new ThothApiError(result)
-  return result.body
-}
 
 const authInterceptor: ApiInterceptor = async (data: ApiCallData): Promise<ApiCallData> => {
   const authState = useAuthState.getState() as AuthState

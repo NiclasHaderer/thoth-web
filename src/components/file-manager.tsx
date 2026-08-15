@@ -28,6 +28,7 @@ export const FolderManager: FC<{
   const { data: folders } = useQuery({
     queryKey: queryKeys.folders(currentPath),
     queryFn: () => unwrap(Api.listFoldersAtACertainPath({ path: currentPath })),
+    meta: { action: "load folders" },
   })
 
   const selected = new Set(selectedFolders ?? [])

@@ -3,8 +3,6 @@ import { Order, UUID } from "@thoth/client"
 export type Resource = "books" | "series" | "authors"
 export type NameResource = "narrators" | "genres"
 
-// Everything that belongs to one library hangs off ["library", libraryId] so a
-// content change can invalidate the whole subtree in one call.
 const libraryScope = (libraryId: UUID) => ["library", libraryId] as const
 
 export const queryKeys = {
@@ -20,11 +18,9 @@ export const queryKeys = {
   serverLicenses: ["licenses", "server"] as const,
   webLicenses: ["licenses", "web"] as const,
 
-  // Spans every library, so it is stale after any content change.
   librarySearches: ["library-search"] as const,
   librarySearch: (query: string) => ["library-search", query] as const,
 
-  // Provider lookups, independent of our own content.
   metadataSearch: (resource: Resource, libraryId: UUID, params: object) =>
     ["metadata-search", resource, libraryId, params] as const,
 
