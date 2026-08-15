@@ -12,7 +12,7 @@ export const LibraryResourceView: FC<LibraryResourceViewProps> = ({ children, li
       <LibraryMenu libraryId={libraryId} className="hidden md:flex" />
       <main
         tabIndex={-1}
-        className="min-w-0 grow overflow-x-hidden overflow-y-auto px-5 pb-[calc(var(--dock-height,3.5rem)+env(safe-area-inset-bottom))] md:mt-10 md:pb-0"
+        className="min-w-0 grow overflow-x-hidden overflow-y-auto px-5 pb-[calc(var(--dock-height,3.5rem)+env(safe-area-inset-bottom))] focus-visible:outline-none md:mt-3 md:pb-0"
       >
         {children}
       </main>

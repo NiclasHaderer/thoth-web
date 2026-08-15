@@ -75,7 +75,12 @@ export const useDuration = (audio: HTMLAudioElement | undefined | null) => {
 export const usePercentage = (
   audio: HTMLAudioElement | undefined | null
 ): [number | undefined, (percentage: number) => void] => {
-  const percentage = useAudioEvent(audio, ["timeupdate"], a => a.currentTime / a.duration, undefined)
+  const percentage = useAudioEvent(
+    audio,
+    ["timeupdate"],
+    a => (Number.isFinite(a.duration) && a.duration > 0 ? a.currentTime / a.duration : undefined),
+    undefined
+  )
 
   return [
     percentage,

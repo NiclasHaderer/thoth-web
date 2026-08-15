@@ -1,67 +1,71 @@
-import { CirclePlayIcon, ImageOffIcon } from "lucide-react"
+import { CheckIcon, PlayIcon } from "lucide-react"
 import { FC } from "react"
-import { Link } from "wouter"
-import { NamedId, UUID } from "@thoth/client"
+import { rowInteraction } from "@thoth/lib/interactive"
+import { cn } from "@thoth/lib/utils"
 import { toReadableTime } from "./helpers"
 
+export type TrackState = "playing" | "paused" | "played" | "idle"
+
 interface TrackProps {
-  coverID?: string | null
   title: string
-  authors: NamedId[]
   duration: number
   index: number
   trackNr?: number | null
+  state: TrackState
   startPlayback: (index: number) => void
-  libraryId: UUID
 }
 
-export const Track: FC<TrackProps> = ({
-  coverID,
-  libraryId,
-  title,
-  duration,
-  trackNr,
-  index,
-  authors,
-  startPlayback,
-}) => (
-  <div className="even:bg-muted mr-3 flex rounded-md p-2">
-    <div
-      className="group relative cursor-pointer"
-      onClick={() => startPlayback(index)}
-      onKeyUp={e => e.key === "Enter" && startPlayback(index)}
-    >
-      {coverID ? (
-        <img
-          className="h-16 w-16 rounded-md object-contain"
-          src={`/api/stream/images/${coverID}`}
-          alt={title}
-          loading="lazy"
-        />
-      ) : (
-        <ImageOffIcon className="h-16 w-16 rounded-md" />
-      )}
+const Equalizer: FC<{ animated: boolean }> = ({ animated }) => (
+  <span className="flex h-3.5 items-end gap-0.5">
+    {[0, 1, 2].map(bar => (
+      <span
+        key={bar}
+        style={{ animationDelay: `${bar * 0.15}s`, animationPlayState: animated ? "running" : "paused" }}
+        className="bg-primary h-full w-0.5 origin-bottom [animation:equalizer_0.9s_ease-in-out_infinite] rounded-full"
+      />
+    ))}
+  </span>
+)
+
+export const Track: FC<TrackProps> = ({ title, duration, trackNr, index, state, startPlayback }) => {
+  const active = state === "playing" || state === "paused"
+
+  return (
+    <li>
       <button
         type="button"
         aria-label={`Play ${title}`}
-        className="bg-opacity-0 group-hover:bg-background group-hover:bg-opacity-40 absolute top-0 left-0 flex h-full w-full items-center justify-center rounded-md opacity-0 transition-all duration-300 group-hover:opacity-100 focus:opacity-100"
+        aria-current={active ? "true" : undefined}
+        onClick={() => startPlayback(index)}
+        className={cn(
+          rowInteraction,
+          "group flex w-full items-center gap-4 px-3 py-3 text-left",
+          active && "bg-muted/60",
+          state === "played" && "text-muted-foreground"
+        )}
       >
-        <CirclePlayIcon className="h-6 w-6" aria-hidden />
+        <span className="relative flex size-8 shrink-0 items-center justify-center">
+          {active ? (
+            <Equalizer animated={state === "playing"} />
+          ) : state === "played" ? (
+            <CheckIcon aria-hidden className="text-muted-foreground size-3.5" />
+          ) : (
+            <span className="text-muted-foreground no-touch:group-hover:opacity-0 text-sm tabular-nums transition-opacity">
+              {trackNr ?? index + 1}
+            </span>
+          )}
+          {active ? null : (
+            <span className="bg-primary text-primary-foreground no-touch:group-hover:scale-100 no-touch:group-hover:opacity-100 absolute inset-0 flex scale-90 items-center justify-center rounded-full opacity-0 transition-all">
+              <PlayIcon aria-hidden className="size-3.5 fill-current" />
+            </span>
+          )}
+        </span>
+
+        <span className={cn("min-w-0 grow truncate text-sm", active && "text-primary font-medium")}>{title}</span>
+
+        <span className="text-muted-foreground shrink-0 text-xs tabular-nums">{toReadableTime(duration)}</span>
+        {active ? null : <PlayIcon aria-hidden className="touch:block hidden size-4 shrink-0 fill-current" />}
       </button>
-    </div>
-    <div className="flex grow items-center justify-between pl-6">
-      <div className="flex items-center">
-        {trackNr}
-        <div className="flex flex-col pl-6">
-          <span>{title}</span>
-          {authors.map(author => (
-            <Link href={`/libraries/${libraryId}/authors/${author.id}`} tabIndex={-1} key={author.id}>
-              <span className="cursor-pointer group-focus:underline hover:underline">{author.name}</span>
-            </Link>
-          ))}
-        </div>
-      </div>
-      {toReadableTime(duration)}
-    </div>
-  </div>
-)
+    </li>
+  )
+}
