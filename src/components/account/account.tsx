@@ -1,4 +1,3 @@
-import { useQueryClient } from "@tanstack/react-query"
 import {
   EyeIcon,
   EyeOffIcon,
@@ -11,7 +10,7 @@ import {
 } from "lucide-react"
 import { FC, useEffect, useMemo, useRef, useState } from "react"
 import { toast } from "sonner"
-import { Api, ThothUserWithPermissions, UserPermissions } from "@thoth/client"
+import { ThothUserWithPermissions, UserPermissions } from "@thoth/client"
 import { ManagedInput } from "@thoth/components/input/managed-input.tsx"
 import { Avatar, AvatarFallback } from "@thoth/components/ui/avatar"
 import { Badge } from "@thoth/components/ui/badge"
@@ -27,25 +26,25 @@ import {
 } from "@thoth/components/ui/dialog"
 import { Form, useForm } from "@thoth/hooks/form.tsx"
 import { useSetUsername } from "@thoth/queries/current-user"
-import { queryKeys } from "@thoth/queries/keys"
+import { useDeleteUser, useUpdatePassword, useUpdateUsername } from "@thoth/queries/users"
 import { useAuthState } from "@thoth/state/auth.state"
-import { apiErrorMessage, pluralize } from "@thoth/utils/utils.ts"
+import { pluralize } from "@thoth/utils/utils.ts"
 
 export const User: FC<{ user: ThothUserWithPermissions<UserPermissions> }> = ({ user }) => {
   const setUsername = useSetUsername()
-  const queryClient = useQueryClient()
   const logout = useAuthState(s => s.logout)
+  const updateUsername = useUpdateUsername()
+  const updatePassword = useUpdatePassword()
+  const deleteUser = useDeleteUser()
 
-  const deleteAccount = async () => {
-    const res = await Api.deleteUser({ id: user.id })
-    if (!res.success) {
-      toast.error(apiErrorMessage(res.error))
-      return
-    }
-    await logout()
-    window.location.replace("/#/login")
-    window.location.reload()
-  }
+  const deleteAccount = () =>
+    deleteUser.mutate(user.id, {
+      onSuccess: async () => {
+        await logout()
+        window.location.replace("/#/login")
+        window.location.reload()
+      },
+    })
 
   const usernameInitial = useMemo(() => ({ username: user.username }), [user.username])
   const usernameForm = useForm(usernameInitial, {
@@ -149,16 +148,17 @@ export const User: FC<{ user: ThothUserWithPermissions<UserPermissions> }> = ({ 
         <Form
           form={usernameForm}
           className="bg-card flex flex-col gap-2 rounded-xl p-4"
-          onSubmit={async values => {
-            const result = await Api.updateUsername({ id: user.id }, { username: values.username })
-            if (!result.success) {
-              toast.error(apiErrorMessage(result.error))
-              return
-            }
-            setUsername(values.username)
-            await queryClient.invalidateQueries({ queryKey: queryKeys.users })
-            toast.success("Username updated")
-          }}
+          onSubmit={values =>
+            updateUsername.mutate(
+              { id: user.id, username: values.username },
+              {
+                onSuccess: () => {
+                  setUsername(values.username)
+                  toast.success("Username updated")
+                },
+              }
+            )
+          }
         >
           <h3 className="text-muted-foreground text-sm font-medium">Username</h3>
           <ManagedInput name="username" leftIcon={<IdCardIcon />} placeholder="Username" />
@@ -175,18 +175,17 @@ export const User: FC<{ user: ThothUserWithPermissions<UserPermissions> }> = ({ 
         <Form
           form={passwordForm}
           className="bg-card flex flex-col gap-2 rounded-xl p-4"
-          onSubmit={async values => {
-            const result = await Api.updatePassword(
-              { id: user.id },
-              { currentPassword: values.currentPassword, newPassword: values.newPassword }
+          onSubmit={values =>
+            updatePassword.mutate(
+              { id: user.id, currentPassword: values.currentPassword, newPassword: values.newPassword },
+              {
+                onSuccess: () => {
+                  passwordForm.restoreInitial()
+                  toast.success("Password updated")
+                },
+              }
             )
-            if (!result.success) {
-              toast.error(apiErrorMessage(result.error))
-              return
-            }
-            passwordForm.restoreInitial()
-            toast.success("Password updated")
-          }}
+          }
         >
           <h3 className="text-muted-foreground text-sm font-medium">Password</h3>
           <ManagedInput

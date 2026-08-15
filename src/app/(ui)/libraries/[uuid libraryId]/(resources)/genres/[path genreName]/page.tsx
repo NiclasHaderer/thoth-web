@@ -8,6 +8,7 @@ export const GenreOutlet = ({ libraryId, genreName }: { libraryId: UUID; genreNa
   const { data } = useQuery({
     queryKey: queryKeys.nameDetail("genres", libraryId, name),
     queryFn: () => unwrap(Api.getGenre({ libraryId, name: encodeURIComponent(name) })),
+    meta: { action: "load the genre" },
   })
 
   if (!data) return null

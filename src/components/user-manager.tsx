@@ -1,58 +1,37 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { useMemo, useState } from "react"
 import { toast } from "sonner"
-import { Api, unwrap } from "@thoth/client"
 import { DataTable } from "@thoth/components/data-table/data-table"
 import { DataTableToolbar } from "@thoth/components/data-table/data-table-toolbar"
 import { UserRow, userColumns } from "@thoth/components/user-columns"
 import { UserDialog, UserFormValues } from "@thoth/components/user-dialog"
 import { useForm } from "@thoth/hooks/form.tsx"
-import { queryKeys } from "@thoth/queries/keys"
+import { useDeleteUser, useUpdateUser, useUsers } from "@thoth/queries/users"
 import { useAuthState } from "@thoth/state/auth.state"
-import { apiErrorMessage } from "@thoth/utils/utils"
 
 export const UserManager = () => {
   const loggedInUserId = useAuthState(s => s.accessToken?.payload.sub)
   const [isOpen, setIsOpen] = useState(false)
-  const queryClient = useQueryClient()
-  const { data: users } = useQuery({
-    queryKey: queryKeys.users,
-    queryFn: () => unwrap(Api.listUsers()),
-  })
-  // Editing a user can be editing yourself, which changes the current user and
-  // the set of libraries visible to them.
-  const refreshUsers = () =>
-    Promise.all([
-      queryClient.invalidateQueries({ queryKey: queryKeys.users }),
-      queryClient.invalidateQueries({ queryKey: queryKeys.currentUser }),
-      queryClient.invalidateQueries({ queryKey: queryKeys.libraries }),
-    ])
+  const { data: users } = useUsers()
+  const updateUserMutation = useUpdateUser()
+  const deleteUserMutation = useDeleteUser()
 
-  const updateUser = async (user: UserFormValues) => {
-    const rename = await Api.updateUsername({ id: user.id! }, { username: user.username })
-    if (!rename.success) {
-      toast.error(apiErrorMessage(rename.error))
-      return
-    }
-    const permissions = await Api.updatePermissions(
-      { id: user.id! },
+  const updateUser = (user: UserFormValues) => {
+    updateUserMutation.mutate(
       {
+        id: user.id!,
+        username: user.username,
         permissions: {
           isAdmin: user.admin,
-          libraries: user.libraries.map(l => ({
-            id: l,
-            permissions: "READONLY",
-          })),
+          libraries: user.libraries.map(l => ({ id: l, permissions: "READONLY" })),
+        },
+      },
+      {
+        onSuccess: () => {
+          setIsOpen(false)
+          toast.success("User updated")
         },
       }
     )
-    if (!permissions.success) {
-      toast.error(apiErrorMessage(permissions.error))
-      return
-    }
-    await refreshUsers()
-    setIsOpen(false)
-    toast.success("User updated")
   }
 
   const form = useForm<UserFormValues>({
@@ -72,14 +51,7 @@ export const UserManager = () => {
     setIsOpen(true)
   }
 
-  const deleteUser = async (user: UserRow) => {
-    const res = await Api.deleteUser({ id: user.id })
-    if (!res.success) {
-      toast.error(apiErrorMessage(res.error))
-      return
-    }
-    await refreshUsers()
-  }
+  const deleteUser = (user: UserRow) => deleteUserMutation.mutate(user.id)
 
   const columns = useMemo(
     () => userColumns({ currentUserId: loggedInUserId, onEdit: openEdit, onDelete: deleteUser }),

@@ -17,6 +17,7 @@ export const useNameList = (resource: NameListResource, list: NameListCall, libr
   useInfiniteQuery({
     queryKey: queryKeys.nameList(resource, libraryId, order),
     queryFn: ({ pageParam }) => unwrap(list({ libraryId, limit: PAGE_SIZE, offset: pageParam, order })),
+    meta: { action: `load ${resource}` },
     initialPageParam: 0,
     getNextPageParam: lastPage => {
       const next = lastPage.offset + lastPage.items.length

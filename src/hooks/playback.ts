@@ -1,6 +1,5 @@
 import { useQueryClient } from "@tanstack/react-query"
 import { useCallback, useEffect, useState, useSyncExternalStore } from "react"
-import { toast } from "sonner"
 import { UUID } from "@thoth/client"
 import { bookDetailQuery } from "@thoth/queries/resources"
 import { usePlaybackState } from "@thoth/state/playback.state"
@@ -123,10 +122,7 @@ export const usePlayBook = () => {
   const queryClient = useQueryClient()
 
   return async (libraryId: UUID, bookId: UUID) => {
-    const book = await queryClient.fetchQuery(bookDetailQuery(libraryId, bookId)).catch((error: Error) => {
-      toast.error(error.message)
-      return undefined
-    })
+    const book = await queryClient.fetchQuery(bookDetailQuery(libraryId, bookId)).catch(() => undefined)
     if (!book) return
     const [first, ...queue] = book.tracks.map(track => ({
       ...track,
