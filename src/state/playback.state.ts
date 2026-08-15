@@ -6,7 +6,6 @@ export type PlaybackTrack = Track & { authors: NamedId[] } & { coverID: string |
 }
 
 interface PlaybackState {
-  isPlaying: boolean
   history: PlaybackTrack[]
   queue: PlaybackTrack[]
   current: PlaybackTrack | null | undefined
@@ -21,13 +20,11 @@ interface PlaybackState {
 }
 
 export const usePlaybackState = create<PlaybackState>((set, get) => ({
-  isPlaying: false,
   history: [],
   queue: [],
   current: null,
   start(track: PlaybackTrack, queue: PlaybackTrack[] = [], history: PlaybackTrack[] = []): void {
     set({
-      isPlaying: true,
       history,
       queue,
       current: track,
@@ -35,7 +32,6 @@ export const usePlaybackState = create<PlaybackState>((set, get) => ({
   },
   stop(): void {
     set({
-      isPlaying: false,
       history: [],
       queue: [],
       current: null,
