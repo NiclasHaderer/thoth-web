@@ -6,14 +6,14 @@ import { RequireLogin } from "@thoth/components/require-login"
 import { usePlaybackState } from "@thoth/state/playback.state"
 
 export const UiLayout: FC<{ children: ReactNode }> = ({ children }) => {
-  const isPlaying = usePlaybackState(state => state.isPlaying)
+  const current = usePlaybackState(state => state.current)
 
   return (
     <RequireLogin>
       <AppBar />
       <div
         data-scroll-area
-        style={{ "--dock-height": isPlaying ? "7.5rem" : "3.5rem" } as CSSProperties}
+        style={{ "--dock-height": current ? "7.5rem" : "3.5rem" } as CSSProperties}
         className="flex min-h-0 grow flex-col overflow-y-auto"
       >
         {children}

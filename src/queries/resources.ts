@@ -96,8 +96,6 @@ const useResourceUpdate = <U, R>(resource: Resource, singular: string, updateFn:
     mutationFn: ({ libraryId, id, data }: { libraryId: UUID; id: UUID; data: U }) =>
       unwrap(updateFn({ libraryId, id }, data)),
     onSuccess: (result, { libraryId, id }) => {
-      // Show the patched fields immediately; the invalidation below refetches
-      // the authoritative detail (the PATCH response omits tracks/books).
       queryClient.setQueryData(queryKeys.resourceDetail(resource, libraryId, id), (previous: unknown) =>
         previous ? { ...previous, ...result } : result
       )
