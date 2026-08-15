@@ -1,5 +1,6 @@
 import { useQueryClient } from "@tanstack/react-query"
-import { useCallback, useEffect, useSyncExternalStore } from "react"
+import { useAnimationFrame, useMotionValue } from "motion/react"
+import { useCallback, useEffect, useRef, useSyncExternalStore } from "react"
 import { UUID } from "@thoth/client"
 import { bookDetailQuery } from "@thoth/queries/resources"
 import { usePlaybackState } from "@thoth/state/playback.state"
@@ -44,19 +45,38 @@ export const usePosition = (): [number, (seconds: number) => void] => {
 
 export const useDuration = (): number => useAudioEvent(["durationchange", "emptied"], a => a.duration)
 
-export const usePercentage = (): [number | undefined, (percentage: number) => void] => {
-  const percentage = useAudioEvent(["timeupdate", "emptied"], a =>
-    Number.isFinite(a.duration) && a.duration > 0 ? a.currentTime / a.duration : undefined
-  )
+const currentPercentage = (media: HTMLAudioElement) =>
+  Number.isFinite(media.duration) && media.duration > 0 ? media.currentTime / media.duration : 0
 
-  return [
-    percentage,
-    (percentage: number) => {
-      const media = audio()
-      media.currentTime = Math.floor(media.duration * percentage)
-      void media.play().catch(() => {})
+export const usePercentage = () => {
+  const progress = useMotionValue(0)
+  const scrubbing = useRef(false)
+
+  useAnimationFrame(() => {
+    if (scrubbing.current) return
+    const next = currentPercentage(audio())
+    if (progress.get() !== next) progress.set(next)
+  })
+
+  const seek = (percentage: number) => {
+    const media = audio()
+    if (!Number.isFinite(media.duration)) return
+    media.currentTime = media.duration * percentage
+    void media.play().catch(() => {})
+  }
+
+  return {
+    progress,
+    scrub: (percentage: number) => {
+      scrubbing.current = true
+      progress.set(percentage)
     },
-  ]
+    scrubEnd: (percentage: number) => {
+      progress.set(percentage)
+      seek(percentage)
+      scrubbing.current = false
+    },
+  }
 }
 
 export const usePlayState = (): [boolean, (shouldPlay: boolean) => void] => {
