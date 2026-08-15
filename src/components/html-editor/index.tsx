@@ -3,7 +3,7 @@ import { FC, lazy, Suspense } from "react"
 import { Loading } from "@thoth/components/loading.tsx"
 
 const HtmlEditorImpl = lazy(() => import("./_html-editor.tsx").then(i => ({ default: i.HtmlEditorImpl })))
-const _HtmlViewer = lazy(() => import("./_html-viewer.tsx").then(i => ({ default: i._HtmlViewer })))
+const HtmlViewerImpl = lazy(() => import("./_html-viewer.tsx").then(i => ({ default: i.HtmlViewerImpl })))
 
 export const HtmlEditor: FC<{
   value?: Content
@@ -22,10 +22,11 @@ export const HtmlViewer: FC<{
   content: string | null | undefined
   className?: string | undefined
   title: string
+  collapsedLines?: number
 }> = props => {
   return (
     <Suspense fallback={<></>}>
-      <_HtmlViewer {...props} />
+      <HtmlViewerImpl {...props} />
     </Suspense>
   )
 }

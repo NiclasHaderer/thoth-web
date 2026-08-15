@@ -9,8 +9,6 @@ export const useUsers = () =>
     meta: { action: "load users" },
   })
 
-// Editing a user can be editing yourself, which changes the current user and the
-// set of libraries visible to them.
 const useInvalidateUsers = () => {
   const queryClient = useQueryClient()
   return () =>

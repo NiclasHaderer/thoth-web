@@ -19,6 +19,4 @@ export const unwrap = async <T>(response: Promise<ApiResponse<T>>): Promise<T> =
   return result.body
 }
 
-// A dead or missing session is not something to tell the user about: the auth
-// interceptor already logs out and RequireLogin redirects to the login screen.
 export const isAuthError = (error: unknown): boolean => error instanceof ThothApiError && error.status === 401
