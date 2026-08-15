@@ -1,10 +1,10 @@
-import { CheckIcon, PlayIcon } from "lucide-react"
+import { PlayIcon } from "lucide-react"
 import { FC } from "react"
 import { rowInteraction } from "@thoth/lib/interactive"
 import { cn } from "@thoth/lib/utils"
 import { toReadableTime } from "./helpers"
 
-export type TrackState = "playing" | "paused" | "played" | "idle"
+export type TrackState = "playing" | "paused" | "idle"
 
 interface TrackProps {
   title: string
@@ -40,15 +40,12 @@ export const Track: FC<TrackProps> = ({ title, duration, trackNr, index, state, 
         className={cn(
           rowInteraction,
           "group flex w-full items-center gap-4 px-3 py-3 text-left",
-          active && "bg-muted/60",
-          state === "played" && "text-muted-foreground"
+          active && "bg-muted/60"
         )}
       >
         <span className="relative flex size-8 shrink-0 items-center justify-center">
           {active ? (
             <Equalizer animated={state === "playing"} />
-          ) : state === "played" ? (
-            <CheckIcon aria-hidden className="text-muted-foreground size-3.5" />
           ) : (
             <span className="text-muted-foreground no-touch:group-hover:opacity-0 text-sm tabular-nums transition-opacity">
               {trackNr ?? index + 1}
