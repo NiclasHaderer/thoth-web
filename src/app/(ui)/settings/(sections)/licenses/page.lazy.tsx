@@ -68,10 +68,12 @@ export const SettingsLicensesOutlet = () => {
   const server = useQuery({
     queryKey: queryKeys.serverLicenses,
     queryFn: () => unwrap(Api.listThirdPartyLicenses()),
+    meta: { action: "load server licenses" },
   })
   const web = useQuery({
     queryKey: queryKeys.webLicenses,
     queryFn: () => unwrap(fetchWebLicenses()),
+    meta: { action: "load web licenses" },
     staleTime: Infinity,
   })
 

@@ -1,3 +1,4 @@
+import { toast } from "sonner"
 import { create } from "zustand"
 import { combine, persist } from "zustand/middleware"
 import { Api, ThothLoginUser } from "@thoth/client"
@@ -30,8 +31,6 @@ export const useAuthState = create(
         if (!jwt.success) return jwt
         const { accessToken } = jwt.body
         const decodedAccessToken = decodeJWT(accessToken)
-        // Whoever was signed in before does not get to leave their libraries,
-        // books or profile behind in the cache.
         queryClient.clear()
         set({
           loggedIn: true,
@@ -47,14 +46,16 @@ export const useAuthState = create(
       },
       logout: async () => {
         modify.setState(INITIAL_USER_STATE)
-        // The interceptor logs out on a dead session without reloading, so the
-        // cache has to be dropped here rather than relying on the logout page.
         queryClient.clear()
         await Api.logoutUser()
       },
       refreshAccessToken: async () => {
         const newAccessToken = await Api.refreshAccessToken()
-        if (!newAccessToken.success) return
+        if (!newAccessToken.success) {
+          const message = "Your session expired. Please log in again."
+          toast.error(message, { id: message })
+          return
+        }
         set({
           loggedIn: true,
           accessTokenStr: newAccessToken.body.accessToken,

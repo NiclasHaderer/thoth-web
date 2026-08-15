@@ -1,6 +1,5 @@
 import { HashIcon, SearchIcon } from "lucide-react"
 import { FC } from "react"
-import { toast } from "sonner"
 import { MetadataSeries, Series, SeriesUpdate } from "@thoth/client"
 import { GenericEdit } from "@thoth/components/generic/generic-edit.tsx"
 import { ManagedInput } from "@thoth/components/input/managed-input"
@@ -42,7 +41,7 @@ export const SeriesEdit: FC<{ series: Series }> = ({ series }) => {
       onSubmit={(values, closeModal) => {
         updateSeries.mutate(
           { libraryId: series.libraryId, id: series.id, data: values },
-          { onSuccess: () => closeModal(), onError: error => toast.error(error.message) }
+          { onSuccess: () => closeModal() }
         )
       }}
       title="Edit Series"

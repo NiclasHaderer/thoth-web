@@ -64,10 +64,13 @@ export const LibraryDialog: FC<LibraryDialogProps> = ({ isOpen, setIsOpen, form,
   const { data: availableAgents } = useQuery({
     queryKey: queryKeys.metadataAgents(form.fields.language),
     queryFn: () => unwrap(Api.listMetadataAgents({ language: form.fields.language })),
+    meta: { action: "load metadata agents" },
+    enabled: form.fields.language !== "",
   })
   const { data: fileScanners } = useQuery({
     queryKey: queryKeys.fileScanners,
     queryFn: () => unwrap(Api.listFileScanners()),
+    meta: { action: "load file scanners" },
   })
   const [browserOpen, setBrowserOpen] = useState(false)
   const isDesktop = useBreakpoint("sm")

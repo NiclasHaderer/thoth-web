@@ -8,6 +8,7 @@ export const NarratorOutlet = ({ libraryId, narratorName }: { libraryId: UUID; n
   const { data } = useQuery({
     queryKey: queryKeys.nameDetail("narrators", libraryId, name),
     queryFn: () => unwrap(Api.getNarrator({ libraryId, name: encodeURIComponent(name) })),
+    meta: { action: "load the narrator" },
   })
 
   if (!data) return null

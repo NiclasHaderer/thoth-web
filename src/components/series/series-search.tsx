@@ -20,6 +20,7 @@ export const SeriesSearch: FC<{
   const { data: result, isFetching: loading } = useQuery({
     queryKey: queryKeys.metadataSearch("series", libraryId, submitted ?? {}),
     queryFn: () => unwrap(Api.searchSeriesMetadata({ q: submitted!.q, libraryId, authorName: submitted!.authorName })),
+    meta: { action: "search for series metadata" },
     enabled: submitted !== null,
   })
 

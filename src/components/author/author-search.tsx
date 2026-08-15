@@ -19,6 +19,7 @@ export const AuthorSearch: FC<{
   const { data: result, isFetching: loading } = useQuery({
     queryKey: queryKeys.metadataSearch("authors", libraryId, submitted ?? {}),
     queryFn: () => unwrap(Api.searchAuthorMetadata({ q: submitted!.q, libraryId })),
+    meta: { action: "search for author metadata" },
     enabled: submitted !== null,
   })
 
