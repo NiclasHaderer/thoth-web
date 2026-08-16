@@ -1,13 +1,13 @@
+import { Order, UUID } from "@/client"
+import { AuthorPreview } from "@/components/author/author-preview.tsx"
+import { ClearIfNotVisible } from "@/components/clear-if-not-visible.tsx"
+import { ResourceListHeader } from "@/components/resource-list-header.tsx"
+import { ResponsiveGrid } from "@/components/responsive-grid.tsx"
+import { useInfinityScroll } from "@/hooks/infinity-scroll.ts"
+import { useScrollTo } from "@/hooks/scroll-to-top.ts"
+import { useAuthors } from "@/queries/resources.ts"
+import { pluralize } from "@/utils/utils.ts"
 import { FC, useRef, useState } from "react"
-import { Order, UUID } from "@thoth/client"
-import { AuthorPreview } from "@thoth/components/author/author-preview.tsx"
-import { ClearIfNotVisible } from "@thoth/components/clear-if-not-visible.tsx"
-import { ResourceListHeader } from "@thoth/components/resource-list-header"
-import { ResponsiveGrid } from "@thoth/components/responsive-grid"
-import { useInfinityScroll } from "@thoth/hooks/infinity-scroll"
-import { useScrollTo } from "@thoth/hooks/scroll-to-top"
-import { useAuthors } from "@thoth/queries/resources"
-import { pluralize } from "@thoth/utils/utils"
 
 const AuthorGrid: FC<{ libraryId: UUID; order: Order }> = ({ libraryId, order }) => {
   const loading = useRef<HTMLDivElement>(null)

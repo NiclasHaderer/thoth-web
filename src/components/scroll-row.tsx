@@ -73,7 +73,7 @@ export const ScrollRow: FC<PropsWithChildren<{ title: string; href: string }>> =
       </div>
       <div
         ref={scroller}
-        className="-mx-1 -my-2 [scrollbar-width:none] overflow-auto px-1 py-2 whitespace-nowrap [&::-webkit-scrollbar]:hidden"
+        className="-mx-5 -my-2 [scrollbar-width:none] overflow-auto px-5 py-2 whitespace-nowrap [&::-webkit-scrollbar]:hidden"
       >
         <div ref={content} className="w-max">
           {children}

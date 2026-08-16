@@ -56,7 +56,7 @@ export const GenericPreview = forwardRef<HTMLDivElement, GenericPreviewProps>(
               type="button"
               aria-label={`Play ${item.label}`}
               onClick={onPlay}
-              className={`bg-primary text-primary-foreground absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full opacity-0 shadow-lg transition duration-200 group-hover:opacity-100 hover:scale-110 hover:brightness-125 focus-visible:opacity-100 focus-visible:outline-none ${
+              className={`bg-primary text-primary-foreground pointer-events-none absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full opacity-0 shadow-lg transition duration-200 group-hover:pointer-events-auto group-hover:opacity-100 hover:scale-110 hover:brightness-125 focus-visible:pointer-events-auto focus-visible:opacity-100 focus-visible:outline-none ${
                 size === "small" ? "size-11" : "size-14"
               }`}
             >

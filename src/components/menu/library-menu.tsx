@@ -2,7 +2,7 @@ import { ChevronDownIcon, LibraryIcon } from "lucide-react"
 import { FC } from "react"
 import { Button, MenuTrigger } from "react-aria-components"
 import { UUID } from "@thoth/client"
-import { useLibraryDestinations } from "@thoth/components/menu/library-nav"
+import { libraryDestinations } from "@thoth/components/menu/library-nav"
 import { SideMenu } from "@thoth/components/menu/side-menu"
 import { DropdownMenu, DropdownMenuItem } from "@thoth/components/ui/dropdown-menu"
 import { cn } from "@thoth/lib/utils"
@@ -11,7 +11,7 @@ import { useLibraries, useLibrary } from "@thoth/queries/libraries"
 export const LibraryMenu: FC<{ libraryId: UUID; className?: string }> = ({ libraryId, className }) => {
   const libraries = useLibraries().data ?? []
   const library = useLibrary(libraryId)
-  const destinations = useLibraryDestinations(libraryId)
+  const destinations = libraryDestinations(libraryId)
 
   const libraryName = library?.name ?? "Library"
 

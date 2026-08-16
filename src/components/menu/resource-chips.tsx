@@ -1,12 +1,12 @@
 import { FC } from "react"
 import { Link, useLocation } from "wouter"
 import { UUID } from "@thoth/client"
-import { useLibraryDestinations } from "@thoth/components/menu/library-nav"
+import { libraryDestinations } from "@thoth/components/menu/library-nav"
 import { cn } from "@thoth/lib/utils"
 
 export const ResourceChips: FC<{ libraryId: UUID; className?: string }> = ({ libraryId, className }) => {
   const [pathname] = useLocation()
-  const destinations = useLibraryDestinations(libraryId).filter(destination => !destination.exact)
+  const destinations = libraryDestinations(libraryId).filter(destination => !destination.exact)
 
   return (
     <div className={cn("no-scrollbar flex gap-2 overflow-x-auto px-4 pb-2", className)}>
@@ -18,10 +18,10 @@ export const ResourceChips: FC<{ libraryId: UUID; className?: string }> = ({ lib
             href={href}
             aria-current={active ? "page" : undefined}
             className={cn(
-              "focus-visible:ring-ring/50 shrink-0 rounded-full px-3 py-1.5 text-sm font-medium transition-colors outline-none focus-visible:ring-3",
+              "focus-visible:ring-ring/50 shrink-0 rounded-lg px-3.5 py-1.5 text-sm font-medium transition-[color,background-color,scale] outline-none [corner-shape:squircle] focus-visible:ring-3 active:scale-[0.98] active:duration-75",
               active
-                ? "bg-primary text-primary-foreground"
-                : "bg-popover text-muted-foreground no-touch:hover:bg-muted no-touch:hover:text-foreground"
+                ? "bg-primary/18 text-foreground"
+                : "bg-muted text-muted-foreground no-touch:hover:bg-accent no-touch:hover:text-foreground"
             )}
           >
             {label}
