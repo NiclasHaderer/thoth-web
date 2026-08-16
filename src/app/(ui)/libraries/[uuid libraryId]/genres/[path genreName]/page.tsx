@@ -1,7 +1,8 @@
+import { Api, UUID, unwrap } from "@/client"
+import { NameBooks } from "@/components/name-books.tsx"
+import { queryKeys } from "@/queries/keys.ts"
 import { useQuery } from "@tanstack/react-query"
-import { Api, UUID, unwrap } from "@thoth/client"
-import { NameBooks } from "@thoth/components/name-books"
-import { queryKeys } from "@thoth/queries/keys"
+import { TagsIcon } from "lucide-react"
 
 export const GenreOutlet = ({ libraryId, genreName }: { libraryId: UUID; genreName: string }) => {
   const name = decodeURIComponent(genreName)
@@ -13,5 +14,5 @@ export const GenreOutlet = ({ libraryId, genreName }: { libraryId: UUID; genreNa
 
   if (!data) return null
 
-  return <NameBooks name={data.name} books={data.books} />
+  return <NameBooks name={data.name} books={data.books} icon={TagsIcon} />
 }

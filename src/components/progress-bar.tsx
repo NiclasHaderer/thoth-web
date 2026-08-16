@@ -1,5 +1,6 @@
 import { MotionValue, motion, useTransform } from "motion/react"
-import { FC, PointerEventHandler, useLayoutEffect, useRef, useState } from "react"
+import { FC, PointerEventHandler, useCallback, useLayoutEffect, useRef, useState } from "react"
+import { useEvent } from "@thoth/hooks/events"
 import { cn } from "@thoth/lib/utils"
 
 export const ProgressBar: FC<{
@@ -9,6 +10,7 @@ export const ProgressBar: FC<{
   onScrubEnd?: (percentage: number) => void
 }> = ({ progress, onScrub, onScrubEnd, className }) => {
   const track = useRef<HTMLDivElement>(null)
+  const container = useRef<HTMLDivElement>(null)
   const [trackWidth, setTrackWidth] = useState(0)
   const [scrubbing, setScrubbing] = useState(false)
   const thumbX = useTransform(progress, p => p * trackWidth)
@@ -21,17 +23,18 @@ export const ProgressBar: FC<{
     return () => observer.disconnect()
   }, [])
 
-  const percentageAt = (clientX: number) => {
+  const percentageAt = useCallback((clientX: number) => {
     const rect = track.current?.getBoundingClientRect()
     if (!rect?.width) return 0
     return Math.min(1, Math.max(0, (clientX - rect.left) / rect.width))
-  }
+  }, [])
 
-  const down: PointerEventHandler<HTMLDivElement> = e => {
-    e.currentTarget.setPointerCapture(e.pointerId)
+  useEvent(container, "pointerdown", event => {
+    event.stopPropagation()
+    container.current?.setPointerCapture(event.pointerId)
     setScrubbing(true)
-    onScrub?.(percentageAt(e.clientX))
-  }
+    onScrub?.(percentageAt(event.clientX))
+  })
 
   const move: PointerEventHandler<HTMLDivElement> = e => {
     if (!scrubbing) return
@@ -46,8 +49,8 @@ export const ProgressBar: FC<{
 
   return (
     <div
-      className={cn("group cursor-pointer touch-none pb-2", className)}
-      onPointerDown={down}
+      ref={container}
+      className={cn("group cursor-pointer touch-none pt-[3px] pb-2", className)}
       onPointerMove={move}
       onPointerUp={up}
       onPointerCancel={up}
@@ -57,7 +60,7 @@ export const ProgressBar: FC<{
       </div>
       <motion.div
         className={cn(
-          "bg-primary pointer-events-none absolute top-0 size-3 -translate-x-1/2 -translate-y-1/4 rounded-full opacity-0 transition-opacity",
+          "bg-primary pointer-events-none absolute top-0 size-3 -translate-x-1/2 rounded-full opacity-0 transition-opacity",
           "group-hover:opacity-100",
           scrubbing && "opacity-100"
         )}

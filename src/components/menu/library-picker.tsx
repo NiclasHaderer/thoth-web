@@ -28,7 +28,11 @@ export const LibraryPicker: FC<{ libraryId: UUID; name: string; className?: stri
     <SheetTrigger isOpen={isOpen} onOpenChange={setIsOpen}>
       <Button
         aria-label={`Current library ${name}, switch library`}
-        className={cn(rowInteraction, "flex cursor-pointer items-center gap-2 px-2 py-1 text-left", className)}
+        className={cn(
+          rowInteraction,
+          "inset-ring-border flex min-h-11 min-w-0 cursor-pointer items-center gap-2 rounded-xl py-1 pr-2.5 pl-3 text-left inset-ring select-none [corner-shape:squircle]",
+          className
+        )}
       >
         <span className="min-w-0 truncate text-2xl font-bold">{name}</span>
         <LibraryIcon aria-hidden className="text-muted-foreground ml-auto size-5 shrink-0" />

@@ -28,8 +28,9 @@ export function GenericEdit<T extends Record<string, any>>({
 
   return (
     <>
-      <Button variant="secondary" onPress={() => setIsOpen(true)}>
-        <PencilIcon className="mr-2" /> Edit
+      <Button variant="secondary" onPress={() => setIsOpen(true)} className="max-sm:w-11 max-sm:px-0">
+        <PencilIcon className="sm:mr-2" />
+        <span className="max-sm:sr-only">Edit</span>
       </Button>
       <Dialog isOpen={isOpen} onOpenChange={setIsOpen} title={title}>
         <Form form={form} onSubmit={values => onSubmit(values, closeModal)}>

@@ -1,9 +1,10 @@
 import { usePlaybackState } from "@/state/playback.state.ts"
 import { pluralize } from "@/utils/utils.ts"
-import { CirclePlayIcon, ImageOffIcon } from "lucide-react"
+import { CirclePlayIcon, ImageOffIcon, StarIcon } from "lucide-react"
 import { FC, Fragment, ReactNode } from "react"
 import { Link } from "wouter"
 import { BookDetailed, UUID } from "@thoth/client"
+import { DetailLayout, DetailRail, RailItem, entityLink } from "@thoth/components/detail/detail-layout"
 import { HtmlViewer } from "@thoth/components/html-editor"
 import { Badge } from "@thoth/components/ui/badge"
 import { Button } from "@thoth/components/ui/button"
@@ -14,17 +15,30 @@ import { toReadableTime } from "../track/helpers"
 import { Track, TrackState } from "../track/track"
 import { BookEdit } from "./book-edit"
 
-const entityLink =
-  "text-foreground underline decoration-muted-foreground/40 underline-offset-4 transition-colors hover:decoration-foreground"
+const RATING_MAX = 5
 
-const Dot = () => <span aria-hidden className="bg-muted-foreground/50 size-1 shrink-0 rounded-full" />
+const Rating: FC<{ value: number }> = ({ value }) => {
+  const stars = Array.from({ length: RATING_MAX }, (_, index) => index)
+  const filled = (Math.min(Math.max(value, 0), RATING_MAX) / RATING_MAX) * 100
 
-const RailItem: FC<{ label: string; children: ReactNode }> = ({ label, children }) => (
-  <div>
-    <dt className="text-muted-foreground text-xs font-medium tracking-wide uppercase">{label}</dt>
-    <dd className="pt-1 text-sm">{children}</dd>
-  </div>
-)
+  return (
+    <div className="flex items-center gap-1.5">
+      <div aria-hidden className="relative">
+        <div className="text-muted-foreground/35 flex">
+          {stars.map(index => (
+            <StarIcon key={index} className="size-4" />
+          ))}
+        </div>
+        <div className="absolute inset-y-0 left-0 flex overflow-hidden text-amber-400" style={{ width: `${filled}%` }}>
+          {stars.map(index => (
+            <StarIcon key={index} className="size-4 shrink-0 fill-current" />
+          ))}
+        </div>
+      </div>
+      <span className="text-muted-foreground text-xs tabular-nums">{value.toFixed(1)}</span>
+    </div>
+  )
+}
 
 export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId, libraryId }) => {
   const play = usePlaybackState(state => state.start)
@@ -77,103 +91,58 @@ export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId, lib
   const hasRail = book.genres.length > 0 || book.publisher || book.isbn || book.providerRating
 
   return (
-    <div className="mx-auto flex max-w-6xl flex-col gap-10 pb-3 lg:flex-row lg:gap-12">
-      <div className="min-w-0 grow">
-        <div className="flex flex-col gap-6 pb-10 sm:flex-row sm:gap-8">
-          {book.coverID ? (
-            <img
-              className="border-border w-40 shrink-0 self-start rounded-lg border sm:w-52"
-              alt={book.title}
-              src={`/api/stream/images/${book.coverID}`}
-            />
-          ) : (
-            <ImageOffIcon className="border-border text-muted-foreground size-40 shrink-0 self-start rounded-lg border p-10 sm:size-52" />
-          )}
-
-          <div className="flex min-w-0 flex-col items-start gap-3">
-            <h1 className="text-3xl font-semibold text-balance">{book.title}</h1>
-
-            {facts.length > 0 ? (
-              <div className="text-muted-foreground flex flex-wrap items-center gap-x-2 text-sm">
-                {facts.map((fact, index) => (
-                  <Fragment key={index}>
-                    {index > 0 ? <Dot /> : null}
-                    {fact}
-                  </Fragment>
-                ))}
-              </div>
-            ) : null}
-
-            {book.narrators.length > 0 ? (
-              <p className="text-muted-foreground text-sm">
-                Narrated by{" "}
-                {book.narrators.map((narrator, index) => (
-                  <Fragment key={narrator}>
-                    {index > 0 ? ", " : ""}
-                    <Link
-                      href={`/libraries/${libraryId}/narrators/${encodeURIComponent(narrator)}`}
-                      className={entityLink}
-                    >
-                      {narrator}
-                    </Link>
-                  </Fragment>
-                ))}
-              </p>
-            ) : null}
-
-            {book.series.length > 0 ? (
-              <div className="flex flex-wrap gap-2">
-                {book.series.map(series => (
-                  <Badge
-                    key={series.id}
-                    variant="secondary"
-                    render={props => <Link {...props} href={`/libraries/${libraryId}/series/${series.id}`} />}
+    <DetailLayout
+      title={book.title}
+      image={book.coverID ? `/api/stream/images/${book.coverID}` : undefined}
+      fallbackIcon={ImageOffIcon}
+      facts={facts}
+      details={
+        <>
+          {book.narrators.length > 0 ? (
+            <p className="text-muted-foreground text-sm">
+              Narrated by{" "}
+              {book.narrators.map((narrator, index) => (
+                <Fragment key={narrator}>
+                  {index > 0 ? ", " : ""}
+                  <Link
+                    href={`/libraries/${libraryId}/narrators/${encodeURIComponent(narrator)}`}
+                    className={entityLink}
                   >
-                    {series.title}
-                  </Badge>
-                ))}
-              </div>
-            ) : null}
-
-            <div className="flex flex-wrap items-center gap-3 pt-2">
-              <Button onPress={() => startPlayback(0)} isDisabled={tracks.length === 0}>
-                <CirclePlayIcon className="mr-2" /> Play
-              </Button>
-              <BookEdit book={book} />
-            </div>
-          </div>
-        </div>
-
-        <div className="pb-10">
-          <HtmlViewer content={book.description} title="Description" collapsedLines={3} />
-        </div>
-
-        {tracks.length > 0 ? (
-          <section className="max-w-prose">
-            <h2 className="flex items-baseline gap-3 pb-3 text-xl">
-              {pluralize(tracks.length, "Track")}
-              <span className="text-muted-foreground text-sm tabular-nums">{toReadableTime(totalDuration)}</span>
-            </h2>
-            <ul className="-mx-3 flex flex-col">
-              {tracks.map((track, index) => (
-                <Track
-                  key={track.id}
-                  {...track}
-                  state={trackState(track.id)}
-                  startPlayback={startPlayback}
-                  index={index}
-                />
+                    {narrator}
+                  </Link>
+                </Fragment>
               ))}
-            </ul>
-          </section>
-        ) : null}
-      </div>
+            </p>
+          ) : null}
 
-      {hasRail ? (
-        <aside className="lg:w-56 lg:shrink-0">
-          <dl className="border-border flex flex-col gap-5 border-t pt-6 lg:border-t-0 lg:pt-0">
+          {book.series.length > 0 ? (
+            <div className="flex flex-wrap gap-2">
+              {book.series.map(series => (
+                <Badge
+                  key={series.id}
+                  variant="secondary"
+                  render={props => <Link {...props} href={`/libraries/${libraryId}/series/${series.id}`} />}
+                >
+                  {series.title}
+                </Badge>
+              ))}
+            </div>
+          ) : null}
+        </>
+      }
+      actions={
+        <>
+          <Button onPress={() => startPlayback(0)} isDisabled={tracks.length === 0} className="grow sm:grow-0">
+            <CirclePlayIcon className="mr-2" /> Play
+          </Button>
+          <BookEdit book={book} />
+        </>
+      }
+      aside={
+        hasRail ? (
+          <DetailRail>
             {book.genres.length > 0 ? (
-              <RailItem label="Genres">
+              <RailItem label="Genres" className="col-span-full">
                 <div className="flex flex-wrap gap-1.5">
                   {book.genres.map(genre => (
                     <Badge
@@ -192,11 +161,41 @@ export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId, lib
 
             {book.publisher ? <RailItem label="Publisher">{book.publisher}</RailItem> : null}
             {book.isbn ? <RailItem label="ISBN">{book.isbn}</RailItem> : null}
-            {book.providerRating ? <RailItem label="Rating">{book.providerRating.toFixed(1)}</RailItem> : null}
-          </dl>
-        </aside>
+            {book.providerRating ? (
+              <RailItem label="Rating">
+                <Rating value={book.providerRating} />
+              </RailItem>
+            ) : null}
+          </DetailRail>
+        ) : null
+      }
+    >
+      {book.description ? (
+        <div className="pb-10">
+          <HtmlViewer content={book.description} title="Description" collapsedLines={3} />
+        </div>
       ) : null}
-    </div>
+
+      {tracks.length > 0 ? (
+        <section className="max-w-prose">
+          <h2 className="flex items-baseline gap-3 pb-3 text-xl">
+            {pluralize(tracks.length, "Track")}
+            <span className="text-muted-foreground text-sm tabular-nums">{toReadableTime(totalDuration)}</span>
+          </h2>
+          <ul className="-mx-3 flex flex-col">
+            {tracks.map((track, index) => (
+              <Track
+                key={track.id}
+                {...track}
+                state={trackState(track.id)}
+                startPlayback={startPlayback}
+                index={index}
+              />
+            ))}
+          </ul>
+        </section>
+      ) : null}
+    </DetailLayout>
   )
 }
 export default BookDetails
