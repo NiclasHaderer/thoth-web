@@ -1,5 +1,5 @@
-import { Api, UUID } from "@thoth/client"
-import { NameList } from "@thoth/components/name-list"
+import { Api, UUID } from "@/client"
+import { NameList } from "@/components/name-list.tsx"
 
 export const GenreListOutlet = ({ libraryId }: { libraryId: UUID }) => {
   return (

@@ -1,13 +1,13 @@
+import { Order, UUID } from "@/client"
+import { ClearIfNotVisible } from "@/components/clear-if-not-visible.tsx"
+import { ResourceListHeader } from "@/components/resource-list-header.tsx"
+import { ResponsiveGrid } from "@/components/responsive-grid.tsx"
+import { SeriesPreview } from "@/components/series/series-preview.tsx"
+import { useInfinityScroll } from "@/hooks/infinity-scroll.ts"
+import { useScrollTo } from "@/hooks/scroll-to-top.ts"
+import { useSeriesList } from "@/queries/resources.ts"
+import { pluralize } from "@/utils/utils.ts"
 import { FC, useRef, useState } from "react"
-import { Order, UUID } from "@thoth/client"
-import { ClearIfNotVisible } from "@thoth/components/clear-if-not-visible.tsx"
-import { ResourceListHeader } from "@thoth/components/resource-list-header"
-import { ResponsiveGrid } from "@thoth/components/responsive-grid"
-import { SeriesPreview } from "@thoth/components/series/series-preview.tsx"
-import { useInfinityScroll } from "@thoth/hooks/infinity-scroll"
-import { useScrollTo } from "@thoth/hooks/scroll-to-top"
-import { useSeriesList } from "@thoth/queries/resources"
-import { pluralize } from "@thoth/utils/utils"
 
 const SeriesGrid: FC<{ libraryId: UUID; order: Order }> = ({ libraryId, order }) => {
   const loading = useRef<HTMLDivElement>(null)

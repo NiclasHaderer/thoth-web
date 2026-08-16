@@ -3,7 +3,7 @@ import { FC, KeyboardEvent, useRef, useState } from "react"
 import { Input } from "@thoth/components/input/input"
 import { SearchResults } from "@thoth/components/menu/search-results"
 import { useLibrarySearch } from "@thoth/queries/library-search"
-import { useGlobalEvent } from "../../hooks/global-events"
+import { useEvent } from "../../hooks/events"
 import { useFocusTrap } from "../../hooks/trap-focus"
 
 export const Search: FC = () => {
@@ -14,13 +14,11 @@ export const Search: FC = () => {
   const inputElement = useRef<HTMLInputElement | null>(null)
   const { focusPrevious, focusNext } = useFocusTrap(searchOverlay, () => !resultVisible)
 
-  useGlobalEvent(
-    "keyup",
-    () => setResultVisible(false),
-    event => event.key === "Escape"
-  )
+  useEvent(window, "keyup", event => {
+    if (event.key === "Escape") setResultVisible(false)
+  })
 
-  useGlobalEvent("click", (event: MouseEvent) => {
+  useEvent(window, "click", event => {
     if (!searchOverlay?.contains(event.target as HTMLElement) && inputElement.current !== event.target) {
       setResultVisible(false)
     }

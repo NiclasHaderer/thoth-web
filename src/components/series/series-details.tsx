@@ -1,8 +1,9 @@
-import { ImageOffIcon } from "lucide-react"
-import { FC } from "react"
+import { BookMarkedIcon } from "lucide-react"
+import { FC, ReactNode } from "react"
 import { Link } from "wouter"
 import { UUID } from "@thoth/client"
 import { BookPreview } from "@thoth/components/book/book-preview.tsx"
+import { DetailLayout, DetailRail, RailItem, entityLink } from "@thoth/components/detail/detail-layout"
 import { HtmlViewer } from "@thoth/components/html-editor"
 import { ResponsiveGrid } from "@thoth/components/responsive-grid"
 import { isDetailedSeries } from "@thoth/models/typeguards"
@@ -15,77 +16,63 @@ export const SeriesDetails: FC<{ seriesId: UUID; libraryId: UUID }> = ({ seriesI
 
   if (!series) return <></>
 
-  return (
-    <>
-      <div className="flex pb-6">
-        <div className="flex flex-col justify-around">
-          <ImageOffIcon className="border-border h-40 w-40 rounded-md border-2 md:h-80 md:w-80" />
-        </div>
-        <div className="flex grow flex-col justify-between pl-4 md:pl-10">
-          <div>
-            <h2 className="pb-3 text-2xl">{series.title}</h2>
-            {isDetailedSeries(series) && series.yearRange ? (
-              <h3 className="pb-3 text-xl">
-                {series.yearRange.start} - {series.yearRange.end}
-              </h3>
-            ) : null}
-            <div>
-              <div className="flex pb-3">
-                <h3 className="text-foreground min-w-40 pr-3 uppercase">Author</h3>
-                {series.authors.map(author => (
-                  <Link href={`/libraries/${libraryId}/authors/${author.id}`} key={author.id}>
-                    <h3 className="no-touch:group-focus:underline text-xl hover:underline">{author.name}</h3>
-                  </Link>
-                ))}
-              </div>
-              {isDetailedSeries(series) && series.narrators.length > 0 ? (
-                <div className="flex pb-3">
-                  <h3 className="text-foreground min-w-40 pr-3 uppercase">Narrators</h3>
-                  <div className="flex flex-wrap">
-                    {series.narrators.map((narrator, i) => (
-                      <h3 className="pr-2 text-xl" key={i}>
-                        {narrator} {series.narrators.length === i + 1 ? null : ","}
-                      </h3>
-                    ))}
-                  </div>
-                </div>
-              ) : null}
-              {isDetailedSeries(series) ? (
-                <div className="flex pb-3">
-                  <h3 className="text-foreground min-w-40 pr-3 uppercase">Book count</h3>
-                  <h3 className="text-xl">{series.books.length}</h3>
-                </div>
-              ) : null}
-              {series.totalBooks ? (
-                <div className="flex pb-3">
-                  <h3 className="text-foreground min-w-40 pr-3 uppercase">Total works</h3>
-                  <h3 className="text-xl">{series.totalBooks}</h3>
-                </div>
-              ) : null}
-              {series.primaryWorks ? (
-                <div className="flex pb-3">
-                  <h3 className="text-foreground min-w-40 pr-3 uppercase">Primary works</h3>
-                  <h3 className="text-xl">{series.primaryWorks}</h3>
-                </div>
-              ) : null}
-            </div>
-          </div>
-          <div className="mt-2">{isDetailedSeries(series) ? <SeriesEdit series={series} /> : null}</div>
-        </div>
-      </div>
-      <HtmlViewer title="Description" content={series.description} className="min-w-full pb-6" />
+  const detailed = isDetailedSeries(series)
 
-      {isDetailedSeries(series) ? (
-        <>
-          <h2 className="p-2 pb-6 text-2xl">{pluralize(series.books.length, "Book")}</h2>
+  const facts: ReactNode[] = []
+  if (series.authors.length > 0) {
+    facts.push(
+      <span className="flex flex-wrap gap-x-1">
+        {series.authors.map((author, index) => (
+          <Link key={author.id} href={`/libraries/${libraryId}/authors/${author.id}`} className={entityLink}>
+            {author.name}
+            {index < series.authors.length - 1 ? "," : ""}
+          </Link>
+        ))}
+      </span>
+    )
+  }
+  if (detailed && series.yearRange) facts.push(`${series.yearRange.start} - ${series.yearRange.end}`)
+  if (detailed) facts.push(pluralize(series.books.length, "book"))
+
+  const hasRail = series.totalBooks || series.primaryWorks
+
+  return (
+    <DetailLayout
+      title={series.title}
+      fallbackIcon={BookMarkedIcon}
+      facts={facts}
+      details={
+        detailed && series.narrators.length > 0 ? (
+          <p className="text-muted-foreground text-sm">Narrated by {series.narrators.join(", ")}</p>
+        ) : null
+      }
+      actions={detailed ? <SeriesEdit series={series} /> : null}
+      aside={
+        hasRail ? (
+          <DetailRail>
+            {series.totalBooks ? <RailItem label="Total works">{series.totalBooks}</RailItem> : null}
+            {series.primaryWorks ? <RailItem label="Primary works">{series.primaryWorks}</RailItem> : null}
+          </DetailRail>
+        ) : null
+      }
+    >
+      {series.description ? (
+        <div className="pb-10">
+          <HtmlViewer title="Description" content={series.description} collapsedLines={3} />
+        </div>
+      ) : null}
+
+      {detailed ? (
+        <section>
+          <h2 className="pb-3 text-xl">{pluralize(series.books.length, "Book")}</h2>
           <ResponsiveGrid>
             {series.books.map((book, k) => (
               <BookPreview {...book} key={k} />
             ))}
           </ResponsiveGrid>
-        </>
+        </section>
       ) : null}
-    </>
+    </DetailLayout>
   )
 }
 

@@ -54,24 +54,30 @@ export const MobileTabBar: FC = () => {
 
   return (
     <nav className="flex h-14 [touch-action:manipulation] items-stretch select-none [-webkit-tap-highlight-color:transparent] md:hidden">
-      {tabs.map(({ href, Icon, ActiveIcon, label, active }) => {
-        const TabIcon = active ? ActiveIcon : Icon
-        return (
-          <Link
-            key={label}
-            href={href}
-            aria-current={active ? "page" : undefined}
-            onClick={() => active && scrollContentToTop()}
-            className={cn(
-              "focus-visible:ring-ring/50 flex flex-1 flex-col items-center justify-center gap-1 rounded-md text-[10px] font-medium whitespace-nowrap outline-none focus-visible:ring-3",
-              active ? "text-primary" : "text-muted-foreground"
-            )}
-          >
-            <TabIcon aria-hidden className="size-6" />
-            {label}
-          </Link>
-        )
-      })}
+      {tabs.map(({ href, Icon, ActiveIcon, label, active }) => (
+        <Link
+          key={label}
+          href={href}
+          aria-current={active ? "page" : undefined}
+          onClick={() => active && scrollContentToTop()}
+          className={cn(
+            "focus-visible:ring-ring/50 flex flex-1 flex-col items-center justify-center gap-1 rounded-md text-[10px] font-medium whitespace-nowrap transition-colors outline-none focus-visible:ring-3",
+            active ? "text-primary" : "text-muted-foreground"
+          )}
+        >
+          <span className="relative size-6">
+            <Icon aria-hidden className="absolute size-6" />
+            <ActiveIcon
+              aria-hidden
+              className={cn(
+                "absolute size-6 transition-[clip-path] duration-300 ease-out motion-reduce:transition-none",
+                active ? "[clip-path:inset(0_0_0_0)]" : "[clip-path:inset(100%_0_0_0)]"
+              )}
+            />
+          </span>
+          {label}
+        </Link>
+      ))}
     </nav>
   )
 }

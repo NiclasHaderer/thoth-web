@@ -14,14 +14,18 @@ export const UiLayout: FC<{ children: ReactNode }> = ({ children }) => {
     const observer = new ResizeObserver(([entry]) => {
       scrollArea.current?.style.setProperty("--dock-height", `${entry.borderBoxSize[0].blockSize}px`)
     })
-    observer.observe(dock)
+    observer.observe(dock, { box: "border-box" })
     return () => observer.disconnect()
   }, [])
 
   return (
     <RequireLogin>
       <AppBar />
-      <div data-scroll-area ref={scrollArea} className="flex min-h-0 grow flex-col overflow-y-auto">
+      <div
+        data-scroll-area
+        ref={scrollArea}
+        className="flex min-h-0 grow flex-col overflow-y-auto [--dock-height:calc(3.5rem+env(safe-area-inset-bottom))]"
+      >
         {children}
       </div>
       <div

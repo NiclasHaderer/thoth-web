@@ -1,4 +1,4 @@
-import { useGlobalEvent } from "./global-events"
+import { useEvent } from "./events"
 
 const TAB_SELECTORS = 'a[href], button, input, textarea, select, details, [tabindex]:not([tabindex="-1"])'
 
@@ -35,14 +35,10 @@ export const useFocusTrap = (
     }
   }
 
-  useGlobalEvent(
-    "keydown",
-    e => {
-      if (!element) return
-      modifyTab(e.shiftKey ? "previous" : "next")
-    },
-    e => e.key.toLowerCase() === "tab" && !escapeTrap(e)
-  )
+  useEvent(window, "keydown", e => {
+    if (!element || e.key.toLowerCase() !== "tab" || escapeTrap(e)) return
+    modifyTab(e.shiftKey ? "previous" : "next")
+  })
   return {
     focusPrevious: () => modifyTab("previous"),
     focusNext: () => modifyTab("next"),
