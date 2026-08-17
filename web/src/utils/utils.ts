@@ -25,15 +25,10 @@ export const apiErrorMessage = (error: string | object): string => {
   return "Something went wrong"
 }
 
-export const notNull = <T>(p: T | null): p is T => p !== null
 export const notNullIsh = <T>(p: T | null | undefined): p is T => p !== null && p !== undefined
 
 export const toFormDate = (date: Date | number | string): string | null => {
   return date ? new Date(date).toISOString().slice(0, 10) : null
-}
-
-export const toUnixTime = (date: Date | number | string): number => {
-  return Math.floor(new Date(date).getTime())
 }
 
 export const toRealURL = (baseUrl: string): string => {

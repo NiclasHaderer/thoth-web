@@ -1,6 +1,0 @@
-export { DataTable } from "@thoth/components/data-table/data-table"
-export { DataTableColumnHeader } from "@thoth/components/data-table/data-table-column-header"
-export { DataTableToolbar } from "@thoth/components/data-table/data-table-toolbar"
-export { DataTableFacetedFilter } from "@thoth/components/data-table/data-table-faceted-filter"
-export { DataTableViewOptions } from "@thoth/components/data-table/data-table-view-options"
-export { DataTableRowActions } from "@thoth/components/data-table/data-table-row-actions"

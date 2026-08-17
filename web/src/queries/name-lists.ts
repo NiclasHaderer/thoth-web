@@ -5,7 +5,7 @@ import { NameResource, queryKeys } from "./keys"
 export const PAGE_SIZE = 50
 
 export type NameListResource = NameResource
-export type NamedCount = { name: string; bookCount: number }
+type NamedCount = { name: string; bookCount: number }
 export type NameListCall = (params: {
   limit?: number
   offset?: number
