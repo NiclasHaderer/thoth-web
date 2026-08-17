@@ -13,7 +13,7 @@ import {
 import { useOnMount } from "@thoth/hooks/lifecycle.ts"
 import { notNullIsh } from "@thoth/utils/utils"
 
-export type SubmitError<T extends Record<string, any>> = Partial<{
+type SubmitError<T extends Record<string, any>> = Partial<{
   [K in keyof T]: string[] | undefined
 }>
 
@@ -49,7 +49,7 @@ export interface FormContext<T extends Record<string, any>> {
 
 const DEFAULT = Symbol("DEFAULT_FORM_CONTEXT")
 const PROVIDED = Symbol("FORM_CONTEXT")
-export const CONTEXT = createContext<FormContext<Record<any, any>>>({
+const CONTEXT = createContext<FormContext<Record<any, any>>>({
   fields: {},
   setFields: () => {},
   setAllFields: () => {},

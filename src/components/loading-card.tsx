@@ -7,7 +7,7 @@ export const LoadingCards: FC<{ amount: number }> = ({ amount }) => (
     ))}
   </>
 )
-export const LoadingCard: FC = () => (
+const LoadingCard: FC = () => (
   <div className="mx-auto w-full rounded-md p-4">
     <div className="flex animate-pulse space-x-4">
       <div className="bg-accent h-10 w-10 rounded-full" />

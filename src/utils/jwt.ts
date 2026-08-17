@@ -1,10 +1,10 @@
-export interface JwtHeader {
+interface JwtHeader {
   alg: string
   typ: string
   kid: string
 }
 
-export type JwtPayload = {
+type JwtPayload = {
   exp: number
   iss: string
   sub: string
