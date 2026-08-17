@@ -2,7 +2,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { Api, ThothUserWithPermissions, UserPermissions, unwrap } from "@thoth/client"
 import { queryKeys } from "./keys"
 
-export type CurrentUser = ThothUserWithPermissions<UserPermissions>
+type CurrentUser = ThothUserWithPermissions<UserPermissions>
 
 export const useCurrentUser = () =>
   useQuery({
