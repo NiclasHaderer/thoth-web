@@ -73,13 +73,13 @@ export const GenericPreview = forwardRef<HTMLDivElement, GenericPreviewProps>(
         >
           {item.label}
         </Link>
-        {subtitle ? (
+        {subtitle === undefined ? null : (
           <span
-            className={`${widthClasses} ${labelCenter} text-foreground block overflow-hidden pt-0.5 text-xs leading-tight text-ellipsis whitespace-nowrap opacity-55`}
+            className={`${widthClasses} ${labelCenter} text-foreground block min-h-[1lh] overflow-hidden pt-0.5 text-xs leading-tight text-ellipsis whitespace-nowrap opacity-55`}
           >
             {subtitle}
           </span>
-        ) : null}
+        )}
       </div>
     )
   }

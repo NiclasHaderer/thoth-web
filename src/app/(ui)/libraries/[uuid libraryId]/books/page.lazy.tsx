@@ -1,35 +1,35 @@
 import { Order, UUID } from "@/client"
+import { BookPreview } from "@/components/book/book-preview.tsx"
 import { PreviewSkeleton } from "@/components/generic/preview-skeleton.tsx"
 import { ResourceGrid } from "@/components/resource-grid.tsx"
 import { ResourceListHeader } from "@/components/resource-list-header.tsx"
 import { RESPONSIVE_GRID } from "@/components/responsive-grid.tsx"
-import { SeriesPreview } from "@/components/series/series-preview.tsx"
-import { useSeriesList } from "@/queries/resources.ts"
+import { useBooks } from "@/queries/resources.ts"
 import { pluralize } from "@/utils/utils.ts"
 import { useState } from "react"
 
-export const SeriesListOutlet = ({ libraryId }: { libraryId: UUID }) => {
+export const BookListOutlet = ({ libraryId }: { libraryId: UUID }) => {
   const [order, setOrder] = useState<Order>("ASC")
-  const series = useSeriesList(libraryId, order)
+  const books = useBooks(libraryId, order)
 
   return (
     <>
       <ResourceListHeader
-        title="Series"
-        subtitle={pluralize(series.total, "series", "series")}
+        title="Books"
+        subtitle={pluralize(books.total, "book")}
         order={order}
         onOrderChange={setOrder}
       />
       <ResourceGrid
         key={order}
-        listKey={series.listKey}
-        total={series.total}
-        itemAt={series.itemAt}
-        loading={series.loading}
-        onRangeChange={series.onRangeChange}
+        listKey={books.listKey}
+        total={books.total}
+        itemAt={books.itemAt}
+        loading={books.loading}
+        onRangeChange={books.onRangeChange}
         listClassName={RESPONSIVE_GRID}
-        renderItem={item => <SeriesPreview {...item} />}
-        renderPlaceholder={() => <PreviewSkeleton />}
+        renderItem={book => <BookPreview {...book} />}
+        renderPlaceholder={() => <PreviewSkeleton subtitle />}
       />
     </>
   )

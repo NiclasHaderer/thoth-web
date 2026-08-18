@@ -4,14 +4,14 @@ import { AuthorPreview } from "@thoth/components/author/author-preview.tsx"
 import { BookPreview } from "@thoth/components/book/book-preview.tsx"
 import { ScrollRow } from "@thoth/components/scroll-row"
 import { SeriesPreview } from "@thoth/components/series/series-preview.tsx"
-import { useAuthors, useBooks, useSeriesList } from "@thoth/queries/resources"
+import { useAuthorsPreview, useBooksPreview, useSeriesPreview } from "@thoth/queries/resources"
 
 const PREVIEW_COUNT = 20
 
 export const LibraryPreview: FC<{ libraryId: UUID }> = ({ libraryId }) => {
-  const { items: libraryBooks } = useBooks(libraryId)
-  const { items: librarySeries } = useSeriesList(libraryId)
-  const { items: libraryAuthors } = useAuthors(libraryId)
+  const libraryBooks = useBooksPreview(libraryId)
+  const librarySeries = useSeriesPreview(libraryId)
+  const libraryAuthors = useAuthorsPreview(libraryId)
 
   return (
     <div>
