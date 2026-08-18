@@ -1,12 +1,4 @@
-import {
-  InfiniteData,
-  QueryClient,
-  useInfiniteQuery,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query"
-import { useMemo } from "react"
+import { QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import {
   ApiResponse,
   Api,
@@ -26,41 +18,26 @@ import {
 } from "@thoth/client"
 import { invalidateLibraryContent } from "./invalidate"
 import { Resource, queryKeys } from "./keys"
+import { ListFn, usePagedList } from "./paged-list"
 
 export const PAGE_SIZE = 30
 
 type Identifiable = { id: UUID }
-type ListFn<T> = (params: {
-  libraryId: UUID
-  limit?: number
-  offset?: number
-  order?: Order
-}) => Promise<ApiResponse<PaginatedResponse<T>>>
 type UpdateFn<U, R> = (params: { libraryId: UUID; id: UUID }, body: U) => Promise<ApiResponse<R>>
 
-const useResourceList = <T>(resource: Resource, listFn: ListFn<T>, libraryId: UUID, order: Order) => {
-  const query = useInfiniteQuery({
-    queryKey: queryKeys.resourceList(resource, libraryId, order),
-    queryFn: ({ pageParam }) => unwrap(listFn({ libraryId, limit: PAGE_SIZE, offset: pageParam, order })),
+// Shares page zero with the full list, so opening a library warms the list the reader lands on next.
+const useResourcePreview = <T>(resource: Resource, listFn: ListFn<T>, libraryId: UUID) => {
+  const query = useQuery({
+    queryKey: queryKeys.libraryListPage(resource, libraryId, "ASC", 0),
+    queryFn: () => unwrap(listFn({ libraryId, limit: PAGE_SIZE, offset: 0, order: "ASC" })),
     meta: { action: `load ${resource}` },
-    initialPageParam: 0,
-    getNextPageParam: lastPage => {
-      const next = lastPage.offset + lastPage.items.length
-      return next < lastPage.total ? next : undefined
-    },
   })
-
-  const items = useMemo(() => query.data?.pages.flatMap(page => page.items) ?? [], [query.data])
-
-  return {
-    items,
-    total: query.data?.pages[0]?.total ?? 0,
-    fetchNextPage: query.fetchNextPage,
-    hasNextPage: query.hasNextPage,
-    isFetchingNextPage: query.isFetchingNextPage,
-    isLoading: query.isLoading,
-  }
+  return query.data?.items ?? []
 }
+
+export const useBooksPreview = (libraryId: UUID) => useResourcePreview("books", Api.listBooks, libraryId)
+export const useSeriesPreview = (libraryId: UUID) => useResourcePreview("series", Api.listSeries, libraryId)
+export const useAuthorsPreview = (libraryId: UUID) => useResourcePreview("authors", Api.listAuthors, libraryId)
 
 const findCachedListItem = <T extends Identifiable>(
   queryClient: QueryClient,
@@ -68,11 +45,11 @@ const findCachedListItem = <T extends Identifiable>(
   libraryId: UUID,
   id: UUID
 ): T | undefined => {
-  const lists = queryClient.getQueriesData<InfiniteData<PaginatedResponse<T>>>({
+  const pages = queryClient.getQueriesData<PaginatedResponse<T>>({
     queryKey: queryKeys.resourceLists(resource, libraryId),
   })
-  for (const [, data] of lists) {
-    const hit = data?.pages.flatMap(page => page.items).find(item => item.id === id)
+  for (const [, page] of pages) {
+    const hit = page?.items.find(item => item.id === id)
     if (hit) return hit
   }
   return undefined
@@ -83,10 +60,10 @@ export const cachedResourceTotal = (
   resource: Resource,
   libraryId: UUID
 ): number | undefined => {
-  const lists = queryClient.getQueriesData<InfiniteData<PaginatedResponse<unknown>>>({
+  const pages = queryClient.getQueriesData<PaginatedResponse<unknown>>({
     queryKey: queryKeys.resourceLists(resource, libraryId),
   })
-  return lists.find(([, data]) => data !== undefined)?.[1]?.pages[0]?.total
+  return pages.find(([, page]) => page !== undefined)?.[1]?.total
 }
 
 const useResourceUpdate = <U, R>(resource: Resource, singular: string, updateFn: UpdateFn<U, R>) => {
@@ -105,7 +82,7 @@ const useResourceUpdate = <U, R>(resource: Resource, singular: string, updateFn:
 }
 
 export const useBooks = (libraryId: UUID, order: Order = "ASC") =>
-  useResourceList("books", Api.listBooks, libraryId, order)
+  usePagedList({ resource: "books", listFn: Api.listBooks, libraryId, order, pageSize: PAGE_SIZE })
 
 export const bookDetailQuery = (libraryId: UUID, id: UUID) => ({
   queryKey: queryKeys.resourceDetail("books", libraryId, id),
@@ -124,7 +101,7 @@ export const useBook = (libraryId: UUID, id: UUID) => {
 export const useUpdateBook = () => useResourceUpdate<BookUpdate, Book>("books", "book", Api.updateBook)
 
 export const useSeriesList = (libraryId: UUID, order: Order = "ASC") =>
-  useResourceList("series", Api.listSeries, libraryId, order)
+  usePagedList({ resource: "series", listFn: Api.listSeries, libraryId, order, pageSize: PAGE_SIZE })
 
 export const useSeries = (libraryId: UUID, id: UUID) => {
   const queryClient = useQueryClient()
@@ -139,7 +116,7 @@ export const useSeries = (libraryId: UUID, id: UUID) => {
 export const useUpdateSeries = () => useResourceUpdate<SeriesUpdate, Series>("series", "series", Api.updateSeries)
 
 export const useAuthors = (libraryId: UUID, order: Order = "ASC") =>
-  useResourceList("authors", Api.listAuthors, libraryId, order)
+  usePagedList({ resource: "authors", listFn: Api.listAuthors, libraryId, order, pageSize: PAGE_SIZE })
 
 export const useAuthor = (libraryId: UUID, id: UUID) => {
   const queryClient = useQueryClient()

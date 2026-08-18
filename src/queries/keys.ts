@@ -2,6 +2,7 @@ import { Order, UUID } from "@thoth/client"
 
 export type Resource = "books" | "series" | "authors"
 export type NameResource = "narrators" | "genres"
+export type LibraryResource = Resource | NameResource
 
 const libraryScope = (libraryId: UUID) => ["library", libraryId] as const
 
@@ -27,13 +28,11 @@ export const queryKeys = {
   library: libraryScope,
 
   resourceLists: (resource: Resource, libraryId: UUID) => [...libraryScope(libraryId), resource, "list"] as const,
-  resourceList: (resource: Resource, libraryId: UUID, order?: Order) =>
-    [...libraryScope(libraryId), resource, "list", { order }] as const,
+  libraryListPage: (resource: LibraryResource, libraryId: UUID, order: Order, offset: number) =>
+    [...libraryScope(libraryId), resource, "list", { order }, offset] as const,
   resourceDetail: (resource: Resource, libraryId: UUID, id: UUID) =>
     [...libraryScope(libraryId), resource, "detail", id] as const,
 
-  nameList: (resource: NameResource, libraryId: UUID, order: Order) =>
-    [...libraryScope(libraryId), resource, "list", { order }] as const,
   nameDetail: (resource: NameResource, libraryId: UUID, name: string) =>
     [...libraryScope(libraryId), resource, "detail", name] as const,
 }
