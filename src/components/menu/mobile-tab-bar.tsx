@@ -1,9 +1,23 @@
-import { FC } from "react"
+import { FC, useState } from "react"
 import { Link, useLocation } from "wouter"
-import { BrowseTabIcon, HomeTabIcon, SearchTabIcon, YouTabIcon } from "@thoth/components/icons/tab-icons"
+import { BrowseTabIcon, HomeTabIcon, SearchTabIcon, TabIconProps, YouTabIcon } from "@thoth/components/icons/tab-icons"
 import { useCurrentLibraryId } from "@thoth/hooks/current-library"
 import { cn } from "@thoth/lib/utils"
 import { useLibraries } from "@thoth/queries/libraries"
+
+const focusSearchInput = () => {
+  const input = document.querySelector<HTMLInputElement>("[data-search-input]")
+  input?.focus()
+  input?.select()
+}
+
+type Tab = {
+  href: string
+  Icon: FC<TabIconProps>
+  label: string
+  active: boolean
+  onRetap?: () => void
+}
 
 const scrollContentToTop = () => {
   document.querySelector("main")?.scrollTo({ top: 0, behavior: "smooth" })
@@ -14,11 +28,12 @@ export const MobileTabBar: FC = () => {
   const [pathname] = useLocation()
   const currentLibraryId = useCurrentLibraryId()
   const libraries = useLibraries().data ?? []
+  const [retapCount, setRetapCount] = useState(0)
 
   const libraryId = currentLibraryId ?? libraries[0]?.id
   const home = libraryId ? `/libraries/${libraryId}` : "/libraries"
 
-  const tabs = [
+  const tabs: Tab[] = [
     { href: home, Icon: HomeTabIcon, label: "Home", active: pathname === home },
     {
       href: libraryId ? `${home}/books` : "/libraries",
@@ -31,6 +46,7 @@ export const MobileTabBar: FC = () => {
       Icon: SearchTabIcon,
       label: "Search",
       active: pathname.startsWith("/search"),
+      onRetap: focusSearchInput,
     },
     {
       href: "/you",
@@ -42,18 +58,23 @@ export const MobileTabBar: FC = () => {
 
   return (
     <nav className="flex h-14 [touch-action:manipulation] items-stretch select-none [-webkit-tap-highlight-color:transparent] md:hidden">
-      {tabs.map(({ href, Icon, label, active }) => (
+      {tabs.map(({ href, Icon, label, active, onRetap }) => (
         <Link
           key={label}
           href={href}
           aria-current={active ? "page" : undefined}
-          onClick={() => active && scrollContentToTop()}
+          onClick={() => {
+            if (!active) return
+            scrollContentToTop()
+            onRetap?.()
+            setRetapCount(count => count + 1)
+          }}
           className={cn(
             "focus-visible:ring-ring/50 flex flex-1 flex-col items-center justify-center gap-1 rounded-md text-[10px] font-medium whitespace-nowrap transition-colors outline-none focus-visible:ring-3",
             active ? "text-primary" : "text-muted-foreground"
           )}
         >
-          <Icon active={active} className="size-6" />
+          <Icon active={active} retap={retapCount} className="size-6" />
           {label}
         </Link>
       ))}

@@ -19,6 +19,7 @@ export const SearchOutlet = () => {
           <Input
             hideError
             autoFocus
+            data-search-input
             groupClassName="bg-popover dark:bg-popover rounded-3xl! h-auto py-1 border-0"
             leftIcon={<SearchIcon className="mx-1 size-5" />}
             placeholder="Search all libraries"
