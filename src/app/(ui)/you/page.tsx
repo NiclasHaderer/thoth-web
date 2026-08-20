@@ -1,6 +1,6 @@
 import { ChevronRightIcon, LogOutIcon, UserIcon } from "lucide-react"
-import { Link } from "wouter"
 import { Logo } from "@thoth/components/icons/logo"
+import { Link } from "@thoth/components/link.tsx"
 import { accountItem, adminItems, licensesItem } from "@thoth/components/menu/settings-nav"
 import { Avatar, AvatarFallback } from "@thoth/components/ui/avatar"
 import { rowInteraction } from "@thoth/lib/interactive"
@@ -14,7 +14,7 @@ export const YouOutlet = () => {
   const entries = [accountItem, ...(isAdmin ? adminItems : [])]
 
   return (
-    <div className="mx-auto flex min-h-full w-full max-w-3xl flex-col px-5 pb-[var(--dock-height,3.5rem)] md:pt-4 md:pb-4">
+    <div className="pb-dock mx-auto flex min-h-full w-full max-w-3xl flex-col px-5 md:pt-4">
       <div className="bg-background/75 sticky top-0 z-10 -mx-5 px-5 pt-4 pb-3 backdrop-blur-xl md:hidden">
         <div className="flex h-10 items-center">
           <Link href="/libraries" aria-label="Thoth home" className="shrink-0 outline-none">
@@ -60,7 +60,6 @@ export const YouOutlet = () => {
         href={licensesItem.href}
         className={cn(rowInteraction, "text-muted-foreground -mx-2 mt-auto flex h-14 items-center gap-3 px-2")}
       >
-        <licensesItem.Icon aria-hidden className="size-5 shrink-0" />
         <span className="text-sm">{licensesItem.label}</span>
       </Link>
     </div>

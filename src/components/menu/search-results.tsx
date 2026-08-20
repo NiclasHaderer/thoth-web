@@ -1,7 +1,7 @@
 import { ImageOffIcon, UserIcon } from "lucide-react"
 import { FC } from "react"
-import { Link } from "wouter"
 import { LibrarySearchResult } from "@thoth/client"
+import { Link } from "@thoth/components/link.tsx"
 
 export const SearchResults: FC<{ search: LibrarySearchResult; onClose: () => void }> = ({ search, onClose }) => (
   <>

@@ -220,6 +220,8 @@ const segmentToPath = (segment: string): Segment | IgnoredSegment => {
   }
 }
 
+const loaderName = (page: Page) => `load${page.export}`
+
 const getComponent = (page: Page) => {
   if (page.lazy) {
     return `
@@ -237,7 +239,8 @@ const buildRoutes = (paths: Path) => {
     const createImport = (p: Path["layout"] | Path["page"]) => {
       if (p?.lazy) {
         imports.push(
-          `const ${p.export} = lazy(() => import('${p.importPath}').then(i => ({'default': i.${p.export}})))`
+          `const ${loaderName(p)} = () => import('${p.importPath}').then(i => ({'default': i.${p.export}}))`,
+          `const ${p.export} = lazy(${loaderName(p)})`
         )
       } else if (p) {
         imports.push(`import { ${p.export} } from '${p.importPath}'`)
@@ -298,6 +301,8 @@ const buildRoutes = (paths: Path) => {
     return possibleUrls
   }
 
+  const lazyRoutes: string[] = []
+
   const writeRoutes = (path: Path, baseUrl: string): string[] => {
     const content = []
     let parentsLayoutClose: string[] = []
@@ -311,6 +316,9 @@ const buildRoutes = (paths: Path) => {
     }
 
     if (path.page) {
+      if (path.page.lazy) {
+        lazyRoutes.push(`{ pattern: /^${cleanupPath(baseUrl)}$/, load: ${loaderName(path.page)} }`)
+      }
       const contentStr = getComponent(path.page)
       const out = `
           <Route path={/^${cleanupPath(baseUrl)}$/}>
@@ -351,7 +359,27 @@ const buildRoutes = (paths: Path) => {
   }
   `
 
-  return imports.join("\n") + "\n" + router
+  const prefetch = `
+  const lazyRoutes: { pattern: RegExp; load: () => Promise<unknown> }[] = [
+    ${lazyRoutes.join(",\n")}
+  ]
+
+  const prefetched = new Set<() => Promise<unknown>>()
+
+  export const prefetchRoute = (path: string) => {
+    for (const route of lazyRoutes) {
+      if (route.pattern.test(path)) {
+        if (!prefetched.has(route.load)) {
+          prefetched.add(route.load)
+          void route.load()
+        }
+        return
+      }
+    }
+  }
+  `
+
+  return imports.join("\n") + "\n" + prefetch + "\n" + router
 }
 
 const writeFile = async (content: string) => {

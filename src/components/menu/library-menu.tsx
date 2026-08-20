@@ -2,6 +2,7 @@ import { ChevronDownIcon, LibraryIcon } from "lucide-react"
 import { FC } from "react"
 import { Button, MenuTrigger } from "react-aria-components"
 import { UUID } from "@thoth/client"
+import { CollapsibleLabel } from "@thoth/components/menu/collapsible-label"
 import { libraryDestinations } from "@thoth/components/menu/library-nav"
 import { SideMenu } from "@thoth/components/menu/side-menu"
 import { DropdownMenu, DropdownMenuItem } from "@thoth/components/ui/dropdown-menu"
@@ -25,17 +26,15 @@ export const LibraryMenu: FC<{ libraryId: UUID; className?: string }> = ({ libra
             <Button
               aria-label={collapsed ? libraryName : undefined}
               className={cn(
-                "group hover:bg-muted focus-visible:bg-muted flex h-12 w-full cursor-pointer items-center rounded-lg text-left transition-colors outline-none",
-                collapsed ? "justify-center px-0" : "gap-3 px-3"
+                "group hover:bg-muted focus-visible:bg-muted flex h-12 w-full cursor-pointer items-center gap-3 rounded-lg pl-4 text-left transition-[color,background-color,padding] duration-150 outline-none",
+                collapsed ? "pr-0" : "pr-3"
               )}
             >
               <LibraryIcon className="text-muted-foreground size-4 shrink-0" />
-              {collapsed ? null : (
-                <>
-                  <span className="truncate text-sm font-medium">{libraryName}</span>
-                  <ChevronDownIcon className="text-muted-foreground ml-auto size-4 shrink-0 transition-transform duration-200 group-aria-expanded:rotate-180" />
-                </>
-              )}
+              <CollapsibleLabel collapsed={collapsed}>
+                <span className="truncate text-sm font-medium">{libraryName}</span>
+                <ChevronDownIcon className="text-muted-foreground ml-auto size-4 shrink-0 transition-transform duration-200 group-aria-expanded:rotate-180" />
+              </CollapsibleLabel>
             </Button>
             <DropdownMenu placement="bottom start" className="w-56">
               {libraries.map(entry => (
@@ -51,9 +50,11 @@ export const LibraryMenu: FC<{ libraryId: UUID; className?: string }> = ({ libra
             </DropdownMenu>
           </MenuTrigger>
         ) : (
-          <div className={cn("flex h-12 items-center", collapsed ? "justify-center" : "gap-3 px-3")}>
+          <div className={cn("flex h-12 items-center gap-3 pl-4", collapsed ? "pr-0" : "pr-3")}>
             <LibraryIcon className="text-muted-foreground size-4 shrink-0" />
-            {collapsed ? null : <span className="truncate text-sm font-medium">{libraryName}</span>}
+            <CollapsibleLabel collapsed={collapsed}>
+              <span className="truncate text-sm font-medium">{libraryName}</span>
+            </CollapsibleLabel>
           </div>
         )
       }

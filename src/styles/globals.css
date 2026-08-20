@@ -20,6 +20,14 @@
   }
 }
 
+@utility pb-dock {
+  padding-bottom: calc(var(--dock-height, 3.5rem) + 1rem);
+
+  @variant md {
+    padding-bottom: 1rem;
+  }
+}
+
 @utility no-scrollbar {
   scrollbar-width: none;
   -ms-overflow-style: none;

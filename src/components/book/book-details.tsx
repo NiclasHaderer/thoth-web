@@ -5,23 +5,25 @@ import {
   BarcodeIcon,
   BuildingIcon,
   CalendarIcon,
+  CirclePlayIcon,
   ClockIcon,
   ImageOffIcon,
   LanguagesIcon,
   LayersIcon,
   LucideIcon,
   MicIcon,
-  PlayIcon,
   StarIcon,
   UserIcon,
 } from "lucide-react"
 import { FC, ReactNode } from "react"
-import { Link } from "wouter"
-import { BookDetailed, UUID } from "@thoth/client"
-import { detailLabel } from "@thoth/components/detail/detail-layout"
+import { Book, BookDetailed, UUID } from "@thoth/client"
+import { detailLabel, MobileDetailHeader } from "@thoth/components/detail/detail-layout"
 import { HtmlViewer } from "@thoth/components/html-editor"
+import { Link } from "@thoth/components/link.tsx"
 import { Button } from "@thoth/components/ui/button"
 import { usePlayState } from "@thoth/hooks/playback"
+import { useBreakpoint } from "@thoth/hooks/use-media-query"
+import { cn } from "@thoth/lib/utils"
 import { isDetailedBook } from "@thoth/models/typeguards"
 import { useBook } from "@thoth/queries/resources"
 import { toRuntime } from "../track/helpers"
@@ -67,10 +69,179 @@ const MetaItem: FC<{ icon: LucideIcon; children: ReactNode }> = ({ icon: Icon, c
   </span>
 )
 
+interface CoverProps {
+  book: Book
+  className: string
+}
+
+const Cover: FC<CoverProps> = ({ book, className }) =>
+  book.coverID ? (
+    <img
+      className={cn("border-border rounded-lg border object-cover shadow-lg shadow-black/25", className)}
+      alt={book.title}
+      src={`/api/stream/images/${book.coverID}`}
+    />
+  ) : (
+    <div
+      className={cn(
+        "border-border text-muted-foreground/60 flex aspect-square items-center justify-center rounded-lg border",
+        className
+      )}
+    >
+      <ImageOffIcon className="size-2/5" />
+    </div>
+  )
+
+interface MetaProps {
+  book: Book
+  libraryId: UUID
+  runtime: number
+}
+
+const Meta: FC<MetaProps> = ({ book, libraryId, runtime }) => (
+  <>
+    {book.authors.length > 0 ? (
+      <MetaRow icon={UserIcon}>
+        <DetailList
+          items={book.authors.map(author => ({
+            key: author.id,
+            label: author.name,
+            href: `/libraries/${libraryId}/authors/${author.id}`,
+          }))}
+        />
+      </MetaRow>
+    ) : null}
+
+    {book.series.length > 0 ? (
+      <MetaRow icon={LayersIcon}>
+        <DetailList
+          items={book.series.map(series => ({
+            key: series.id,
+            label: series.title,
+            href: `/libraries/${libraryId}/series/${series.id}`,
+          }))}
+        />
+      </MetaRow>
+    ) : null}
+
+    {book.narrators.length > 0 ? (
+      <MetaRow icon={MicIcon}>
+        <DetailList
+          items={book.narrators.map(narrator => ({
+            key: narrator,
+            label: narrator,
+            href: `/libraries/${libraryId}/narrators/${encodeURIComponent(narrator)}`,
+          }))}
+        />
+      </MetaRow>
+    ) : null}
+
+    <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5">
+      {runtime ? <MetaItem icon={ClockIcon}>{toRuntime(runtime)}</MetaItem> : null}
+      {book.releaseDate ? <MetaItem icon={CalendarIcon}>{new Date(book.releaseDate).getFullYear()}</MetaItem> : null}
+      {book.publisher ? <MetaItem icon={BuildingIcon}>{book.publisher}</MetaItem> : null}
+      {book.language ? (
+        <MetaItem icon={LanguagesIcon}>
+          <span className="capitalize">{book.language}</span>
+        </MetaItem>
+      ) : null}
+      {book.isbn ? (
+        <MetaItem icon={BarcodeIcon}>
+          <span className="tabular-nums">{book.isbn}</span>
+        </MetaItem>
+      ) : null}
+    </div>
+  </>
+)
+
+const GenreLinks: FC<{ book: Book; libraryId: UUID }> = ({ book, libraryId }) => (
+  <>
+    {book.genres.map(genre => (
+      <Link
+        key={genre}
+        href={`/libraries/${libraryId}/genres/${encodeURIComponent(genre)}`}
+        className="text-primary text-sm hover:underline"
+      >
+        {genre}
+      </Link>
+    ))}
+  </>
+)
+
+interface HeaderProps extends MetaProps {
+  tracks: number
+  actions: ReactNode
+}
+
+const DesktopHeader: FC<HeaderProps> = ({ book, libraryId, runtime, actions }) => (
+  <div className="grid grid-cols-[auto_minmax(0,1fr)] items-start gap-x-8 gap-y-5">
+    <Cover book={book} className="w-56 shrink-0 self-center lg:w-64" />
+
+    <div className="flex min-w-0 flex-col gap-2">
+      <h1 className="min-w-0 text-4xl font-bold tracking-tight text-balance">{book.title}</h1>
+
+      {book.providerRating || book.genres.length > 0 ? (
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5">
+          {book.providerRating ? <Rating value={book.providerRating} /> : null}
+          <GenreLinks book={book} libraryId={libraryId} />
+        </div>
+      ) : null}
+
+      <div className="border-border/60 mt-1 flex flex-col gap-1.5 border-t pt-3">
+        <Meta book={book} libraryId={libraryId} runtime={runtime} />
+      </div>
+
+      <div className="flex items-center gap-1.5 pt-4">{actions}</div>
+    </div>
+
+    {book.description ? (
+      <div className="col-span-2">
+        <HtmlViewer content={book.description} collapsedLines={3} />
+      </div>
+    ) : null}
+  </div>
+)
+
+const MobileHeader: FC<HeaderProps> = ({ book, libraryId, runtime, tracks, actions }) => {
+  const tracksLabel = tracks > 0 ? pluralize(tracks, "Track") : undefined
+
+  return (
+    <MobileDetailHeader
+      title={book.title}
+      backdrop={book.coverID ? `/api/stream/images/${book.coverID}` : undefined}
+      art={<Cover book={book} className="w-full" />}
+      actions={actions}
+      revealTop={
+        <div className="text-muted-foreground flex flex-wrap items-center justify-center gap-x-2 pb-1.5 text-sm">
+          <GenreLinks book={book} libraryId={libraryId} />
+          {book.publisher ? <span>{book.publisher}</span> : null}
+        </div>
+      }
+      stats={
+        <>
+          {book.providerRating ? <Rating value={book.providerRating} /> : null}
+          {runtime ? <span>{toRuntime(runtime)}</span> : null}
+          {tracksLabel ? <span>{tracksLabel}</span> : null}
+        </>
+      }
+      revealBottom={
+        <div className="flex flex-col gap-4 pt-4 text-left">
+          {book.description ? <HtmlViewer content={book.description} collapsedLines={3} /> : null}
+
+          <div className="border-border/60 flex flex-col gap-2 rounded-lg border p-4">
+            <Meta book={book} libraryId={libraryId} runtime={0} />
+          </div>
+        </div>
+      }
+    />
+  )
+}
+
 export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId, libraryId }) => {
   const play = usePlaybackState(state => state.start)
   const current = usePlaybackState(state => state.current)
   const [isPlaying] = usePlayState()
+  const isDesktop = useBreakpoint("md")
   const { data: book } = useBook(libraryId, bookId)
 
   if (!book) return <></>
@@ -80,7 +251,6 @@ export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId, lib
 
   const tracks = isDetailedBook(book) ? book.tracks : []
   const totalDuration = tracks.reduce((sum, track) => sum + track.duration, 0)
-  const year = book.releaseDate ? new Date(book.releaseDate).getFullYear() : undefined
 
   const startPlayback = (position: number) => {
     const bookTracks = (book as BookDetailed).tracks
@@ -99,132 +269,32 @@ export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId, lib
     play(start, queue, history)
   }
 
-  const cover = book.coverID ? `/api/stream/images/${book.coverID}` : undefined
-
   const actions = (
     <>
       <Button
         onPress={() => startPlayback(0)}
         isDisabled={tracks.length === 0}
-        className="h-11 grow gap-2.5 px-6 text-base font-semibold sm:h-10 sm:grow-0"
+        className="h-11 grow px-5 md:h-10 md:grow-0"
       >
-        <PlayIcon className="size-4 fill-current" /> Play
+        <CirclePlayIcon className="mr-2" /> Play
       </Button>
       <BookEdit book={book} />
     </>
   )
 
+  const Header = isDesktop ? DesktopHeader : MobileHeader
+
   return (
-    <div className="mx-auto max-w-5xl min-w-0 pb-3">
-      <div className="grid grid-cols-[auto_minmax(0,1fr)] items-start gap-x-5 gap-y-5 sm:gap-x-8">
-        {cover ? (
-          <img
-            className="border-border w-24 shrink-0 self-center rounded-lg border object-cover shadow-lg shadow-black/25 sm:w-56 lg:w-64"
-            alt={book.title}
-            src={cover}
-          />
-        ) : (
-          <div className="border-border text-muted-foreground/60 flex aspect-square w-24 shrink-0 items-center justify-center self-center rounded-lg border sm:w-56 lg:w-64">
-            <ImageOffIcon className="size-2/5" />
-          </div>
-        )}
-
-        <div className="flex min-w-0 flex-col gap-2">
-          <h1 className="min-w-0 text-2xl font-bold tracking-tight text-balance sm:text-4xl">{book.title}</h1>
-
-          {book.providerRating || book.genres.length > 0 ? (
-            <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5">
-              {book.providerRating ? <Rating value={book.providerRating} /> : null}
-              {book.genres.map(genre => (
-                <Link
-                  key={genre}
-                  href={`/libraries/${libraryId}/genres/${encodeURIComponent(genre)}`}
-                  className="text-primary text-sm hover:underline"
-                >
-                  {genre}
-                </Link>
-              ))}
-            </div>
-          ) : null}
-
-          <div className="border-border/60 mt-1 flex flex-col gap-1.5 border-t pt-3">
-            {book.authors.length > 0 ? (
-              <MetaRow icon={UserIcon}>
-                <DetailList
-                  items={book.authors.map(author => ({
-                    key: author.id,
-                    label: author.name,
-                    href: `/libraries/${libraryId}/authors/${author.id}`,
-                  }))}
-                />
-              </MetaRow>
-            ) : null}
-
-            {book.series.length > 0 ? (
-              <MetaRow icon={LayersIcon}>
-                <DetailList
-                  items={book.series.map(series => ({
-                    key: series.id,
-                    label: series.title,
-                    href: `/libraries/${libraryId}/series/${series.id}`,
-                  }))}
-                />
-              </MetaRow>
-            ) : null}
-
-            {book.narrators.length > 0 ? (
-              <MetaRow icon={MicIcon}>
-                <DetailList
-                  items={book.narrators.map(narrator => ({
-                    key: narrator,
-                    label: narrator,
-                    href: `/libraries/${libraryId}/narrators/${encodeURIComponent(narrator)}`,
-                  }))}
-                />
-              </MetaRow>
-            ) : null}
-
-            <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5">
-              {totalDuration ? <MetaItem icon={ClockIcon}>{toRuntime(totalDuration)}</MetaItem> : null}
-              {year ? <MetaItem icon={CalendarIcon}>{year}</MetaItem> : null}
-              {book.publisher ? <MetaItem icon={BuildingIcon}>{book.publisher}</MetaItem> : null}
-              {book.language ? (
-                <MetaItem icon={LanguagesIcon}>
-                  <span className="capitalize">{book.language}</span>
-                </MetaItem>
-              ) : null}
-              {book.isbn ? (
-                <MetaItem icon={BarcodeIcon}>
-                  <span className="tabular-nums">{book.isbn}</span>
-                </MetaItem>
-              ) : null}
-            </div>
-          </div>
-
-          <div className="hidden items-center gap-1.5 pt-4 sm:flex">{actions}</div>
-        </div>
-
-        <div className="col-span-2 flex items-center gap-1.5 sm:hidden">{actions}</div>
-
-        {book.description ? (
-          <div className="col-span-2">
-            <HtmlViewer content={book.description} collapsedLines={3} />
-          </div>
-        ) : null}
-      </div>
+    <div className="mx-auto max-w-5xl min-w-0">
+      <Header book={book} libraryId={libraryId} runtime={totalDuration} tracks={tracks.length} actions={actions} />
 
       {tracks.length > 0 ? (
-        <section className="pt-10">
-          <h2 className={`${detailLabel} flex justify-end gap-2 pb-2.5`}>
+        <section className="pt-8 md:pt-10">
+          <h2 className={`${detailLabel} border-border/60 flex items-center justify-between border-y py-2.5`}>
             <span>{pluralize(tracks.length, "Track")}</span>
-            {totalDuration ? (
-              <>
-                <span aria-hidden>&middot;</span>
-                <span>{toRuntime(totalDuration)}</span>
-              </>
-            ) : null}
+            {totalDuration ? <span>{toRuntime(totalDuration)}</span> : null}
           </h2>
-          <ul className="border-border/60 flex flex-col border-t">
+          <ul className="flex flex-col">
             {tracks.map((track, index) => (
               <Track
                 key={track.id}

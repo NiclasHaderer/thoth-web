@@ -1,7 +1,7 @@
 import { forwardRef, Fragment } from "react"
-import { Link } from "wouter"
 import { Book } from "@thoth/client"
 import { GenericPreview } from "@thoth/components/generic/generic-preview.tsx"
+import { Link } from "@thoth/components/link.tsx"
 import { usePlayBook } from "@thoth/hooks/playback"
 
 interface BookPreviewProps extends Book {
