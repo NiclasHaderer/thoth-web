@@ -1,6 +1,6 @@
 import { ImageOffIcon, PlayIcon } from "lucide-react"
 import { forwardRef, ReactNode } from "react"
-import { Link } from "wouter"
+import { Link } from "@thoth/components/link.tsx"
 import { getSizing } from "@thoth/utils/width.ts"
 
 interface GenericPreviewProps {

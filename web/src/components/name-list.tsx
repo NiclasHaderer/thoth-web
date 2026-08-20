@@ -1,7 +1,7 @@
 import { ChevronRightIcon } from "lucide-react"
 import { FC, useState } from "react"
-import { Link } from "wouter"
 import { Order, UUID } from "@thoth/client"
+import { Link } from "@thoth/components/link.tsx"
 import { ResourceGrid } from "@thoth/components/resource-grid"
 import { ResourceListHeader } from "@thoth/components/resource-list-header"
 import { Skeleton } from "@thoth/components/ui/skeleton"

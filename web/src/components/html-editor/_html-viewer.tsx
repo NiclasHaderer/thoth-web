@@ -20,7 +20,7 @@ export const HtmlViewerImpl: FC<{
     const element = contentRef.current
     if (!element || collapsedLines === undefined) return
     const height = parseFloat(getComputedStyle(element).lineHeight) * collapsedLines
-    setCollapsedHeight(height)
+    setCollapsedHeight(Math.min(height, element.scrollHeight))
     setOverflows(element.scrollHeight > height + 1)
   }, [content, collapsedLines])
 
@@ -47,7 +47,13 @@ export const HtmlViewerImpl: FC<{
         animate={{ height: expanded || collapsedHeight === undefined ? "auto" : collapsedHeight }}
         transition={{ duration: 0.25, ease: "easeInOut" }}
         onAnimationComplete={() => !expanded && setClamped(true)}
-        className="overflow-hidden"
+        onClick={event => {
+          if (!overflows || (event.target as HTMLElement).closest("a")) return
+          // A selection means the tap was a text drag or long-press to copy, not a toggle.
+          if (window.getSelection()?.isCollapsed === false) return
+          toggle()
+        }}
+        className={`overflow-hidden ${overflows ? "cursor-pointer" : ""}`}
       >
         <div
           ref={contentRef}
