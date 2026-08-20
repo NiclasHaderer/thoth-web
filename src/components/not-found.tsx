@@ -1,4 +1,4 @@
-import { Link } from "wouter"
+import { Link } from "@thoth/components/link.tsx"
 import { buttonVariants } from "@thoth/components/ui/button"
 
 export const NotFound = () => {

@@ -1,6 +1,6 @@
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react"
 import { FC, PropsWithChildren, useEffect, useRef, useState } from "react"
-import { Link } from "wouter"
+import { Link } from "@thoth/components/link.tsx"
 import { Button } from "@thoth/components/ui/button"
 
 export const ScrollRow: FC<PropsWithChildren<{ title: string; href: string }>> = ({ title, href, children }) => {
