@@ -2,7 +2,7 @@ import { entityLink } from "@/components/detail/detail-layout.tsx"
 import { Button, buttonVariants } from "@/components/ui/button.tsx"
 import { DropdownMenu, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu.tsx"
 import { FC, useLayoutEffect, useRef, useState } from "react"
-import { Link } from "wouter"
+import { Link } from "@thoth/components/link.tsx"
 
 export interface DetailListItem {
   key: string
@@ -51,7 +51,7 @@ export const DetailList: FC<{ items: DetailListItem[]; prefix?: string }> = ({ i
   const hidden = total - visible.length
 
   return (
-    <span ref={rowRef} className="justify-[inherit] relative flex w-full flex-wrap items-baseline gap-x-1">
+    <span ref={rowRef} className="relative flex w-full flex-wrap items-baseline [justify-content:inherit] gap-x-1">
       {prefix ? <span className="text-muted-foreground">{prefix}</span> : null}
 
       {visible.map((item, index) => (

@@ -1,4 +1,5 @@
 import { LucideIcon, PanelLeftCloseIcon, PanelLeftOpenIcon } from "lucide-react"
+import { motion } from "motion/react"
 import { FC, ReactNode, useState } from "react"
 import { Button } from "react-aria-components"
 import { NavItem } from "@thoth/components/menu/nav-item"
@@ -31,16 +32,15 @@ export const SideMenu: FC<{
   const ToggleIcon = collapsed ? PanelLeftOpenIcon : PanelLeftCloseIcon
 
   return (
-    <aside
-      className={cn(
-        "bg-card my-3 ml-3 flex shrink-0 flex-col overflow-hidden rounded-xl p-2 transition-[width] duration-200",
-        collapsed ? "w-16" : "w-56",
-        className
-      )}
+    <motion.aside
+      initial={false}
+      animate={{ width: collapsed ? "4rem" : "14rem" }}
+      transition={{ type: "spring", stiffness: 500, damping: 35 }}
+      className={cn("bg-card my-3 ml-3 flex shrink-0 flex-col overflow-hidden rounded-xl p-2", className)}
     >
       {header(collapsed)}
 
-      <ul className="mt-2 flex flex-col gap-1">
+      <ul className="mt-4 flex flex-col gap-1">
         {items.map(item => (
           <li key={item.href}>
             <NavItem {...item} collapsed={collapsed} />
@@ -60,6 +60,6 @@ export const SideMenu: FC<{
           <ToggleIcon className="size-4 shrink-0" />
         </Button>
       </div>
-    </aside>
+    </motion.aside>
   )
 }

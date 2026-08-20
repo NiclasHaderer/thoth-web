@@ -1,12 +1,16 @@
 import { SettingsIcon } from "lucide-react"
 import { FC, ReactNode, useEffect } from "react"
 import { useLocation } from "wouter"
+import { CollapsibleLabel } from "@thoth/components/menu/collapsible-label"
 import { accountItem, adminItems, adminPaths, licensesItem } from "@thoth/components/menu/settings-nav"
 import { SideMenu } from "@thoth/components/menu/side-menu"
+import { useBreakpoint } from "@thoth/hooks/use-media-query"
+import { cn } from "@thoth/lib/utils"
 import { useCurrentUser } from "@thoth/queries/current-user"
 
 export const SettingsLayout: FC<{ children: ReactNode }> = ({ children }) => {
   const { data: user } = useCurrentUser()
+  const isDesktop = useBreakpoint("md")
   const [pathname, navigate] = useLocation()
 
   const isAdmin = user?.permissions.isAdmin ?? false
@@ -24,20 +28,20 @@ export const SettingsLayout: FC<{ children: ReactNode }> = ({ children }) => {
 
   return (
     <div className="flex min-h-0 grow overflow-hidden">
-      <SideMenu
-        className="hidden md:flex"
-        items={[...navItems, licensesItem]}
-        header={collapsed => (
-          <div className="flex h-12 items-center justify-center">
-            {collapsed ? (
+      {isDesktop ? (
+        <SideMenu
+          items={[...navItems, licensesItem]}
+          header={collapsed => (
+            <div className={cn("flex h-12 items-center gap-3 pl-4", collapsed ? "pr-0" : "pr-3")}>
               <SettingsIcon className="text-muted-foreground size-4 shrink-0" />
-            ) : (
-              <span className="truncate text-sm font-medium">Settings</span>
-            )}
-          </div>
-        )}
-      />
-      <main className="flex min-w-0 grow flex-col overflow-y-auto p-4 sm:p-8">{children}</main>
+              <CollapsibleLabel collapsed={collapsed}>
+                <span className="truncate text-sm font-medium">Settings</span>
+              </CollapsibleLabel>
+            </div>
+          )}
+        />
+      ) : null}
+      <main className="pb-dock flex min-w-0 grow flex-col overflow-y-auto p-4 sm:p-8 md:pb-8">{children}</main>
     </div>
   )
 }

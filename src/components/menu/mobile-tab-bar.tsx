@@ -1,6 +1,7 @@
 import { FC, useState } from "react"
-import { Link, useLocation } from "wouter"
+import { useLocation } from "wouter"
 import { BrowseTabIcon, HomeTabIcon, SearchTabIcon, TabIconProps, YouTabIcon } from "@thoth/components/icons/tab-icons"
+import { Link } from "@thoth/components/link.tsx"
 import { useCurrentLibraryId } from "@thoth/hooks/current-library"
 import { cn } from "@thoth/lib/utils"
 import { useLibraries } from "@thoth/queries/libraries"

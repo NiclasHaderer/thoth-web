@@ -10,7 +10,7 @@ import {
 } from "lucide-react"
 import { AnimatePresence, animate, motion, useMotionValue } from "motion/react"
 import { FC, PropsWithChildren } from "react"
-import { Link } from "wouter"
+import { Link } from "@thoth/components/link.tsx"
 import { ProgressBar } from "@thoth/components/progress-bar"
 import { Button } from "@thoth/components/ui/button"
 import { Tooltip, TooltipTrigger } from "@thoth/components/ui/tooltip"
