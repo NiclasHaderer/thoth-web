@@ -3,7 +3,7 @@ import { Author, AuthorUpdate, MetadataAuthor } from "@thoth/client"
 import { GenericEdit } from "@thoth/components/generic/generic-edit.tsx"
 import { useUpdateAuthor } from "@thoth/queries/resources"
 import { useForm } from "../../hooks/form"
-import { toFormDate } from "../../utils/utils"
+import { fromFormDate, toFormDate } from "../../utils/utils"
 import { AuthorForm } from "./author-form"
 import { AuthorSearch } from "./author-search"
 
@@ -40,6 +40,10 @@ export const AuthorEdit: FC<{ author: Author }> = ({ author }) => {
     toForm: {
       birthDate: value => value && toFormDate(value),
       deathDate: value => value && toFormDate(value),
+    },
+    fromForm: {
+      birthDate: value => fromFormDate(value) as unknown as string,
+      deathDate: value => fromFormDate(value) as unknown as string,
     },
   })
 

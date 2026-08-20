@@ -1,17 +1,30 @@
+import { DetailList } from "@/components/detail/detail-list.tsx"
 import { usePlaybackState } from "@/state/playback.state.ts"
 import { pluralize } from "@/utils/utils.ts"
-import { CirclePlayIcon, ImageOffIcon, StarIcon } from "lucide-react"
-import { FC, Fragment, ReactNode } from "react"
+import {
+  BarcodeIcon,
+  BuildingIcon,
+  CalendarIcon,
+  ClockIcon,
+  ImageOffIcon,
+  LanguagesIcon,
+  LayersIcon,
+  LucideIcon,
+  MicIcon,
+  PlayIcon,
+  StarIcon,
+  UserIcon,
+} from "lucide-react"
+import { FC, ReactNode } from "react"
 import { Link } from "wouter"
 import { BookDetailed, UUID } from "@thoth/client"
-import { DetailLayout, DetailRail, RailItem, entityLink } from "@thoth/components/detail/detail-layout"
+import { detailLabel } from "@thoth/components/detail/detail-layout"
 import { HtmlViewer } from "@thoth/components/html-editor"
-import { Badge } from "@thoth/components/ui/badge"
 import { Button } from "@thoth/components/ui/button"
 import { usePlayState } from "@thoth/hooks/playback"
 import { isDetailedBook } from "@thoth/models/typeguards"
 import { useBook } from "@thoth/queries/resources"
-import { toReadableTime } from "../track/helpers"
+import { toRuntime } from "../track/helpers"
 import { Track, TrackState } from "../track/track"
 import { BookEdit } from "./book-edit"
 
@@ -22,7 +35,7 @@ const Rating: FC<{ value: number }> = ({ value }) => {
   const filled = (Math.min(Math.max(value, 0), RATING_MAX) / RATING_MAX) * 100
 
   return (
-    <div className="flex items-center gap-1.5">
+    <div className="flex items-center gap-2">
       <div aria-hidden className="relative">
         <div className="text-muted-foreground/35 flex">
           {stars.map(index => (
@@ -35,10 +48,24 @@ const Rating: FC<{ value: number }> = ({ value }) => {
           ))}
         </div>
       </div>
-      <span className="text-muted-foreground text-xs tabular-nums">{value.toFixed(1)}</span>
+      <span className="text-sm tabular-nums">{value.toFixed(1)}</span>
     </div>
   )
 }
+
+const MetaRow: FC<{ icon: LucideIcon; children: ReactNode }> = ({ icon: Icon, children }) => (
+  <div className="text-muted-foreground flex min-w-0 items-baseline gap-2 text-sm">
+    <Icon aria-hidden className="size-4 shrink-0 translate-y-0.5" />
+    <div className="min-w-0 grow">{children}</div>
+  </div>
+)
+
+const MetaItem: FC<{ icon: LucideIcon; children: ReactNode }> = ({ icon: Icon, children }) => (
+  <span className="text-muted-foreground flex items-center gap-1.5 text-sm whitespace-nowrap">
+    <Icon aria-hidden className="size-4 shrink-0" />
+    {children}
+  </span>
+)
 
 export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId, libraryId }) => {
   const play = usePlaybackState(state => state.start)
@@ -72,117 +99,132 @@ export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId, lib
     play(start, queue, history)
   }
 
-  const facts: ReactNode[] = []
-  if (book.authors.length > 0) {
-    facts.push(
-      <span className="flex flex-wrap gap-x-1">
-        {book.authors.map((author, index) => (
-          <Link key={author.id} href={`/libraries/${libraryId}/authors/${author.id}`} className={entityLink}>
-            {author.name}
-            {index < book.authors.length - 1 ? "," : ""}
-          </Link>
-        ))}
-      </span>
-    )
-  }
-  if (year) facts.push(year)
-  if (book.language) facts.push(<span className="capitalize">{book.language}</span>)
+  const cover = book.coverID ? `/api/stream/images/${book.coverID}` : undefined
 
-  const hasRail = book.genres.length > 0 || book.publisher || book.isbn || book.providerRating
+  const actions = (
+    <>
+      <Button
+        onPress={() => startPlayback(0)}
+        isDisabled={tracks.length === 0}
+        className="h-11 grow gap-2.5 px-6 text-base font-semibold sm:h-10 sm:grow-0"
+      >
+        <PlayIcon className="size-4 fill-current" /> Play
+      </Button>
+      <BookEdit book={book} />
+    </>
+  )
 
   return (
-    <DetailLayout
-      title={book.title}
-      image={book.coverID ? `/api/stream/images/${book.coverID}` : undefined}
-      fallbackIcon={ImageOffIcon}
-      facts={facts}
-      details={
-        <>
-          {book.narrators.length > 0 ? (
-            <p className="text-muted-foreground text-sm">
-              Narrated by{" "}
-              {book.narrators.map((narrator, index) => (
-                <Fragment key={narrator}>
-                  {index > 0 ? ", " : ""}
-                  <Link
-                    href={`/libraries/${libraryId}/narrators/${encodeURIComponent(narrator)}`}
-                    className={entityLink}
-                  >
-                    {narrator}
-                  </Link>
-                </Fragment>
-              ))}
-            </p>
-          ) : null}
+    <div className="mx-auto max-w-5xl min-w-0 pb-3">
+      <div className="grid grid-cols-[auto_minmax(0,1fr)] items-start gap-x-5 gap-y-5 sm:gap-x-8">
+        {cover ? (
+          <img
+            className="border-border w-24 shrink-0 self-center rounded-lg border object-cover shadow-lg shadow-black/25 sm:w-56 lg:w-64"
+            alt={book.title}
+            src={cover}
+          />
+        ) : (
+          <div className="border-border text-muted-foreground/60 flex aspect-square w-24 shrink-0 items-center justify-center self-center rounded-lg border sm:w-56 lg:w-64">
+            <ImageOffIcon className="size-2/5" />
+          </div>
+        )}
 
-          {book.series.length > 0 ? (
-            <div className="flex flex-wrap gap-2">
-              {book.series.map(series => (
-                <Badge
-                  key={series.id}
-                  variant="secondary"
-                  render={props => <Link {...props} href={`/libraries/${libraryId}/series/${series.id}`} />}
+        <div className="flex min-w-0 flex-col gap-2">
+          <h1 className="min-w-0 text-2xl font-bold tracking-tight text-balance sm:text-4xl">{book.title}</h1>
+
+          {book.providerRating || book.genres.length > 0 ? (
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5">
+              {book.providerRating ? <Rating value={book.providerRating} /> : null}
+              {book.genres.map(genre => (
+                <Link
+                  key={genre}
+                  href={`/libraries/${libraryId}/genres/${encodeURIComponent(genre)}`}
+                  className="text-primary text-sm hover:underline"
                 >
-                  {series.title}
-                </Badge>
+                  {genre}
+                </Link>
               ))}
             </div>
           ) : null}
-        </>
-      }
-      actions={
-        <>
-          <Button onPress={() => startPlayback(0)} isDisabled={tracks.length === 0} className="grow sm:grow-0">
-            <CirclePlayIcon className="mr-2" /> Play
-          </Button>
-          <BookEdit book={book} />
-        </>
-      }
-      aside={
-        hasRail ? (
-          <DetailRail>
-            {book.genres.length > 0 ? (
-              <RailItem label="Genres" className="col-span-full">
-                <div className="flex flex-wrap gap-1.5">
-                  {book.genres.map(genre => (
-                    <Badge
-                      key={genre}
-                      variant="outline"
-                      render={props => (
-                        <Link {...props} href={`/libraries/${libraryId}/genres/${encodeURIComponent(genre)}`} />
-                      )}
-                    >
-                      {genre}
-                    </Badge>
-                  ))}
-                </div>
-              </RailItem>
+
+          <div className="border-border/60 mt-1 flex flex-col gap-1.5 border-t pt-3">
+            {book.authors.length > 0 ? (
+              <MetaRow icon={UserIcon}>
+                <DetailList
+                  items={book.authors.map(author => ({
+                    key: author.id,
+                    label: author.name,
+                    href: `/libraries/${libraryId}/authors/${author.id}`,
+                  }))}
+                />
+              </MetaRow>
             ) : null}
 
-            {book.publisher ? <RailItem label="Publisher">{book.publisher}</RailItem> : null}
-            {book.isbn ? <RailItem label="ISBN">{book.isbn}</RailItem> : null}
-            {book.providerRating ? (
-              <RailItem label="Rating">
-                <Rating value={book.providerRating} />
-              </RailItem>
+            {book.series.length > 0 ? (
+              <MetaRow icon={LayersIcon}>
+                <DetailList
+                  items={book.series.map(series => ({
+                    key: series.id,
+                    label: series.title,
+                    href: `/libraries/${libraryId}/series/${series.id}`,
+                  }))}
+                />
+              </MetaRow>
             ) : null}
-          </DetailRail>
-        ) : null
-      }
-    >
-      {book.description ? (
-        <div className="pb-10">
-          <HtmlViewer content={book.description} title="Description" collapsedLines={3} />
+
+            {book.narrators.length > 0 ? (
+              <MetaRow icon={MicIcon}>
+                <DetailList
+                  items={book.narrators.map(narrator => ({
+                    key: narrator,
+                    label: narrator,
+                    href: `/libraries/${libraryId}/narrators/${encodeURIComponent(narrator)}`,
+                  }))}
+                />
+              </MetaRow>
+            ) : null}
+
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5">
+              {totalDuration ? <MetaItem icon={ClockIcon}>{toRuntime(totalDuration)}</MetaItem> : null}
+              {year ? <MetaItem icon={CalendarIcon}>{year}</MetaItem> : null}
+              {book.publisher ? <MetaItem icon={BuildingIcon}>{book.publisher}</MetaItem> : null}
+              {book.language ? (
+                <MetaItem icon={LanguagesIcon}>
+                  <span className="capitalize">{book.language}</span>
+                </MetaItem>
+              ) : null}
+              {book.isbn ? (
+                <MetaItem icon={BarcodeIcon}>
+                  <span className="tabular-nums">{book.isbn}</span>
+                </MetaItem>
+              ) : null}
+            </div>
+          </div>
+
+          <div className="hidden items-center gap-1.5 pt-4 sm:flex">{actions}</div>
         </div>
-      ) : null}
+
+        <div className="col-span-2 flex items-center gap-1.5 sm:hidden">{actions}</div>
+
+        {book.description ? (
+          <div className="col-span-2">
+            <HtmlViewer content={book.description} collapsedLines={3} />
+          </div>
+        ) : null}
+      </div>
 
       {tracks.length > 0 ? (
-        <section className="max-w-prose">
-          <h2 className="flex items-baseline gap-3 pb-3 text-xl">
-            {pluralize(tracks.length, "Track")}
-            <span className="text-muted-foreground text-sm tabular-nums">{toReadableTime(totalDuration)}</span>
+        <section className="pt-10">
+          <h2 className={`${detailLabel} flex justify-end gap-2 pb-2.5`}>
+            <span>{pluralize(tracks.length, "Track")}</span>
+            {totalDuration ? (
+              <>
+                <span aria-hidden>&middot;</span>
+                <span>{toRuntime(totalDuration)}</span>
+              </>
+            ) : null}
           </h2>
-          <ul className="-mx-3 flex flex-col">
+          <ul className="border-border/60 flex flex-col border-t">
             {tracks.map((track, index) => (
               <Track
                 key={track.id}
@@ -195,7 +237,7 @@ export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId, lib
           </ul>
         </section>
       ) : null}
-    </DetailLayout>
+    </div>
   )
 }
 export default BookDetails

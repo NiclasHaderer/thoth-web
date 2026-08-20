@@ -1,4 +1,4 @@
-import { PlayIcon } from "lucide-react"
+import { PauseIcon, PlayIcon } from "lucide-react"
 import { FC } from "react"
 import { rowInteraction } from "@thoth/lib/interactive"
 import { cn } from "@thoth/lib/utils"
@@ -31,7 +31,7 @@ export const Track: FC<TrackProps> = ({ title, duration, trackNr, index, state, 
   const active = state === "playing" || state === "paused"
 
   return (
-    <li>
+    <li className="border-border/60 border-b">
       <button
         type="button"
         aria-label={`Play ${title}`}
@@ -39,29 +39,39 @@ export const Track: FC<TrackProps> = ({ title, duration, trackNr, index, state, 
         onClick={() => startPlayback(index)}
         className={cn(
           rowInteraction,
-          "group flex w-full items-center gap-4 px-3 py-3 text-left",
-          active && "bg-muted/60"
+          "group flex w-full items-center gap-4 rounded-none px-2 py-3.5 text-left",
+          active && "bg-muted/40"
         )}
       >
-        <span className="relative flex size-8 shrink-0 items-center justify-center">
+        <span className="flex w-7 shrink-0 items-center justify-center">
           {active ? (
             <Equalizer animated={state === "playing"} />
           ) : (
-            <span className="text-muted-foreground no-touch:group-hover:opacity-0 text-sm tabular-nums transition-opacity">
-              {trackNr ?? index + 1}
-            </span>
-          )}
-          {active ? null : (
-            <span className="bg-primary text-primary-foreground no-touch:group-hover:scale-100 no-touch:group-hover:opacity-100 absolute inset-0 flex scale-90 items-center justify-center rounded-full opacity-0 transition-all">
-              <PlayIcon aria-hidden className="size-3.5 fill-current" />
-            </span>
+            <span className="text-muted-foreground/70 text-xs tabular-nums">{trackNr ?? index + 1}</span>
           )}
         </span>
 
-        <span className={cn("min-w-0 grow truncate text-sm", active && "text-primary font-medium")}>{title}</span>
+        <span className={cn("min-w-0 grow truncate text-sm sm:text-base", active && "text-primary font-medium")}>
+          {title}
+        </span>
 
         <span className="text-muted-foreground shrink-0 text-xs tabular-nums">{toReadableTime(duration)}</span>
-        {active ? null : <PlayIcon aria-hidden className="touch:block hidden size-4 shrink-0 fill-current" />}
+
+        <span
+          aria-hidden
+          className={cn(
+            "flex size-7 shrink-0 items-center justify-center rounded-full border transition-colors",
+            active
+              ? "border-primary text-primary"
+              : "border-muted-foreground/40 text-muted-foreground/70 no-touch:group-hover:border-foreground no-touch:group-hover:text-foreground"
+          )}
+        >
+          {state === "playing" ? (
+            <PauseIcon className="size-3 fill-current" />
+          ) : (
+            <PlayIcon className="size-3 fill-current" />
+          )}
+        </span>
       </button>
     </li>
   )

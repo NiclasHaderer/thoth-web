@@ -1,4 +1,3 @@
-import { LucideIcon } from "lucide-react"
 import { FC } from "react"
 import { Book } from "@thoth/client"
 import { BookPreview } from "@thoth/components/book/book-preview.tsx"
@@ -8,13 +7,8 @@ import { ResourceGrid } from "@thoth/components/resource-grid"
 import { RESPONSIVE_GRID } from "@thoth/components/responsive-grid"
 import { pluralize } from "@thoth/utils/utils"
 
-export const NameBooks: FC<{ name: string; books: Book[]; icon: LucideIcon; round?: boolean }> = ({
-  name,
-  books,
-  icon,
-  round,
-}) => (
-  <DetailLayout title={name} fallbackIcon={icon} round={round} facts={[pluralize(books.length, "book")]}>
+export const NameBooks: FC<{ name: string; books: Book[] }> = ({ name, books }) => (
+  <DetailLayout title={name} credit={pluralize(books.length, "book")}>
     <ResourceGrid
       listKey={`name-books:${name}`}
       total={books.length}

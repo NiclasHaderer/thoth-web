@@ -2,7 +2,6 @@ import { Api, UUID, unwrap } from "@/client"
 import { NameBooks } from "@/components/name-books.tsx"
 import { queryKeys } from "@/queries/keys.ts"
 import { useQuery } from "@tanstack/react-query"
-import { MicIcon } from "lucide-react"
 
 export const NarratorOutlet = ({ libraryId, narratorName }: { libraryId: UUID; narratorName: string }) => {
   const name = decodeURIComponent(narratorName)
@@ -14,5 +13,5 @@ export const NarratorOutlet = ({ libraryId, narratorName }: { libraryId: UUID; n
 
   if (!data) return null
 
-  return <NameBooks name={data.name} books={data.books} icon={MicIcon} round />
+  return <NameBooks name={data.name} books={data.books} />
 }

@@ -45,7 +45,7 @@ function DropdownMenu({
         className
       )}
     >
-      <MenuPrimitive className="max-h-[inherit] overflow-x-hidden overflow-y-auto outline-hidden" {...props}>
+      <MenuPrimitive className="outline-hidden" {...props}>
         {children}
       </MenuPrimitive>
     </PopoverPrimitive>

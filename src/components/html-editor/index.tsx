@@ -21,7 +21,7 @@ export const HtmlEditor: FC<{
 export const HtmlViewer: FC<{
   content: string | null | undefined
   className?: string | undefined
-  title: string
+  title?: string
   collapsedLines?: number
 }> = props => {
   return (
