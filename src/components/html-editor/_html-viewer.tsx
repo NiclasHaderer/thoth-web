@@ -1,12 +1,13 @@
 import dompurify from "dompurify"
 import { motion } from "motion/react"
 import { CSSProperties, FC, useEffect, useRef, useState } from "react"
+import { detailLabel } from "@thoth/components/detail/detail-layout"
 import { Button } from "@thoth/components/ui/button"
 
 export const HtmlViewerImpl: FC<{
   content: string | null | undefined
   className?: string | undefined
-  title: string
+  title?: string
   collapsedLines?: number
 }> = ({ content, className, title, collapsedLines }) => {
   const contentRef = useRef<HTMLDivElement>(null)
@@ -40,7 +41,7 @@ export const HtmlViewerImpl: FC<{
 
   return (
     <>
-      <h2 className="text-xl">{title}</h2>
+      {title ? <h2 className={`${detailLabel} pb-3`}>{title}</h2> : null}
       <motion.div
         initial={false}
         animate={{ height: expanded || collapsedHeight === undefined ? "auto" : collapsedHeight }}
@@ -51,12 +52,12 @@ export const HtmlViewerImpl: FC<{
         <div
           ref={contentRef}
           style={clamp}
-          className={`prose prose-invert ${className ?? ""}`}
+          className={`prose prose-invert max-w-none ${className ?? ""}`}
           dangerouslySetInnerHTML={{ __html: dompurify.sanitize(content ?? "") }}
         />
       </motion.div>
       {collapsedLines !== undefined && overflows ? (
-        <div className="flex max-w-prose justify-end">
+        <div className="flex justify-end">
           <Button variant="ghost" size="sm" className="-mr-3" onPress={toggle}>
             {expanded ? "Show less" : "Show more"}
           </Button>
