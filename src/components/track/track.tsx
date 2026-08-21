@@ -13,6 +13,7 @@ interface TrackProps {
   trackNr?: number | null
   state: TrackState
   startPlayback: (index: number) => void
+  togglePlayback: (shouldPlay: boolean) => void
 }
 
 const Equalizer: FC<{ animated: boolean }> = ({ animated }) => (
@@ -27,20 +28,21 @@ const Equalizer: FC<{ animated: boolean }> = ({ animated }) => (
   </span>
 )
 
-export const Track: FC<TrackProps> = ({ title, duration, trackNr, index, state, startPlayback }) => {
+export const Track: FC<TrackProps> = ({ title, duration, trackNr, index, state, startPlayback, togglePlayback }) => {
   const active = state === "playing" || state === "paused"
 
   return (
-    <li className="border-border/60 border-b">
+    <li className="border-border/60 relative border-b">
+      {active ? <span aria-hidden className="bg-primary absolute inset-y-0 left-0 w-0.5 rounded-full" /> : null}
       <button
         type="button"
-        aria-label={`Play ${title}`}
+        aria-label={state === "playing" ? `Pause ${title}` : `Play ${title}`}
         aria-current={active ? "true" : undefined}
-        onClick={() => startPlayback(index)}
+        onClick={() => (active ? togglePlayback(state !== "playing") : startPlayback(index))}
         className={cn(
           rowInteraction,
           "group flex w-full items-center gap-4 rounded-none px-2 py-3.5 text-left",
-          active && "bg-muted/40"
+          active && "bg-primary/10"
         )}
       >
         <span className="flex w-7 shrink-0 items-center justify-center">
@@ -51,9 +53,7 @@ export const Track: FC<TrackProps> = ({ title, duration, trackNr, index, state, 
           )}
         </span>
 
-        <span className={cn("min-w-0 grow truncate text-sm sm:text-base", active && "text-primary font-medium")}>
-          {title}
-        </span>
+        <span className={cn("min-w-0 grow truncate text-sm sm:text-base", active && "font-medium")}>{title}</span>
 
         <span className="text-muted-foreground shrink-0 text-xs tabular-nums">{toReadableTime(duration)}</span>
 
@@ -62,7 +62,7 @@ export const Track: FC<TrackProps> = ({ title, duration, trackNr, index, state, 
           className={cn(
             "flex size-7 shrink-0 items-center justify-center rounded-full border transition-colors",
             active
-              ? "border-primary text-primary"
+              ? "border-primary bg-primary text-primary-foreground"
               : "border-muted-foreground/40 text-muted-foreground/70 no-touch:group-hover:border-foreground no-touch:group-hover:text-foreground"
           )}
         >

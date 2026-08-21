@@ -240,7 +240,7 @@ const MobileHeader: FC<HeaderProps> = ({ book, libraryId, runtime, tracks, actio
 export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId, libraryId }) => {
   const play = usePlaybackState(state => state.start)
   const current = usePlaybackState(state => state.current)
-  const [isPlaying] = usePlayState()
+  const [isPlaying, setPlaying] = usePlayState()
   const isDesktop = useBreakpoint("md")
   const { data: book } = useBook(libraryId, bookId)
 
@@ -301,6 +301,7 @@ export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId, lib
                 {...track}
                 state={trackState(track.id)}
                 startPlayback={startPlayback}
+                togglePlayback={setPlaying}
                 index={index}
               />
             ))}
