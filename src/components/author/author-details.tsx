@@ -6,18 +6,32 @@ import { isDetailedAuthor } from "@/models/typeguards"
 import { useAuthor } from "@/queries/resources"
 import { formatDate, pluralize } from "@/utils/utils.ts"
 import { UserIcon } from "lucide-react"
-import { FC, ReactNode } from "react"
-import { DetailLayout, entityLink } from "@thoth/components/detail/detail-layout"
+import { FC, Fragment } from "react"
+import { DetailLayout, detailLabel, entityLink } from "@thoth/components/detail/detail-layout"
 import AuthorEdit from "./author-edit"
 
 export const AuthorDetails: FC<{ authorId: UUID; libraryId: UUID }> = ({ authorId, libraryId }) => {
   const { data: author } = useAuthor(libraryId, authorId)
   if (!author) return <></>
 
-  const facts: ReactNode[] = []
-  if (author.birthDate) facts.push(<span>Born {formatDate(author.birthDate)}</span>)
-  if (author.deathDate) facts.push(<span>Died {formatDate(author.deathDate)}</span>)
-  if (author.bornIn) facts.push(author.bornIn)
+  const born = author.birthDate ? formatDate(author.birthDate) : undefined
+  const died = author.deathDate ? formatDate(author.deathDate) : undefined
+  const lifespan = born && died ? `${born} - ${died}` : born ? `Born ${born}` : died ? `Died ${died}` : undefined
+
+  const credits = [
+    author.bornIn ? <span key="bornIn">Born in {author.bornIn}</span> : null,
+    author.website ? (
+      <a
+        key="website"
+        className={entityLink}
+        target="_blank"
+        referrerPolicy="no-referrer"
+        href={author.website.startsWith("http") ? author.website : `https://${author.website}`}
+      >
+        {author.website}
+      </a>
+    ) : null,
+  ].filter(Boolean)
 
   return (
     <DetailLayout
@@ -25,17 +39,17 @@ export const AuthorDetails: FC<{ authorId: UUID; libraryId: UUID }> = ({ authorI
       image={author.imageID ? `/api/stream/images/${author.imageID}` : undefined}
       fallbackIcon={UserIcon}
       round
-      facts={facts}
-      details={
-        author.website ? (
-          <a
-            className={`text-sm ${entityLink}`}
-            target="_blank"
-            referrerPolicy="no-referrer"
-            href={author.website.startsWith("http") ? author.website : `https://${author.website}`}
-          >
-            {author.website}
-          </a>
+      subtitle={lifespan}
+      credit={
+        credits.length > 0 ? (
+          <span className="flex flex-wrap items-center gap-x-2">
+            {credits.map((credit, index) => (
+              <Fragment key={index}>
+                {index > 0 ? <span aria-hidden>&middot;</span> : null}
+                {credit}
+              </Fragment>
+            ))}
+          </span>
         ) : null
       }
       actions={<AuthorEdit author={author} />}
@@ -48,7 +62,7 @@ export const AuthorDetails: FC<{ authorId: UUID; libraryId: UUID }> = ({ authorI
 
       {isDetailedAuthor(author) ? (
         <section>
-          <h2 className="pb-3 text-xl">{pluralize(author.books.length, "Book")}</h2>
+          <h2 className={`${detailLabel} pb-3`}>{pluralize(author.books.length, "Book")}</h2>
           <ResponsiveGrid>
             {author.books.map((book, k) => (
               <BookPreview {...book} key={k} />

@@ -14,12 +14,14 @@ export function GenericEdit<T extends Record<string, any>>({
   title,
   InformationDisplay,
   Search,
+  Trigger,
 }: {
   form: FormContext<T>
   onSubmit: (values: T, closeModal: () => void) => void
   title: string
   InformationDisplay: FC
   Search: FC<{ onSelect: () => void }>
+  Trigger?: FC<{ open: () => void }>
 }) {
   const [isOpen, setIsOpen] = useState(false)
   const [selectedTab, setSelectedTab] = useState<Key>("information")
@@ -28,10 +30,14 @@ export function GenericEdit<T extends Record<string, any>>({
 
   return (
     <>
-      <Button variant="secondary" onPress={() => setIsOpen(true)} className="max-sm:w-11 max-sm:px-0">
-        <PencilIcon className="sm:mr-2" />
-        <span className="max-sm:sr-only">Edit</span>
-      </Button>
+      {Trigger ? (
+        <Trigger open={() => setIsOpen(true)} />
+      ) : (
+        <Button variant="secondary" onPress={() => setIsOpen(true)} className="max-sm:w-11 max-sm:px-0">
+          <PencilIcon className="sm:mr-2" />
+          <span className="max-sm:sr-only">Edit</span>
+        </Button>
+      )}
       <Dialog isOpen={isOpen} onOpenChange={setIsOpen} title={title}>
         <Form form={form} onSubmit={values => onSubmit(values, closeModal)}>
           <Tabs selectedKey={selectedTab} onSelectionChange={setSelectedTab}>
