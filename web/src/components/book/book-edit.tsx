@@ -6,6 +6,7 @@ import {
   UserIcon,
   SearchIcon,
   ImageOffIcon,
+  PencilIcon,
 } from "lucide-react"
 import { FC, useRef } from "react"
 import { Book, BookUpdate, MetadataBook } from "@thoth/client"
@@ -15,7 +16,7 @@ import { ResponsiveImage } from "@thoth/components/responsive-image"
 import { Button } from "@thoth/components/ui/button"
 import { useUpdateBook } from "@thoth/queries/resources"
 import { FormContext, useForm } from "../../hooks/form"
-import { isUUID, toBase64, toFormDate } from "../../utils/utils"
+import { fromFormDate, isUUID, toBase64, toFormDate } from "../../utils/utils"
 import { HtmlEditor } from "../html-editor"
 import { BookSearch } from "./book-search"
 
@@ -60,6 +61,7 @@ export const BookEdit: FC<{ book: Book }> = ({ book }) => {
       narrators: value => value?.join(", "),
     },
     fromForm: {
+      releaseDate: value => fromFormDate(value) as unknown as string,
       narrators: value =>
         value
           ?.split(",")
@@ -72,6 +74,17 @@ export const BookEdit: FC<{ book: Book }> = ({ book }) => {
     <GenericEdit
       title="Edit Book"
       form={form}
+      Trigger={({ open }) => (
+        <Button
+          variant="ghost"
+          size="icon-lg"
+          aria-label="Edit book"
+          onPress={open}
+          className="text-muted-foreground hover:text-foreground size-11 rounded-full sm:size-10"
+        >
+          <PencilIcon className="size-5" />
+        </Button>
+      )}
       onSubmit={async (values, closeModal) => {
         await updateBook.mutateAsync({ libraryId: book.libraryId, id: book.id, data: values })
         closeModal()

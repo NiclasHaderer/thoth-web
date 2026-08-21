@@ -3,6 +3,7 @@ import { AuthState, useAuthState } from "@thoth/state/auth.state"
 import { isExpired } from "@thoth/utils/jwt"
 import { createApi } from "./generated/api-client"
 import { ApiCallData, ApiInterceptor, ApiResponse } from "./generated/client"
+import { httpInterceptor } from "./http-interceptor.ts"
 
 export * from "./generated/models"
 export * from "./error"
@@ -47,4 +48,4 @@ const authInterceptor: ApiInterceptor = async (data: ApiCallData): Promise<ApiCa
   return { ...data, executor }
 }
 
-export const Api = createApi({}, [authInterceptor])
+export const Api = createApi({}, import.meta.env.DEV ? [authInterceptor, httpInterceptor] : [authInterceptor])

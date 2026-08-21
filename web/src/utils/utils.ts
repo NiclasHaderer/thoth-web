@@ -28,7 +28,17 @@ export const apiErrorMessage = (error: string | object): string => {
 export const notNullIsh = <T>(p: T | null | undefined): p is T => p !== null && p !== undefined
 
 export const toFormDate = (date: Date | number | string): string | null => {
-  return date ? new Date(date).toISOString().slice(0, 10) : null
+  if (!date) return null
+  const parsed = new Date(date)
+  const month = `${parsed.getMonth() + 1}`.padStart(2, "0")
+  const day = `${parsed.getDate()}`.padStart(2, "0")
+  return `${parsed.getFullYear()}-${month}-${day}`
+}
+
+export const fromFormDate = (date?: string | null): number | null => {
+  if (!date) return null
+  const [year, month, day] = date.split("-").map(Number)
+  return new Date(year, month - 1, day).getTime()
 }
 
 export const toRealURL = (baseUrl: string): string => {

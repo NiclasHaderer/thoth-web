@@ -10,3 +10,10 @@ export const toReadableTime = (totalSeconds: number | undefined) => {
 
   return (hourString !== "00" ? `${hourString}:` : "") + `${minuteString}:` + secondString
 }
+
+export const toRuntime = (totalSeconds: number) => {
+  const hours = Math.floor(totalSeconds / 3600)
+  const minutes = Math.round((totalSeconds - hours * 3600) / 60)
+  if (!hours) return `${Math.max(minutes, 1)} min`
+  return minutes ? `${hours} h ${minutes} min` : `${hours} h`
+}

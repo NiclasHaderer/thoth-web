@@ -229,8 +229,9 @@ export const useField = <T extends Record<string, any>, K extends keyof T & stri
     value: fields[name],
     setValue: (newValue: T[K]) => setFields({ [name]: newValue }),
     formSetValue: (newValue?: string | null) => {
+      const transform = fromFormTransformers[name]
       setFields({
-        [name]: fromFormTransformers[name]?.(newValue) ?? newValue,
+        [name]: transform ? transform(newValue) : newValue,
       })
     },
     errors: errors[name],
