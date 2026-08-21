@@ -94,6 +94,7 @@ export interface NamedMetadataAgent {
 }
 
 export interface Library {
+  bookCount: number
   fileScanners: Array<FileScanner>
   folders: Array<string>
   icon: string | undefined
