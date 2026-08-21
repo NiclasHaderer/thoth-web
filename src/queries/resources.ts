@@ -55,17 +55,6 @@ const findCachedListItem = <T extends Identifiable>(
   return undefined
 }
 
-export const cachedResourceTotal = (
-  queryClient: QueryClient,
-  resource: Resource,
-  libraryId: UUID
-): number | undefined => {
-  const pages = queryClient.getQueriesData<PaginatedResponse<unknown>>({
-    queryKey: queryKeys.resourceLists(resource, libraryId),
-  })
-  return pages.find(([, page]) => page !== undefined)?.[1]?.total
-}
-
 const useResourceUpdate = <U, R>(resource: Resource, singular: string, updateFn: UpdateFn<U, R>) => {
   const queryClient = useQueryClient()
   return useMutation({
