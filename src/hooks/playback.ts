@@ -2,8 +2,10 @@ import { useQueryClient } from "@tanstack/react-query"
 import { useAnimationFrame, useMotionValue } from "motion/react"
 import { useCallback, useEffect, useRef, useSyncExternalStore } from "react"
 import { UUID } from "@thoth/client"
+import { useEvent } from "@thoth/hooks/events"
 import { bookDetailQuery } from "@thoth/queries/resources"
 import { usePlaybackState } from "@thoth/state/playback.state"
+import { useSleepTimer } from "@thoth/state/sleep-timer.state"
 
 let element: HTMLAudioElement | undefined
 const audio = (): HTMLAudioElement => (element ??= document.createElement("audio"))
@@ -22,7 +24,7 @@ export const useAudioSource = (url: string | undefined | null, autoplay = true) 
   }, [url, autoplay])
 }
 
-const useAudioEvent = <T>(events: string[], getSnapshot: (audio: HTMLAudioElement) => T): T => {
+const useAudioSnapshot = <T>(events: string[], getSnapshot: (audio: HTMLAudioElement) => T): T => {
   const subscribe = useCallback((onChange: () => void) => {
     const media = audio()
     events.forEach(event => media.addEventListener(event, onChange))
@@ -32,8 +34,8 @@ const useAudioEvent = <T>(events: string[], getSnapshot: (audio: HTMLAudioElemen
   return useSyncExternalStore(subscribe, () => getSnapshot(audio()))
 }
 
-export const usePosition = (): [number, (seconds: number) => void] => {
-  const position = useAudioEvent(["timeupdate", "emptied"], a => a.currentTime)
+export const usePlaybackPosition = (): [number, (seconds: number) => void] => {
+  const position = useAudioSnapshot(["timeupdate", "emptied"], a => a.currentTime)
 
   return [
     position,
@@ -43,12 +45,12 @@ export const usePosition = (): [number, (seconds: number) => void] => {
   ]
 }
 
-export const useDuration = (): number => useAudioEvent(["durationchange", "emptied"], a => a.duration)
+export const useDuration = (): number => useAudioSnapshot(["durationchange", "emptied"], a => a.duration)
 
 const currentPercentage = (media: HTMLAudioElement) =>
   Number.isFinite(media.duration) && media.duration > 0 ? media.currentTime / media.duration : 0
 
-export const usePercentage = () => {
+export const useProgress = () => {
   const progress = useMotionValue(0)
   const scrubbing = useRef(false)
 
@@ -80,31 +82,87 @@ export const usePercentage = () => {
 }
 
 export const usePlayState = (): [boolean, (shouldPlay: boolean) => void] => {
-  const playing = useAudioEvent(["play", "pause", "ended", "emptied"], a => !a.paused)
+  const playing = useAudioSnapshot(["play", "pause", "ended", "emptied"], a => !a.paused)
 
   return [
     playing,
-    (shouldPlay: boolean) => {
+    useCallback((shouldPlay: boolean) => {
       const media = audio()
       if (shouldPlay) {
         void media.play().catch(() => {})
       } else {
         media.pause()
       }
+    }, []),
+  ]
+}
+
+export const useSkip = () =>
+  useCallback((seconds: number) => {
+    const media = audio()
+    media.currentTime = Math.max(0, media.currentTime + seconds)
+  }, [])
+
+export const usePlaybackRate = (): [number, (rate: number) => void] => {
+  const rate = useAudioSnapshot(["ratechange", "emptied"], a => a.playbackRate)
+
+  return [
+    rate,
+    (next: number) => {
+      const media = audio()
+      media.defaultPlaybackRate = next
+      media.playbackRate = next
     },
   ]
 }
 
-export const useOnEnded = (callback: () => void) => {
-  useEffect(() => {
-    const media = audio()
-    const ended = () => callback()
+export const useSleepTimerPause = () => {
+  const endsAt = useSleepTimer(s => s.endsAt)
+  const clear = useSleepTimer(s => s.clear)
 
-    media.addEventListener("ended", ended)
-    return () => {
-      media.removeEventListener("ended", ended)
+  useEffect(() => {
+    if (!endsAt) return
+    const timer = setTimeout(
+      () => {
+        audio().pause()
+        clear()
+      },
+      Math.max(0, endsAt - Date.now())
+    )
+    return () => clearTimeout(timer)
+  }, [endsAt, clear])
+}
+
+export const useAutoAdvance = (advance: () => void) => {
+  const untilEndOfTrack = useSleepTimer(s => s.untilEndOfTrack)
+  const clear = useSleepTimer(s => s.clear)
+
+  useEvent(audio(), "ended", () => {
+    if (untilEndOfTrack) {
+      clear()
+    } else {
+      advance()
     }
-  }, [callback])
+  })
+}
+
+export const RESTART_THRESHOLD = 5
+export const SKIP_BACK = 15
+export const SKIP_FORWARD = 30
+
+export const usePreviousTrack = (): [() => void, boolean] => {
+  const previous = usePlaybackState(s => s.previous)
+  const hasHistory = usePlaybackState(s => s.history.length > 0)
+  const position = useAudioSnapshot(["timeupdate", "emptied"], a => a.currentTime)
+
+  return [
+    () => {
+      const media = audio()
+      if (hasHistory && media.currentTime <= RESTART_THRESHOLD) return previous()
+      media.currentTime = 0
+    },
+    hasHistory || position > RESTART_THRESHOLD,
+  ]
 }
 
 export const usePlayBook = () => {

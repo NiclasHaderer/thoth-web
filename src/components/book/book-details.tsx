@@ -17,7 +17,7 @@ import {
 } from "lucide-react"
 import { FC, ReactNode } from "react"
 import { Book, BookDetailed, UUID } from "@thoth/client"
-import { detailLabel, MobileDetailHeader } from "@thoth/components/detail/detail-layout"
+import { MobileDetailHeader } from "@thoth/components/detail/detail-layout"
 import { HtmlViewer } from "@thoth/components/html-editor"
 import { Link } from "@thoth/components/link.tsx"
 import { Button } from "@thoth/components/ui/button"
@@ -27,7 +27,7 @@ import { cn } from "@thoth/lib/utils"
 import { isDetailedBook } from "@thoth/models/typeguards"
 import { useBook } from "@thoth/queries/resources"
 import { toRuntime } from "../track/helpers"
-import { Track, TrackState } from "../track/track"
+import { TrackList } from "../track/track-list"
 import { BookEdit } from "./book-edit"
 
 const RATING_MAX = 5
@@ -247,7 +247,6 @@ export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId, lib
   if (!book) return <></>
 
   const currentId = current?.book.id === bookId ? current.id : undefined
-  const trackState = (id: UUID): TrackState => (id === currentId ? (isPlaying ? "playing" : "paused") : "idle")
 
   const tracks = isDetailedBook(book) ? book.tracks : []
   const totalDuration = tracks.reduce((sum, track) => sum + track.duration, 0)
@@ -289,24 +288,16 @@ export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId, lib
       <Header book={book} libraryId={libraryId} runtime={totalDuration} tracks={tracks.length} actions={actions} />
 
       {tracks.length > 0 ? (
-        <section className="pt-8 md:pt-10">
-          <h2 className={`${detailLabel} border-border/60 flex items-center justify-between border-y py-2.5`}>
-            <span>{pluralize(tracks.length, "Track")}</span>
-            {totalDuration ? <span>{toRuntime(totalDuration)}</span> : null}
-          </h2>
-          <ul className="flex flex-col">
-            {tracks.map((track, index) => (
-              <Track
-                key={track.id}
-                {...track}
-                state={trackState(track.id)}
-                startPlayback={startPlayback}
-                togglePlayback={setPlaying}
-                index={index}
-              />
-            ))}
-          </ul>
-        </section>
+        <TrackList
+          className="pt-8 md:pt-10"
+          label={pluralize(tracks.length, "Track")}
+          trailing={totalDuration ? toRuntime(totalDuration) : undefined}
+          tracks={tracks}
+          activeId={currentId}
+          playing={isPlaying}
+          onStart={startPlayback}
+          onToggle={setPlaying}
+        />
       ) : null}
     </div>
   )

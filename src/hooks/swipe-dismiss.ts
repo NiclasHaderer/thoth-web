@@ -2,8 +2,6 @@ import { useEffect, useRef, useState } from "react"
 
 const DISMISS_DISTANCE = 96
 
-// Listeners go on the sheet panel natively: react-aria filters unknown DOM
-// props off Modal, so pointer handlers passed as JSX never reach the element.
 export const useSwipeDismiss = (onDismiss: () => void) => {
   const [anchor, setAnchor] = useState<HTMLElement | null>(null)
   const dismiss = useRef(onDismiss)
