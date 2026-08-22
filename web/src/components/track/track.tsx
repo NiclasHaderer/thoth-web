@@ -41,7 +41,7 @@ export const Track: FC<TrackProps> = ({ title, duration, trackNr, index, state, 
         onClick={() => (active ? togglePlayback(state !== "playing") : startPlayback(index))}
         className={cn(
           rowInteraction,
-          "group flex w-full items-center gap-4 rounded-none px-2 py-3.5 text-left",
+          "group flex w-full items-center gap-4 rounded-none px-2 py-3.5 text-left [&_svg]:stroke-[1.5]",
           active && "bg-primary/10"
         )}
       >

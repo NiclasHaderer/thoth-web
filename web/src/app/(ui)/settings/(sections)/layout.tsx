@@ -41,7 +41,7 @@ export const SettingsLayout: FC<{ children: ReactNode }> = ({ children }) => {
           )}
         />
       ) : null}
-      <main className="pb-dock flex min-w-0 grow flex-col overflow-y-auto p-4 sm:p-8 md:pb-8">{children}</main>
+      <main className="flex min-w-0 grow flex-col overflow-y-auto p-4 pb-4 sm:p-8 md:pb-8">{children}</main>
     </div>
   )
 }
