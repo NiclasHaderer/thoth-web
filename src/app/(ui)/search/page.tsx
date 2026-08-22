@@ -10,7 +10,7 @@ export const SearchOutlet = () => {
   const { query, setQuery, result } = useLibrarySearch(150)
 
   return (
-    <div className="pb-dock mx-auto flex min-h-0 w-full max-w-3xl flex-col px-5">
+    <div className="mx-auto flex min-h-0 w-full max-w-3xl flex-col px-5 pb-4">
       <div className="bg-background/75 sticky top-0 z-10 -mx-5 flex items-center gap-2 px-5 pt-4 pb-3 backdrop-blur-xl">
         <Link href="/libraries" aria-label="Thoth home" className="shrink-0 outline-none md:hidden">
           <Logo className="h-8 w-auto" />

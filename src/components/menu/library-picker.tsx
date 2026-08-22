@@ -2,10 +2,10 @@ import { CheckIcon, LibraryIcon, SettingsIcon } from "lucide-react"
 import { FC, useState } from "react"
 import { Button } from "react-aria-components"
 import { UUID } from "@thoth/client"
+import { BottomSheet } from "@thoth/components/bottom-sheet"
 import { LibraryAvatar } from "@thoth/components/library/library-avatar"
 import { Link } from "@thoth/components/link.tsx"
-import { Sheet, SheetHeader, SheetTitle, SheetTrigger } from "@thoth/components/ui/sheet"
-import { useSwipeDismiss } from "@thoth/hooks/swipe-dismiss"
+import { SheetTrigger } from "@thoth/components/ui/sheet"
 import { rowInteraction } from "@thoth/lib/interactive"
 import { cn } from "@thoth/lib/utils"
 import { useCurrentUser } from "@thoth/queries/current-user"
@@ -20,7 +20,6 @@ export const LibraryPicker: FC<{ libraryId: UUID; name: string; className?: stri
   const libraries = useLibraries().data ?? []
   const isAdmin = useCurrentUser().data?.permissions.isAdmin ?? false
   const [isOpen, setIsOpen] = useState(false)
-  const swipeRef = useSwipeDismiss(() => setIsOpen(false))
 
   if (libraries.length <= 1) {
     return <h1 className={cn("min-w-0 truncate px-2 text-2xl font-bold", className)}>{name}</h1>
@@ -39,13 +38,7 @@ export const LibraryPicker: FC<{ libraryId: UUID; name: string; className?: stri
         <span className="min-w-0 truncate text-2xl font-bold">{name}</span>
         <LibraryIcon aria-hidden className="text-muted-foreground ml-auto size-5 shrink-0" />
       </Button>
-      <Sheet side="bottom" showCloseButton={false} className="gap-0 rounded-t-xl pb-[env(safe-area-inset-bottom)]">
-        <div aria-hidden ref={swipeRef} className="flex shrink-0 justify-center pt-2.5">
-          <span className="bg-muted-foreground/40 h-1 w-10 rounded-full" />
-        </div>
-        <SheetHeader className="pt-3 pb-3">
-          <SheetTitle>Libraries</SheetTitle>
-        </SheetHeader>
+      <BottomSheet title="Libraries" onDismiss={() => setIsOpen(false)}>
         <div className="flex flex-col gap-1 pb-3">
           {libraries.map(entry => {
             const current = entry.id === libraryId
@@ -89,7 +82,7 @@ export const LibraryPicker: FC<{ libraryId: UUID; name: string; className?: stri
             </>
           )}
         </div>
-      </Sheet>
+      </BottomSheet>
     </SheetTrigger>
   )
 }

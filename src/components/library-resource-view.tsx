@@ -17,7 +17,7 @@ export const LibraryResourceView: FC<LibraryResourceViewProps> = ({ children, li
       <ScrollSurface
         as="main"
         tabIndex={-1}
-        className="pb-dock min-w-0 grow overflow-x-hidden overflow-y-auto px-5 focus-visible:outline-none md:mt-3"
+        className="min-w-0 grow overflow-x-hidden overflow-y-auto px-5 pb-4 focus-visible:outline-none md:mt-3"
       >
         {children}
       </ScrollSurface>

@@ -14,7 +14,7 @@ export const YouOutlet = () => {
   const entries = [accountItem, ...(isAdmin ? adminItems : [])]
 
   return (
-    <div className="pb-dock mx-auto flex min-h-full w-full max-w-3xl flex-col px-5 md:pt-4">
+    <div className="mx-auto flex min-h-full w-full max-w-3xl flex-col px-5 pb-4 md:pt-4">
       <div className="bg-background/75 sticky top-0 z-10 -mx-5 px-5 pt-4 pb-3 backdrop-blur-xl md:hidden">
         <div className="flex h-10 items-center">
           <Link href="/libraries" aria-label="Thoth home" className="shrink-0 outline-none">
