@@ -134,7 +134,7 @@ export const MiniPlayer: FC<{ player: FullscreenPlayerController }> = ({ player 
             animate={{ height: "auto" }}
             exit={{ height: 0, transition: dockCollapse }}
             transition={dockSpring}
-            className="[clip-path:inset(-12px_0_0_0)]"
+            className="overflow-clip [overflow-clip-margin:12px]"
           >
             <SwipeDock
               enabled={!isDesktop}

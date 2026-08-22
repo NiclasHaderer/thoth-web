@@ -92,12 +92,12 @@ const FullscreenPlayerBody: FC<{ player: FullscreenPlayerController; track: Play
         if (y.get() > viewportHeight * CLOSE_FRACTION || info.velocity.y > CLOSE_VELOCITY) return close()
         animate(y, 0, playerSpring)
       }}
-      className="bg-background fixed inset-x-0 top-0 z-30 flex touch-none flex-col overflow-hidden"
+      className="bg-card/75 fixed inset-x-0 top-0 z-30 flex touch-none flex-col overflow-hidden backdrop-blur-xl"
     >
       {cover ? (
         <div aria-hidden className="pointer-events-none absolute inset-0">
           <img src={cover} alt="" className="h-full w-full scale-125 object-cover opacity-40 blur-3xl" />
-          <div className="from-background/40 to-background absolute inset-0 bg-gradient-to-b" />
+          <div className="from-background/40 to-background/75 absolute inset-0 bg-gradient-to-b" />
         </div>
       ) : null}
 

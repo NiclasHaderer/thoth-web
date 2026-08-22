@@ -52,7 +52,7 @@ export const ProgressBar: FC<{
     <div
       ref={container}
       className={cn(
-        "relative cursor-pointer touch-none pt-[3px] pb-2",
+        "group relative cursor-pointer touch-none pt-[3px] pb-2",
         "touch:after:absolute touch:after:inset-x-0 touch:after:-top-2.5 touch:after:-bottom-2.5 touch:after:content-['']",
         className
       )}
@@ -64,7 +64,11 @@ export const ProgressBar: FC<{
         <motion.div className="bg-primary absolute inset-0 origin-left" style={{ scaleX: progress }} />
       </div>
       <motion.div
-        className="bg-primary pointer-events-none absolute top-0 size-3 -translate-x-1/2 rounded-full"
+        className={cn(
+          "bg-primary pointer-events-none absolute top-0 size-3 -translate-x-1/2 rounded-full",
+          "opacity-0 transition-opacity group-hover:opacity-100",
+          scrubbing && "opacity-100"
+        )}
         style={{ x: thumbX }}
         animate={{ scale: scrubbing ? 1.25 : 1 }}
         transition={{ duration: 0.15 }}

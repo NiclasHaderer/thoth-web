@@ -64,7 +64,6 @@ export const useProgress = () => {
     const media = audio()
     if (!Number.isFinite(media.duration)) return
     media.currentTime = media.duration * percentage
-    void media.play().catch(() => {})
   }
 
   return {
