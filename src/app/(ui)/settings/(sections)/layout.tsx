@@ -27,7 +27,7 @@ export const SettingsLayout: FC<{ children: ReactNode }> = ({ children }) => {
   const navItems = isAdmin ? [accountItem, ...adminItems] : [accountItem]
 
   return (
-    <div className="flex min-h-0 grow overflow-hidden">
+    <div className="flex min-h-0 grow overflow-hidden max-md:-mb-(--bottom-height)">
       {isDesktop ? (
         <SideMenu
           items={[...navItems, licensesItem]}
@@ -41,7 +41,9 @@ export const SettingsLayout: FC<{ children: ReactNode }> = ({ children }) => {
           )}
         />
       ) : null}
-      <main className="flex min-w-0 grow flex-col overflow-y-auto p-4 pb-4 sm:p-8 md:pb-8">{children}</main>
+      <main className="flex min-w-0 grow flex-col overflow-y-auto p-4 pb-4 max-md:pb-[calc(var(--bottom-height)+--spacing(4))] sm:p-8 md:pb-8">
+        {children}
+      </main>
     </div>
   )
 }

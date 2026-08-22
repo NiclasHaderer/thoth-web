@@ -133,6 +133,13 @@
   @apply bg-muted hover:bg-accent rounded-full transition-colors;
 }
 
+@media (width < theme(--breakpoint-md)) {
+  [data-scroll-area]::-webkit-scrollbar-track,
+  [data-scroll-area] main::-webkit-scrollbar-track {
+    margin-bottom: var(--bottom-height, 0px);
+  }
+}
+
 :root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);

@@ -54,7 +54,7 @@ export const usePlaybackState = create<PlaybackState>((set, get) => ({
   next(): void {
     const state = get()
     const next = state.queue.shift()
-    if (!next) return state.stop()
+    if (!next) return
 
     set({
       queue: [...state.queue],

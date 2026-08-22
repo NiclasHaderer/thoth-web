@@ -12,12 +12,12 @@ export const LibraryResourceView: FC<LibraryResourceViewProps> = ({ children, li
   const isDesktop = useBreakpoint("md")
 
   return (
-    <div className="flex min-h-0 grow overflow-hidden">
+    <div className="flex min-h-0 grow overflow-hidden max-md:-mb-(--bottom-height)">
       {isDesktop ? <LibraryMenu libraryId={libraryId} /> : null}
       <ScrollSurface
         as="main"
         tabIndex={-1}
-        className="min-w-0 grow overflow-x-hidden overflow-y-auto px-5 pb-4 focus-visible:outline-none md:mt-3"
+        className="min-w-0 grow overflow-x-hidden overflow-y-auto px-5 pb-4 focus-visible:outline-none max-md:pb-[calc(var(--bottom-height)+--spacing(4))] md:mt-3"
       >
         {children}
       </ScrollSurface>
