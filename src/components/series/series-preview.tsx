@@ -1,6 +1,7 @@
 import { forwardRef } from "react"
 import { Series } from "@thoth/client"
 import { GenericPreview } from "@thoth/components/generic/generic-preview.tsx"
+import { notNullIsh, unique } from "@thoth/utils/utils"
 
 interface SeriesPreviewProps extends Series {
   size?: "small" | "normal"
@@ -15,7 +16,7 @@ export const SeriesPreview = forwardRef<HTMLDivElement, SeriesPreviewProps>(
         libraryId={series.libraryId}
         id={series.id}
         size={size}
-        imageId={series.coverID}
+        stackImageIds={unique([series.coverID, ...series.bookCoverIDs].filter(notNullIsh))}
         type="series"
         ref={ref}
         className={className}

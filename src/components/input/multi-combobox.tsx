@@ -25,7 +25,6 @@ export const MultiCombobox = <K extends string>({
   onChange,
   onCreate,
   labelClassName,
-  wrapperClassName,
   leftIcon,
 }: {
   label: string
@@ -34,13 +33,13 @@ export const MultiCombobox = <K extends string>({
   onChange: (value: K[]) => void
   onCreate?: ((label: string) => Promise<K>) | undefined
   labelClassName?: string | undefined
-  wrapperClassName?: string | undefined
   leftIcon?: ReactNode | undefined
 }) => {
   const [query, setQuery] = useState("")
   const trimmed = query.trim()
+  const trimmedLower = trimmed.toLowerCase()
   const showCreate =
-    !!onCreate && trimmed.length > 0 && !options.some(option => option.label.toLowerCase() === trimmed.toLowerCase())
+    !!onCreate && trimmed.length > 0 && !options.some(option => option.label.toLowerCase() === trimmedLower)
 
   const handleChange = async (keys: (string | number)[]) => {
     const ids = keys.map(String)
@@ -53,7 +52,7 @@ export const MultiCombobox = <K extends string>({
 
   return (
     <div className="pb-4">
-      <label className={`flex items-center ${wrapperClassName ?? ""}`}>
+      <label className="flex items-center">
         <div className={`shrink-0 px-2 whitespace-nowrap ${labelClassName ?? ""}`}>{label}</div>
         <Combobox
           className="min-w-0 grow"
@@ -85,7 +84,7 @@ export const MultiCombobox = <K extends string>({
                 </ComboboxItem>
               ))}
               {showCreate ? (
-                <ComboboxItem id={CREATE_KEY} textValue={query}>
+                <ComboboxItem id={CREATE_KEY} textValue={trimmed}>
                   Create "{trimmed}"
                 </ComboboxItem>
               ) : null}

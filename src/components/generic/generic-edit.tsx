@@ -62,15 +62,17 @@ export function GenericEdit<T extends Record<string, any>>({
                 Information
               </TabsTrigger>
               <TabsTrigger id="lookup" className="w-1/2">
-                Lookup Information
+                Find match
               </TabsTrigger>
             </TabsList>
-            <TabsContent id="information" className="mt-2">
-              {information}
-            </TabsContent>
-            <TabsContent id="lookup" className="mt-2">
-              {search(() => setSelectedTab("information"))}
-            </TabsContent>
+            <div className="mt-2 grid [&>*]:col-start-1 [&>*]:row-start-1 [&>[inert]]:invisible">
+              <TabsContent id="information" shouldForceMount>
+                {information}
+              </TabsContent>
+              <TabsContent id="lookup" shouldForceMount className="flex flex-col">
+                {search(() => setSelectedTab("information"))}
+              </TabsContent>
+            </div>
           </Tabs>
           <DialogFooter>
             <Button type="button" variant="secondary" onPress={closeModal}>

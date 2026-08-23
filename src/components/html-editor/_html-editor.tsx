@@ -8,7 +8,7 @@ import Text from "@tiptap/extension-text"
 import { TextAlign } from "@tiptap/extension-text-align"
 import { Underline } from "@tiptap/extension-underline"
 import { Content, EditorContent, useEditor } from "@tiptap/react"
-import { FC, useEffect } from "react"
+import { FC, useEffect, useRef } from "react"
 import "./_html-editor.css"
 
 export const HtmlEditorImpl: FC<{
@@ -33,17 +33,22 @@ export const HtmlEditorImpl: FC<{
     autofocus: false,
   })
 
+  const lastEmitted = useRef<string | undefined>(undefined)
+
   useEffect(() => {
     if (!editor || !editor.isInitialized) return
     if (value != null && typeof value !== "string") return
+    const normalized = value || undefined
+    if (normalized === lastEmitted.current) return
     const current = editor.isEmpty ? undefined : editor.getHTML()
-    if ((value || undefined) !== current) editor.commands.setContent(value ?? "")
+    if (normalized !== current) editor.commands.setContent(value ?? "")
   }, [editor, value])
 
   useEffect(() => {
     const update = () => {
-      if (!editor || !onChange) return
-      editor.isEmpty ? onChange(undefined) : onChange(editor.getHTML())
+      if (!editor) return
+      lastEmitted.current = editor.isEmpty ? undefined : editor.getHTML()
+      onChange?.(lastEmitted.current)
     }
     editor?.on("update", update)
     return () => {
