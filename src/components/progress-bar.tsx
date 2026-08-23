@@ -60,8 +60,12 @@ export const ProgressBar: FC<{
       onPointerUp={up}
       onPointerCancel={up}
     >
-      <div ref={track} className={cn("bg-secondary/60 relative h-1.5 overflow-hidden", trackClassName)}>
-        <motion.div className="bg-primary absolute inset-0 origin-left" style={{ scaleX: progress }} />
+      <div ref={track} className={cn("relative h-1.5 overflow-hidden", trackClassName)}>
+        <div className="bg-secondary/60 absolute inset-x-0 top-0 h-[var(--bar-h,0.375rem)]" />
+        <motion.div
+          className="bg-primary absolute inset-x-0 top-0 h-[var(--bar-h,0.375rem)] origin-left"
+          style={{ scaleX: progress }}
+        />
       </div>
       <motion.div
         className={cn(

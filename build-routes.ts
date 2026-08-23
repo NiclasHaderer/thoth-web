@@ -256,7 +256,6 @@ const buildRoutes = (paths: Path) => {
   const imports = writeImports(paths, [
     'import { lazy, Suspense } from "react"',
     'import { Route, Router, Switch } from "wouter"',
-    'import { useHashLocation } from "wouter/use-hash-location";',
     'import { NotFound } from "@thoth/components/not-found.tsx"',
     'import { UUID } from "@thoth/client"',
   ])
@@ -350,7 +349,7 @@ const buildRoutes = (paths: Path) => {
   const router = `
   export const Routes = () => {
     return (
-      <Router hook={useHashLocation}>
+      <Router>
         <Switch>
           ${routes.join("\n")}
         </Switch>
