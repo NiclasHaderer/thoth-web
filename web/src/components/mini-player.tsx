@@ -1,18 +1,17 @@
-import {
-  ImageOffIcon,
-  PauseIcon,
-  PlayIcon,
-  RotateCcwIcon,
-  RotateCwIcon,
-  SkipBackIcon,
-  SkipForwardIcon,
-  SquareIcon,
-} from "lucide-react"
+import { ImageOffIcon } from "lucide-react"
 import { AnimatePresence, animate, motion, useMotionValue } from "motion/react"
 import { FC, PropsWithChildren, useRef } from "react"
 import { FullscreenPlayer } from "@thoth/components/fullscreen-player"
 import { Link } from "@thoth/components/link.tsx"
 import { PlayerButton } from "@thoth/components/player-button"
+import {
+  PlayPauseIcon,
+  RotateCcwIcon,
+  RotateCwIcon,
+  SkipBackIcon,
+  SkipForwardIcon,
+  SquareIcon,
+} from "@thoth/components/player-icons"
 import { ProgressBar } from "@thoth/components/progress-bar"
 import { FullscreenPlayerController } from "@thoth/hooks/fullscreen-player"
 import { useBreakpoint } from "@thoth/hooks/use-media-query"
@@ -136,89 +135,91 @@ export const MiniPlayer: FC<{ player: FullscreenPlayerController }> = ({ player 
             transition={dockSpring}
             className="overflow-clip [overflow-clip-margin:12px]"
           >
-            <SwipeDock
-              enabled={!isDesktop}
-              onDismiss={playback.stop}
-              player={player}
-              className="bg-card/75 border-border/60 md:bg-card relative flex h-20 items-center gap-3 border-t-[0.5px] px-3 backdrop-blur-xl md:mx-3 md:mb-3 md:h-24 md:rounded-xl md:border-0 md:backdrop-blur-none"
-            >
-              <div data-dock-control className="absolute -top-[3px] right-0 left-0 z-10">
-                <ProgressBar
-                  className="w-full"
-                  trackClassName="md:rounded-t-xl"
-                  progress={progress}
-                  onScrub={scrub}
-                  onScrubEnd={scrubEnd}
-                />
-              </div>
+            <div className="px-2 pb-2 md:px-3 md:pb-3">
+              <SwipeDock
+                enabled={!isDesktop}
+                onDismiss={playback.stop}
+                player={player}
+                className="bg-card/60 md:bg-card relative flex h-20 items-center gap-3 rounded-xl px-3 backdrop-blur-xl md:h-24 md:backdrop-blur-none"
+              >
+                <div data-dock-control className="absolute -top-[3px] right-0 left-0 z-10 max-md:pointer-events-none">
+                  <ProgressBar
+                    className="w-full"
+                    trackClassName="h-3.5 rounded-t-xl [--bar-h:0.25rem] md:[--bar-h:0.375rem]"
+                    progress={progress}
+                    onScrub={scrub}
+                    onScrubEnd={scrubEnd}
+                  />
+                </div>
 
-              {isDesktop ? (
-                <Link
-                  href={`/libraries/${track.libraryId}/books/${track.book.id}`}
-                  className="flex min-w-0 grow items-center gap-3 outline-none"
-                  aria-label={track.title}
-                >
-                  <Cover track={track} />
-                  <TrackLabel track={track} />
-                </Link>
-              ) : (
-                <button
-                  type="button"
-                  aria-label="Open player"
-                  className="flex min-w-0 grow items-center gap-3 text-left outline-none"
-                >
-                  <Cover track={track} />
-                  <TrackLabel track={track} />
-                </button>
-              )}
+                {isDesktop ? (
+                  <Link
+                    href={`/libraries/${track.libraryId}/books/${track.book.id}`}
+                    className="flex min-w-0 grow items-center gap-3 outline-none"
+                    aria-label={track.title}
+                  >
+                    <Cover track={track} />
+                    <TrackLabel track={track} />
+                  </Link>
+                ) : (
+                  <button
+                    type="button"
+                    aria-label="Open player"
+                    className="flex min-w-0 grow items-center gap-3 text-left outline-none"
+                  >
+                    <Cover track={track} />
+                    <TrackLabel track={track} />
+                  </button>
+                )}
 
-              <div className="text-muted-foreground hidden shrink-0 items-center text-sm tabular-nums md:flex">
-                {toReadableTime(position)} / {toReadableTime(duration)}
-              </div>
+                <div className="text-muted-foreground hidden shrink-0 items-center text-sm tabular-nums md:flex">
+                  {toReadableTime(position)} / {toReadableTime(duration)}
+                </div>
 
-              <div data-dock-control className="flex shrink-0 items-center">
-                <PlayerButton
-                  label="Previous track"
-                  onPress={previousTrack}
-                  isDisabled={!canGoPrevious}
-                  className="hidden size-10 rounded-full md:flex"
-                >
-                  <SkipBackIcon className="size-5" />
-                </PlayerButton>
-                <PlayerButton
-                  label={`Skip back ${SKIP_BACK} seconds`}
-                  onPress={() => skip(-SKIP_BACK)}
-                  className="size-10 rounded-full"
-                >
-                  <RotateCcwIcon className="size-5" />
-                </PlayerButton>
-                <PlayerButton
-                  label={playing ? "Pause" : "Play"}
-                  onPress={() => setPlaying(!playing)}
-                  className="size-11 rounded-full"
-                >
-                  {playing ? <PauseIcon className="size-6" /> : <PlayIcon className="size-6" />}
-                </PlayerButton>
-                <PlayerButton
-                  label={`Skip forward ${SKIP_FORWARD} seconds`}
-                  onPress={() => skip(SKIP_FORWARD)}
-                  className="size-10 rounded-full"
-                >
-                  <RotateCwIcon className="size-5" />
-                </PlayerButton>
-                <PlayerButton
-                  label="Next track"
-                  onPress={playback.next}
-                  isDisabled={playback.queue.length === 0}
-                  className="hidden size-10 rounded-full md:flex"
-                >
-                  <SkipForwardIcon className="size-5" />
-                </PlayerButton>
-                <PlayerButton label="Stop" onPress={playback.stop} className="hidden size-10 rounded-full md:flex">
-                  <SquareIcon className="size-5" />
-                </PlayerButton>
-              </div>
-            </SwipeDock>
+                <div data-dock-control className="flex shrink-0 items-center">
+                  <PlayerButton
+                    label="Previous track"
+                    onPress={previousTrack}
+                    isDisabled={!canGoPrevious}
+                    className="hidden size-10 rounded-full md:flex"
+                  >
+                    <SkipBackIcon className="size-5" />
+                  </PlayerButton>
+                  <PlayerButton
+                    label={`Skip back ${SKIP_BACK} seconds`}
+                    onPress={() => skip(-SKIP_BACK)}
+                    className="size-10 rounded-full"
+                  >
+                    <RotateCcwIcon className="size-5 max-md:[&_text]:hidden" seconds={SKIP_BACK} />
+                  </PlayerButton>
+                  <PlayerButton
+                    label={playing ? "Pause" : "Play"}
+                    onPress={() => setPlaying(!playing)}
+                    className="size-11 rounded-full"
+                  >
+                    <PlayPauseIcon playing={playing} className="size-6" />
+                  </PlayerButton>
+                  <PlayerButton
+                    label={`Skip forward ${SKIP_FORWARD} seconds`}
+                    onPress={() => skip(SKIP_FORWARD)}
+                    className="size-10 rounded-full"
+                  >
+                    <RotateCwIcon className="size-5 max-md:[&_text]:hidden" seconds={SKIP_FORWARD} />
+                  </PlayerButton>
+                  <PlayerButton
+                    label="Next track"
+                    onPress={playback.next}
+                    isDisabled={playback.queue.length === 0}
+                    className="hidden size-10 rounded-full md:flex"
+                  >
+                    <SkipForwardIcon className="size-5" />
+                  </PlayerButton>
+                  <PlayerButton label="Stop" onPress={playback.stop} className="hidden size-10 rounded-full md:flex">
+                    <SquareIcon className="size-5" />
+                  </PlayerButton>
+                </div>
+              </SwipeDock>
+            </div>
           </motion.div>
         ) : null}
       </AnimatePresence>

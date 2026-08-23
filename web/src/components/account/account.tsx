@@ -41,8 +41,7 @@ export const User: FC<{ user: ThothUserWithPermissions<UserPermissions> }> = ({ 
     deleteUser.mutate(user.id, {
       onSuccess: async () => {
         await logout()
-        window.location.replace("/#/login")
-        window.location.reload()
+        window.location.replace("/login")
       },
     })
 
