@@ -1,14 +1,23 @@
 import { useQueryClient } from "@tanstack/react-query"
 import { useAnimationFrame, useMotionValue } from "motion/react"
 import { useCallback, useEffect, useRef, useSyncExternalStore } from "react"
-import { UUID } from "@thoth/client"
+import { useLocation, useSearch } from "wouter"
+import { ThothApiError, UUID } from "@thoth/client"
 import { useEvent } from "@thoth/hooks/events"
 import { bookDetailQuery } from "@thoth/queries/resources"
 import { usePlaybackState } from "@thoth/state/playback.state"
 import { useSleepTimer } from "@thoth/state/sleep-timer.state"
 
+const VOLUME_KEY = "thoth.volume"
+
 let element: HTMLAudioElement | undefined
-const audio = (): HTMLAudioElement => (element ??= document.createElement("audio"))
+const audio = (): HTMLAudioElement => {
+  if (element) return element
+  element = document.createElement("audio")
+  const stored = Number(localStorage.getItem(VOLUME_KEY) ?? NaN)
+  if (Number.isFinite(stored)) element.volume = Math.min(1, Math.max(0, stored))
+  return element
+}
 
 export const useAudioSource = (url: string | undefined | null, autoplay = true) => {
   useEffect(() => {
@@ -149,6 +158,23 @@ export const usePlaybackRate = (): [number, (rate: number) => void] => {
   ]
 }
 
+export const useVolume = () => {
+  const level = useAudioSnapshot(["volumechange"], a => a.volume)
+  const progress = useMotionValue(level)
+
+  useEffect(() => {
+    progress.set(level)
+  }, [level, progress])
+
+  const set = useCallback((percentage: number) => {
+    const media = audio()
+    media.volume = Math.min(1, Math.max(0, percentage))
+    localStorage.setItem(VOLUME_KEY, String(media.volume))
+  }, [])
+
+  return { level, progress, set }
+}
+
 export const useSleepTimerPause = () => {
   const endsAt = useSleepTimer(s => s.endsAt)
   const clear = useSleepTimer(s => s.clear)
@@ -196,6 +222,113 @@ export const usePreviousTrack = (): [() => void, boolean] => {
     },
     hasHistory || position > RESTART_THRESHOLD,
   ]
+}
+
+const RESUME_KEY = "thoth.playback"
+const RESUME_WRITE_INTERVAL = 5000
+
+interface StoredPlayback {
+  libraryId: UUID
+  bookId: UUID
+  position: number
+  rate: number
+}
+
+const readResume = (): StoredPlayback | null => {
+  try {
+    return JSON.parse(localStorage.getItem(RESUME_KEY) ?? "null") as StoredPlayback | null
+  } catch {
+    return null
+  }
+}
+
+const writeResume = () => {
+  const state = usePlaybackState.getState()
+  if (!state.current) return
+  const media = audio()
+  const position = state.history.reduce((sum, track) => sum + track.duration, 0) + media.currentTime
+  const stored: StoredPlayback = {
+    libraryId: state.current.libraryId,
+    bookId: state.current.book.id,
+    position,
+    rate: media.playbackRate,
+  }
+  localStorage.setItem(RESUME_KEY, JSON.stringify(stored))
+}
+
+export const usePersistPlayback = () => {
+  const lastWrite = useRef(0)
+
+  useEvent(audio(), "timeupdate", () => {
+    if (Date.now() - lastWrite.current < RESUME_WRITE_INTERVAL) return
+    lastWrite.current = Date.now()
+    writeResume()
+  })
+  useEvent(audio(), "pause", writeResume)
+  useEvent(audio(), "ratechange", writeResume)
+  useEvent(window, "pagehide", writeResume)
+
+  useEffect(
+    () =>
+      usePlaybackState.subscribe((state, previous) => {
+        if (!state.current && previous.current) localStorage.removeItem(RESUME_KEY)
+      }),
+    []
+  )
+}
+
+let restoreAttempted = false
+
+export const useRestorePlayback = () => {
+  const queryClient = useQueryClient()
+  const [path, navigate] = useLocation()
+  const search = useSearch()
+
+  useEffect(() => {
+    if (restoreAttempted || usePlaybackState.getState().current) return
+    restoreAttempted = true
+
+    const clearPlayerParam = () => {
+      const params = new URLSearchParams(search)
+      if (!params.has("player")) return
+      params.delete("player")
+      const rest = params.toString()
+      navigate(rest ? `${path}?${rest}` : path, { replace: true })
+    }
+
+    const stored = readResume()
+    if (!stored) return clearPlayerParam()
+
+    queryClient
+      .fetchQuery(bookDetailQuery(stored.libraryId, stored.bookId))
+      .then(book => {
+        const tracks = book.tracks.map(track => ({
+          ...track,
+          authors: book.authors,
+          coverID: book.coverID,
+          libraryId: stored.libraryId,
+        }))
+        if (tracks.length === 0) {
+          localStorage.removeItem(RESUME_KEY)
+          return clearPlayerParam()
+        }
+
+        let index = 0
+        let offset = stored.position
+        while (index < tracks.length - 1 && offset >= tracks[index].duration) offset -= tracks[index++].duration
+
+        const media = audio()
+        media.defaultPlaybackRate = stored.rate
+        media.playbackRate = stored.rate
+        usePlaybackState.getState().start(tracks[index], tracks.slice(index + 1), tracks.slice(0, index), false)
+        seekWhenLoaded(offset)
+      })
+      .catch((error: unknown) => {
+        if (error instanceof ThothApiError && error.status === 404) localStorage.removeItem(RESUME_KEY)
+        clearPlayerParam()
+      })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 }
 
 export const usePlayBook = () => {

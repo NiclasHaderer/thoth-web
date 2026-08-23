@@ -1,6 +1,9 @@
 import { MotionValue, animate, useMotionValue, useTransform } from "motion/react"
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
+import { useLocation, useSearch } from "wouter"
 import { useEvent } from "@thoth/hooks/events"
+import { useBreakpoint } from "@thoth/hooks/use-media-query"
+import { usePlaybackState } from "@thoth/state/playback.state"
 
 export const playerSpring = { type: "spring", stiffness: 420, damping: 38, mass: 0.8 } as const
 
@@ -23,23 +26,66 @@ export const useFullscreenPlayer = (): FullscreenPlayerController => {
   const [viewportHeight, setViewportHeight] = useState(() => window.innerHeight)
   const y = useMotionValue(viewportHeight)
   const progress = useTransform(y, [viewportHeight, 0], [0, 1])
-  const [visible, setVisible] = useState(false)
-  const [expanded, setExpanded] = useState(false)
+  const [path, navigate] = useLocation()
+  const search = useSearch()
+  const isDesktop = useBreakpoint("md")
+  const hasTrack = usePlaybackState(s => !!s.current)
+
+  const playerOpen = new URLSearchParams(search).has("player")
+  const expanded = playerOpen && hasTrack && !isDesktop
+  const [visible, setVisible] = useState(expanded)
+  if (expanded && !visible) setVisible(true)
+
+  const restored = useRef(playerOpen)
+  const pushed = useRef(false)
+  const wasExpanded = useRef(expanded)
 
   useEvent(window, "resize", () => {
     setViewportHeight(window.innerHeight)
     if (!expanded) y.set(window.innerHeight)
   })
 
-  const open = () => {
-    setVisible(true)
-    setExpanded(true)
-    animate(y, 0, playerSpring)
+  const pathWithoutPlayer = () => {
+    const params = new URLSearchParams(search)
+    params.delete("player")
+    const rest = params.toString()
+    return rest ? `${path}?${rest}` : path
   }
 
-  const dismiss = () => {
-    setExpanded(false)
-    animate(y, viewportHeight, { ...playerSpring, onComplete: () => setVisible(false) })
+  useEffect(() => {
+    if (playerOpen && isDesktop) navigate(pathWithoutPlayer(), { replace: true })
+    if (!playerOpen) restored.current = false
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [playerOpen, isDesktop])
+
+  useEffect(() => {
+    if (wasExpanded.current === expanded) return
+    wasExpanded.current = expanded
+    if (expanded) {
+      if (restored.current) y.set(0)
+      else animate(y, 0, playerSpring)
+      restored.current = false
+    } else {
+      pushed.current = false
+      animate(y, viewportHeight, { ...playerSpring, onComplete: () => setVisible(false) })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [expanded])
+
+  const open = () => {
+    const params = new URLSearchParams(search)
+    params.set("player", "open")
+    pushed.current = true
+    navigate(`${path}?${params}`)
+  }
+
+  const close = () => {
+    if (pushed.current) {
+      pushed.current = false
+      history.back()
+    } else {
+      navigate(pathWithoutPlayer(), { replace: true })
+    }
   }
 
   return {
@@ -49,7 +95,7 @@ export const useFullscreenPlayer = (): FullscreenPlayerController => {
     visible,
     expanded,
     open,
-    close: dismiss,
+    close,
     drag: offsetY => {
       if (!visible) setVisible(true)
       y.stop()
@@ -57,7 +103,7 @@ export const useFullscreenPlayer = (): FullscreenPlayerController => {
     },
     release: (offsetY, velocityY) => {
       if (offsetY < -viewportHeight * OPEN_FRACTION || velocityY < -OPEN_VELOCITY) return open()
-      dismiss()
+      animate(y, viewportHeight, { ...playerSpring, onComplete: () => setVisible(false) })
     },
   }
 }

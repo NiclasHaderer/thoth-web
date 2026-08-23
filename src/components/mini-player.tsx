@@ -1,6 +1,7 @@
-import { ImageOffIcon } from "lucide-react"
+import { ImageOffIcon, Volume1Icon, Volume2Icon, VolumeXIcon } from "lucide-react"
 import { AnimatePresence, animate, motion, useMotionValue } from "motion/react"
-import { FC, PropsWithChildren, useRef } from "react"
+import { FC, PropsWithChildren, useRef, useState } from "react"
+import { Popover } from "react-aria-components"
 import { FullscreenPlayer } from "@thoth/components/fullscreen-player"
 import { Link } from "@thoth/components/link.tsx"
 import { PlayerButton } from "@thoth/components/player-button"
@@ -22,12 +23,15 @@ import {
   useAutoAdvance,
   useAudioSource,
   useDuration,
+  usePersistPlayback,
   useProgress,
   usePlayState,
   usePlaybackPosition,
   usePreviousTrack,
+  useRestorePlayback,
   useSkip,
   useSleepTimerPause,
+  useVolume,
 } from "../hooks/playback"
 import { PlaybackTrack, usePlaybackState } from "../state/playback.state"
 import { toReadableTime } from "./track/helpers"
@@ -93,6 +97,11 @@ const Cover: FC<{ track: PlaybackTrack }> = ({ track }) =>
     <ImageOffIcon className="text-muted-foreground size-12 rounded-md md:size-16" />
   )
 
+const VolumeIcon: FC<{ level: number; className?: string }> = ({ level, className }) => {
+  const Icon = level === 0 ? VolumeXIcon : level < 0.5 ? Volume1Icon : Volume2Icon
+  return <Icon className={className} />
+}
+
 const TrackLabel: FC<{ track: PlaybackTrack }> = ({ track }) => (
   <div className="min-w-0 grow">
     <div className="truncate text-sm font-medium">
@@ -111,13 +120,27 @@ export const MiniPlayer: FC<{ player: FullscreenPlayerController }> = ({ player 
   const playback = usePlaybackState()
   const track = playback.current
 
-  useAudioSource(track?.id ? `/api/stream/audio/${track.id}` : undefined)
+  useAudioSource(track?.id ? `/api/stream/audio/${track.id}` : undefined, playback.autoplay)
+  useRestorePlayback()
+  usePersistPlayback()
   const [position] = usePlaybackPosition()
   const duration = useDuration()
   const { progress, scrub, scrubEnd } = useProgress()
   const [playing, setPlaying] = usePlayState()
   const [previousTrack, canGoPrevious] = usePreviousTrack()
   const skip = useSkip()
+  const volume = useVolume()
+  const [volumeOpen, setVolumeOpen] = useState(false)
+  const volumeRef = useRef<HTMLDivElement>(null)
+  const volumeCloseTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
+  const volumeEnter = () => {
+    clearTimeout(volumeCloseTimer.current)
+    setVolumeOpen(true)
+  }
+  const volumeLeave = () => {
+    clearTimeout(volumeCloseTimer.current)
+    volumeCloseTimer.current = setTimeout(() => setVolumeOpen(false), 150)
+  }
   useSleepTimerPause()
   useAutoAdvance(playback.next)
   const isDesktop = useBreakpoint("md")
@@ -175,6 +198,33 @@ export const MiniPlayer: FC<{ player: FullscreenPlayerController }> = ({ player 
                 <div className="text-muted-foreground hidden shrink-0 items-center text-sm tabular-nums md:flex">
                   {toReadableTime(position)} / {toReadableTime(duration)}
                 </div>
+
+                <div ref={volumeRef} className="hidden md:block" onMouseEnter={volumeEnter} onMouseLeave={volumeLeave}>
+                  <PlayerButton label="Volume" onPress={() => setVolumeOpen(true)} className="size-10 rounded-full">
+                    <VolumeIcon level={volume.level} className="size-5" />
+                  </PlayerButton>
+                </div>
+                <Popover
+                  triggerRef={volumeRef}
+                  isOpen={volumeOpen}
+                  onOpenChange={setVolumeOpen}
+                  isNonModal
+                  placement="top"
+                  offset={8}
+                  className="bg-popover ring-foreground/10 data-entering:animate-in data-entering:fade-in-0 data-entering:zoom-in-95 data-exiting:animate-out data-exiting:fade-out-0 data-exiting:zoom-out-95 data-[placement=top]:slide-in-from-bottom-2 rounded-lg px-2 py-3 shadow-md ring-1 duration-100 outline-none"
+                >
+                  <div onMouseEnter={volumeEnter} onMouseLeave={volumeLeave}>
+                    <ProgressBar
+                      vertical
+                      thumb={false}
+                      className="px-2"
+                      trackClassName="h-24 w-1 rounded-full [--bar-h:0.25rem]"
+                      progress={volume.progress}
+                      onScrub={volume.set}
+                      onScrubEnd={volume.set}
+                    />
+                  </div>
+                </Popover>
 
                 <div data-dock-control className="flex shrink-0 items-center">
                   <PlayerButton
