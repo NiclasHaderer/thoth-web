@@ -39,9 +39,17 @@ export const BookSearch: FC<{
           defaultValue={authors}
           onValue={setAuthors}
           onEnter={search}
+          preventSubmit
         />
 
-        <Input wrapperClassName="grow" label="Book" onValue={setBook} defaultValue={book} onEnter={search} />
+        <Input
+          wrapperClassName="grow"
+          label="Book"
+          onValue={setBook}
+          defaultValue={book}
+          onEnter={search}
+          preventSubmit
+        />
         <Button variant="secondary" size="icon" className="ml-2 h-10 w-10" onPress={search}>
           <SearchIcon className="size-5" />
         </Button>
