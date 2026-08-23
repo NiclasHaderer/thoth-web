@@ -1,4 +1,4 @@
-import { fromFormDate, isUUID, toBase64, toFormDate } from "@/utils/utils.ts"
+import { fromFormDate, toFormDate, unique } from "@/utils/utils.ts"
 import {
   BookMarkedIcon,
   CalendarIcon,
@@ -9,15 +9,14 @@ import {
   UserIcon,
   UsersIcon,
   SearchIcon,
-  ImageOffIcon,
   PencilIcon,
 } from "lucide-react"
-import { FC, useRef } from "react"
+import { FC, useMemo } from "react"
 import { Book, BookUpdate, MetadataBook, UUID } from "@thoth/client"
 import { GenericEdit } from "@thoth/components/generic/generic-edit.tsx"
+import { CoverPicker } from "@thoth/components/input/cover-picker"
 import { ManagedInput } from "@thoth/components/input/managed-input"
 import { MultiCombobox } from "@thoth/components/input/multi-combobox"
-import { ResponsiveImage } from "@thoth/components/responsive-image"
 import { Button } from "@thoth/components/ui/button"
 import {
   useAllAuthors,
@@ -118,57 +117,34 @@ export const BookEdit: FC<{ book: Book }> = ({ book }) => {
 }
 
 const BookForm: FC<{ form: FormContext<BookUpdate>; libraryId: UUID }> = ({ form, libraryId }) => {
-  const imageRef = useRef<HTMLInputElement>(null)
   const { data: authors } = useAllAuthors(libraryId)
   const { data: series } = useAllSeries(libraryId)
   const { data: genres } = useAllGenres(libraryId)
   const createAuthor = useCreateAuthor()
   const createSeries = useCreateSeries()
+
+  const authorOptions = useMemo(() => (authors ?? []).map(author => ({ id: author.id, label: author.name })), [authors])
+  const seriesOptions = useMemo(() => (series ?? []).map(entry => ({ id: entry.id, label: entry.title })), [series])
+  const genreOptions = useMemo(
+    () =>
+      unique([...(genres ?? []).map(genre => genre.name), ...(form.fields.genres ?? [])]).map(genre => ({
+        id: genre,
+        label: genre,
+      })),
+    [genres, form.fields.genres]
+  )
+
   return (
     <>
       <div className="flex flex-col md:flex-row">
-        <div className="flex cursor-pointer items-center justify-center pr-2">
-          <div className="flex flex-col justify-center">
-            {form.fields.cover ? (
-              <ResponsiveImage
-                className="h-52 min-h-52 w-52 min-w-52 rounded-md lg:h-72 lg:min-h-72 lg:w-72 lg:min-w-72"
-                src={isUUID(form.fields.cover) ? `/api/stream/images/${form.fields.cover}` : form.fields.cover}
-                alt="book"
-                onClick={() => imageRef.current && imageRef.current.click()}
-              />
-            ) : (
-              <ImageOffIcon
-                className="h-52 w-52 cursor-pointer rounded-md lg:h-72 lg:w-72"
-                onClick={() => imageRef.current && imageRef.current.click()}
-              />
-            )}
-            <input
-              className="hidden"
-              ref={imageRef}
-              type="file"
-              accept="image/*"
-              onChange={async () => {
-                const file = imageRef.current!.files![0]
-                const base64 = await toBase64(file)
-                form.setFields({ cover: base64 })
-              }}
-            />
-            <Button
-              variant="secondary"
-              className="mt-2 self-center"
-              onPress={() => imageRef.current && imageRef.current.click()}
-            >
-              Upload image
-            </Button>
-          </div>
-        </div>
+        <CoverPicker alt="book" value={form.fields.cover} onChange={cover => form.setFields({ cover })} />
         <div className="min-w-0 grow">
           <ManagedInput name="title" labelClassName="w-28" label="Title" leftIcon={<SearchIcon />} />
           <MultiCombobox
             label="Authors"
             labelClassName="w-28"
             leftIcon={<UsersIcon />}
-            options={(authors ?? []).map(author => ({ id: author.id, label: author.name }))}
+            options={authorOptions}
             value={form.fields.authors ?? []}
             onChange={authors => form.setFields({ authors })}
             onCreate={async name => (await createAuthor.mutateAsync({ libraryId, data: { name } })).id}
@@ -177,7 +153,7 @@ const BookForm: FC<{ form: FormContext<BookUpdate>; libraryId: UUID }> = ({ form
             label="Series"
             labelClassName="w-28"
             leftIcon={<LayersIcon />}
-            options={(series ?? []).map(entry => ({ id: entry.id, label: entry.title }))}
+            options={seriesOptions}
             value={form.fields.series ?? []}
             onChange={series => form.setFields({ series })}
             onCreate={async title => (await createSeries.mutateAsync({ libraryId, data: { title } })).id}
@@ -187,9 +163,7 @@ const BookForm: FC<{ form: FormContext<BookUpdate>; libraryId: UUID }> = ({ form
             label="Genres"
             labelClassName="w-28"
             leftIcon={<TagsIcon />}
-            options={[...new Set([...(genres ?? []).map(genre => genre.name), ...(form.fields.genres ?? [])])].map(
-              genre => ({ id: genre, label: genre })
-            )}
+            options={genreOptions}
             value={form.fields.genres ?? []}
             onChange={genres => form.setFields({ genres })}
             onCreate={genre => Promise.resolve(genre)}
@@ -206,14 +180,11 @@ const BookForm: FC<{ form: FormContext<BookUpdate>; libraryId: UUID }> = ({ form
           <ManagedInput name="publisher" labelClassName="w-28" label="Publisher" leftIcon={<BookMarkedIcon />} />
         </div>
       </div>
-      <label className="flex items-center">
-        <HtmlEditor
-          className="grow"
-          placeholder="Description"
-          value={form.fields.description}
-          onChange={description => form.setFields({ description: description ?? "" })}
-        />
-      </label>
+      <HtmlEditor
+        placeholder="Description"
+        value={form.fields.description}
+        onChange={description => form.setFields({ description: description ?? "" })}
+      />
     </>
   )
 }

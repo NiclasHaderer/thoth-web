@@ -52,14 +52,9 @@ export const AuthorDetails: FC<{ authorId: UUID; libraryId: UUID }> = ({ authorI
           </span>
         ) : null
       }
+      body={author.biography ? <HtmlViewer className="prose-sm" content={author.biography} collapsedLines={3} /> : null}
       actions={<AuthorEdit author={author} />}
     >
-      {author.biography ? (
-        <div className="pb-10">
-          <HtmlViewer content={author.biography} title="Biography" collapsedLines={3} />
-        </div>
-      ) : null}
-
       {isDetailedAuthor(author) ? (
         <section>
           <h2 className={`${detailLabel} pb-3`}>{pluralize(author.books.length, "Book")}</h2>

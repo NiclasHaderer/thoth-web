@@ -1,7 +1,8 @@
 import { useQuery } from "@tanstack/react-query"
 import { SearchIcon } from "lucide-react"
-import { FC, Fragment, useState } from "react"
+import { FC, useState } from "react"
 import { Api, MetadataBook, UUID, unwrap } from "@thoth/client"
+import { MetadataResults } from "@thoth/components/generic/metadata-results"
 import { Input } from "@thoth/components/input/input"
 import { LoadingCards } from "@thoth/components/loading-card"
 import { Button } from "@thoth/components/ui/button"
@@ -31,60 +32,39 @@ export const BookSearch: FC<{
 
   return (
     <>
-      <div className="mb-4 flex items-center">
-        <Input
-          labelClassName="w-28"
-          wrapperClassName="grow pr-2"
-          label="Author"
-          defaultValue={authors}
-          onValue={setAuthors}
-          onEnter={search}
-          preventSubmit
-        />
-
-        <Input
-          wrapperClassName="grow"
-          label="Book"
-          onValue={setBook}
-          defaultValue={book}
-          onEnter={search}
-          preventSubmit
-        />
-        <Button variant="secondary" size="icon" className="ml-2 h-10 w-10" onPress={search}>
-          <SearchIcon className="size-5" />
+      <div className="mb-4 flex items-center gap-2">
+        <div className="grow">
+          <Input
+            labelClassName="w-28"
+            label="Author"
+            defaultValue={authors}
+            onValue={setAuthors}
+            onEnter={search}
+            preventSubmit
+            hideError
+          />
+        </div>
+        <div className="grow">
+          <Input label="Book" onValue={setBook} defaultValue={book} onEnter={search} preventSubmit hideError />
+        </div>
+        <Button variant="secondary" size="icon" aria-label="Search" onPress={search}>
+          <SearchIcon />
         </Button>
       </div>
-      <div className="max-h-96 overflow-y-auto">
-        {result ? <BookSearchResult results={result} select={onSelect} /> : null}
+      <div className="h-0 min-h-48 grow overflow-y-auto">
+        {result ? (
+          <MetadataResults
+            results={result}
+            onSelect={onSelect}
+            title={book => book.title}
+            description={book => book.description}
+            image={book =>
+              book.coverURL ? <img className="h-28 w-28" alt={book.title ?? "Cover"} src={book.coverURL} /> : null
+            }
+          />
+        ) : null}
         {loading ? <LoadingCards amount={10} /> : null}
       </div>
-    </>
-  )
-}
-
-const BookSearchResult: FC<{ results: MetadataBook[]; select: (result: MetadataBook) => void }> = ({
-  results,
-  select,
-}) => {
-  return (
-    <>
-      {results.length === 0 ? <div>Nothing was found</div> : null}
-      {results.map((book, i) => (
-        <Fragment key={i}>
-          <div
-            onClick={() => select(book)}
-            className="hover:bg-muted focus:bg-muted flex cursor-pointer items-stretch justify-between rounded-md p-2 transition-colors"
-            tabIndex={0}
-          >
-            <div>
-              <h3 className="pr-2 pb-2 text-xl">{book.title || "Unknown"}</h3>
-              <p className="line-clamp-4 pr-2">{book.description}</p>
-            </div>
-            {book.coverURL ? <img className="h-28 w-28" alt={book.title ?? "Cover"} src={book.coverURL} /> : null}
-          </div>
-          {results.length - 1 !== i ? <hr className="border-border my-4" /> : null}
-        </Fragment>
-      ))}
     </>
   )
 }
