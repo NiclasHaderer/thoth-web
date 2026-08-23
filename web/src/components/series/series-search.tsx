@@ -1,7 +1,8 @@
 import { useQuery } from "@tanstack/react-query"
 import { SearchIcon } from "lucide-react"
-import { FC, Fragment, useState } from "react"
+import { FC, useState } from "react"
 import { Api, MetadataSeries, UUID, unwrap } from "@thoth/client"
+import { MetadataResults } from "@thoth/components/generic/metadata-results"
 import { Input } from "@thoth/components/input/input"
 import { LoadingCards } from "@thoth/components/loading-card"
 import { Button } from "@thoth/components/ui/button"
@@ -31,59 +32,36 @@ export const SeriesSearch: FC<{
 
   return (
     <>
-      <div className="mb-4 flex items-center">
-        <Input
-          labelClassName="w-28"
-          wrapperClassName="grow pr-2"
-          label="Series"
-          onValue={setSeries}
-          defaultValue={series}
-          onEnter={search}
-          preventSubmit
-        />
-        <Input
-          labelClassName="w-28"
-          wrapperClassName="grow pr-2"
-          label="Author"
-          onValue={setAuthors}
-          defaultValue={authors}
-          onEnter={search}
-          preventSubmit
-        />
-        <Button variant="secondary" size="icon" className="ml-2 h-10 w-10" onPress={search}>
-          <SearchIcon className="size-5" />
+      <div className="mb-4 flex items-center gap-2">
+        <div className="grow">
+          <Input
+            labelClassName="w-28"
+            label="Series"
+            onValue={setSeries}
+            defaultValue={series}
+            onEnter={search}
+            preventSubmit
+            hideError
+          />
+        </div>
+        <div className="grow">
+          <Input label="Author" onValue={setAuthors} defaultValue={authors} onEnter={search} preventSubmit hideError />
+        </div>
+        <Button variant="secondary" size="icon" aria-label="Search" onPress={search}>
+          <SearchIcon />
         </Button>
       </div>
-      <div className="max-h-96 overflow-y-auto">
-        {result ? <AuthorSearchResult results={result} select={onSelect} /> : null}
+      <div className="h-0 min-h-48 grow overflow-y-auto">
+        {result ? (
+          <MetadataResults
+            results={result}
+            onSelect={onSelect}
+            title={series => series.title}
+            description={series => series.description}
+          />
+        ) : null}
         {loading ? <LoadingCards amount={10} /> : null}
       </div>
-    </>
-  )
-}
-
-const AuthorSearchResult: FC<{ results: MetadataSeries[]; select: (result: MetadataSeries) => void }> = ({
-  results,
-  select,
-}) => {
-  return (
-    <>
-      {results.length === 0 ? <div>Nothing was found</div> : null}
-      {results.map((series, i) => (
-        <Fragment key={i}>
-          <div
-            onClick={() => select(series)}
-            className="hover:bg-muted focus:bg-muted flex cursor-pointer items-stretch justify-between rounded-md p-2 transition-colors"
-            tabIndex={0}
-          >
-            <div>
-              <h3 className="pr-2 pb-2 text-xl">{series.title || "Unknown"}</h3>
-              <p className="line-clamp-4 pr-2">{series.description}</p>
-            </div>
-          </div>
-          {results.length - 1 !== i ? <hr className="border-border my-4" /> : null}
-        </Fragment>
-      ))}
     </>
   )
 }

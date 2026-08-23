@@ -39,23 +39,21 @@ const useResourcePreview = <T>(resource: Resource, listFn: ListFn<T>, libraryId:
 }
 
 const listAllPages = async <T>(listFn: ListFn<T>, libraryId: UUID): Promise<T[]> => {
-  const items: T[] = []
-  let total = Infinity
-  while (items.length < total) {
-    const page = await unwrap(listFn({ libraryId, limit: 500, offset: items.length, order: "ASC" }))
-    total = page.total
-    if (page.items.length === 0) break
-    items.push(...page.items)
-  }
-  return items
-}
+  const pageSize = 500
+  const first = await unwrap(listFn({ libraryId, limit: pageSize, offset: 0, order: "ASC" }))
+  if (first.items.length === 0 || first.items.length >= first.total) return first.items
 
-const allOfResourceKey = (resource: LibraryResource, libraryId: UUID) =>
-  [...queryKeys.resourceLists(resource, libraryId), "all"] as const
+  const offsets: number[] = []
+  for (let offset = first.items.length; offset < first.total; offset += pageSize) offsets.push(offset)
+  const rest = await Promise.all(
+    offsets.map(offset => unwrap(listFn({ libraryId, limit: pageSize, offset, order: "ASC" })))
+  )
+  return [first, ...rest].flatMap(page => page.items)
+}
 
 const useAllOfResource = <T>(resource: LibraryResource, listFn: ListFn<T>, libraryId: UUID) =>
   useQuery({
-    queryKey: allOfResourceKey(resource, libraryId),
+    queryKey: queryKeys.resourceListAll(resource, libraryId),
     queryFn: () => listAllPages(listFn, libraryId),
     meta: { action: `load ${resource}` },
   })
@@ -110,7 +108,7 @@ const useResourceCreate = <C, R extends Identifiable>(
     mutationFn: ({ libraryId, data }: { libraryId: UUID; data: C }) => unwrap(createFn({ libraryId }, data)),
     onSuccess: (result, { libraryId }) => {
       queryClient.setQueryData(queryKeys.resourceDetail(resource, libraryId, result.id), result)
-      queryClient.setQueryData(allOfResourceKey(resource, libraryId), (previous: R[] | undefined) =>
+      queryClient.setQueryData(queryKeys.resourceListAll(resource, libraryId), (previous: R[] | undefined) =>
         previous ? [...previous, result] : previous
       )
       return invalidateLibraryContent(queryClient, libraryId)
