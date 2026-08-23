@@ -1,4 +1,4 @@
-import { LinkIcon, PartyPopperIcon, SkullIcon, UserIcon, UploadIcon } from "lucide-react"
+import { LinkIcon, MapPinIcon, PartyPopperIcon, SkullIcon, UserIcon, UploadIcon } from "lucide-react"
 import { FC, useRef } from "react"
 import { AuthorUpdate } from "@thoth/client"
 import { ManagedInput } from "@thoth/components/input/managed-input"
@@ -66,6 +66,13 @@ export const AuthorForm: FC<{ form: FormContext<AuthorUpdate> }> = ({ form }) =>
             labelClassName="w-28"
             label="Died"
             leftIcon={<SkullIcon />}
+          />
+          <ManagedInput
+            wrapperClassName="pt-2"
+            name="bornIn"
+            labelClassName="w-28"
+            label="Born in"
+            leftIcon={<MapPinIcon />}
           />
           <ManagedInput
             wrapperClassName="pt-2"

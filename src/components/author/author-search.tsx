@@ -31,7 +31,14 @@ export const AuthorSearch: FC<{
   return (
     <>
       <div className="mb-4 flex items-center">
-        <Input wrapperClassName="grow pr-2" label="Author" onEnter={search} onValue={setAuthor} defaultValue={author} />
+        <Input
+          wrapperClassName="grow pr-2"
+          label="Author"
+          onEnter={search}
+          onValue={setAuthor}
+          defaultValue={author}
+          preventSubmit
+        />
         <Button variant="secondary" size="icon" className="ml-2 h-10 w-10" onPress={search}>
           <SearchIcon className="size-5" />
         </Button>
