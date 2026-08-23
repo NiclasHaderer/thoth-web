@@ -225,6 +225,7 @@ export interface BookUpdate {
   authors: Array<UUID> | undefined
   cover: string | undefined
   description: string | undefined
+  genres: Array<string> | undefined
   isbn: string | undefined
   language: string | undefined
   narrators: Array<string> | undefined
@@ -248,6 +249,10 @@ export interface SeriesDetailed extends Series {
   yearRange: YearRange | undefined
 }
 
+export interface SeriesCreate {
+  title: string
+}
+
 export interface SeriesUpdate {
   books: Array<UUID> | undefined
   cover: string | undefined
@@ -264,9 +269,14 @@ export interface AuthorDetailed extends Author {
   series: Array<Series>
 }
 
+export interface AuthorCreate {
+  name: string
+}
+
 export interface AuthorUpdate {
   biography: string | undefined
   birthDate: string | undefined
+  books: Array<UUID> | undefined
   bornIn: string | undefined
   deathDate: string | undefined
   image: string | undefined

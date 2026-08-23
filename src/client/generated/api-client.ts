@@ -5,6 +5,7 @@
 import { ApiCallData, ApiInterceptor, ApiResponse, _request, _createUrl, _mergeHeaders } from "./client"
 import type {
   Author,
+  AuthorCreate,
   AuthorDetailed,
   AuthorUpdate,
   Book,
@@ -39,6 +40,7 @@ import type {
   PartialUpdateLibrary,
   Position,
   Series,
+  SeriesCreate,
   SeriesDetailed,
   SeriesUpdate,
   ThirdPartyLicense,
@@ -544,6 +546,23 @@ export const createApi = (
         true
       )
     },
+    createSeries: (
+      { libraryId }: { libraryId: UUID },
+      body: SeriesCreate,
+      headers: HeadersInit = {},
+      interceptors: ApiInterceptor[] = []
+    ): Promise<ApiResponse<SeriesDetailed>> => {
+      return _request(
+        `/api/libraries/${libraryId}/series`,
+        "POST",
+        "json",
+        _mergeHeaders(defaultHeadersImpl, headers),
+        body,
+        [...defaultInterceptors, ...interceptors],
+        executor,
+        true
+      )
+    },
     listSeriesSorting: (
       { limit, offset, order, libraryId }: { limit?: number; offset?: number; order?: Order; libraryId: UUID },
       headers: HeadersInit = {},
@@ -636,6 +655,23 @@ export const createApi = (
         "json",
         _mergeHeaders(defaultHeadersImpl, headers),
         undefined,
+        [...defaultInterceptors, ...interceptors],
+        executor,
+        true
+      )
+    },
+    createAuthor: (
+      { libraryId }: { libraryId: UUID },
+      body: AuthorCreate,
+      headers: HeadersInit = {},
+      interceptors: ApiInterceptor[] = []
+    ): Promise<ApiResponse<AuthorDetailed>> => {
+      return _request(
+        `/api/libraries/${libraryId}/authors`,
+        "POST",
+        "json",
+        _mergeHeaders(defaultHeadersImpl, headers),
+        body,
         [...defaultInterceptors, ...interceptors],
         executor,
         true

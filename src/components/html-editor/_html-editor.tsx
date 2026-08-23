@@ -34,6 +34,13 @@ export const HtmlEditorImpl: FC<{
   })
 
   useEffect(() => {
+    if (!editor || !editor.isInitialized) return
+    if (value != null && typeof value !== "string") return
+    const current = editor.isEmpty ? undefined : editor.getHTML()
+    if ((value || undefined) !== current) editor.commands.setContent(value ?? "")
+  }, [editor, value])
+
+  useEffect(() => {
     const update = () => {
       if (!editor || !onChange) return
       editor.isEmpty ? onChange(undefined) : onChange(editor.getHTML())
@@ -46,11 +53,11 @@ export const HtmlEditorImpl: FC<{
   }, [editor])
 
   return (
-    <div className="border-accent flex grow flex-col rounded-md border">
+    <div className="border-input focus-within:border-ring focus-within:ring-ring/50 dark:bg-input/30 mb-4 flex grow flex-col overflow-hidden rounded-lg border transition-colors focus-within:ring-3">
       <button type="button" className="hidden" />
       <EditorContent
         editor={editor}
-        className={`prose prose-invert max-h-36 max-w-none cursor-auto overflow-y-auto rounded-b-md p-2 ${
+        className={`prose prose-invert max-h-36 max-w-none cursor-auto overflow-y-auto p-2 [&_.ProseMirror]:outline-none ${
           className ?? ""
         }`}
       />

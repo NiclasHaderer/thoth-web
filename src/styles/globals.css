@@ -107,6 +107,13 @@
   form {
     display: contents;
   }
+  input[type="number"] {
+    appearance: textfield;
+  }
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+    appearance: none;
+  }
 }
 
 /* Bump only the font-size tokens on phones so text reads at a comfortable, native

@@ -24,6 +24,7 @@ const authorToUpdateModel = (author: Author): AuthorUpdate => {
   return {
     biography: author.biography,
     birthDate: author.birthDate,
+    books: undefined,
     bornIn: author.bornIn,
     deathDate: author.deathDate,
     image: author.imageID,
@@ -55,8 +56,8 @@ export const AuthorEdit: FC<{ author: Author }> = ({ author }) => {
         await updateAuthor.mutateAsync({ libraryId: author.libraryId, id: author.id, data: values })
         closeModal()
       }}
-      InformationDisplay={() => <AuthorForm form={form} />}
-      Search={({ onSelect }) => (
+      information={<AuthorForm form={form} />}
+      search={onSelect => (
         <AuthorSearch
           libraryId={author.libraryId}
           authorSearch={form.fields.name}

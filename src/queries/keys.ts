@@ -27,7 +27,8 @@ export const queryKeys = {
 
   library: libraryScope,
 
-  resourceLists: (resource: Resource, libraryId: UUID) => [...libraryScope(libraryId), resource, "list"] as const,
+  resourceLists: (resource: LibraryResource, libraryId: UUID) =>
+    [...libraryScope(libraryId), resource, "list"] as const,
   libraryListPage: (resource: LibraryResource, libraryId: UUID, order: Order, offset: number) =>
     [...libraryScope(libraryId), resource, "list", { order }, offset] as const,
   resourceDetail: (resource: Resource, libraryId: UUID, id: UUID) =>
