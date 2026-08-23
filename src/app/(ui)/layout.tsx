@@ -59,7 +59,7 @@ export const UiLayout: FC<{ children: ReactNode }> = ({ children }) => {
         </div>
         <motion.div
           style={{ y: navY, scale: navScale, opacity: navOpacity }}
-          className="bg-card/75 border-border/60 origin-bottom border-t-[0.5px] pb-[env(safe-area-inset-bottom)] backdrop-blur-xl md:hidden"
+          className="bg-card/60 border-border/60 origin-bottom border-t-[0.5px] pb-[env(safe-area-inset-bottom)] backdrop-blur-xl md:hidden"
         >
           <MobileTabBar />
         </motion.div>
