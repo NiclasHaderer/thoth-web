@@ -170,6 +170,7 @@ export interface Book {
 
 export interface Series {
   authors: Array<NamedId>
+  bookCoverIDs: Array<UUID>
   coverID: UUID | undefined
   description: string | undefined
   genres: Array<string>

@@ -1,13 +1,12 @@
-import { BookIcon, HashIcon, ImageOffIcon, SearchIcon } from "lucide-react"
-import { FC, useRef } from "react"
+import { BookIcon, HashIcon, SearchIcon } from "lucide-react"
+import { FC } from "react"
 import { MetadataSeries, Series, SeriesUpdate } from "@thoth/client"
 import { GenericEdit } from "@thoth/components/generic/generic-edit.tsx"
+import { CoverPicker } from "@thoth/components/input/cover-picker"
 import { ManagedInput } from "@thoth/components/input/managed-input"
-import { ResponsiveImage } from "@thoth/components/responsive-image"
-import { Button } from "@thoth/components/ui/button"
 import { useUpdateSeries } from "@thoth/queries/resources"
 import { FormContext, useForm } from "../../hooks/form"
-import { isUUID, toBase64 } from "../../utils/utils"
+import { fromFormNumber } from "../../utils/utils"
 import { HtmlEditor } from "../html-editor"
 import { SeriesSearch } from "./series-search"
 
@@ -39,8 +38,8 @@ export const SeriesEdit: FC<{ series: Series }> = ({ series }) => {
   const updateSeries = useUpdateSeries()
   const form = useForm(seriesToUpdate(series), {
     fromForm: {
-      primaryWorks: value => (value ? Number(value) : undefined),
-      totalBooks: value => (value ? Number(value) : undefined),
+      primaryWorks: fromFormNumber,
+      totalBooks: fromFormNumber,
     },
   })
 
@@ -69,49 +68,13 @@ export const SeriesEdit: FC<{ series: Series }> = ({ series }) => {
 }
 
 const SeriesForm: FC<{ form: FormContext<SeriesUpdate> }> = ({ form }) => {
-  const imageRef = useRef<HTMLInputElement>(null)
   return (
     <>
       <div className="flex flex-col md:flex-row">
-        <div className="flex cursor-pointer items-center justify-center pr-2">
-          <div className="flex flex-col justify-center">
-            {form.fields.cover ? (
-              <ResponsiveImage
-                className="h-52 min-h-52 w-52 min-w-52 rounded-md"
-                src={isUUID(form.fields.cover) ? `/api/stream/images/${form.fields.cover}` : form.fields.cover}
-                alt="series"
-                onClick={() => imageRef.current && imageRef.current.click()}
-              />
-            ) : (
-              <ImageOffIcon
-                className="h-52 w-52 cursor-pointer rounded-md"
-                onClick={() => imageRef.current && imageRef.current.click()}
-              />
-            )}
-            <input
-              className="hidden"
-              ref={imageRef}
-              type="file"
-              accept="image/*"
-              onChange={async () => {
-                const file = imageRef.current!.files![0]
-                const base64 = await toBase64(file)
-                form.setFields({ cover: base64 })
-              }}
-            />
-            <Button
-              variant="secondary"
-              className="mt-2 self-center"
-              onPress={() => imageRef.current && imageRef.current.click()}
-            >
-              Upload image
-            </Button>
-          </div>
-        </div>
-        <div className="grow">
-          <ManagedInput className="pt-2" name="title" labelClassName="w-28" label="Title" leftIcon={<SearchIcon />} />
+        <CoverPicker alt="series" value={form.fields.cover} onChange={cover => form.setFields({ cover })} />
+        <div className="min-w-0 grow">
+          <ManagedInput name="title" labelClassName="w-28" label="Title" leftIcon={<SearchIcon />} />
           <ManagedInput
-            wrapperClassName="py-2"
             name="primaryWorks"
             type="number"
             min="0"
@@ -130,14 +93,11 @@ const SeriesForm: FC<{ form: FormContext<SeriesUpdate> }> = ({ form }) => {
         </div>
       </div>
 
-      <div className="flex flex-col pt-4">
-        <HtmlEditor
-          className="grow"
-          placeholder="Description"
-          value={form.fields.description}
-          onChange={description => form.setFields({ description })}
-        />
-      </div>
+      <HtmlEditor
+        placeholder="Description"
+        value={form.fields.description}
+        onChange={description => form.setFields({ description })}
+      />
     </>
   )
 }

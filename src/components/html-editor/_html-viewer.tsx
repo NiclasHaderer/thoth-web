@@ -1,15 +1,13 @@
 import dompurify from "dompurify"
 import { motion } from "motion/react"
 import { CSSProperties, FC, useEffect, useRef, useState } from "react"
-import { detailLabel } from "@thoth/components/detail/detail-layout"
 import { Button } from "@thoth/components/ui/button"
 
 export const HtmlViewerImpl: FC<{
   content: string | null | undefined
   className?: string | undefined
-  title?: string
   collapsedLines?: number
-}> = ({ content, className, title, collapsedLines }) => {
+}> = ({ content, className, collapsedLines }) => {
   const contentRef = useRef<HTMLDivElement>(null)
   const [expanded, setExpanded] = useState(false)
   const [clamped, setClamped] = useState(true)
@@ -41,7 +39,6 @@ export const HtmlViewerImpl: FC<{
 
   return (
     <>
-      {title ? <h2 className={`${detailLabel} pb-3`}>{title}</h2> : null}
       <motion.div
         initial={false}
         animate={{ height: expanded || collapsedHeight === undefined ? "auto" : collapsedHeight }}

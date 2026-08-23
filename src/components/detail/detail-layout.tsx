@@ -4,11 +4,6 @@ import { FC, ReactNode, useState } from "react"
 import { useBreakpoint } from "@thoth/hooks/use-media-query"
 import { cn } from "@thoth/lib/utils"
 
-export interface DetailFact {
-  label: string
-  value: ReactNode
-}
-
 export interface DetailLayoutProps {
   title: string
   image?: string
@@ -16,8 +11,8 @@ export interface DetailLayoutProps {
   round?: boolean
   subtitle?: ReactNode
   credit?: ReactNode
+  body?: ReactNode
   actions?: ReactNode
-  facts?: DetailFact[]
   children?: ReactNode
 }
 
@@ -142,13 +137,13 @@ export const DetailLayout: FC<DetailLayoutProps> = ({
   round,
   subtitle,
   credit,
+  body,
   actions,
-  facts,
   children,
 }) => {
   const isDesktop = useBreakpoint("md")
   const artShape = round ? "rounded-full" : "rounded-lg"
-  const artSize = "w-[62%] max-w-56 shrink-0 sm:w-60 sm:max-w-none"
+  const artSize = "w-60 shrink-0"
 
   const art = (sizeClass: string) =>
     image ? (
@@ -174,16 +169,6 @@ export const DetailLayout: FC<DetailLayoutProps> = ({
       </div>
     ) : null
 
-  const factItems =
-    facts && facts.length > 0
-      ? facts.map(fact => (
-          <div key={fact.label} className="min-w-0">
-            <dt className={detailLabel}>{fact.label}</dt>
-            <dd className="pt-2 text-sm">{fact.value}</dd>
-          </div>
-        ))
-      : null
-
   if (!isDesktop) {
     return (
       <div className="mx-auto max-w-6xl min-w-0">
@@ -208,14 +193,9 @@ export const DetailLayout: FC<DetailLayoutProps> = ({
               </div>
             ) : null
           }
-          revealBottom={
-            factItems ? (
-              <dl className="border-border/60 mt-4 grid grid-cols-2 gap-x-8 gap-y-4 rounded-lg border p-4 text-left">
-                {factItems}
-              </dl>
-            ) : null
-          }
         />
+
+        {body ? <div className="pt-6">{body}</div> : null}
 
         <div className="pt-8">{children}</div>
       </div>
@@ -224,37 +204,29 @@ export const DetailLayout: FC<DetailLayoutProps> = ({
 
   return (
     <div className="mx-auto max-w-6xl min-w-0">
-      <header className="flex flex-col items-center gap-6 text-center sm:flex-row sm:items-start sm:gap-9 sm:text-left">
+      <header className="flex items-start gap-9">
         {art(artSize)}
 
-        <div className="flex w-full min-w-0 flex-col items-center gap-2 sm:flex-1 sm:items-start sm:pt-1">
-          <h1 className="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">{title}</h1>
+        <div className="flex min-w-0 flex-1 flex-col gap-2 pt-1">
+          <div className="flex w-full items-start justify-between gap-4">
+            <h1 className="min-w-0 text-4xl font-semibold tracking-tight text-balance">{title}</h1>
 
-          {subtitle ? (
-            <div className="flex w-full flex-wrap items-center justify-center gap-x-3 text-lg sm:justify-start">
-              {subtitle}
-            </div>
-          ) : null}
+            {actions ? (
+              <div className="flex shrink-0 items-center gap-1.5 pt-1 [&>[data-slot=button]]:h-9">{actions}</div>
+            ) : null}
+          </div>
+
+          {subtitle ? <div className="flex w-full flex-wrap items-center gap-x-3 text-lg">{subtitle}</div> : null}
 
           {credit ? (
-            <div className="text-muted-foreground flex w-full flex-wrap items-center justify-center gap-x-3 text-sm sm:justify-start">
+            <div className="text-muted-foreground border-border/60 mt-1 flex w-full flex-wrap items-center gap-x-3 gap-y-1.5 border-t pt-3 text-sm">
               {credit}
             </div>
           ) : null}
 
-          {actions ? (
-            <div className="flex w-full flex-row-reverse flex-wrap items-center justify-center gap-3 pt-4 sm:w-auto sm:flex-row sm:justify-start [&>[data-slot=button]]:h-11 sm:[&>[data-slot=button]]:h-9">
-              {actions}
-            </div>
-          ) : null}
+          {body ? <div className="w-full max-w-3xl pt-4">{body}</div> : null}
         </div>
       </header>
-
-      {factItems ? (
-        <dl className="border-border mt-10 grid grid-cols-2 gap-x-8 gap-y-6 border-t pt-7 text-left sm:grid-cols-3 lg:grid-cols-4">
-          {factItems}
-        </dl>
-      ) : null}
 
       <div className="pt-12">{children}</div>
     </div>

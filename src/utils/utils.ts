@@ -35,6 +35,10 @@ export const toFormDate = (date: Date | number | string): string | null => {
   return `${parsed.getFullYear()}-${month}-${day}`
 }
 
+export const fromFormNumber = (value?: string | null): number | undefined => {
+  return value ? Number(value) : undefined
+}
+
 export const fromFormDate = (date?: string | null): number | null => {
   if (!date) return null
   const [year, month, day] = date.split("-").map(Number)
