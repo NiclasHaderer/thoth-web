@@ -1,17 +1,16 @@
-import {
-  ImageOffIcon,
-  PauseIcon,
-  PlayIcon,
-  RotateCcwIcon,
-  RotateCwIcon,
-  SkipBackIcon,
-  SkipForwardIcon,
-} from "lucide-react"
+import { ImageOffIcon } from "lucide-react"
 import { animate, motion, useMotionValue } from "motion/react"
 import { FC, Fragment, useEffect, useMemo, useRef, useState } from "react"
 import { createPortal } from "react-dom"
 import { Link } from "@thoth/components/link.tsx"
 import { PlayerButton } from "@thoth/components/player-button"
+import {
+  PlayPauseIcon,
+  RotateCcwIcon,
+  RotateCwIcon,
+  SkipBackIcon,
+  SkipForwardIcon,
+} from "@thoth/components/player-icons"
 import { PlaybackRatePicker, SleepTimerPicker } from "@thoth/components/player-pickers"
 import { ProgressBar } from "@thoth/components/progress-bar"
 import { Button } from "@thoth/components/ui/button"
@@ -60,6 +59,7 @@ const FullscreenPlayerBody: FC<{ player: FullscreenPlayerController; track: Play
   const [previousTrack, canGoPrevious] = usePreviousTrack()
   const skip = useSkip()
   const [pane, setPane] = useState(0)
+  const [queueAtTop, setQueueAtTop] = useState(true)
   const viewport = useRef<HTMLDivElement>(null)
   const x = useMotionValue(0)
 
@@ -185,7 +185,13 @@ const FullscreenPlayerBody: FC<{ player: FullscreenPlayerController; track: Play
               </div>
 
               <div className="pt-6">
-                <ProgressBar className="w-full" progress={progress} onScrub={scrub} onScrubEnd={scrubEnd} />
+                <ProgressBar
+                  className="w-full"
+                  trackClassName="rounded-full"
+                  progress={progress}
+                  onScrub={scrub}
+                  onScrubEnd={scrubEnd}
+                />
                 <div className="text-muted-foreground flex items-center justify-between text-xs tabular-nums">
                   <span>{toReadableTime(position)}</span>
                   <span>{toReadableTime(duration)}</span>
@@ -206,21 +212,21 @@ const FullscreenPlayerBody: FC<{ player: FullscreenPlayerController; track: Play
                   onPress={() => skip(-SKIP_BACK)}
                   className="size-12 rounded-full"
                 >
-                  <RotateCcwIcon className="size-7" />
+                  <RotateCcwIcon className="size-7" seconds={SKIP_BACK} />
                 </PlayerButton>
                 <Button
                   aria-label={playing ? "Pause" : "Play"}
                   onPress={() => setPlaying(!playing)}
                   className="size-16 rounded-full [&_svg]:stroke-[1.5]"
                 >
-                  {playing ? <PauseIcon className="size-8" /> : <PlayIcon className="size-8" />}
+                  <PlayPauseIcon playing={playing} className="size-8" />
                 </Button>
                 <PlayerButton
                   label={`Skip forward ${SKIP_FORWARD} seconds`}
                   onPress={() => skip(SKIP_FORWARD)}
                   className="size-12 rounded-full"
                 >
-                  <RotateCwIcon className="size-7" />
+                  <RotateCwIcon className="size-7" seconds={SKIP_FORWARD} />
                 </PlayerButton>
                 <PlayerButton
                   label="Next track"
@@ -239,7 +245,13 @@ const FullscreenPlayerBody: FC<{ player: FullscreenPlayerController; track: Play
             </div>
 
             <div className="flex w-1/2 min-w-0 flex-col px-4 pt-4">
-              <div className="min-h-0 grow touch-pan-y overflow-y-auto">
+              <div
+                onScroll={event => setQueueAtTop(event.currentTarget.scrollTop <= 0)}
+                className={cn(
+                  "min-h-0 grow overflow-y-auto overscroll-contain",
+                  queueAtTop ? "touch-pan-down" : "touch-pan-y"
+                )}
+              >
                 <TrackList
                   tracks={timeline}
                   activeId={track.id}

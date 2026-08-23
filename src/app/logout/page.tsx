@@ -6,8 +6,7 @@ export const LogoutOutlet = () => {
   useOnMount(async () => {
     await auth.logout()
     // Full reload to drop all in-memory state (current user, audiobook cache, ...).
-    window.location.replace("/#/login")
-    window.location.reload()
+    window.location.replace("/login")
   })
 
   return <></>

@@ -96,10 +96,44 @@ export const usePlayState = (): [boolean, (shouldPlay: boolean) => void] => {
   ]
 }
 
+let pendingSeek: number | null = null
+const applyPendingSeek = () => {
+  if (pendingSeek === null) return
+  const media = audio()
+  media.currentTime = Math.min(Math.max(0, pendingSeek), media.duration)
+  pendingSeek = null
+}
+
+const seekWhenLoaded = (seconds: number) => {
+  if (pendingSeek === null) audio().addEventListener("loadedmetadata", applyPendingSeek, { once: true })
+  pendingSeek = seconds
+}
+
 export const useSkip = () =>
   useCallback((seconds: number) => {
     const media = audio()
-    media.currentTime = Math.max(0, media.currentTime + seconds)
+    const target = media.currentTime + seconds
+    const state = usePlaybackState.getState()
+
+    if (target < 0) {
+      const previousTrack = state.history[state.history.length - 1]
+      if (!previousTrack) {
+        media.currentTime = 0
+        return
+      }
+      state.previous()
+      seekWhenLoaded(previousTrack.duration + target)
+      return
+    }
+
+    if (Number.isFinite(media.duration) && target > media.duration && state.queue.length > 0) {
+      const overshoot = target - media.duration
+      state.next()
+      seekWhenLoaded(overshoot)
+      return
+    }
+
+    media.currentTime = target
   }, [])
 
 export const usePlaybackRate = (): [number, (rate: number) => void] => {
