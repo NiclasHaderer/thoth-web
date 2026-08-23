@@ -102,10 +102,6 @@ const FullscreenPlayerBody: FC<{ player: FullscreenPlayerController; track: Play
       ) : null}
 
       <div className="relative flex min-h-0 grow flex-col pt-[calc(env(safe-area-inset-top)+0.75rem)] pb-[calc(env(safe-area-inset-bottom)+1.5rem)]">
-        <button type="button" className="flex w-full justify-center py-2 outline-none">
-          <span aria-hidden className="bg-muted-foreground/40 h-1 w-10 rounded-full" />
-        </button>
-
         <div className="flex items-center justify-center gap-2 pt-3">
           {["Now playing", "Queue"].map((label, index) => (
             <button
@@ -154,7 +150,6 @@ const FullscreenPlayerBody: FC<{ player: FullscreenPlayerController; track: Play
               <div className="flex min-w-0 flex-col gap-1">
                 <Link
                   href={`/libraries/${track.libraryId}/books/${track.book.id}`}
-                  onClick={close}
                   className="block truncate text-xl font-bold tracking-tight outline-none"
                 >
                   {track.trackNr ? `${track.trackNr}. ` : null}
@@ -166,7 +161,6 @@ const FullscreenPlayerBody: FC<{ player: FullscreenPlayerController; track: Play
                       {index > 0 ? ", " : null}
                       <Link
                         href={`/libraries/${track.libraryId}/authors/${author.id}`}
-                        onClick={close}
                         className="hover:underline focus-visible:underline focus-visible:outline-none"
                       >
                         {author.name}
@@ -176,7 +170,6 @@ const FullscreenPlayerBody: FC<{ player: FullscreenPlayerController; track: Play
                   {track.authors.length ? " - " : null}
                   <Link
                     href={`/libraries/${track.libraryId}/books/${track.book.id}`}
-                    onClick={close}
                     className="hover:underline focus-visible:underline focus-visible:outline-none"
                   >
                     {track.book.title}
