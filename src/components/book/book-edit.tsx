@@ -1,22 +1,33 @@
+import { fromFormDate, isUUID, toBase64, toFormDate } from "@/utils/utils.ts"
 import {
   BookMarkedIcon,
   CalendarIcon,
+  LayersIcon,
   ListOrderedIcon,
   LanguagesIcon,
+  TagsIcon,
   UserIcon,
+  UsersIcon,
   SearchIcon,
   ImageOffIcon,
   PencilIcon,
 } from "lucide-react"
 import { FC, useRef } from "react"
-import { Book, BookUpdate, MetadataBook } from "@thoth/client"
+import { Book, BookUpdate, MetadataBook, UUID } from "@thoth/client"
 import { GenericEdit } from "@thoth/components/generic/generic-edit.tsx"
 import { ManagedInput } from "@thoth/components/input/managed-input"
+import { MultiCombobox } from "@thoth/components/input/multi-combobox"
 import { ResponsiveImage } from "@thoth/components/responsive-image"
 import { Button } from "@thoth/components/ui/button"
-import { useUpdateBook } from "@thoth/queries/resources"
+import {
+  useAllAuthors,
+  useAllGenres,
+  useAllSeries,
+  useCreateAuthor,
+  useCreateSeries,
+  useUpdateBook,
+} from "@thoth/queries/resources"
 import { FormContext, useForm } from "../../hooks/form"
-import { fromFormDate, isUUID, toBase64, toFormDate } from "../../utils/utils"
 import { HtmlEditor } from "../html-editor"
 import { BookSearch } from "./book-search"
 
@@ -40,6 +51,7 @@ const bookToUpdate = (book: Book): BookUpdate => {
     authors: book.authors.map(a => a.id),
     cover: book.coverID,
     description: book.description,
+    genres: book.genres,
     isbn: book.isbn,
     language: book.language,
     narrators: book.narrators,
@@ -74,7 +86,7 @@ export const BookEdit: FC<{ book: Book }> = ({ book }) => {
     <GenericEdit
       title="Edit Book"
       form={form}
-      Trigger={({ open }) => (
+      trigger={open => (
         <Button
           variant="ghost"
           size="icon-lg"
@@ -89,8 +101,8 @@ export const BookEdit: FC<{ book: Book }> = ({ book }) => {
         await updateBook.mutateAsync({ libraryId: book.libraryId, id: book.id, data: values })
         closeModal()
       }}
-      InformationDisplay={() => <BookForm form={form} />}
-      Search={({ onSelect }) => (
+      information={<BookForm form={form} libraryId={book.libraryId} />}
+      search={onSelect => (
         <BookSearch
           libraryId={book.libraryId}
           book={book.title}
@@ -105,8 +117,13 @@ export const BookEdit: FC<{ book: Book }> = ({ book }) => {
   )
 }
 
-const BookForm: FC<{ form: FormContext<BookUpdate> }> = ({ form }) => {
+const BookForm: FC<{ form: FormContext<BookUpdate>; libraryId: UUID }> = ({ form, libraryId }) => {
   const imageRef = useRef<HTMLInputElement>(null)
+  const { data: authors } = useAllAuthors(libraryId)
+  const { data: series } = useAllSeries(libraryId)
+  const { data: genres } = useAllGenres(libraryId)
+  const createAuthor = useCreateAuthor()
+  const createSeries = useCreateSeries()
   return (
     <>
       <div className="flex flex-col md:flex-row">
@@ -114,14 +131,14 @@ const BookForm: FC<{ form: FormContext<BookUpdate> }> = ({ form }) => {
           <div className="flex flex-col justify-center">
             {form.fields.cover ? (
               <ResponsiveImage
-                className="h-52 min-h-52 w-52 min-w-52 rounded-md"
+                className="h-52 min-h-52 w-52 min-w-52 rounded-md lg:h-72 lg:min-h-72 lg:w-72 lg:min-w-72"
                 src={isUUID(form.fields.cover) ? `/api/stream/images/${form.fields.cover}` : form.fields.cover}
                 alt="book"
                 onClick={() => imageRef.current && imageRef.current.click()}
               />
             ) : (
               <ImageOffIcon
-                className="h-52 w-52 cursor-pointer rounded-md"
+                className="h-52 w-52 cursor-pointer rounded-md lg:h-72 lg:w-72"
                 onClick={() => imageRef.current && imageRef.current.click()}
               />
             )}
@@ -145,9 +162,38 @@ const BookForm: FC<{ form: FormContext<BookUpdate> }> = ({ form }) => {
             </Button>
           </div>
         </div>
-        <div>
+        <div className="min-w-0 grow">
           <ManagedInput name="title" labelClassName="w-28" label="Title" leftIcon={<SearchIcon />} />
+          <MultiCombobox
+            label="Authors"
+            labelClassName="w-28"
+            leftIcon={<UsersIcon />}
+            options={(authors ?? []).map(author => ({ id: author.id, label: author.name }))}
+            value={form.fields.authors ?? []}
+            onChange={authors => form.setFields({ authors })}
+            onCreate={async name => (await createAuthor.mutateAsync({ libraryId, data: { name } })).id}
+          />
+          <MultiCombobox
+            label="Series"
+            labelClassName="w-28"
+            leftIcon={<LayersIcon />}
+            options={(series ?? []).map(entry => ({ id: entry.id, label: entry.title }))}
+            value={form.fields.series ?? []}
+            onChange={series => form.setFields({ series })}
+            onCreate={async title => (await createSeries.mutateAsync({ libraryId, data: { title } })).id}
+          />
           <ManagedInput name="narrators" labelClassName="w-28" label="Narrators" leftIcon={<UserIcon />} />
+          <MultiCombobox
+            label="Genres"
+            labelClassName="w-28"
+            leftIcon={<TagsIcon />}
+            options={[...new Set([...(genres ?? []).map(genre => genre.name), ...(form.fields.genres ?? [])])].map(
+              genre => ({ id: genre, label: genre })
+            )}
+            value={form.fields.genres ?? []}
+            onChange={genres => form.setFields({ genres })}
+            onCreate={genre => Promise.resolve(genre)}
+          />
           <ManagedInput name="language" labelClassName="w-28" label="Language" leftIcon={<LanguagesIcon />} />
           <ManagedInput
             name="releaseDate"

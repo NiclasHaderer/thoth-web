@@ -39,6 +39,7 @@ export const SeriesSearch: FC<{
           onValue={setSeries}
           defaultValue={series}
           onEnter={search}
+          preventSubmit
         />
         <Input
           labelClassName="w-28"
@@ -47,6 +48,7 @@ export const SeriesSearch: FC<{
           onValue={setAuthors}
           defaultValue={authors}
           onEnter={search}
+          preventSubmit
         />
         <Button variant="secondary" size="icon" className="ml-2 h-10 w-10" onPress={search}>
           <SearchIcon className="size-5" />

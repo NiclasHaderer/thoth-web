@@ -3,6 +3,7 @@ import {
   ApiResponse,
   Api,
   Author,
+  AuthorCreate,
   AuthorDetailed,
   AuthorUpdate,
   Book,
@@ -11,19 +12,21 @@ import {
   Order,
   PaginatedResponse,
   Series,
+  SeriesCreate,
   SeriesDetailed,
   SeriesUpdate,
   UUID,
   unwrap,
 } from "@thoth/client"
 import { invalidateLibraryContent } from "./invalidate"
-import { Resource, queryKeys } from "./keys"
+import { LibraryResource, Resource, queryKeys } from "./keys"
 import { ListFn, usePagedList } from "./paged-list"
 
 export const PAGE_SIZE = 30
 
 type Identifiable = { id: UUID }
 type UpdateFn<U, R> = (params: { libraryId: UUID; id: UUID }, body: U) => Promise<ApiResponse<R>>
+type CreateFn<C, R> = (params: { libraryId: UUID }, body: C) => Promise<ApiResponse<R>>
 
 // Shares page zero with the full list, so opening a library warms the list the reader lands on next.
 const useResourcePreview = <T>(resource: Resource, listFn: ListFn<T>, libraryId: UUID) => {
@@ -34,6 +37,32 @@ const useResourcePreview = <T>(resource: Resource, listFn: ListFn<T>, libraryId:
   })
   return query.data?.items ?? []
 }
+
+const listAllPages = async <T>(listFn: ListFn<T>, libraryId: UUID): Promise<T[]> => {
+  const items: T[] = []
+  let total = Infinity
+  while (items.length < total) {
+    const page = await unwrap(listFn({ libraryId, limit: 500, offset: items.length, order: "ASC" }))
+    total = page.total
+    if (page.items.length === 0) break
+    items.push(...page.items)
+  }
+  return items
+}
+
+const allOfResourceKey = (resource: LibraryResource, libraryId: UUID) =>
+  [...queryKeys.resourceLists(resource, libraryId), "all"] as const
+
+const useAllOfResource = <T>(resource: LibraryResource, listFn: ListFn<T>, libraryId: UUID) =>
+  useQuery({
+    queryKey: allOfResourceKey(resource, libraryId),
+    queryFn: () => listAllPages(listFn, libraryId),
+    meta: { action: `load ${resource}` },
+  })
+
+export const useAllAuthors = (libraryId: UUID) => useAllOfResource("authors", Api.listAuthors, libraryId)
+export const useAllSeries = (libraryId: UUID) => useAllOfResource("series", Api.listSeries, libraryId)
+export const useAllGenres = (libraryId: UUID) => useAllOfResource("genres", Api.listGenres, libraryId)
 
 export const useBooksPreview = (libraryId: UUID) => useResourcePreview("books", Api.listBooks, libraryId)
 export const useSeriesPreview = (libraryId: UUID) => useResourcePreview("series", Api.listSeries, libraryId)
@@ -64,6 +93,25 @@ const useResourceUpdate = <U, R>(resource: Resource, singular: string, updateFn:
     onSuccess: (result, { libraryId, id }) => {
       queryClient.setQueryData(queryKeys.resourceDetail(resource, libraryId, id), (previous: unknown) =>
         previous ? { ...previous, ...result } : result
+      )
+      return invalidateLibraryContent(queryClient, libraryId)
+    },
+  })
+}
+
+const useResourceCreate = <C, R extends Identifiable>(
+  resource: Resource,
+  singular: string,
+  createFn: CreateFn<C, R>
+) => {
+  const queryClient = useQueryClient()
+  return useMutation({
+    meta: { action: `create the ${singular}` },
+    mutationFn: ({ libraryId, data }: { libraryId: UUID; data: C }) => unwrap(createFn({ libraryId }, data)),
+    onSuccess: (result, { libraryId }) => {
+      queryClient.setQueryData(queryKeys.resourceDetail(resource, libraryId, result.id), result)
+      queryClient.setQueryData(allOfResourceKey(resource, libraryId), (previous: R[] | undefined) =>
+        previous ? [...previous, result] : previous
       )
       return invalidateLibraryContent(queryClient, libraryId)
     },
@@ -104,6 +152,9 @@ export const useSeries = (libraryId: UUID, id: UUID) => {
 
 export const useUpdateSeries = () => useResourceUpdate<SeriesUpdate, Series>("series", "series", Api.updateSeries)
 
+export const useCreateSeries = () =>
+  useResourceCreate<SeriesCreate, SeriesDetailed>("series", "series", Api.createSeries)
+
 export const useAuthors = (libraryId: UUID, order: Order = "ASC") =>
   usePagedList({ resource: "authors", listFn: Api.listAuthors, libraryId, order, pageSize: PAGE_SIZE })
 
@@ -118,3 +169,6 @@ export const useAuthor = (libraryId: UUID, id: UUID) => {
 }
 
 export const useUpdateAuthor = () => useResourceUpdate<AuthorUpdate, Author>("authors", "author", Api.updateAuthor)
+
+export const useCreateAuthor = () =>
+  useResourceCreate<AuthorCreate, AuthorDetailed>("authors", "author", Api.createAuthor)

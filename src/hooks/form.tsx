@@ -250,7 +250,7 @@ export const useFieldUpdater = <T extends Record<string, any>, K extends keyof T
   const transformedValue = toForm?.(value) ?? value
 
   return {
-    value: transformedValue,
+    value: transformedValue ?? "",
     onChange: (e: ChangeEvent<HTMLInputElement>) => {
       formSetValue(e.target.value)
     },

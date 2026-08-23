@@ -1,5 +1,5 @@
 import { PencilIcon } from "lucide-react"
-import { FC, useState } from "react"
+import { ReactNode, useState } from "react"
 import { Key } from "react-aria-components"
 import { Dialog } from "@thoth/components/dialog"
 import { Button } from "@thoth/components/ui/button"
@@ -12,34 +12,50 @@ export function GenericEdit<T extends Record<string, any>>({
   form,
   onSubmit,
   title,
-  InformationDisplay,
-  Search,
-  Trigger,
+  information,
+  search,
+  trigger,
 }: {
   form: FormContext<T>
-  onSubmit: (values: T, closeModal: () => void) => void
+  onSubmit: (values: T, closeModal: () => void) => void | Promise<void>
   title: string
-  InformationDisplay: FC
-  Search: FC<{ onSelect: () => void }>
-  Trigger?: FC<{ open: () => void }>
+  information: ReactNode
+  search: (onSelect: () => void) => ReactNode
+  trigger?: (open: () => void) => ReactNode
 }) {
   const [isOpen, setIsOpen] = useState(false)
   const [selectedTab, setSelectedTab] = useState<Key>("information")
+  const [submitting, setSubmitting] = useState(false)
 
+  const openModal = () => {
+    form.restoreInitial()
+    setSelectedTab("information")
+    setIsOpen(true)
+  }
   const closeModal = () => setIsOpen(false)
 
   return (
     <>
-      {Trigger ? (
-        <Trigger open={() => setIsOpen(true)} />
+      {trigger ? (
+        trigger(openModal)
       ) : (
-        <Button variant="secondary" onPress={() => setIsOpen(true)} className="max-sm:w-11 max-sm:px-0">
+        <Button variant="secondary" onPress={openModal} className="max-sm:w-11 max-sm:px-0">
           <PencilIcon className="sm:mr-2" />
           <span className="max-sm:sr-only">Edit</span>
         </Button>
       )}
-      <Dialog isOpen={isOpen} onOpenChange={setIsOpen} title={title}>
-        <Form form={form} onSubmit={values => onSubmit(values, closeModal)}>
+      <Dialog isOpen={isOpen} onOpenChange={setIsOpen} title={title} className="sm:max-w-[85%] lg:max-w-4xl">
+        <Form
+          form={form}
+          onSubmit={async values => {
+            setSubmitting(true)
+            try {
+              await onSubmit(values, closeModal)
+            } finally {
+              setSubmitting(false)
+            }
+          }}
+        >
           <Tabs selectedKey={selectedTab} onSelectionChange={setSelectedTab}>
             <TabsList className="w-full">
               <TabsTrigger id="information" className="w-1/2">
@@ -50,17 +66,19 @@ export function GenericEdit<T extends Record<string, any>>({
               </TabsTrigger>
             </TabsList>
             <TabsContent id="information" className="mt-2">
-              <InformationDisplay />
+              {information}
             </TabsContent>
             <TabsContent id="lookup" className="mt-2">
-              <Search onSelect={() => setSelectedTab("information")} />
+              {search(() => setSelectedTab("information"))}
             </TabsContent>
           </Tabs>
           <DialogFooter>
             <Button type="button" variant="secondary" onPress={closeModal}>
               Cancel
             </Button>
-            <Button type="submit">Submit</Button>
+            <Button type="submit" isDisabled={submitting}>
+              Submit
+            </Button>
           </DialogFooter>
         </Form>
       </Dialog>
