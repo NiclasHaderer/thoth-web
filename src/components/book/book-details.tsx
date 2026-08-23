@@ -13,6 +13,7 @@ import {
   LucideIcon,
   MicIcon,
   StarIcon,
+  TagsIcon,
   UserIcon,
 } from "lucide-react"
 import { FC, ReactNode } from "react"
@@ -160,7 +161,7 @@ const GenreLinks: FC<{ book: Book; libraryId: UUID }> = ({ book, libraryId }) =>
       <Link
         key={genre}
         href={`/libraries/${libraryId}/genres/${encodeURIComponent(genre)}`}
-        className="text-primary text-sm hover:underline"
+        className="text-muted-foreground min-w-0 truncate text-sm hover:underline"
       >
         {genre}
       </Link>
@@ -181,7 +182,7 @@ const DesktopHeader: FC<HeaderProps> = ({ book, libraryId, runtime, actions }) =
       <h1 className="min-w-0 text-4xl font-bold tracking-tight text-balance">{book.title}</h1>
 
       {book.providerRating || book.genres.length > 0 ? (
-        <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5">
+        <div className="flex min-w-0 items-center gap-x-5">
           {book.providerRating ? <Rating value={book.providerRating} /> : null}
           <GenreLinks book={book} libraryId={libraryId} />
         </div>
@@ -212,10 +213,7 @@ const MobileHeader: FC<HeaderProps> = ({ book, libraryId, runtime, tracks, actio
       art={<Cover book={book} className="w-full" />}
       actions={actions}
       revealTop={
-        <div className="text-muted-foreground flex flex-wrap items-center justify-center gap-x-2 pb-1.5 text-sm">
-          <GenreLinks book={book} libraryId={libraryId} />
-          {book.publisher ? <span>{book.publisher}</span> : null}
-        </div>
+        book.publisher ? <div className="text-muted-foreground pb-1.5 text-center text-sm">{book.publisher}</div> : null
       }
       stats={
         <>
@@ -230,6 +228,13 @@ const MobileHeader: FC<HeaderProps> = ({ book, libraryId, runtime, tracks, actio
 
           <div className="border-border/60 flex flex-col gap-2 rounded-lg border p-4">
             <Meta book={book} libraryId={libraryId} runtime={0} />
+            {book.genres.length > 0 ? (
+              <MetaRow icon={TagsIcon}>
+                <div className="flex min-w-0 gap-x-2">
+                  <GenreLinks book={book} libraryId={libraryId} />
+                </div>
+              </MetaRow>
+            ) : null}
           </div>
         </div>
       }

@@ -9,8 +9,9 @@ interface PlaybackState {
   history: PlaybackTrack[]
   queue: PlaybackTrack[]
   current: PlaybackTrack | null | undefined
+  autoplay: boolean
 
-  start: (track: PlaybackTrack, queue?: PlaybackTrack[], history?: PlaybackTrack[]) => void
+  start: (track: PlaybackTrack, queue?: PlaybackTrack[], history?: PlaybackTrack[], autoplay?: boolean) => void
 
   jumpTo: (index: number) => void
 
@@ -25,11 +26,13 @@ export const usePlaybackState = create<PlaybackState>((set, get) => ({
   history: [],
   queue: [],
   current: null,
-  start(track: PlaybackTrack, queue: PlaybackTrack[] = [], history: PlaybackTrack[] = []): void {
+  autoplay: true,
+  start(track: PlaybackTrack, queue: PlaybackTrack[] = [], history: PlaybackTrack[] = [], autoplay = true): void {
     set({
       history,
       queue,
       current: track,
+      autoplay,
     })
   },
   jumpTo(index: number): void {
@@ -42,6 +45,7 @@ export const usePlaybackState = create<PlaybackState>((set, get) => ({
       history: timeline.slice(0, index),
       queue: timeline.slice(index + 1),
       current: target,
+      autoplay: true,
     })
   },
   stop(): void {
@@ -60,6 +64,7 @@ export const usePlaybackState = create<PlaybackState>((set, get) => ({
       queue: [...state.queue],
       history: [...state.history, ...(state.current ? [state.current] : [])],
       current: next,
+      autoplay: true,
     })
   },
   previous(): void {
@@ -71,6 +76,7 @@ export const usePlaybackState = create<PlaybackState>((set, get) => ({
       queue: [...(state.current ? [state.current] : []), ...state.queue],
       history: [...state.history],
       current: previous,
+      autoplay: true,
     })
   },
 }))
