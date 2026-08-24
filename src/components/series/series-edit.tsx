@@ -34,7 +34,11 @@ const seriesToUpdate = (series: Series): SeriesUpdate => {
   }
 }
 
-export const SeriesEdit: FC<{ series: Series }> = ({ series }) => {
+export const SeriesEdit: FC<{ series: Series; isOpen: boolean; onOpenChange: (open: boolean) => void }> = ({
+  series,
+  isOpen,
+  onOpenChange,
+}) => {
   const updateSeries = useUpdateSeries()
   const form = useForm(seriesToUpdate(series), {
     fromForm: {
@@ -46,6 +50,8 @@ export const SeriesEdit: FC<{ series: Series }> = ({ series }) => {
   return (
     <GenericEdit
       form={form}
+      isOpen={isOpen}
+      onOpenChange={onOpenChange}
       onSubmit={async (values, closeModal) => {
         await updateSeries.mutateAsync({ libraryId: series.libraryId, id: series.id, data: values })
         closeModal()

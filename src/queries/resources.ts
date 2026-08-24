@@ -26,6 +26,7 @@ export const PAGE_SIZE = 30
 
 type Identifiable = { id: UUID }
 type UpdateFn<U, R> = (params: { libraryId: UUID; id: UUID }, body: U) => Promise<ApiResponse<R>>
+type AutoMatchFn<R> = (params: { libraryId: UUID; id: UUID }) => Promise<ApiResponse<R>>
 type CreateFn<C, R> = (params: { libraryId: UUID }, body: C) => Promise<ApiResponse<R>>
 
 // Shares page zero with the full list, so opening a library warms the list the reader lands on next.
@@ -97,6 +98,20 @@ const useResourceUpdate = <U, R>(resource: Resource, singular: string, updateFn:
   })
 }
 
+const useResourceAutoMatch = <R>(resource: Resource, singular: string, autoMatchFn: AutoMatchFn<R>) => {
+  const queryClient = useQueryClient()
+  return useMutation({
+    meta: { action: `auto match the ${singular}` },
+    mutationFn: ({ libraryId, id }: { libraryId: UUID; id: UUID }) => unwrap(autoMatchFn({ libraryId, id })),
+    onSuccess: (result, { libraryId, id }) => {
+      queryClient.setQueryData(queryKeys.resourceDetail(resource, libraryId, id), (previous: unknown) =>
+        previous ? { ...previous, ...result } : result
+      )
+      return invalidateLibraryContent(queryClient, libraryId)
+    },
+  })
+}
+
 const useResourceCreate = <C, R extends Identifiable>(
   resource: Resource,
   singular: string,
@@ -135,6 +150,8 @@ export const useBook = (libraryId: UUID, id: UUID) => {
 
 export const useUpdateBook = () => useResourceUpdate<BookUpdate, Book>("books", "book", Api.updateBook)
 
+export const useAutoMatchBook = () => useResourceAutoMatch<Book>("books", "book", Api.autoMatchBook)
+
 export const useSeriesList = (libraryId: UUID, order: Order = "ASC") =>
   usePagedList({ resource: "series", listFn: Api.listSeries, libraryId, order, pageSize: PAGE_SIZE })
 
@@ -149,6 +166,8 @@ export const useSeries = (libraryId: UUID, id: UUID) => {
 }
 
 export const useUpdateSeries = () => useResourceUpdate<SeriesUpdate, Series>("series", "series", Api.updateSeries)
+
+export const useAutoMatchSeries = () => useResourceAutoMatch<Series>("series", "series", Api.autoMatchSeries)
 
 export const useCreateSeries = () =>
   useResourceCreate<SeriesCreate, SeriesDetailed>("series", "series", Api.createSeries)
@@ -167,6 +186,8 @@ export const useAuthor = (libraryId: UUID, id: UUID) => {
 }
 
 export const useUpdateAuthor = () => useResourceUpdate<AuthorUpdate, Author>("authors", "author", Api.updateAuthor)
+
+export const useAutoMatchAuthor = () => useResourceAutoMatch<Author>("authors", "author", Api.autoMatchAuthor)
 
 export const useCreateAuthor = () =>
   useResourceCreate<AuthorCreate, AuthorDetailed>("authors", "author", Api.createAuthor)

@@ -12,7 +12,7 @@ export const queryKeys = {
 
   libraries: ["libraries"] as const,
 
-  metadataAgents: (language: string) => ["metadata-agents", language] as const,
+  metadataAgents: ["metadata-agents"] as const,
   fileScanners: ["file-scanners"] as const,
   folders: (path: string) => ["folders", path] as const,
 
