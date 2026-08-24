@@ -9,7 +9,6 @@ import {
   UserIcon,
   UsersIcon,
   SearchIcon,
-  PencilIcon,
 } from "lucide-react"
 import { FC, useMemo } from "react"
 import { Book, BookUpdate, MetadataBook, UUID } from "@thoth/client"
@@ -17,7 +16,6 @@ import { GenericEdit } from "@thoth/components/generic/generic-edit.tsx"
 import { CoverPicker } from "@thoth/components/input/cover-picker"
 import { ManagedInput } from "@thoth/components/input/managed-input"
 import { MultiCombobox } from "@thoth/components/input/multi-combobox"
-import { Button } from "@thoth/components/ui/button"
 import {
   useAllAuthors,
   useAllGenres,
@@ -64,7 +62,11 @@ const bookToUpdate = (book: Book): BookUpdate => {
   }
 }
 
-export const BookEdit: FC<{ book: Book }> = ({ book }) => {
+export const BookEdit: FC<{ book: Book; isOpen: boolean; onOpenChange: (open: boolean) => void }> = ({
+  book,
+  isOpen,
+  onOpenChange,
+}) => {
   const updateBook = useUpdateBook()
   const form = useForm(bookToUpdate(book), {
     toForm: {
@@ -85,17 +87,8 @@ export const BookEdit: FC<{ book: Book }> = ({ book }) => {
     <GenericEdit
       title="Edit Book"
       form={form}
-      trigger={open => (
-        <Button
-          variant="ghost"
-          size="icon-lg"
-          aria-label="Edit book"
-          onPress={open}
-          className="text-muted-foreground hover:text-foreground size-11 rounded-full sm:size-10"
-        >
-          <PencilIcon className="size-5" />
-        </Button>
-      )}
+      isOpen={isOpen}
+      onOpenChange={onOpenChange}
       onSubmit={async (values, closeModal) => {
         await updateBook.mutateAsync({ libraryId: book.libraryId, id: book.id, data: values })
         closeModal()

@@ -5,13 +5,17 @@ import { DetailList } from "@/components/detail/detail-list.tsx"
 import { HtmlViewer } from "@/components/html-editor"
 import { ResponsiveGrid } from "@/components/responsive-grid"
 import { isDetailedSeries } from "@/models/typeguards"
-import { useSeries } from "@/queries/resources"
+import { useAutoMatchSeries, useSeries } from "@/queries/resources"
 import { pluralize } from "@/utils/utils.ts"
-import { FC } from "react"
+import { FC, useState } from "react"
+import { EditButton } from "@thoth/components/generic/edit-button"
+import { ResourceActions } from "@thoth/components/generic/resource-actions"
 import SeriesEdit from "./series-edit"
 
 export const SeriesDetails: FC<{ seriesId: UUID; libraryId: UUID }> = ({ seriesId, libraryId }) => {
   const { data: series } = useSeries(libraryId, seriesId)
+  const autoMatchSeries = useAutoMatchSeries()
+  const [isEditing, setEditing] = useState(false)
 
   if (!series) return <></>
 
@@ -64,7 +68,13 @@ export const SeriesDetails: FC<{ seriesId: UUID; libraryId: UUID }> = ({ seriesI
       body={
         series.description ? <HtmlViewer className="prose-sm" content={series.description} collapsedLines={3} /> : null
       }
-      actions={detailed ? <SeriesEdit series={series} /> : null}
+      actions={
+        <>
+          {detailed ? <EditButton onPress={() => setEditing(true)} /> : null}
+          <ResourceActions libraryId={libraryId} id={series.id} label="series" autoMatch={autoMatchSeries} />
+          {detailed ? <SeriesEdit series={series} isOpen={isEditing} onOpenChange={setEditing} /> : null}
+        </>
+      }
     >
       {detailed ? (
         <section>

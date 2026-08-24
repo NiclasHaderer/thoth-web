@@ -16,9 +16,10 @@ import {
   TagsIcon,
   UserIcon,
 } from "lucide-react"
-import { FC, ReactNode } from "react"
+import { FC, ReactNode, useState } from "react"
 import { Book, BookDetailed, UUID } from "@thoth/client"
 import { MobileDetailHeader } from "@thoth/components/detail/detail-layout"
+import { ResourceActions } from "@thoth/components/generic/resource-actions"
 import { HtmlViewer } from "@thoth/components/html-editor"
 import { Link } from "@thoth/components/link.tsx"
 import { Button } from "@thoth/components/ui/button"
@@ -26,7 +27,7 @@ import { usePlayState } from "@thoth/hooks/playback"
 import { useBreakpoint } from "@thoth/hooks/use-media-query"
 import { cn } from "@thoth/lib/utils"
 import { isDetailedBook } from "@thoth/models/typeguards"
-import { useBook } from "@thoth/queries/resources"
+import { useAutoMatchBook, useBook } from "@thoth/queries/resources"
 import { toRuntime } from "../track/helpers"
 import { TrackList } from "../track/track-list"
 import { BookEdit } from "./book-edit"
@@ -248,6 +249,8 @@ export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId, lib
   const [isPlaying, setPlaying] = usePlayState()
   const isDesktop = useBreakpoint("md")
   const { data: book } = useBook(libraryId, bookId)
+  const autoMatchBook = useAutoMatchBook()
+  const [isEditing, setEditing] = useState(false)
 
   if (!book) return <></>
 
@@ -282,7 +285,14 @@ export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId, lib
       >
         <CirclePlayIcon className="mr-2" /> Play
       </Button>
-      <BookEdit book={book} />
+      <ResourceActions
+        libraryId={libraryId}
+        id={book.id}
+        label="book"
+        autoMatch={autoMatchBook}
+        onEdit={() => setEditing(true)}
+      />
+      <BookEdit book={book} isOpen={isEditing} onOpenChange={setEditing} />
     </>
   )
 
