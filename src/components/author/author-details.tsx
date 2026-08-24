@@ -3,15 +3,19 @@ import { BookPreview } from "@/components/book/book-preview.tsx"
 import { HtmlViewer } from "@/components/html-editor"
 import { ResponsiveGrid } from "@/components/responsive-grid"
 import { isDetailedAuthor } from "@/models/typeguards"
-import { useAuthor } from "@/queries/resources"
+import { useAuthor, useAutoMatchAuthor } from "@/queries/resources"
 import { formatDate, pluralize } from "@/utils/utils.ts"
 import { UserIcon } from "lucide-react"
-import { FC, Fragment } from "react"
+import { FC, Fragment, useState } from "react"
 import { DetailLayout, detailLabel, entityLink } from "@thoth/components/detail/detail-layout"
+import { EditButton } from "@thoth/components/generic/edit-button"
+import { ResourceActions } from "@thoth/components/generic/resource-actions"
 import AuthorEdit from "./author-edit"
 
 export const AuthorDetails: FC<{ authorId: UUID; libraryId: UUID }> = ({ authorId, libraryId }) => {
   const { data: author } = useAuthor(libraryId, authorId)
+  const autoMatchAuthor = useAutoMatchAuthor()
+  const [isEditing, setEditing] = useState(false)
   if (!author) return <></>
 
   const born = author.birthDate ? formatDate(author.birthDate) : undefined
@@ -53,7 +57,13 @@ export const AuthorDetails: FC<{ authorId: UUID; libraryId: UUID }> = ({ authorI
         ) : null
       }
       body={author.biography ? <HtmlViewer className="prose-sm" content={author.biography} collapsedLines={3} /> : null}
-      actions={<AuthorEdit author={author} />}
+      actions={
+        <>
+          <EditButton onPress={() => setEditing(true)} />
+          <ResourceActions libraryId={libraryId} id={author.id} label="author" autoMatch={autoMatchAuthor} />
+          <AuthorEdit author={author} isOpen={isEditing} onOpenChange={setEditing} />
+        </>
+      }
     >
       {isDetailedAuthor(author) ? (
         <section>

@@ -644,6 +644,22 @@ export const createApi = (
         true
       )
     },
+    autoMatchSeries: (
+      { id, libraryId }: { id: UUID; libraryId: UUID },
+      headers: HeadersInit = {},
+      interceptors: ApiInterceptor[] = []
+    ): Promise<ApiResponse<Series>> => {
+      return _request(
+        `/api/libraries/${libraryId}/series/${id}/automatch`,
+        "POST",
+        "json",
+        _mergeHeaders(defaultHeadersImpl, headers),
+        undefined,
+        [...defaultInterceptors, ...interceptors],
+        executor,
+        true
+      )
+    },
     listAuthors: (
       { limit, offset, order, libraryId }: { limit?: number; offset?: number; order?: Order; libraryId: UUID },
       headers: HeadersInit = {},
@@ -750,6 +766,22 @@ export const createApi = (
       return _request(
         _createUrl(`/api/libraries/${libraryId}/authors/autocomplete`, { q }),
         "GET",
+        "json",
+        _mergeHeaders(defaultHeadersImpl, headers),
+        undefined,
+        [...defaultInterceptors, ...interceptors],
+        executor,
+        true
+      )
+    },
+    autoMatchAuthor: (
+      { id, libraryId }: { id: UUID; libraryId: UUID },
+      headers: HeadersInit = {},
+      interceptors: ApiInterceptor[] = []
+    ): Promise<ApiResponse<Author>> => {
+      return _request(
+        `/api/libraries/${libraryId}/authors/${id}/automatch`,
+        "POST",
         "json",
         _mergeHeaders(defaultHeadersImpl, headers),
         undefined,

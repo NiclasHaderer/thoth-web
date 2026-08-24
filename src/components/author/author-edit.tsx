@@ -35,7 +35,11 @@ const authorToUpdateModel = (author: Author): AuthorUpdate => {
   }
 }
 
-export const AuthorEdit: FC<{ author: Author }> = ({ author }) => {
+export const AuthorEdit: FC<{ author: Author; isOpen: boolean; onOpenChange: (open: boolean) => void }> = ({
+  author,
+  isOpen,
+  onOpenChange,
+}) => {
   const updateAuthor = useUpdateAuthor()
   const form = useForm(authorToUpdateModel(author), {
     toForm: {
@@ -52,6 +56,8 @@ export const AuthorEdit: FC<{ author: Author }> = ({ author }) => {
     <GenericEdit
       title="Edit Author"
       form={form}
+      isOpen={isOpen}
+      onOpenChange={onOpenChange}
       onSubmit={async (values, closeModal) => {
         await updateAuthor.mutateAsync({ libraryId: author.libraryId, id: author.id, data: values })
         closeModal()
