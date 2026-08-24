@@ -12,7 +12,7 @@ import {
   ScanLineIcon,
 } from "lucide-react"
 import { AnimatePresence, motion } from "motion/react"
-import { FC, useEffect, useState } from "react"
+import { FC, useState } from "react"
 import { Api, FileScanner, MetadataLanguage, NamedMetadataAgent, UUID, unwrap } from "@thoth/client"
 import { Dialog } from "@thoth/components/dialog"
 import { FolderManager } from "@thoth/components/file-manager"
@@ -62,10 +62,9 @@ interface LibraryDialogProps {
 
 export const LibraryDialog: FC<LibraryDialogProps> = ({ isOpen, setIsOpen, form, onSubmit }) => {
   const { data: availableAgents } = useQuery({
-    queryKey: queryKeys.metadataAgents(form.fields.language),
-    queryFn: () => unwrap(Api.listMetadataAgents({ language: form.fields.language })),
+    queryKey: queryKeys.metadataAgents,
+    queryFn: () => unwrap(Api.listMetadataAgents()),
     meta: { action: "load metadata agents" },
-    enabled: form.fields.language !== "",
   })
   const { data: fileScanners } = useQuery({
     queryKey: queryKeys.fileScanners,
@@ -74,17 +73,6 @@ export const LibraryDialog: FC<LibraryDialogProps> = ({ isOpen, setIsOpen, form,
   })
   const [browserOpen, setBrowserOpen] = useState(false)
   const isDesktop = useBreakpoint("sm")
-
-  // Drop selected scanners that the newly fetched language no longer offers.
-  useEffect(() => {
-    if (!availableAgents) return
-    const available = new Set(availableAgents.map(a => a.name))
-    const filtered = form.fields.metadataAgents.filter(a => available.has(a.name))
-    if (filtered.length !== form.fields.metadataAgents.length) {
-      form.setFields({ metadataAgents: filtered })
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [availableAgents])
 
   const formFields = (
     <>
@@ -122,7 +110,7 @@ export const LibraryDialog: FC<LibraryDialogProps> = ({ isOpen, setIsOpen, form,
         name="metadataAgents"
         icon={<RadarIcon />}
         multiple={true}
-        options={availableAgents?.map(a => ({ value: a, label: a.name })) ?? []}
+        options={availableAgents?.map(agent => ({ value: { name: agent.name }, label: agent.name })) ?? []}
       />
       <SelectLine
         labelClassName="w-28"
