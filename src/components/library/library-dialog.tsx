@@ -5,6 +5,7 @@ import {
   SparklesIcon,
   XIcon,
   FolderIcon,
+  GlobeIcon,
   LanguagesIcon,
   LibraryIcon,
   ChevronLeftIcon,
@@ -13,7 +14,7 @@ import {
 } from "lucide-react"
 import { AnimatePresence, motion } from "motion/react"
 import { FC, useState } from "react"
-import { Api, FileScanner, MetadataLanguage, NamedMetadataAgent, UUID, unwrap } from "@thoth/client"
+import { Api, FileScanner, MetadataLanguage, MetadataRegion, NamedMetadataAgent, UUID, unwrap } from "@thoth/client"
 import { Dialog } from "@thoth/components/dialog"
 import { FolderManager } from "@thoth/components/file-manager"
 import { InputError } from "@thoth/components/input/input-error"
@@ -41,10 +42,24 @@ const LANGUAGES = Object.keys({
   Russian: 0,
 } satisfies Record<MetadataLanguage, unknown>) as MetadataLanguage[]
 
+const REGIONS = Object.keys({
+  AU: 0,
+  CA: 0,
+  DE: 0,
+  ES: 0,
+  FR: 0,
+  IN: 0,
+  IT: 0,
+  JP: 0,
+  US: 0,
+  UK: 0,
+} satisfies Record<MetadataRegion, unknown>) as MetadataRegion[]
+
 export type LibraryFormValues = {
   id: UUID | undefined
   name: string
-  language: string
+  language: MetadataLanguage | ""
+  region: MetadataRegion | ""
   preferEmbeddedMetadata: boolean
   folders: string[]
   metadataAgents: NamedMetadataAgent[]
@@ -91,6 +106,14 @@ export const LibraryDialog: FC<LibraryDialogProps> = ({ isOpen, setIsOpen, form,
         name="language"
         title={"Language"}
         options={LANGUAGES}
+      />
+      <SelectLine
+        labelClassName="w-28"
+        label="Region"
+        icon={<GlobeIcon />}
+        name="region"
+        title={"Region"}
+        options={REGIONS}
       />
       <SelectLine
         labelClassName="w-28"

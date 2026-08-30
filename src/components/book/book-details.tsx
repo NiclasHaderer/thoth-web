@@ -257,7 +257,7 @@ export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId, lib
   const currentId = current?.book.id === bookId ? current.id : undefined
 
   const tracks = isDetailedBook(book) ? book.tracks : []
-  const totalDuration = tracks.reduce((sum, track) => sum + track.duration, 0)
+  const totalDuration = tracks.reduce((sum, track) => sum + track.durationMs / 1000, 0)
 
   const startPlayback = (position: number) => {
     const bookTracks = (book as BookDetailed).tracks

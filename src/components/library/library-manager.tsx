@@ -1,6 +1,6 @@
 import { PlusIcon } from "lucide-react"
 import { useMemo, useState } from "react"
-import { FileScanner, Library, NamedMetadataAgent, UUID } from "@thoth/client"
+import { FileScanner, Library, MetadataLanguage, MetadataRegion, NamedMetadataAgent, UUID } from "@thoth/client"
 import { DataTable } from "@thoth/components/data-table/data-table"
 import { DataTableToolbar } from "@thoth/components/data-table/data-table-toolbar"
 import { Dialog } from "@thoth/components/dialog"
@@ -23,7 +23,8 @@ export const LibraryManager = () => {
     {
       id: undefined as undefined | UUID,
       name: "",
-      language: "",
+      language: "" as MetadataLanguage | "",
+      region: "" as MetadataRegion | "",
       preferEmbeddedMetadata: false as boolean,
       folders: [] as string[],
       metadataAgents: [] as NamedMetadataAgent[],
@@ -35,6 +36,7 @@ export const LibraryManager = () => {
       validate: {
         name: (name: string) => name.length > 0 || "Name is required",
         language: (language: string) => language.length > 0 || "Language is required",
+        region: (region: string) => region.length > 0 || "Region is required",
         folders: (folders: string[]) => folders.length > 0 || "At least one folder is required",
         fileScanners: (fileScanners: FileScanner[]) => {
           return fileScanners.length > 0 || "At least one file scanner is required"
@@ -43,10 +45,12 @@ export const LibraryManager = () => {
     }
   )
 
-  const onSubmit = (values: LibraryFormValues) => {
+  const onSubmit = ({ language, region, ...values }: LibraryFormValues) => {
+    if (!language || !region) return
     const handlers = { onSuccess: () => setIsOpen(false) }
-    if (values.mode === "create") createLibrary.mutate(values, handlers)
-    else updateLibrary.mutate({ id: values.id!, library: values }, handlers)
+    const library = { ...values, language, region }
+    if (values.mode === "create") createLibrary.mutate(library, handlers)
+    else updateLibrary.mutate({ id: values.id!, library }, handlers)
   }
 
   const openEdit = (library: Library) => {

@@ -8,7 +8,7 @@ export type TrackState = "playing" | "paused" | "idle"
 
 interface TrackProps {
   title: string
-  duration: number
+  durationMs: number
   index: number
   trackNr?: number | null
   state: TrackState
@@ -28,7 +28,7 @@ const Equalizer: FC<{ animated: boolean }> = ({ animated }) => (
   </span>
 )
 
-export const Track: FC<TrackProps> = ({ title, duration, trackNr, index, state, startPlayback, togglePlayback }) => {
+export const Track: FC<TrackProps> = ({ title, durationMs, trackNr, index, state, startPlayback, togglePlayback }) => {
   const active = state === "playing" || state === "paused"
 
   return (
@@ -55,7 +55,7 @@ export const Track: FC<TrackProps> = ({ title, duration, trackNr, index, state, 
 
         <span className={cn("min-w-0 grow truncate text-sm sm:text-base", active && "font-medium")}>{title}</span>
 
-        <span className="text-muted-foreground shrink-0 text-xs tabular-nums">{toReadableTime(duration)}</span>
+        <span className="text-muted-foreground shrink-0 text-xs tabular-nums">{toReadableTime(durationMs / 1000)}</span>
 
         <span
           aria-hidden

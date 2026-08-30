@@ -131,7 +131,7 @@ export const useSkip = () =>
         return
       }
       state.previous()
-      seekWhenLoaded(previousTrack.duration + target)
+      seekWhenLoaded(previousTrack.durationMs / 1000 + target)
       return
     }
 
@@ -246,7 +246,7 @@ const writeResume = () => {
   const state = usePlaybackState.getState()
   if (!state.current) return
   const media = audio()
-  const position = state.history.reduce((sum, track) => sum + track.duration, 0) + media.currentTime
+  const position = state.history.reduce((sum, track) => sum + track.durationMs / 1000, 0) + media.currentTime
   const stored: StoredPlayback = {
     libraryId: state.current.libraryId,
     bookId: state.current.book.id,
@@ -315,7 +315,8 @@ export const useRestorePlayback = () => {
 
         let index = 0
         let offset = stored.position
-        while (index < tracks.length - 1 && offset >= tracks[index].duration) offset -= tracks[index++].duration
+        while (index < tracks.length - 1 && offset >= tracks[index].durationMs / 1000)
+          offset -= tracks[index++].durationMs / 1000
 
         const media = audio()
         media.defaultPlaybackRate = stored.rate
