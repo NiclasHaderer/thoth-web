@@ -89,9 +89,14 @@ export interface FileScanner {
   name: string
 }
 
+export type MetadataLanguage =
+  "Spanish" | "English" | "German" | "French" | "Italian" | "Danish" | "Finnish" | "Norwegian" | "Swedish" | "Russian"
+
 export interface NamedMetadataAgent {
   name: string
 }
+
+export type MetadataRegion = "AU" | "CA" | "DE" | "ES" | "FR" | "IN" | "IT" | "JP" | "US" | "UK"
 
 export interface Library {
   bookCount: number
@@ -99,37 +104,40 @@ export interface Library {
   folders: Array<string>
   icon: string | undefined
   id: UUID
-  language: string
+  language: MetadataLanguage
   metadataAgents: Array<NamedMetadataAgent>
   name: string
   preferEmbeddedMetadata: boolean
+  region: MetadataRegion
 }
 
 export interface UpdateLibrary {
   fileScanners: Array<FileScanner>
   folders: Array<string>
   icon: string | undefined
-  language: string
+  language: MetadataLanguage
   metadataAgents: Array<NamedMetadataAgent>
   name: string
   preferEmbeddedMetadata: boolean
+  region: MetadataRegion
 }
 
 export interface PartialUpdateLibrary {
   fileScanners: Array<FileScanner> | undefined
   folders: Array<string> | undefined
   icon: string | undefined
-  language: string | undefined
+  language: MetadataLanguage | undefined
   metadataAgents: Array<NamedMetadataAgent> | undefined
   name: string | undefined
   preferEmbeddedMetadata: boolean | undefined
+  region: MetadataRegion | undefined
 }
 
 export interface Author {
   biography: string | undefined
-  birthDate: string | undefined
+  birthDate: number | undefined
   bornIn: string | undefined
-  deathDate: string | undefined
+  deathDate: number | undefined
   id: UUID
   imageID: UUID | undefined
   libraryId: UUID
@@ -149,22 +157,27 @@ export interface TitledId {
   title: string
 }
 
+export type PlayStatus = "UNPLAYED" | "IN_PROGRESS" | "FINISHED"
+
 export interface Book {
   authors: Array<NamedId>
   coverID: UUID | undefined
   description: string | undefined
+  durationMs: number
   genres: Array<string>
   id: UUID
   isbn: string | undefined
-  language: string | undefined
+  language: MetadataLanguage | undefined
   libraryId: UUID
   narrators: Array<string>
+  positionMs: number
   provider: string | undefined
   providerID: string | undefined
   providerRating: number | undefined
   publisher: string | undefined
-  releaseDate: string | undefined
+  releaseDate: number | undefined
   series: Array<TitledId>
+  status: PlayStatus
   title: string
 }
 
@@ -191,7 +204,7 @@ export interface LibrarySearchResult {
 
 export interface MetadataAgentApiModel {
   name: string
-  supportedCountryCodes: Array<string>
+  supportedRegions: Array<MetadataRegion>
 }
 
 export interface PaginatedResponse<T> {
@@ -211,7 +224,7 @@ export interface Position {
 
 export interface Track {
   book: TitledId
-  duration: number
+  durationMs: number
   fileModifiedAt: number
   id: UUID
   title: string
@@ -228,13 +241,13 @@ export interface BookUpdate {
   description: string | undefined
   genres: Array<string> | undefined
   isbn: string | undefined
-  language: string | undefined
+  language: MetadataLanguage | undefined
   narrators: Array<string> | undefined
   provider: string | undefined
   providerID: string | undefined
   providerRating: number | undefined
   publisher: string | undefined
-  releaseDate: string | undefined
+  releaseDate: number | undefined
   series: Array<UUID> | undefined
   title: string | undefined
 }
@@ -276,10 +289,10 @@ export interface AuthorCreate {
 
 export interface AuthorUpdate {
   biography: string | undefined
-  birthDate: string | undefined
+  birthDate: number | undefined
   books: Array<UUID> | undefined
   bornIn: string | undefined
-  deathDate: string | undefined
+  deathDate: number | undefined
   image: string | undefined
   name: string | undefined
   provider: string | undefined
@@ -318,6 +331,15 @@ export interface MetadataSearchAuthor {
   name: string | undefined
 }
 
+export interface MetadataAuthor extends MetadataSearchAuthor {
+  biography: string | undefined
+  birthDate: number | undefined
+  bornIn: string | undefined
+  deathDate: number | undefined
+  imageURL: string | undefined
+  website: string | undefined
+}
+
 export interface MetadataBookSeries {
   id: MetadataAgentID
   index: number | undefined
@@ -329,26 +351,12 @@ export interface MetadataSearchBook {
   authors: Array<MetadataSearchAuthor> | undefined
   coverURL: string | undefined
   id: MetadataAgentID
-  language: string | undefined
+  language: MetadataLanguage | undefined
   link: string | undefined
   narrators: Array<string>
-  releaseDate: string | undefined
+  releaseDate: number | undefined
   series: Array<MetadataBookSeries>
   title: string | undefined
-}
-
-export type MetadataLanguage =
-  "Spanish" | "English" | "German" | "French" | "Italian" | "Danish" | "Finnish" | "Norwegian" | "Swedish" | "Russian"
-
-export type MetadataSearchCount = "Small" | "Medium" | "Large" | "ExtraLarge"
-
-export interface MetadataAuthor extends MetadataSearchAuthor {
-  biography: string | undefined
-  birthDate: string | undefined
-  bornIn: string | undefined
-  deathDate: string | undefined
-  imageURL: string | undefined
-  website: string | undefined
 }
 
 export interface MetadataBook extends MetadataSearchBook {
@@ -357,6 +365,8 @@ export interface MetadataBook extends MetadataSearchBook {
   providerRating: number | undefined
   publisher: string | undefined
 }
+
+export type MetadataSearchCount = "Small" | "Medium" | "Large" | "ExtraLarge"
 
 export interface MetadataSeries {
   authors: Array<string> | undefined
@@ -368,6 +378,25 @@ export interface MetadataSeries {
   primaryWorks: number | undefined
   title: string | undefined
   totalBooks: number | undefined
+}
+
+export interface ProgressUpdate {
+  positionMs: number
+}
+
+export interface SetFinished {
+  finished: boolean
+}
+
+export interface SetDismissed {
+  dismissed: boolean
+}
+
+export interface ListeningHistoryEntry {
+  at: number
+  book: Book
+  id: UUID
+  positionMs: number
 }
 
 export interface ThirdPartyLicense {
