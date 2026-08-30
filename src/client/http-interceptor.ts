@@ -62,7 +62,7 @@ const inflateBook = (book: BookDetailed, count: number): BookDetailed => ({
   })).map((track, index) => ({
     ...track,
     trackNr: index + 1,
-    duration: index < book.tracks.length ? track.duration : 900 + ((index * 173) % 2400),
+    durationMs: index < book.tracks.length ? track.durationMs : (900 + ((index * 173) % 2400)) * 1000,
   })),
 })
 
