@@ -47,8 +47,8 @@ export const AuthorEdit: FC<{ author: Author; isOpen: boolean; onOpenChange: (op
       deathDate: value => value && toFormDate(value),
     },
     fromForm: {
-      birthDate: value => fromFormDate(value) as unknown as string,
-      deathDate: value => fromFormDate(value) as unknown as string,
+      birthDate: value => fromFormDate(value) ?? undefined,
+      deathDate: value => fromFormDate(value) ?? undefined,
     },
   })
 

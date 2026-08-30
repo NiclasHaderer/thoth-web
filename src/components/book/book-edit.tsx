@@ -74,7 +74,7 @@ export const BookEdit: FC<{ book: Book; isOpen: boolean; onOpenChange: (open: bo
       narrators: value => value?.join(", "),
     },
     fromForm: {
-      releaseDate: value => fromFormDate(value) as unknown as string,
+      releaseDate: value => fromFormDate(value) ?? undefined,
       narrators: value =>
         value
           ?.split(",")
