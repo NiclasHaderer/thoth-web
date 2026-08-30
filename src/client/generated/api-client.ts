@@ -21,12 +21,14 @@ import type {
   LibraryPermissionLevel,
   LibraryPermissions,
   LibrarySearchResult,
+  ListeningHistoryEntry,
   MetadataAgentApiModel,
   MetadataAgentID,
   MetadataAuthor,
   MetadataBook,
   MetadataBookSeries,
   MetadataLanguage,
+  MetadataRegion,
   MetadataSearchAuthor,
   MetadataSearchBook,
   MetadataSearchCount,
@@ -38,11 +40,15 @@ import type {
   Order,
   PaginatedResponse,
   PartialUpdateLibrary,
+  PlayStatus,
   Position,
+  ProgressUpdate,
   Series,
   SeriesCreate,
   SeriesDetailed,
   SeriesUpdate,
+  SetDismissed,
+  SetFinished,
   ThirdPartyLicense,
   ThothAccessToken,
   ThothChangePassword,
@@ -854,45 +860,6 @@ export const createApi = (
         true
       )
     },
-    searchMetadata: (
-      {
-        author,
-        keywords,
-        language,
-        narrator,
-        pageSize,
-        title,
-        libraryId,
-      }: {
-        author?: string
-        keywords?: string
-        language?: MetadataLanguage
-        narrator?: string
-        pageSize?: MetadataSearchCount
-        title?: string
-        libraryId: UUID
-      },
-      headers: HeadersInit = {},
-      interceptors: ApiInterceptor[] = []
-    ): Promise<ApiResponse<Array<MetadataSearchBook>>> => {
-      return _request(
-        _createUrl(`/api/libraries/${libraryId}/metadata/search`, {
-          author,
-          keywords,
-          language,
-          narrator,
-          pageSize,
-          title,
-        }),
-        "GET",
-        "json",
-        _mergeHeaders(defaultHeadersImpl, headers),
-        undefined,
-        [...defaultInterceptors, ...interceptors],
-        executor,
-        true
-      )
-    },
     getAuthorMetadata: (
       { provider, id, libraryId }: { provider: string; id: string; libraryId: UUID },
       headers: HeadersInit = {},
@@ -942,12 +909,35 @@ export const createApi = (
       )
     },
     searchBookMetadata: (
-      { authorName, q, libraryId }: { authorName?: string; q: string; libraryId: UUID },
+      {
+        authorName,
+        keywords,
+        language,
+        narrator,
+        pageSize,
+        q,
+        libraryId,
+      }: {
+        authorName?: string
+        keywords?: string
+        language?: MetadataLanguage
+        narrator?: string
+        pageSize?: MetadataSearchCount
+        q: string
+        libraryId: UUID
+      },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<Array<MetadataBook>>> => {
       return _request(
-        _createUrl(`/api/libraries/${libraryId}/metadata/book/search`, { authorName, q }),
+        _createUrl(`/api/libraries/${libraryId}/metadata/book/search`, {
+          authorName,
+          keywords,
+          language,
+          narrator,
+          pageSize,
+          q,
+        }),
         "GET",
         "json",
         _mergeHeaders(defaultHeadersImpl, headers),
@@ -980,6 +970,89 @@ export const createApi = (
     ): Promise<ApiResponse<Array<MetadataSeries>>> => {
       return _request(
         _createUrl(`/api/libraries/${libraryId}/metadata/series/search`, { authorName, q }),
+        "GET",
+        "json",
+        _mergeHeaders(defaultHeadersImpl, headers),
+        undefined,
+        [...defaultInterceptors, ...interceptors],
+        executor,
+        true
+      )
+    },
+    setBookProgress: (
+      { id, libraryId }: { id: UUID; libraryId: UUID },
+      body: ProgressUpdate,
+      headers: HeadersInit = {},
+      interceptors: ApiInterceptor[] = []
+    ): Promise<ApiResponse<Empty>> => {
+      return _request(
+        `/api/libraries/${libraryId}/books/${id}/progress`,
+        "PUT",
+        "text",
+        _mergeHeaders(defaultHeadersImpl, headers),
+        body,
+        [...defaultInterceptors, ...interceptors],
+        executor,
+        true
+      )
+    },
+    setBookFinished: (
+      { id, libraryId }: { id: UUID; libraryId: UUID },
+      body: SetFinished,
+      headers: HeadersInit = {},
+      interceptors: ApiInterceptor[] = []
+    ): Promise<ApiResponse<Empty>> => {
+      return _request(
+        `/api/libraries/${libraryId}/books/${id}/progress/finished`,
+        "PUT",
+        "text",
+        _mergeHeaders(defaultHeadersImpl, headers),
+        body,
+        [...defaultInterceptors, ...interceptors],
+        executor,
+        true
+      )
+    },
+    setBookDismissed: (
+      { id, libraryId }: { id: UUID; libraryId: UUID },
+      body: SetDismissed,
+      headers: HeadersInit = {},
+      interceptors: ApiInterceptor[] = []
+    ): Promise<ApiResponse<Empty>> => {
+      return _request(
+        `/api/libraries/${libraryId}/books/${id}/progress/dismissed`,
+        "PUT",
+        "text",
+        _mergeHeaders(defaultHeadersImpl, headers),
+        body,
+        [...defaultInterceptors, ...interceptors],
+        executor,
+        true
+      )
+    },
+    getContinueListening: (
+      { limit }: { limit?: number },
+      headers: HeadersInit = {},
+      interceptors: ApiInterceptor[] = []
+    ): Promise<ApiResponse<Array<Book>>> => {
+      return _request(
+        _createUrl(`/api/me/continue-listening`, { limit }),
+        "GET",
+        "json",
+        _mergeHeaders(defaultHeadersImpl, headers),
+        undefined,
+        [...defaultInterceptors, ...interceptors],
+        executor,
+        true
+      )
+    },
+    getListeningHistory: (
+      { limit, offset }: { limit?: number; offset?: number },
+      headers: HeadersInit = {},
+      interceptors: ApiInterceptor[] = []
+    ): Promise<ApiResponse<PaginatedResponse<ListeningHistoryEntry>>> => {
+      return _request(
+        _createUrl(`/api/me/history`, { limit, offset }),
         "GET",
         "json",
         _mergeHeaders(defaultHeadersImpl, headers),
