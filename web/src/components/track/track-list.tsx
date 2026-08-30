@@ -6,7 +6,7 @@ import { Track } from "./track"
 export interface TrackListEntry {
   id: UUID
   title: string
-  duration: number
+  durationMs: number
   trackNr?: number | null
 }
 
