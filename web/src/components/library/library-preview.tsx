@@ -4,7 +4,7 @@ import { AuthorPreview } from "@thoth/components/author/author-preview.tsx"
 import { BookPreview } from "@thoth/components/book/book-preview.tsx"
 import { ScrollRow } from "@thoth/components/scroll-row"
 import { SeriesPreview } from "@thoth/components/series/series-preview.tsx"
-import { useAuthorsPreview, useBooksPreview, useSeriesPreview } from "@thoth/queries/resources"
+import { useAuthorsPreview, useBooksPreview, useContinueListening, useSeriesPreview } from "@thoth/queries/resources"
 
 const PREVIEW_COUNT = 20
 
@@ -12,9 +12,18 @@ export const LibraryPreview: FC<{ libraryId: UUID }> = ({ libraryId }) => {
   const libraryBooks = useBooksPreview(libraryId)
   const librarySeries = useSeriesPreview(libraryId)
   const libraryAuthors = useAuthorsPreview(libraryId)
+  const continueListening = useContinueListening()
 
   return (
     <div>
+      {continueListening.length > 0 ? (
+        <ScrollRow title="Continue listening">
+          {continueListening.map(book => (
+            <BookPreview size="small" {...book} className="mx-3 align-top first:ml-0!" key={book.id} />
+          ))}
+        </ScrollRow>
+      ) : null}
+
       <ScrollRow title="Books" href={`/libraries/${libraryId}/books`}>
         {libraryBooks.slice(0, PREVIEW_COUNT).map((book, index) => (
           <BookPreview size="small" {...book} className="mx-3 align-top first:ml-0!" key={index} />
