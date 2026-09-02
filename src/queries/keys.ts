@@ -9,6 +9,7 @@ const libraryScope = (libraryId: UUID) => ["library", libraryId] as const
 export const queryKeys = {
   currentUser: ["current-user"] as const,
   users: ["users"] as const,
+  continueListening: ["continue-listening"] as const,
 
   libraries: ["libraries"] as const,
 

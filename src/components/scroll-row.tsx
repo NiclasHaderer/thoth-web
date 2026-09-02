@@ -3,7 +3,7 @@ import { FC, PropsWithChildren, useEffect, useRef, useState } from "react"
 import { Link } from "@thoth/components/link.tsx"
 import { Button } from "@thoth/components/ui/button"
 
-export const ScrollRow: FC<PropsWithChildren<{ title: string; href: string }>> = ({ title, href, children }) => {
+export const ScrollRow: FC<PropsWithChildren<{ title: string; href?: string }>> = ({ title, href, children }) => {
   const scroller = useRef<HTMLDivElement>(null)
   const content = useRef<HTMLDivElement>(null)
   const [atStart, setAtStart] = useState(true)
@@ -40,12 +40,16 @@ export const ScrollRow: FC<PropsWithChildren<{ title: string; href: string }>> =
   return (
     <>
       <div className="mt-8 mb-2 flex items-center gap-1 first:mt-0">
-        <Link
-          className="block w-fit text-xl font-bold decoration-1 hover:underline focus-visible:underline focus-visible:outline-none"
-          href={href}
-        >
-          {title}
-        </Link>
+        {href ? (
+          <Link
+            className="block w-fit text-xl font-bold decoration-1 hover:underline focus-visible:underline focus-visible:outline-none"
+            href={href}
+          >
+            {title}
+          </Link>
+        ) : (
+          <span className="block w-fit text-xl font-bold">{title}</span>
+        )}
         {scrollable ? (
           <>
             <Button

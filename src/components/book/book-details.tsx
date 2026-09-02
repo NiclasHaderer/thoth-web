@@ -5,6 +5,8 @@ import {
   BarcodeIcon,
   BuildingIcon,
   CalendarIcon,
+  CheckIcon,
+  CircleCheckIcon,
   CirclePlayIcon,
   ClockIcon,
   ImageOffIcon,
@@ -12,23 +14,25 @@ import {
   LayersIcon,
   LucideIcon,
   MicIcon,
+  RotateCcwIcon,
   StarIcon,
   TagsIcon,
   UserIcon,
 } from "lucide-react"
 import { FC, ReactNode, useState } from "react"
-import { Book, BookDetailed, UUID } from "@thoth/client"
+import { Book, UUID } from "@thoth/client"
 import { MobileDetailHeader } from "@thoth/components/detail/detail-layout"
 import { ResourceActions } from "@thoth/components/generic/resource-actions"
 import { HtmlViewer } from "@thoth/components/html-editor"
 import { Link } from "@thoth/components/link.tsx"
 import { Button } from "@thoth/components/ui/button"
-import { usePlayState } from "@thoth/hooks/playback"
+import { DropdownMenuItem } from "@thoth/components/ui/dropdown-menu"
+import { startBookAt, startBookTrack, useBookProgress, usePlayState } from "@thoth/hooks/playback"
 import { useBreakpoint } from "@thoth/hooks/use-media-query"
 import { cn } from "@thoth/lib/utils"
 import { isDetailedBook } from "@thoth/models/typeguards"
-import { useAutoMatchBook, useBook } from "@thoth/queries/resources"
-import { toRuntime } from "../track/helpers"
+import { useAutoMatchBook, useBook, useResetBookProgress, useSetBookFinished } from "@thoth/queries/resources"
+import { toReadableTime, toRuntime } from "../track/helpers"
 import { TrackList } from "../track/track-list"
 import { BookEdit } from "./book-edit"
 
@@ -57,6 +61,17 @@ const Rating: FC<{ value: number }> = ({ value }) => {
   )
 }
 
+const BookProgress: FC<{ book: Book; className?: string }> = ({ book, className }) => {
+  const { inProgress, remainingMs } = useBookProgress(book)
+
+  // Height is reserved even without progress so starting playback does not shift the layout.
+  return (
+    <div className={cn("text-muted-foreground min-h-[1lh] text-xs whitespace-nowrap", className)}>
+      {inProgress ? `${toReadableTime(remainingMs / 1000)} left` : null}
+    </div>
+  )
+}
+
 const MetaRow: FC<{ icon: LucideIcon; children: ReactNode }> = ({ icon: Icon, children }) => (
   <div className="text-muted-foreground flex min-w-0 items-baseline gap-2 text-sm">
     <Icon aria-hidden className="size-4 shrink-0 translate-y-0.5" />
@@ -76,23 +91,48 @@ interface CoverProps {
   className: string
 }
 
-const Cover: FC<CoverProps> = ({ book, className }) =>
-  book.coverID ? (
-    <img
-      className={cn("border-border rounded-lg border object-cover shadow-lg shadow-black/25", className)}
-      alt={book.title}
-      src={`/api/stream/images/${book.coverID}`}
-    />
-  ) : (
-    <div
-      className={cn(
-        "border-border text-muted-foreground/60 flex aspect-square items-center justify-center rounded-lg border",
-        className
-      )}
-    >
-      <ImageOffIcon className="size-2/5" />
-    </div>
+// Isolated so live position updates only re-render the overlay, not the whole page.
+const CoverIndicators: FC<{ book: Book }> = ({ book }) => {
+  const { finished, inProgress, fraction } = useBookProgress(book)
+
+  return (
+    <>
+      {finished ? (
+        <div
+          aria-label="Played"
+          className="absolute top-0 right-0 flex size-11 items-center justify-center rounded-bl-lg bg-black/55 text-white/90 backdrop-blur-sm"
+        >
+          <CheckIcon className="size-5" strokeWidth={2.5} />
+        </div>
+      ) : null}
+      {inProgress ? (
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1 bg-black/60 backdrop-blur-sm">
+          <div
+            className="bg-primary h-full transition-[width] duration-300 ease-linear"
+            style={{ width: `${fraction * 100}%` }}
+          />
+        </div>
+      ) : null}
+    </>
   )
+}
+
+const Cover: FC<CoverProps> = ({ book, className }) => (
+  <div className={cn("relative overflow-hidden rounded-lg", className)}>
+    {book.coverID ? (
+      <img
+        className="border-border w-full rounded-lg border object-cover shadow-lg shadow-black/25"
+        alt={book.title}
+        src={`/api/stream/images/${book.coverID}`}
+      />
+    ) : (
+      <div className="border-border text-muted-foreground/60 flex aspect-square w-full items-center justify-center rounded-lg border">
+        <ImageOffIcon className="size-2/5" />
+      </div>
+    )}
+    <CoverIndicators book={book} />
+  </div>
+)
 
 interface MetaProps {
   book: Book
@@ -177,7 +217,10 @@ interface HeaderProps extends MetaProps {
 
 const DesktopHeader: FC<HeaderProps> = ({ book, libraryId, runtime, actions }) => (
   <div className="grid grid-cols-[auto_minmax(0,1fr)] items-start gap-x-8 gap-y-5">
-    <Cover book={book} className="w-56 shrink-0 self-center lg:w-64" />
+    <div className="flex w-56 shrink-0 flex-col gap-2 self-center lg:w-64">
+      <Cover book={book} className="w-full" />
+      <BookProgress book={book} className="text-center" />
+    </div>
 
     <div className="flex min-w-0 flex-col gap-2">
       <h1 className="min-w-0 text-4xl font-bold tracking-tight text-balance">{book.title}</h1>
@@ -221,6 +264,7 @@ const MobileHeader: FC<HeaderProps> = ({ book, libraryId, runtime, tracks, actio
           {book.providerRating ? <Rating value={book.providerRating} /> : null}
           {runtime ? <span>{toRuntime(runtime)}</span> : null}
           {tracksLabel ? <span>{tracksLabel}</span> : null}
+          <BookProgress book={book} />
         </>
       }
       revealBottom={
@@ -244,46 +288,58 @@ const MobileHeader: FC<HeaderProps> = ({ book, libraryId, runtime, tracks, actio
 }
 
 export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId, libraryId }) => {
-  const play = usePlaybackState(state => state.start)
-  const current = usePlaybackState(state => state.current)
+  const currentTrack = usePlaybackState(state => state.current)
   const [isPlaying, setPlaying] = usePlayState()
   const isDesktop = useBreakpoint("md")
   const { data: book } = useBook(libraryId, bookId)
   const autoMatchBook = useAutoMatchBook()
+  const setFinished = useSetBookFinished()
+  const resetProgress = useResetBookProgress()
   const [isEditing, setEditing] = useState(false)
 
   if (!book) return <></>
 
-  const currentId = current?.book.id === bookId ? current.id : undefined
+  const isCurrentBook = currentTrack?.book.id === bookId
+  const currentTrackId = isCurrentBook ? currentTrack?.id : undefined
 
   const tracks = isDetailedBook(book) ? book.tracks : []
   const totalDuration = tracks.reduce((sum, track) => sum + track.durationMs / 1000, 0)
 
-  const startPlayback = (position: number) => {
-    const bookTracks = (book as BookDetailed).tracks
-
-    const start = { ...bookTracks[position], authors: book.authors, coverID: book.coverID, libraryId }
-    const queue = bookTracks.slice(position + 1, bookTracks.length).map(q => ({
-      ...q,
-      authors: book.authors,
-      coverID: book.coverID,
-      libraryId,
-    }))
-    const history = bookTracks
-      .slice(0, position)
-      .map(q => ({ ...q, authors: book.authors, coverID: book.coverID, libraryId }))
-
-    play(start, queue, history)
+  const startPlayback = (index: number) => {
+    if (isDetailedBook(book)) startBookTrack(book, libraryId, index)
   }
+
+  const inProgress = book.status === "IN_PROGRESS" && book.durationMs > 0
+  const isFinished = book.status === "FINISHED"
 
   const actions = (
     <>
       <Button
-        onPress={() => startPlayback(0)}
+        onPress={() => {
+          if (isCurrentBook) return setPlaying(true)
+          if (isDetailedBook(book)) startBookAt(book, libraryId, inProgress ? book.positionMs / 1000 : 0)
+        }}
         isDisabled={tracks.length === 0}
         className="h-11 grow px-5 md:h-10 md:grow-0"
       >
-        <CirclePlayIcon className="mr-2" /> Play
+        <CirclePlayIcon className="mr-2" /> {isCurrentBook || inProgress ? "Resume" : "Play"}
+      </Button>
+      <Button
+        variant="ghost"
+        size="icon-lg"
+        aria-label={isFinished ? "Mark as unplayed" : "Mark as played"}
+        isDisabled={setFinished.isPending}
+        onPress={() => setFinished.mutate({ libraryId, id: book.id, finished: !isFinished })}
+        className={cn(
+          "aspect-square h-11 w-auto! shrink-0 grow-0! rounded-full px-0! sm:h-10",
+          isFinished ? "text-primary" : "text-muted-foreground hover:text-foreground"
+        )}
+      >
+        {isFinished ? (
+          <CircleCheckIcon className="[&>path]:stroke-background size-5 fill-current" />
+        ) : (
+          <CircleCheckIcon className="size-5" />
+        )}
       </Button>
       <ResourceActions
         libraryId={libraryId}
@@ -291,7 +347,20 @@ export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId, lib
         label="book"
         autoMatch={autoMatchBook}
         onEdit={() => setEditing(true)}
-      />
+      >
+        <DropdownMenuItem
+          className="gap-2.5 rounded-lg px-2.5 py-2 text-sm"
+          isDisabled={resetProgress.isPending || (book.positionMs === 0 && book.status === "UNPLAYED")}
+          onAction={() => {
+            resetProgress.mutate({ libraryId, id: book.id })
+            // Otherwise the running playback keeps its position and syncs it straight back.
+            if (isCurrentBook && isDetailedBook(book)) startBookAt(book, libraryId, 0, isPlaying)
+          }}
+        >
+          <RotateCcwIcon className="text-muted-foreground size-5" />
+          Reset progress
+        </DropdownMenuItem>
+      </ResourceActions>
       <BookEdit book={book} isOpen={isEditing} onOpenChange={setEditing} />
     </>
   )
@@ -308,7 +377,7 @@ export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId, lib
           label={pluralize(tracks.length, "Track")}
           trailing={totalDuration ? toRuntime(totalDuration) : undefined}
           tracks={tracks}
-          activeId={currentId}
+          activeId={currentTrackId}
           playing={isPlaying}
           onStart={startPlayback}
           onToggle={setPlaying}
