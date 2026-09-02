@@ -1,15 +1,9 @@
-import { Api, UUID, unwrap } from "@/client"
+import { UUID } from "@/client"
 import { NameBooks } from "@/components/name-books.tsx"
-import { queryKeys } from "@/queries/keys.ts"
-import { useQuery } from "@tanstack/react-query"
+import { useNarrator } from "@/queries/resources"
 
 export const NarratorOutlet = ({ libraryId, narratorName }: { libraryId: UUID; narratorName: string }) => {
-  const name = decodeURIComponent(narratorName)
-  const { data } = useQuery({
-    queryKey: queryKeys.nameDetail("narrators", libraryId, name),
-    queryFn: () => unwrap(Api.getNarrator({ libraryId, name: encodeURIComponent(name) })),
-    meta: { action: "load the narrator" },
-  })
+  const { data } = useNarrator(libraryId, decodeURIComponent(narratorName))
 
   if (!data) return null
 

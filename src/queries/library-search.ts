@@ -1,7 +1,6 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query"
 import { useEffect, useState } from "react"
-import { Api, unwrap } from "@thoth/client"
-import { queryKeys } from "./keys"
+import { queries } from "./queries"
 
 export const useLibrarySearch = (debounceMs = 100) => {
   const [query, setQuery] = useState("")
@@ -13,9 +12,7 @@ export const useLibrarySearch = (debounceMs = 100) => {
   }, [query, debounceMs])
 
   const { data } = useQuery({
-    queryKey: queryKeys.librarySearch(debounced),
-    queryFn: () => unwrap(Api.searchInAllLibraries({ q: debounced })),
-    meta: { action: "run the search" },
+    ...queries.librarySearch(debounced),
     enabled: debounced.trim() !== "",
     placeholderData: keepPreviousData,
   })

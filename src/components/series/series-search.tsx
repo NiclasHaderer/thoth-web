@@ -1,12 +1,11 @@
-import { useQuery } from "@tanstack/react-query"
 import { SearchIcon } from "lucide-react"
 import { FC, useState } from "react"
-import { Api, MetadataSeries, UUID, unwrap } from "@thoth/client"
+import { MetadataSeries, UUID } from "@thoth/client"
 import { MetadataResults } from "@thoth/components/generic/metadata-results"
 import { Input } from "@thoth/components/input/input"
 import { LoadingCards } from "@thoth/components/loading-card"
 import { Button } from "@thoth/components/ui/button"
-import { queryKeys } from "@thoth/queries/keys"
+import { useSeriesMetadataSearch } from "@thoth/queries/metadata"
 
 export const SeriesSearch: FC<{
   series?: string | null | undefined
@@ -18,12 +17,7 @@ export const SeriesSearch: FC<{
   const [series, setSeries] = useState(_series)
   const [submitted, setSubmitted] = useState<{ q: string; authorName: string | undefined } | null>(null)
 
-  const { data: result, isFetching: loading } = useQuery({
-    queryKey: queryKeys.metadataSearch("series", libraryId, submitted ?? {}),
-    queryFn: () => unwrap(Api.searchSeriesMetadata({ q: submitted!.q, libraryId, authorName: submitted!.authorName })),
-    meta: { action: "search for series metadata" },
-    enabled: submitted !== null,
-  })
+  const { data: result, isFetching: loading } = useSeriesMetadataSearch(libraryId, submitted)
 
   const search = () => {
     if (!series) return
