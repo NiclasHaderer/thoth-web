@@ -7,7 +7,8 @@ import { ResourceListHeader } from "@thoth/components/resource-list-header"
 import { Skeleton } from "@thoth/components/ui/skeleton"
 import { rowInteraction } from "@thoth/lib/interactive"
 import { cn } from "@thoth/lib/utils"
-import { NameListCall, NameListResource, useNameList } from "@thoth/queries/name-lists"
+import { NameResource } from "@thoth/queries/queries"
+import { useNameList } from "@thoth/queries/resources"
 import { pluralize } from "@thoth/utils/utils"
 
 const LIST_CLASSES =
@@ -18,17 +19,16 @@ const ROW_CLASSES =
 
 interface NameListProps {
   libraryId: UUID
-  resource: NameListResource
+  resource: NameResource
   title: string
   unit: string
   unitPlural?: string
   basePath: string
-  list: NameListCall
 }
 
 const NameItems: FC<NameListProps & { order: Order; onOrderChange: (order: Order) => void }> = props => {
   const { unit, unitPlural, basePath, order } = props
-  const query = useNameList(props.resource, props.list, props.libraryId, order)
+  const query = useNameList(props.resource, props.libraryId, order)
 
   return (
     <>

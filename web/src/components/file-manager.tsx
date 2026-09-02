@@ -1,7 +1,5 @@
-import { useQuery } from "@tanstack/react-query"
 import { PlusIcon, CheckIcon, XIcon, FolderIcon } from "lucide-react"
 import { FC, useState } from "react"
-import { Api, unwrap } from "@thoth/client"
 import { InputError } from "@thoth/components/input/input-error"
 import {
   Breadcrumb,
@@ -14,7 +12,7 @@ import {
 import { Button } from "@thoth/components/ui/button"
 import { ButtonGroup } from "@thoth/components/ui/button-group"
 import { DropdownMenu, DropdownMenuItem, DropdownMenuTrigger } from "@thoth/components/ui/dropdown-menu"
-import { queryKeys } from "@thoth/queries/keys"
+import { useFolders } from "@thoth/queries/system"
 
 export const FolderManager: FC<{
   onSelectFolder?: (path: string) => void
@@ -25,11 +23,7 @@ export const FolderManager: FC<{
   selectedFolders?: string[]
 }> = ({ onSelectFolder, onRemoveFolder, contentClassName, className, errors, selectedFolders }) => {
   const [currentPath, setCurrentPath] = useState("/")
-  const { data: folders } = useQuery({
-    queryKey: queryKeys.folders(currentPath),
-    queryFn: () => unwrap(Api.listFoldersAtACertainPath({ path: currentPath })),
-    meta: { action: "load folders" },
-  })
+  const { data: folders } = useFolders(currentPath)
 
   const selected = new Set(selectedFolders ?? [])
 

@@ -1,4 +1,3 @@
-import { useQuery } from "@tanstack/react-query"
 import {
   ChevronsRightIcon,
   ChevronsLeftIcon,
@@ -14,7 +13,7 @@ import {
 } from "lucide-react"
 import { AnimatePresence, motion } from "motion/react"
 import { FC, useState } from "react"
-import { Api, FileScanner, MetadataLanguage, MetadataRegion, NamedMetadataAgent, UUID, unwrap } from "@thoth/client"
+import { FileScanner, MetadataLanguage, MetadataRegion, NamedMetadataAgent, UUID } from "@thoth/client"
 import { Dialog } from "@thoth/components/dialog"
 import { FolderManager } from "@thoth/components/file-manager"
 import { InputError } from "@thoth/components/input/input-error"
@@ -24,7 +23,7 @@ import { Button } from "@thoth/components/ui/button"
 import { DialogFooter } from "@thoth/components/ui/dialog"
 import { Form, FormContext } from "@thoth/hooks/form"
 import { useBreakpoint } from "@thoth/hooks/use-media-query"
-import { queryKeys } from "@thoth/queries/keys"
+import { useFileScanners, useMetadataAgents } from "@thoth/queries/system"
 import { unique } from "@thoth/utils/utils"
 
 // The `satisfies Record<MetadataLanguage, ...>` forces every union member to be
@@ -76,16 +75,8 @@ interface LibraryDialogProps {
 }
 
 export const LibraryDialog: FC<LibraryDialogProps> = ({ isOpen, setIsOpen, form, onSubmit }) => {
-  const { data: availableAgents } = useQuery({
-    queryKey: queryKeys.metadataAgents,
-    queryFn: () => unwrap(Api.listMetadataAgents()),
-    meta: { action: "load metadata agents" },
-  })
-  const { data: fileScanners } = useQuery({
-    queryKey: queryKeys.fileScanners,
-    queryFn: () => unwrap(Api.listFileScanners()),
-    meta: { action: "load file scanners" },
-  })
+  const { data: availableAgents } = useMetadataAgents()
+  const { data: fileScanners } = useFileScanners()
   const [browserOpen, setBrowserOpen] = useState(false)
   const isDesktop = useBreakpoint("sm")
 
