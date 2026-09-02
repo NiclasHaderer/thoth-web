@@ -59,3 +59,25 @@ export const unique = <T>(list?: T[]): T[] => {
 export const pluralize = (count: number, singular: string, plural = `${singular}s`): string => {
   return `${count} ${count === 1 ? singular : plural}`
 }
+
+// tick() runs fn at most once per interval; now() runs it immediately and restarts the window.
+export const throttled = (interval: number, fn: () => void) => {
+  let last = 0
+  const now = () => {
+    last = Date.now()
+    fn()
+  }
+  return {
+    now,
+    tick: () => {
+      if (Date.now() - last >= interval) now()
+    },
+  }
+}
+
+export const withoutSearchParam = (path: string, search: string, name: string): string => {
+  const params = new URLSearchParams(search)
+  params.delete(name)
+  const rest = params.toString()
+  return rest ? `${path}?${rest}` : path
+}

@@ -1,4 +1,4 @@
-import { Api, UUID } from "@/client"
+import { UUID } from "@/client"
 import { NameList } from "@/components/name-list.tsx"
 
 export const NarratorListOutlet = ({ libraryId }: { libraryId: UUID }) => {
@@ -9,7 +9,6 @@ export const NarratorListOutlet = ({ libraryId }: { libraryId: UUID }) => {
       title="Narrators"
       unit="narrator"
       basePath={`/libraries/${libraryId}/narrators`}
-      list={Api.listNarrators}
     />
   )
 }

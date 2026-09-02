@@ -1,13 +1,12 @@
-import { useQuery } from "@tanstack/react-query"
 import { SearchIcon } from "lucide-react"
 import { FC, useState } from "react"
-import { Api, MetadataAuthor, UUID, unwrap } from "@thoth/client"
+import { MetadataAuthor, UUID } from "@thoth/client"
 import { MetadataResults } from "@thoth/components/generic/metadata-results"
 import { Input } from "@thoth/components/input/input"
 import { LoadingCards } from "@thoth/components/loading-card"
 import { ResponsiveImage } from "@thoth/components/responsive-image"
 import { Button } from "@thoth/components/ui/button"
-import { queryKeys } from "@thoth/queries/keys"
+import { useAuthorMetadataSearch } from "@thoth/queries/metadata"
 
 export const AuthorSearch: FC<{
   authorSearch?: string | null | undefined
@@ -17,12 +16,7 @@ export const AuthorSearch: FC<{
   const [author, setAuthor] = useState(authorSearch)
   const [submitted, setSubmitted] = useState<{ q: string } | null>(null)
 
-  const { data: result, isFetching: loading } = useQuery({
-    queryKey: queryKeys.metadataSearch("authors", libraryId, submitted ?? {}),
-    queryFn: () => unwrap(Api.searchAuthorMetadata({ q: submitted!.q, libraryId })),
-    meta: { action: "search for author metadata" },
-    enabled: submitted !== null,
-  })
+  const { data: result, isFetching: loading } = useAuthorMetadataSearch(libraryId, submitted)
 
   const search = () => {
     if (!author) return

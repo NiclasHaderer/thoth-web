@@ -3,7 +3,8 @@ import { useEffect, useRef, useState } from "react"
 import { useLocation, useSearch } from "wouter"
 import { useEvent } from "@thoth/hooks/events"
 import { useBreakpoint } from "@thoth/hooks/use-media-query"
-import { usePlaybackState } from "@thoth/state/playback.state"
+import { usePlayback } from "@thoth/playback"
+import { withoutSearchParam } from "@thoth/utils/utils"
 
 export const playerSpring = { type: "spring", stiffness: 420, damping: 38, mass: 0.8 } as const
 
@@ -29,7 +30,7 @@ export const useFullscreenPlayer = (): FullscreenPlayerController => {
   const [path, navigate] = useLocation()
   const search = useSearch()
   const isDesktop = useBreakpoint("md")
-  const hasTrack = usePlaybackState(s => !!s.current)
+  const hasTrack = usePlayback(s => !!s.book)
 
   const playerOpen = new URLSearchParams(search).has("player")
   const expanded = playerOpen && hasTrack && !isDesktop
@@ -45,12 +46,7 @@ export const useFullscreenPlayer = (): FullscreenPlayerController => {
     if (!expanded) y.set(window.innerHeight)
   })
 
-  const pathWithoutPlayer = () => {
-    const params = new URLSearchParams(search)
-    params.delete("player")
-    const rest = params.toString()
-    return rest ? `${path}?${rest}` : path
-  }
+  const pathWithoutPlayer = () => withoutSearchParam(path, search, "player")
 
   useEffect(() => {
     if (playerOpen && isDesktop) navigate(pathWithoutPlayer(), { replace: true })
