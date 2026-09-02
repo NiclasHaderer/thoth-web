@@ -8,6 +8,12 @@ export const invalidateLibraryContent = (queryClient: QueryClient, libraryId: UU
     queryClient.invalidateQueries({ queryKey: queryKeys.librarySearches }),
   ])
 
+export const invalidatePlayState = (queryClient: QueryClient, libraryId: UUID) =>
+  Promise.all([
+    invalidateLibraryContent(queryClient, libraryId),
+    queryClient.invalidateQueries({ queryKey: queryKeys.continueListening }),
+  ])
+
 export const invalidateLibraryMembership = (queryClient: QueryClient) =>
   Promise.all([
     queryClient.invalidateQueries({ queryKey: queryKeys.libraries }),

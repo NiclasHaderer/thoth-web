@@ -1,4 +1,5 @@
 import { QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useMemo } from "react"
 import {
   ApiResponse,
   Api,
@@ -18,7 +19,8 @@ import {
   UUID,
   unwrap,
 } from "@thoth/client"
-import { invalidateLibraryContent } from "./invalidate"
+import { usePlaybackState } from "@thoth/state/playback.state"
+import { invalidateLibraryContent, invalidatePlayState } from "./invalidate"
 import { LibraryResource, Resource, queryKeys } from "./keys"
 import { ListFn, usePagedList } from "./paged-list"
 
@@ -129,6 +131,70 @@ const useResourceCreate = <C, R extends Identifiable>(
       return invalidateLibraryContent(queryClient, libraryId)
     },
   })
+}
+
+const useBookPlayState = <V extends { libraryId: UUID; id: UUID }>(
+  action: string,
+  mutationFn: (variables: V) => Promise<unknown>,
+  patch: (previous: Book | BookDetailed, variables: V) => Book | BookDetailed
+) => {
+  const queryClient = useQueryClient()
+  return useMutation({
+    meta: { action },
+    mutationFn,
+    onSuccess: (_result, variables) => {
+      queryClient.setQueryData(
+        queryKeys.resourceDetail("books", variables.libraryId, variables.id),
+        (previous: Book | BookDetailed | undefined) => (previous ? patch(previous, variables) : previous)
+      )
+      return invalidatePlayState(queryClient, variables.libraryId)
+    },
+  })
+}
+
+export const useSetBookFinished = () =>
+  useBookPlayState(
+    "update the play state",
+    ({ libraryId, id, finished }: { libraryId: UUID; id: UUID; finished: boolean }) =>
+      unwrap(Api.setBookFinished({ libraryId, id }, { finished })),
+    (previous, { finished }) => ({
+      ...previous,
+      status: finished ? "FINISHED" : "UNPLAYED",
+      positionMs: finished ? previous.durationMs : 0,
+    })
+  )
+
+export const useResetBookProgress = () =>
+  useBookPlayState(
+    "reset the progress",
+    ({ libraryId, id }: { libraryId: UUID; id: UUID }) =>
+      unwrap(Api.setBookProgress({ libraryId, id }, { positionMs: 0 })),
+    previous => ({ ...previous, status: "UNPLAYED", positionMs: 0 })
+  )
+
+// The book playing right now is pinned to the front rather than waited for: the server only
+// lists a book once it has stored progress for it, so any refetch during the first moments of
+// playback would otherwise drop it back out of the row.
+export const useContinueListening = (): Book[] => {
+  const queryClient = useQueryClient()
+  const current = usePlaybackState(state => state.current)
+  const { data } = useQuery({
+    queryKey: queryKeys.continueListening,
+    queryFn: () => unwrap(Api.getContinueListening({})),
+    meta: { action: "load continue listening" },
+  })
+
+  return useMemo(() => {
+    const list = data ?? []
+    if (!current) return list
+
+    const playing =
+      list.find(book => book.id === current.book.id) ??
+      queryClient.getQueryData<Book>(queryKeys.resourceDetail("books", current.libraryId, current.book.id))
+    if (!playing) return list
+
+    return [playing, ...list.filter(book => book.id !== current.book.id)]
+  }, [data, current, queryClient])
 }
 
 export const useBooks = (libraryId: UUID, order: Order = "ASC") =>
