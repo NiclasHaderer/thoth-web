@@ -1,28 +1,14 @@
 import { useQueries } from "@tanstack/react-query"
 import { useState } from "react"
 import { ListRange } from "react-virtuoso"
-import { ApiResponse, Order, PaginatedResponse, UUID, unwrap } from "@thoth/client"
-import { LibraryResource, queryKeys } from "./keys"
+import { Order, UUID } from "@thoth/client"
+import { PagedQueries } from "./queries"
 
-export type ListFn<T> = (params: {
-  libraryId: UUID
-  limit?: number
-  offset?: number
-  order?: Order
-}) => Promise<ApiResponse<PaginatedResponse<T>>>
-
-interface PagedListOptions<T> {
-  resource: LibraryResource
-  listFn: ListFn<T>
-  libraryId: UUID
-  order: Order
-  pageSize: number
-}
-
-export const usePagedList = <T>({ resource, listFn, libraryId, order, pageSize }: PagedListOptions<T>) => {
+export const usePagedList = <T>(group: PagedQueries<T>, libraryId: UUID, order: Order) => {
+  const { pageSize } = group
   const pageOf = (index: number) => Math.floor(index / pageSize) * pageSize
 
-  const listKey = `${resource}:${libraryId}:${order}`
+  const listKey = `${group.resource}:${libraryId}:${order}`
 
   const [range, setRange] = useState<ListRange>({ startIndex: 0, endIndex: 0 })
 
@@ -31,13 +17,7 @@ export const usePagedList = <T>({ resource, listFn, libraryId, order, pageSize }
   for (let offset = pageOf(range.startIndex); offset <= pageOf(range.endIndex); offset += pageSize) offsets.add(offset)
   const wanted = [...offsets].sort((a, b) => a - b)
 
-  const results = useQueries({
-    queries: wanted.map(offset => ({
-      queryKey: queryKeys.libraryListPage(resource, libraryId, order, offset),
-      queryFn: () => unwrap(listFn({ libraryId, limit: pageSize, offset, order })),
-      meta: { action: `load ${resource}` },
-    })),
-  })
+  const results = useQueries({ queries: wanted.map(offset => group.page(libraryId, order, offset)) })
 
   const pages = new Map<number, T[]>()
   results.forEach((result, index) => {

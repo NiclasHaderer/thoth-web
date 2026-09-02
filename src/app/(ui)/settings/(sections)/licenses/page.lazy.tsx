@@ -1,12 +1,9 @@
-import { useQuery } from "@tanstack/react-query"
 import { ChevronRightIcon } from "lucide-react"
 import { FC } from "react"
-import webLicensesUrl from "@thoth/assets/third-party-licenses.json?url"
-import { Api, ThirdPartyLicense, unwrap } from "@thoth/client"
-import { _request } from "@thoth/client/generated/client"
+import { ThirdPartyLicense } from "@thoth/client"
 import { SettingsSection } from "@thoth/components/settings/settings-section"
 import { Badge } from "@thoth/components/ui/badge"
-import { queryKeys } from "@thoth/queries/keys"
+import { useServerLicenses, useWebLicenses } from "@thoth/queries/system"
 
 const LicenseList: FC<{ licenses: ThirdPartyLicense[] }> = ({ licenses }) => (
   <div className="flex flex-col gap-2">
@@ -52,30 +49,9 @@ const LicenseList: FC<{ licenses: ThirdPartyLicense[] }> = ({ licenses }) => (
   </div>
 )
 
-const fetchWebLicenses = () =>
-  _request<ThirdPartyLicense[]>(
-    webLicensesUrl,
-    "GET",
-    "json",
-    new Headers(),
-    undefined,
-    [],
-    data => fetch(data.route),
-    false
-  )
-
 export const SettingsLicensesOutlet = () => {
-  const server = useQuery({
-    queryKey: queryKeys.serverLicenses,
-    queryFn: () => unwrap(Api.listThirdPartyLicenses()),
-    meta: { action: "load server licenses" },
-  })
-  const web = useQuery({
-    queryKey: queryKeys.webLicenses,
-    queryFn: () => unwrap(fetchWebLicenses()),
-    meta: { action: "load web licenses" },
-    staleTime: Infinity,
-  })
+  const server = useServerLicenses()
+  const web = useWebLicenses()
 
   return (
     <SettingsSection

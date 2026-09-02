@@ -1,5 +1,4 @@
 import { DetailList } from "@/components/detail/detail-list.tsx"
-import { usePlaybackState } from "@/state/playback.state.ts"
 import { pluralize } from "@/utils/utils.ts"
 import {
   BarcodeIcon,
@@ -27,10 +26,18 @@ import { HtmlViewer } from "@thoth/components/html-editor"
 import { Link } from "@thoth/components/link.tsx"
 import { Button } from "@thoth/components/ui/button"
 import { DropdownMenuItem } from "@thoth/components/ui/dropdown-menu"
-import { startBookAt, startBookTrack, useBookProgress, usePlayState } from "@thoth/hooks/playback"
 import { useBreakpoint } from "@thoth/hooks/use-media-query"
 import { cn } from "@thoth/lib/utils"
 import { isDetailedBook } from "@thoth/models/typeguards"
+import {
+  audio,
+  startBook,
+  startTrack,
+  useBookProgress,
+  useCurrentTrack,
+  usePlayback,
+  usePlaying,
+} from "@thoth/playback"
 import { useAutoMatchBook, useBook, useResetBookProgress, useSetBookFinished } from "@thoth/queries/resources"
 import { toReadableTime, toRuntime } from "../track/helpers"
 import { TrackList } from "../track/track-list"
@@ -288,8 +295,9 @@ const MobileHeader: FC<HeaderProps> = ({ book, libraryId, runtime, tracks, actio
 }
 
 export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId, libraryId }) => {
-  const currentTrack = usePlaybackState(state => state.current)
-  const [isPlaying, setPlaying] = usePlayState()
+  const isCurrentBook = usePlayback(s => s.book?.id === bookId)
+  const currentTrack = useCurrentTrack()
+  const isPlaying = usePlaying()
   const isDesktop = useBreakpoint("md")
   const { data: book } = useBook(libraryId, bookId)
   const autoMatchBook = useAutoMatchBook()
@@ -299,14 +307,13 @@ export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId, lib
 
   if (!book) return <></>
 
-  const isCurrentBook = currentTrack?.book.id === bookId
   const currentTrackId = isCurrentBook ? currentTrack?.id : undefined
 
   const tracks = isDetailedBook(book) ? book.tracks : []
   const totalDuration = tracks.reduce((sum, track) => sum + track.durationMs / 1000, 0)
 
   const startPlayback = (index: number) => {
-    if (isDetailedBook(book)) startBookTrack(book, libraryId, index)
+    if (isDetailedBook(book)) startTrack(book, libraryId, index)
   }
 
   const inProgress = book.status === "IN_PROGRESS" && book.durationMs > 0
@@ -316,8 +323,8 @@ export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId, lib
     <>
       <Button
         onPress={() => {
-          if (isCurrentBook) return setPlaying(true)
-          if (isDetailedBook(book)) startBookAt(book, libraryId, inProgress ? book.positionMs / 1000 : 0)
+          if (isCurrentBook) return audio.play()
+          if (isDetailedBook(book)) startBook(book, libraryId, inProgress ? book.positionMs : 0)
         }}
         isDisabled={tracks.length === 0}
         className="h-11 grow px-5 md:h-10 md:grow-0"
@@ -354,7 +361,7 @@ export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId, lib
           onAction={() => {
             resetProgress.mutate({ libraryId, id: book.id })
             // Otherwise the running playback keeps its position and syncs it straight back.
-            if (isCurrentBook && isDetailedBook(book)) startBookAt(book, libraryId, 0, isPlaying)
+            if (isCurrentBook && isDetailedBook(book)) startBook(book, libraryId, 0, isPlaying)
           }}
         >
           <RotateCcwIcon className="text-muted-foreground size-5" />
@@ -380,7 +387,7 @@ export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId, lib
           activeId={currentTrackId}
           playing={isPlaying}
           onStart={startPlayback}
-          onToggle={setPlaying}
+          onToggle={audio.setPlaying}
         />
       ) : null}
     </div>

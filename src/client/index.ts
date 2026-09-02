@@ -1,13 +1,13 @@
 import { unstable_batchedUpdates } from "react-dom"
 import { AuthState, useAuthState } from "@thoth/state/auth.state"
 import { isExpired } from "@thoth/utils/jwt"
+import { ThothApiError } from "./error"
 import { createApi } from "./generated/api-client"
 import { ApiCallData, ApiInterceptor, ApiResponse } from "./generated/client"
 import { httpInterceptor } from "./http-interceptor.ts"
 
 export * from "./generated/models"
 export * from "./error"
-export type { ApiResponse, ApiError } from "./generated/client"
 
 const SESSION_EXPIRED: ApiResponse<never> = { success: false, error: "Session expired", status: 401 }
 
@@ -48,4 +48,20 @@ const authInterceptor: ApiInterceptor = async (data: ApiCallData): Promise<ApiCa
   return { ...data, executor }
 }
 
-export const Api = createApi({}, import.meta.env.DEV ? [authInterceptor, httpInterceptor] : [authInterceptor])
+const rawApi = createApi({}, import.meta.env.DEV ? [authInterceptor, httpInterceptor] : [authInterceptor])
+
+type Throwing<A> = {
+  [K in keyof A]: A[K] extends (...args: infer P) => Promise<ApiResponse<infer R>> ? (...args: P) => Promise<R> : never
+}
+
+const unwrap = async <T>(response: Promise<ApiResponse<T>>): Promise<T> => {
+  const result = await response
+  if (!result.success) throw new ThothApiError(result)
+  return result.body
+}
+
+type RawCall = (...args: unknown[]) => Promise<ApiResponse<unknown>>
+
+export const Api = Object.fromEntries(
+  Object.entries(rawApi).map(([name, call]) => [name, (...args: unknown[]) => unwrap((call as RawCall)(...args))])
+) as Throwing<typeof rawApi>

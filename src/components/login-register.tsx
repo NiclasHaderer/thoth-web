@@ -9,12 +9,6 @@ import { Button } from "@thoth/components/ui/button"
 import { Form, useForm } from "@thoth/hooks/form"
 import { useAuthState } from "@thoth/state/auth.state"
 
-const errorMessage = (error: string | object): string => {
-  if (typeof error === "string") return error
-  if (error && typeof error === "object" && "error" in error && typeof error.error === "string") return error.error
-  return "Something went wrong"
-}
-
 export const LoginRegister: FC<{ type: "register" | "login"; redirectPath?: string }> = ({ type, redirectPath }) => {
   const isRegister = type === "register"
   const [, navigate] = useLocation()
@@ -55,12 +49,10 @@ export const LoginRegister: FC<{ type: "register" | "login"; redirectPath?: stri
     setSubmitting(true)
     try {
       const cb = isRegister ? userState.register : userState.login
-      const result = await cb(credentials)
-      if (!result.success) {
-        toast.error(errorMessage(result.error))
-        return
-      }
+      await cb(credentials)
       navigate(redirectPath || "/libraries", { replace: true })
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Something went wrong")
     } finally {
       setSubmitting(false)
     }

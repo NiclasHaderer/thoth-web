@@ -2,10 +2,9 @@ import { CheckIcon, GaugeIcon, MoonIcon } from "lucide-react"
 import { FC, ReactNode, useEffect, useState } from "react"
 import { BottomSheet } from "@thoth/components/bottom-sheet"
 import { SheetTrigger } from "@thoth/components/ui/sheet"
-import { usePlaybackRate } from "@thoth/hooks/playback"
 import { rowInteraction } from "@thoth/lib/interactive"
 import { cn } from "@thoth/lib/utils"
-import { useSleepTimer } from "@thoth/state/sleep-timer.state"
+import { audio, useAudio, useSleepTimer } from "@thoth/playback"
 import { toReadableTime } from "./track/helpers"
 import { Button } from "./ui/button"
 
@@ -108,7 +107,7 @@ export const SleepTimerPicker: FC = () => {
 const RATES = [0.75, 1, 1.25, 1.5, 1.75, 2]
 
 export const PlaybackRatePicker: FC = () => {
-  const [rate, setRate] = usePlaybackRate()
+  const rate = useAudio(media => media.playbackRate)
 
   return (
     <PickerSheet
@@ -120,7 +119,7 @@ export const PlaybackRatePicker: FC = () => {
       options={RATES.map(option => ({
         label: `${option}x`,
         active: rate === option,
-        onSelect: () => setRate(option),
+        onSelect: () => audio.setRate(option),
       }))}
     />
   )

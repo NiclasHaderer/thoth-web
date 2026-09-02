@@ -1,6 +1,6 @@
 import { ImageOffIcon } from "lucide-react"
 import { animate, motion, useMotionValue } from "motion/react"
-import { FC, Fragment, useEffect, useMemo, useRef, useState } from "react"
+import { FC, Fragment, useEffect, useRef, useState } from "react"
 import { createPortal } from "react-dom"
 import { Link } from "@thoth/components/link.tsx"
 import { PlayerButton } from "@thoth/components/player-button"
@@ -16,18 +16,23 @@ import { ProgressBar } from "@thoth/components/progress-bar"
 import { Button } from "@thoth/components/ui/button"
 import { useEvent } from "@thoth/hooks/events"
 import { FullscreenPlayerController, playerSpring } from "@thoth/hooks/fullscreen-player"
+import { cn } from "@thoth/lib/utils"
 import {
+  PlayingBook,
   SKIP_BACK,
   SKIP_FORWARD,
-  useDuration,
-  useProgress,
-  usePlayState,
-  usePlaybackPosition,
-  usePreviousTrack,
-  useSkip,
-} from "@thoth/hooks/playback"
-import { cn } from "@thoth/lib/utils"
-import { PlaybackTrack, usePlaybackState } from "@thoth/state/playback.state"
+  audio,
+  hasNextTrack,
+  jumpToTrack,
+  nextTrack,
+  previousOrRestart,
+  skip,
+  useAudio,
+  useCanGoPrevious,
+  usePlayback,
+  usePlaying,
+  useTrackProgress,
+} from "@thoth/playback"
 import { toReadableTime } from "./track/helpers"
 import { TrackList } from "./track/track-list"
 
@@ -38,26 +43,27 @@ const PANE_VELOCITY = 400
 
 export const FullscreenPlayer: FC<{ player: FullscreenPlayerController; enabled: boolean }> = ({ player, enabled }) => {
   const { visible, close } = player
-  const track = usePlaybackState(s => s.current)
+  const book = usePlayback(s => s.book)
 
   useEffect(() => {
-    if (visible && (!track || !enabled)) close()
-  }, [visible, track, enabled, close])
+    if (visible && (!book || !enabled)) close()
+  }, [visible, book, enabled, close])
 
-  if (!visible || !enabled || !track) return null
+  if (!visible || !enabled || !book) return null
 
-  return <FullscreenPlayerBody player={player} track={track} />
+  return <FullscreenPlayerBody player={player} book={book} />
 }
 
-const FullscreenPlayerBody: FC<{ player: FullscreenPlayerController; track: PlaybackTrack }> = ({ player, track }) => {
+const FullscreenPlayerBody: FC<{ player: FullscreenPlayerController; book: PlayingBook }> = ({ player, book }) => {
   const { y, viewportHeight, close } = player
-  const playback = usePlaybackState()
-  const [position] = usePlaybackPosition()
-  const duration = useDuration()
-  const { progress, scrub, scrubEnd } = useProgress()
-  const [playing, setPlaying] = usePlayState()
-  const [previousTrack, canGoPrevious] = usePreviousTrack()
-  const skip = useSkip()
+  const index = usePlayback(s => s.trackIndex)
+  const track = book.tracks[index]
+  const hasNext = usePlayback(hasNextTrack)
+  const position = useAudio(media => media.currentTime)
+  const duration = useAudio(media => media.duration)
+  const { progress, scrub, scrubEnd } = useTrackProgress()
+  const playing = usePlaying()
+  const canGoPrevious = useCanGoPrevious()
   const [pane, setPane] = useState(0)
   const [queueAtTop, setQueueAtTop] = useState(true)
   const viewport = useRef<HTMLDivElement>(null)
@@ -72,12 +78,7 @@ const FullscreenPlayerBody: FC<{ player: FullscreenPlayerController; track: Play
 
   useEvent(window, "resize", () => x.set(-pane * paneWidth()))
 
-  const cover = track.coverID ? `/api/stream/images/${track.coverID}` : undefined
-
-  const timeline = useMemo(
-    () => [...playback.history, track, ...playback.queue],
-    [playback.history, track, playback.queue]
-  )
+  const cover = book.coverID ? `/api/stream/images/${book.coverID}` : undefined
 
   return createPortal(
     <motion.div
@@ -138,7 +139,7 @@ const FullscreenPlayerBody: FC<{ player: FullscreenPlayerController; track: Play
               <div className="flex min-h-0 grow items-center justify-center py-6">
                 {cover ? (
                   <img
-                    alt={track.book.title}
+                    alt={book.title}
                     src={cover}
                     className="max-h-full w-full max-w-sm rounded-2xl object-contain shadow-2xl shadow-black/40"
                   />
@@ -149,30 +150,30 @@ const FullscreenPlayerBody: FC<{ player: FullscreenPlayerController; track: Play
 
               <div className="flex min-w-0 flex-col gap-1">
                 <Link
-                  href={`/libraries/${track.libraryId}/books/${track.book.id}`}
+                  href={`/libraries/${book.libraryId}/books/${book.id}`}
                   className="block truncate text-xl font-bold tracking-tight outline-none"
                 >
                   {track.trackNr ? `${track.trackNr}. ` : null}
                   {track.title}
                 </Link>
                 <div className="text-muted-foreground truncate text-sm">
-                  {track.authors.map((author, index) => (
+                  {book.authors.map((author, position) => (
                     <Fragment key={author.id}>
-                      {index > 0 ? ", " : null}
+                      {position > 0 ? ", " : null}
                       <Link
-                        href={`/libraries/${track.libraryId}/authors/${author.id}`}
+                        href={`/libraries/${book.libraryId}/authors/${author.id}`}
                         className="hover:underline focus-visible:underline focus-visible:outline-none"
                       >
                         {author.name}
                       </Link>
                     </Fragment>
                   ))}
-                  {track.authors.length ? " - " : null}
+                  {book.authors.length ? " - " : null}
                   <Link
-                    href={`/libraries/${track.libraryId}/books/${track.book.id}`}
+                    href={`/libraries/${book.libraryId}/books/${book.id}`}
                     className="hover:underline focus-visible:underline focus-visible:outline-none"
                   >
-                    {track.book.title}
+                    {book.title}
                   </Link>
                 </div>
               </div>
@@ -194,7 +195,7 @@ const FullscreenPlayerBody: FC<{ player: FullscreenPlayerController; track: Play
               <div className="flex items-center justify-between pt-4">
                 <PlayerButton
                   label="Previous track"
-                  onPress={previousTrack}
+                  onPress={previousOrRestart}
                   isDisabled={!canGoPrevious}
                   className="size-11 rounded-full"
                 >
@@ -209,7 +210,7 @@ const FullscreenPlayerBody: FC<{ player: FullscreenPlayerController; track: Play
                 </PlayerButton>
                 <Button
                   aria-label={playing ? "Pause" : "Play"}
-                  onPress={() => setPlaying(!playing)}
+                  onPress={() => audio.setPlaying(!playing)}
                   className="size-16 rounded-full [&_svg]:stroke-[1.5]"
                 >
                   <PlayPauseIcon playing={playing} className="size-8" />
@@ -223,8 +224,8 @@ const FullscreenPlayerBody: FC<{ player: FullscreenPlayerController; track: Play
                 </PlayerButton>
                 <PlayerButton
                   label="Next track"
-                  onPress={playback.next}
-                  isDisabled={playback.queue.length === 0}
+                  onPress={nextTrack}
+                  isDisabled={!hasNext}
                   className="size-11 rounded-full"
                 >
                   <SkipForwardIcon className="size-6" />
@@ -246,11 +247,11 @@ const FullscreenPlayerBody: FC<{ player: FullscreenPlayerController; track: Play
                 )}
               >
                 <TrackList
-                  tracks={timeline}
+                  tracks={book.tracks}
                   activeId={track.id}
                   playing={playing}
-                  onStart={playback.jumpTo}
-                  onToggle={setPlaying}
+                  onStart={jumpToTrack}
+                  onToggle={audio.setPlaying}
                 />
               </div>
             </div>

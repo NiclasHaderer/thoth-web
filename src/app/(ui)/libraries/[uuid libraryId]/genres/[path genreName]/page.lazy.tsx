@@ -1,15 +1,9 @@
-import { Api, UUID, unwrap } from "@/client"
+import { UUID } from "@/client"
 import { NameBooks } from "@/components/name-books.tsx"
-import { queryKeys } from "@/queries/keys.ts"
-import { useQuery } from "@tanstack/react-query"
+import { useGenre } from "@/queries/resources"
 
 export const GenreOutlet = ({ libraryId, genreName }: { libraryId: UUID; genreName: string }) => {
-  const name = decodeURIComponent(genreName)
-  const { data } = useQuery({
-    queryKey: queryKeys.nameDetail("genres", libraryId, name),
-    queryFn: () => unwrap(Api.getGenre({ libraryId, name: encodeURIComponent(name) })),
-    meta: { action: "load the genre" },
-  })
+  const { data } = useGenre(libraryId, decodeURIComponent(genreName))
 
   if (!data) return null
 

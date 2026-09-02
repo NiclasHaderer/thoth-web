@@ -30,42 +30,37 @@ export const useAuthState = create(
   persist(
     combine(INITIAL_USER_STATE as AuthState, (set, _get, modify) => ({
       login: async (userPw: ThothLoginUser) => {
-        const jwt = await Api.loginUser(userPw)
-        if (!jwt.success) return jwt
-        const { accessToken } = jwt.body
-        const decodedAccessToken = decodeJWT(accessToken)
+        const { accessToken } = await Api.loginUser(userPw)
         queryClient.clear()
         set({
           loggedIn: true,
           accessTokenStr: accessToken,
-          accessToken: decodedAccessToken,
+          accessToken: decodeJWT(accessToken),
         })
-        return jwt
       },
       register: async (userPw: ThothLoginUser) => {
-        const user = await Api.registerUser(userPw)
-        if (!user.success) return user
-        return await useAuthState.getState().login(userPw)
+        await Api.registerUser(userPw)
+        await useAuthState.getState().login(userPw)
       },
       logout: async () => {
         modify.setState(INITIAL_USER_STATE)
         queryClient.clear()
-        await Api.logoutUser()
+        await Api.logoutUser().catch(() => undefined)
       },
       refreshAccessToken: (): Promise<boolean> => {
         refreshInFlight ??= Api.refreshAccessToken()
-          .then(newAccessToken => {
-            if (!newAccessToken.success) {
-              const message = "Your session expired. Please log in again."
-              toast.error(message, { id: message })
-              return false
-            }
+          .then(({ accessToken }) => {
             set({
               loggedIn: true,
-              accessTokenStr: newAccessToken.body.accessToken,
-              accessToken: decodeJWT(newAccessToken.body.accessToken),
+              accessTokenStr: accessToken,
+              accessToken: decodeJWT(accessToken),
             })
             return true
+          })
+          .catch(() => {
+            const message = "Your session expired. Please log in again."
+            toast.error(message, { id: message })
+            return false
           })
           .finally(() => (refreshInFlight = undefined))
         return refreshInFlight

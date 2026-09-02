@@ -2,6 +2,7 @@ import { ImageOffIcon, Volume1Icon, Volume2Icon, VolumeXIcon } from "lucide-reac
 import { AnimatePresence, animate, motion, useMotionValue } from "motion/react"
 import { FC, PropsWithChildren, useRef, useState } from "react"
 import { Popover } from "react-aria-components"
+import { Track } from "@thoth/client"
 import { FullscreenPlayer } from "@thoth/components/fullscreen-player"
 import { Link } from "@thoth/components/link.tsx"
 import { PlayerButton } from "@thoth/components/player-button"
@@ -18,22 +19,23 @@ import { FullscreenPlayerController } from "@thoth/hooks/fullscreen-player"
 import { useBreakpoint } from "@thoth/hooks/use-media-query"
 import { cn } from "@thoth/lib/utils"
 import {
+  PlayingBook,
   SKIP_BACK,
   SKIP_FORWARD,
-  useAutoAdvance,
-  useAudioSource,
-  useDuration,
-  usePersistPlayback,
-  useProgress,
-  usePlayState,
-  usePlaybackPosition,
-  usePreviousTrack,
-  useRestorePlayback,
-  useSkip,
-  useSleepTimerPause,
+  audio,
+  hasNextTrack,
+  nextTrack,
+  previousOrRestart,
+  skip,
+  stop,
+  useAudio,
+  useCanGoPrevious,
+  useCurrentTrack,
+  usePlayback,
+  usePlaying,
+  useTrackProgress,
   useVolume,
-} from "../hooks/playback"
-import { PlaybackTrack, usePlaybackState } from "../state/playback.state"
+} from "@thoth/playback"
 import { toReadableTime } from "./track/helpers"
 
 const dockSpring = { type: "spring", stiffness: 520, damping: 32, mass: 0.7 } as const
@@ -85,13 +87,13 @@ const SwipeDock: FC<
   )
 }
 
-const Cover: FC<{ track: PlaybackTrack }> = ({ track }) =>
-  track.coverID ? (
+const Cover: FC<{ book: PlayingBook }> = ({ book }) =>
+  book.coverID ? (
     <img
       className="size-12 rounded-md object-cover md:size-16"
-      alt={track.title}
+      alt={book.title}
       loading="lazy"
-      src={`/api/stream/images/${track.coverID}`}
+      src={`/api/stream/images/${book.coverID}`}
     />
   ) : (
     <ImageOffIcon className="text-muted-foreground size-12 rounded-md md:size-16" />
@@ -102,33 +104,29 @@ const VolumeIcon: FC<{ level: number; className?: string }> = ({ level, classNam
   return <Icon className={className} />
 }
 
-const TrackLabel: FC<{ track: PlaybackTrack }> = ({ track }) => (
+const TrackLabel: FC<{ book: PlayingBook; track: Track }> = ({ book, track }) => (
   <div className="min-w-0 grow">
     <div className="truncate text-sm font-medium">
       {track.trackNr ? `${track.trackNr}. ` : null}
       {track.title}
     </div>
     <div className="text-muted-foreground truncate text-xs">
-      {track.authors.map(author => author.name).join(", ")}
-      {track.authors.length ? " - " : null}
-      {track.book.title}
+      {book.authors.map(author => author.name).join(", ")}
+      {book.authors.length ? " - " : null}
+      {book.title}
     </div>
   </div>
 )
 
 export const MiniPlayer: FC<{ player: FullscreenPlayerController }> = ({ player }) => {
-  const playback = usePlaybackState()
-  const track = playback.current
-
-  useAudioSource(track?.id ? `/api/stream/audio/${track.id}` : undefined, playback.autoplay)
-  useRestorePlayback()
-  usePersistPlayback()
-  const [position] = usePlaybackPosition()
-  const duration = useDuration()
-  const { progress, scrub, scrubEnd } = useProgress()
-  const [playing, setPlaying] = usePlayState()
-  const [previousTrack, canGoPrevious] = usePreviousTrack()
-  const skip = useSkip()
+  const book = usePlayback(s => s.book)
+  const track = useCurrentTrack()
+  const hasNext = usePlayback(hasNextTrack)
+  const position = useAudio(media => media.currentTime)
+  const duration = useAudio(media => media.duration)
+  const { progress, scrub, scrubEnd } = useTrackProgress()
+  const playing = usePlaying()
+  const canGoPrevious = useCanGoPrevious()
   const volume = useVolume()
   const [volumeOpen, setVolumeOpen] = useState(false)
   const volumeRef = useRef<HTMLDivElement>(null)
@@ -141,15 +139,13 @@ export const MiniPlayer: FC<{ player: FullscreenPlayerController }> = ({ player 
     clearTimeout(volumeCloseTimer.current)
     volumeCloseTimer.current = setTimeout(() => setVolumeOpen(false), 150)
   }
-  useSleepTimerPause()
-  useAutoAdvance(playback.next)
   const isDesktop = useBreakpoint("md")
 
   return (
     <>
       <FullscreenPlayer player={player} enabled={!isDesktop} />
       <AnimatePresence initial={false}>
-        {track ? (
+        {book && track ? (
           <motion.div
             key="playback"
             initial={{ height: 0 }}
@@ -161,7 +157,7 @@ export const MiniPlayer: FC<{ player: FullscreenPlayerController }> = ({ player 
             <div className="px-2 pb-2 md:px-3 md:pb-3">
               <SwipeDock
                 enabled={!isDesktop}
-                onDismiss={playback.stop}
+                onDismiss={stop}
                 player={player}
                 className="bg-card/60 md:bg-card relative flex h-20 items-center gap-3 rounded-xl px-3 backdrop-blur-xl md:h-24 md:backdrop-blur-none"
               >
@@ -177,12 +173,12 @@ export const MiniPlayer: FC<{ player: FullscreenPlayerController }> = ({ player 
 
                 {isDesktop ? (
                   <Link
-                    href={`/libraries/${track.libraryId}/books/${track.book.id}`}
+                    href={`/libraries/${book.libraryId}/books/${book.id}`}
                     className="flex min-w-0 grow items-center gap-3 outline-none"
                     aria-label={track.title}
                   >
-                    <Cover track={track} />
-                    <TrackLabel track={track} />
+                    <Cover book={book} />
+                    <TrackLabel book={book} track={track} />
                   </Link>
                 ) : (
                   <button
@@ -190,8 +186,8 @@ export const MiniPlayer: FC<{ player: FullscreenPlayerController }> = ({ player 
                     aria-label="Open player"
                     className="flex min-w-0 grow items-center gap-3 text-left outline-none"
                   >
-                    <Cover track={track} />
-                    <TrackLabel track={track} />
+                    <Cover book={book} />
+                    <TrackLabel book={book} track={track} />
                   </button>
                 )}
 
@@ -229,7 +225,7 @@ export const MiniPlayer: FC<{ player: FullscreenPlayerController }> = ({ player 
                 <div data-dock-control className="flex shrink-0 items-center">
                   <PlayerButton
                     label="Previous track"
-                    onPress={previousTrack}
+                    onPress={previousOrRestart}
                     isDisabled={!canGoPrevious}
                     className="hidden size-10 rounded-full md:flex"
                   >
@@ -244,7 +240,7 @@ export const MiniPlayer: FC<{ player: FullscreenPlayerController }> = ({ player 
                   </PlayerButton>
                   <PlayerButton
                     label={playing ? "Pause" : "Play"}
-                    onPress={() => setPlaying(!playing)}
+                    onPress={() => audio.setPlaying(!playing)}
                     className="size-11 rounded-full"
                   >
                     <PlayPauseIcon playing={playing} className="size-6" />
@@ -258,13 +254,13 @@ export const MiniPlayer: FC<{ player: FullscreenPlayerController }> = ({ player 
                   </PlayerButton>
                   <PlayerButton
                     label="Next track"
-                    onPress={playback.next}
-                    isDisabled={playback.queue.length === 0}
+                    onPress={nextTrack}
+                    isDisabled={!hasNext}
                     className="hidden size-10 rounded-full md:flex"
                   >
                     <SkipForwardIcon className="size-5" />
                   </PlayerButton>
-                  <PlayerButton label="Stop" onPress={playback.stop} className="hidden size-10 rounded-full md:flex">
+                  <PlayerButton label="Stop" onPress={stop} className="hidden size-10 rounded-full md:flex">
                     <SquareIcon className="size-5" />
                   </PlayerButton>
                 </div>
