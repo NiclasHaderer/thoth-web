@@ -22,6 +22,21 @@ interface PlaybackState {
   previous: () => void
 }
 
+// Book-level position of whatever is playing right now, published at 1ce per second so any view
+// showing that book (previews, continue listening, details) tracks playback without
+// subscribing to raw audio events.
+interface PlaybackProgress {
+  libraryId: UUID | null
+  bookId: UUID | null
+  positionMs: number
+}
+
+export const usePlaybackProgress = create<PlaybackProgress>(() => ({
+  libraryId: null,
+  bookId: null,
+  positionMs: 0,
+}))
+
 export const usePlaybackState = create<PlaybackState>((set, get) => ({
   history: [],
   queue: [],

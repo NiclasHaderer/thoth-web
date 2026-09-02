@@ -1,4 +1,4 @@
-import { ImageOffIcon, PlayIcon } from "lucide-react"
+import { CheckIcon, ImageOffIcon, PlayIcon } from "lucide-react"
 import { FC, forwardRef, ReactNode } from "react"
 import { Link } from "@thoth/components/link.tsx"
 import { getSizing } from "@thoth/utils/width.ts"
@@ -15,6 +15,8 @@ interface GenericPreviewProps {
   roundedPicture?: boolean
   className: string
   onPlay?: () => void
+  progress?: number
+  finished?: boolean
 }
 
 const STACK_POSITIONS = ["size-[86%] bottom-0 left-0", "size-[86%] top-[7%] right-[7%]", "size-[86%] top-0 right-0"]
@@ -52,7 +54,7 @@ const CoverStack: FC<{ ids: string[]; alt: string }> = ({ ids, alt }) => {
 }
 
 export const GenericPreview = forwardRef<HTMLDivElement, GenericPreviewProps>(
-  ({ size, roundedPicture = false, stackImageIds, className, subtitle, onPlay, ...item }, ref) => {
+  ({ size, roundedPicture = false, stackImageIds, className, subtitle, onPlay, progress, finished, ...item }, ref) => {
     const { containerClasses, widthClasses, heightClasses } = getSizing(size)
     const roundedClasses = roundedPicture ? "rounded-full" : "rounded-xl"
     const labelCenter = roundedPicture ? "text-center" : "text-left"
@@ -96,6 +98,22 @@ export const GenericPreview = forwardRef<HTMLDivElement, GenericPreviewProps>(
               )}
               {onPlay ? (
                 <div className="pointer-events-none absolute inset-0 bg-black/45 opacity-0 transition-opacity duration-200 group-focus-within:opacity-100 group-hover:opacity-100" />
+              ) : null}
+              {finished ? (
+                <div
+                  aria-label="Played"
+                  className="absolute top-0 right-0 flex size-8 items-center justify-center rounded-bl-lg bg-black/55 text-white/90 backdrop-blur-sm"
+                >
+                  <CheckIcon className="size-3.5" strokeWidth={2.5} />
+                </div>
+              ) : null}
+              {progress !== undefined ? (
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1 bg-black/60 backdrop-blur-sm">
+                  <div
+                    className="bg-primary h-full transition-[width] duration-300 ease-linear"
+                    style={{ width: `${Math.min(1, Math.max(0, progress)) * 100}%` }}
+                  />
+                </div>
               ) : null}
             </div>
           </Link>

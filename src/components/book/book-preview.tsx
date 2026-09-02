@@ -2,7 +2,7 @@ import { forwardRef, Fragment } from "react"
 import { Book } from "@thoth/client"
 import { GenericPreview } from "@thoth/components/generic/generic-preview.tsx"
 import { Link } from "@thoth/components/link.tsx"
-import { usePlayBook } from "@thoth/hooks/playback"
+import { useBookProgress, usePlayBook } from "@thoth/hooks/playback"
 
 interface BookPreviewProps extends Book {
   size?: "small" | "normal"
@@ -12,6 +12,7 @@ interface BookPreviewProps extends Book {
 export const BookPreview = forwardRef<HTMLDivElement, BookPreviewProps>(
   ({ size = "normal", className = "", ...book }, ref) => {
     const playBook = usePlayBook()
+    const { finished, inProgress, fraction } = useBookProgress(book)
     return (
       <GenericPreview
         size={size}
@@ -33,6 +34,8 @@ export const BookPreview = forwardRef<HTMLDivElement, BookPreviewProps>(
         ref={ref}
         className={className}
         type="books"
+        progress={inProgress ? fraction : undefined}
+        finished={finished}
         onPlay={() => void playBook(book.libraryId, book.id)}
       />
     )

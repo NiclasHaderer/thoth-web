@@ -1,11 +1,13 @@
 import { useQueryClient } from "@tanstack/react-query"
 import { useAnimationFrame, useMotionValue } from "motion/react"
-import { useCallback, useEffect, useRef, useSyncExternalStore } from "react"
+import { useCallback, useEffect, useMemo, useRef, useSyncExternalStore } from "react"
 import { useLocation, useSearch } from "wouter"
-import { ThothApiError, UUID } from "@thoth/client"
+import { Api, Book, BookDetailed, ThothApiError, UUID } from "@thoth/client"
 import { useEvent } from "@thoth/hooks/events"
+import { invalidateLibraryContent } from "@thoth/queries/invalidate"
+import { queryKeys } from "@thoth/queries/keys"
 import { bookDetailQuery } from "@thoth/queries/resources"
-import { usePlaybackState } from "@thoth/state/playback.state"
+import { PlaybackTrack, usePlaybackProgress, usePlaybackState } from "@thoth/state/playback.state"
 import { useSleepTimer } from "@thoth/state/sleep-timer.state"
 
 const VOLUME_KEY = "thoth.volume"
@@ -118,6 +120,44 @@ const seekWhenLoaded = (seconds: number) => {
   pendingSeek = seconds
 }
 
+const toPlaybackTracks = (book: BookDetailed, libraryId: UUID): PlaybackTrack[] =>
+  book.tracks.map(track => ({ ...track, authors: book.authors, coverID: book.coverID, libraryId }))
+
+const startTracks = (tracks: PlaybackTrack[], index: number, offsetSeconds: number, autoplay: boolean) => {
+  const media = audio()
+  if (media.src.endsWith(`/${tracks[index].id}`)) {
+    // The source stays the same, so nothing reloads: neither a queued seek nor the
+    // autoplay of useAudioSource would ever fire. Apply both directly.
+    pendingSeek = null
+    media.currentTime = offsetSeconds
+    if (autoplay) void media.play().catch(() => {})
+  } else {
+    // Queued before the state change so every listener already sees where the book resumes,
+    // instead of briefly reporting the start of the track. Always queued, so a stale seek
+    // from an earlier aborted start can never apply to this track.
+    seekWhenLoaded(offsetSeconds)
+  }
+  usePlaybackState.getState().start(tracks[index], tracks.slice(index + 1), tracks.slice(0, index), autoplay)
+}
+
+export const startBookAt = (book: BookDetailed, libraryId: UUID, positionSeconds: number, autoplay = true): boolean => {
+  const tracks = toPlaybackTracks(book, libraryId)
+  if (tracks.length === 0) return false
+
+  let index = 0
+  let offset = Math.max(0, positionSeconds)
+  while (index < tracks.length - 1 && offset >= tracks[index].durationMs / 1000)
+    offset -= tracks[index++].durationMs / 1000
+
+  startTracks(tracks, index, offset, autoplay)
+  return true
+}
+
+export const startBookTrack = (book: BookDetailed, libraryId: UUID, index: number) => {
+  const tracks = toPlaybackTracks(book, libraryId)
+  if (tracks[index]) startTracks(tracks, index, 0, true)
+}
+
 export const useSkip = () =>
   useCallback((seconds: number) => {
     const media = audio()
@@ -144,6 +184,24 @@ export const useSkip = () =>
 
     media.currentTime = target
   }, [])
+
+// Live book-level progress: follows playback for the book that is playing, the cached position
+// otherwise. The selectors keep books that are not playing from re-rendering on playback ticks.
+export const useBookProgress = (book: Book) => {
+  const isCurrent = usePlaybackProgress(s => s.bookId === book.id && s.libraryId === book.libraryId)
+  const positionMs = usePlaybackProgress(s =>
+    s.bookId === book.id && s.libraryId === book.libraryId ? s.positionMs : book.positionMs
+  )
+  const finished = book.status === "FINISHED"
+
+  return {
+    finished,
+    positionMs,
+    remainingMs: Math.max(0, book.durationMs - positionMs),
+    fraction: book.durationMs > 0 ? Math.min(1, positionMs / book.durationMs) : 0,
+    inProgress: !finished && book.durationMs > 0 && (positionMs > 0 || isCurrent),
+  }
+}
 
 export const usePlaybackRate = (): [number, (rate: number) => void] => {
   const rate = useAudioSnapshot(["ratechange", "emptied"], a => a.playbackRate)
@@ -226,6 +284,61 @@ export const usePreviousTrack = (): [() => void, boolean] => {
 
 const RESUME_KEY = "thoth.playback"
 const RESUME_WRITE_INTERVAL = 5000
+const PROGRESS_SYNC_INTERVAL = 15000
+const PROGRESS_PUBLISH_INTERVAL = 1000
+
+// tick() runs fn at most once per interval; now() runs it immediately and restarts the window.
+const throttled = (interval: number, fn: () => void) => {
+  let last = 0
+  const now = () => {
+    last = Date.now()
+    fn()
+  }
+  return {
+    now,
+    tick: () => {
+      if (Date.now() - last >= interval) now()
+    },
+  }
+}
+
+// Set when a book starts, cleared by the first sync that carries a trustworthy position.
+let startPending = false
+
+type PlaybackSnapshot = { history: PlaybackTrack[]; current: PlaybackTrack | null | undefined }
+
+const historyMs = (state: PlaybackSnapshot) => state.history.reduce((sum, track) => sum + track.durationMs, 0)
+
+// The element keeps the previous track's currentTime until the new source is loaded, so it says
+// nothing about the current book until then. A queued seek does: it is where the book resumes.
+const currentTimeMs = (track: PlaybackTrack): number | null => {
+  const queued = pendingSeek !== null && usePlaybackState.getState().current?.id === track.id
+  if (queued) return (pendingSeek as number) * 1000
+  return audio().src.endsWith(`/${track.id}`) ? audio().currentTime * 1000 : null
+}
+
+const positionSettled = (track: PlaybackTrack) => currentTimeMs(track) !== null
+
+const bookPositionMs = (state: PlaybackSnapshot) =>
+  Math.round(historyMs(state) + (state.current ? (currentTimeMs(state.current) ?? 0) : 0))
+
+const publishProgress = (state: PlaybackSnapshot = usePlaybackState.getState()) => {
+  if (!state.current) return usePlaybackProgress.setState({ libraryId: null, bookId: null, positionMs: 0 })
+  usePlaybackProgress.setState({
+    libraryId: state.current.libraryId,
+    bookId: state.current.book.id,
+    positionMs: bookPositionMs(state),
+  })
+}
+
+const syncProgress = async (state: PlaybackSnapshot = usePlaybackState.getState()): Promise<boolean> => {
+  if (!state.current || !positionSettled(state.current)) return false
+  const response = await Api.setBookProgress(
+    { libraryId: state.current.libraryId, id: state.current.book.id },
+    { positionMs: bookPositionMs(state) }
+  )
+  return response.success
+}
 
 interface StoredPlayback {
   libraryId: UUID
@@ -256,24 +369,74 @@ const writeResume = () => {
   localStorage.setItem(RESUME_KEY, JSON.stringify(stored))
 }
 
+const publish = throttled(PROGRESS_PUBLISH_INTERVAL, publishProgress)
+const resume = throttled(RESUME_WRITE_INTERVAL, writeResume)
+
 export const usePersistPlayback = () => {
-  const lastWrite = useRef(0)
+  const queryClient = useQueryClient()
+
+  // Continue listening is derived from the stored progress, so it can only be refreshed
+  // once the server has actually taken the new position.
+  const sync = useCallback(
+    (state?: PlaybackSnapshot) =>
+      void syncProgress(state).then(written => {
+        if (written) void queryClient.invalidateQueries({ queryKey: queryKeys.continueListening })
+      }),
+    [queryClient]
+  )
+  const throttledSync = useMemo(() => throttled(PROGRESS_SYNC_INTERVAL, sync), [sync])
+
+  const persist = () => {
+    publish.now()
+    resume.now()
+    throttledSync.now()
+  }
 
   useEvent(audio(), "timeupdate", () => {
-    if (Date.now() - lastWrite.current < RESUME_WRITE_INTERVAL) return
-    lastWrite.current = Date.now()
-    writeResume()
+    // A freshly started book has no stored progress, so it is missing from continue listening
+    // until the server has seen it once. Sync as soon as the position is trustworthy
+    // instead of waiting out the sync interval.
+    const current = usePlaybackState.getState().current
+    if (startPending && current && positionSettled(current)) {
+      startPending = false
+      throttledSync.now()
+    }
+    publish.tick()
+    resume.tick()
+    throttledSync.tick()
   })
-  useEvent(audio(), "pause", writeResume)
-  useEvent(audio(), "ratechange", writeResume)
-  useEvent(window, "pagehide", writeResume)
+  useEvent(audio(), "pause", persist)
+  useEvent(audio(), "seeked", persist)
+  useEvent(audio(), "ratechange", resume.now)
+  useEvent(window, "pagehide", persist)
 
   useEffect(
     () =>
       usePlaybackState.subscribe((state, previous) => {
-        if (!state.current && previous.current) localStorage.removeItem(RESUME_KEY)
+        if (previous.current?.book.id === state.current?.book.id) return
+
+        // Book changed or playback ended: flush the old book so every list picks up its new
+        // position and status.
+        const stoppedPositionMs = previous.current ? bookPositionMs(previous) : 0
+        if (previous.current) sync(previous)
+        if (!state.current) localStorage.removeItem(RESUME_KEY)
+        startPending = Boolean(state.current)
+        publishProgress(state)
+
+        // The book that just started is pinned into the row by useContinueListening; only the
+        // one that stopped needs its final position written into the cached list.
+        if (previous.current) {
+          const stopped = previous.current.book.id
+          queryClient.setQueryData<Book[]>(queryKeys.continueListening, list =>
+            list?.map(book => (book.id === stopped ? { ...book, positionMs: stoppedPositionMs } : book))
+          )
+        }
+
+        for (const track of [previous.current, state.current]) {
+          if (track) void invalidateLibraryContent(queryClient, track.libraryId)
+        }
       }),
-    []
+    [queryClient, sync]
   )
 }
 
@@ -302,27 +465,13 @@ export const useRestorePlayback = () => {
     queryClient
       .fetchQuery(bookDetailQuery(stored.libraryId, stored.bookId))
       .then(book => {
-        const tracks = book.tracks.map(track => ({
-          ...track,
-          authors: book.authors,
-          coverID: book.coverID,
-          libraryId: stored.libraryId,
-        }))
-        if (tracks.length === 0) {
-          localStorage.removeItem(RESUME_KEY)
-          return clearPlayerParam()
-        }
-
-        let index = 0
-        let offset = stored.position
-        while (index < tracks.length - 1 && offset >= tracks[index].durationMs / 1000)
-          offset -= tracks[index++].durationMs / 1000
-
         const media = audio()
         media.defaultPlaybackRate = stored.rate
         media.playbackRate = stored.rate
-        usePlaybackState.getState().start(tracks[index], tracks.slice(index + 1), tracks.slice(0, index), false)
-        seekWhenLoaded(offset)
+        if (!startBookAt(book, stored.libraryId, stored.position, false)) {
+          localStorage.removeItem(RESUME_KEY)
+          clearPlayerParam()
+        }
       })
       .catch((error: unknown) => {
         if (error instanceof ThothApiError && error.status === 404) localStorage.removeItem(RESUME_KEY)
@@ -333,19 +482,18 @@ export const useRestorePlayback = () => {
 }
 
 export const usePlayBook = () => {
-  const play = usePlaybackState(s => s.start)
   const queryClient = useQueryClient()
 
   return async (libraryId: UUID, bookId: UUID) => {
+    // The playing book's cached position is stale; picking it again just resumes the audio.
+    if (usePlaybackState.getState().current?.book.id === bookId)
+      return void audio()
+        .play()
+        .catch(() => {})
+
     const book = await queryClient.fetchQuery(bookDetailQuery(libraryId, bookId)).catch(() => undefined)
     if (!book) return
-    const [first, ...queue] = book.tracks.map(track => ({
-      ...track,
-      authors: book.authors,
-      coverID: book.coverID,
-      libraryId,
-    }))
-    if (!first) return
-    play(first, queue)
+    const position = book.status === "IN_PROGRESS" ? book.positionMs / 1000 : 0
+    startBookAt(book, libraryId, position)
   }
 }
