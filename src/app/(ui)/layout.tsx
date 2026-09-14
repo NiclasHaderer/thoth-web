@@ -7,6 +7,7 @@ import { RequireLogin } from "@thoth/components/require-login"
 import { useEvent } from "@thoth/hooks/events"
 import { useFullscreenPlayer } from "@thoth/hooks/fullscreen-player"
 import { cn } from "@thoth/lib/utils"
+import { useMountOffline } from "@thoth/offline"
 import { useMountPlayback } from "@thoth/playback"
 import { useSessionRefresh } from "@thoth/state/auth.state"
 
@@ -17,6 +18,7 @@ export const UiLayout: FC<{ children: ReactNode }> = ({ children }) => {
   const playerRef = useRef<HTMLDivElement>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
   useSessionRefresh()
+  useMountOffline()
   useMountPlayback()
   const player = useFullscreenPlayer()
   const miniBottom = useMotionValue(0)

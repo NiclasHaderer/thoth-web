@@ -67,7 +67,7 @@ const NameItems: FC<NameListProps & { order: Order; onOrderChange: (order: Order
             </Link>
           </div>
         )}
-        renderPlaceholder={() => (
+        renderSkeleton={() => (
           <div aria-busy className={cn("border-border", ROW_CLASSES, "border-b md:border md:border-b-0")}>
             <Skeleton className="h-5 w-32 md:h-6 md:w-full" />
             <Skeleton className="ml-auto h-5 w-16 md:ml-0" />
@@ -76,7 +76,9 @@ const NameItems: FC<NameListProps & { order: Order; onOrderChange: (order: Order
       />
 
       {!query.loading && query.total === 0 ? (
-        <p className="text-muted-foreground mt-12 text-center text-sm">{`No ${unitPlural ?? `${unit}s`} yet`}</p>
+        <p className="text-muted-foreground mt-12 text-center text-sm">
+          {query.offline ? "Not available offline" : `No ${unitPlural ?? `${unit}s`} yet`}
+        </p>
       ) : null}
     </>
   )

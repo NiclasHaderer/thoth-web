@@ -18,7 +18,7 @@ export const AuthorPreview = forwardRef<HTMLDivElement, AuthorProps>(
         imageId={author.imageID}
         ref={ref}
         type="authors"
-        roundedPicture={true}
+        round={true}
         className={className}
       />
     )

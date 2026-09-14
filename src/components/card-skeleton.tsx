@@ -1,6 +1,6 @@
 import { FC } from "react"
 
-export const Loading: FC<{ count: number }> = ({ count }) => {
+export const CardSkeleton: FC<{ count: number }> = ({ count }) => {
   return (
     <>
       {new Array(count).fill(0).map((_, i) => (

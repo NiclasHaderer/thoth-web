@@ -2,6 +2,7 @@ import { ImageOffIcon } from "lucide-react"
 import { animate, motion, useMotionValue } from "motion/react"
 import { FC, Fragment, useEffect, useRef, useState } from "react"
 import { createPortal } from "react-dom"
+import { useCoverSrc } from "@thoth/client/media"
 import { Link } from "@thoth/components/link.tsx"
 import { PlayerButton } from "@thoth/components/player-button"
 import {
@@ -27,8 +28,9 @@ import {
   nextTrack,
   previousOrRestart,
   skip,
-  useAudio,
   useCanGoPrevious,
+  useDuration,
+  usePosition,
   usePlayback,
   usePlaying,
   useTrackProgress,
@@ -59,8 +61,8 @@ const FullscreenPlayerBody: FC<{ player: FullscreenPlayerController; book: Playi
   const index = usePlayback(s => s.trackIndex)
   const track = book.tracks[index]
   const hasNext = usePlayback(hasNextTrack)
-  const position = useAudio(media => media.currentTime)
-  const duration = useAudio(media => media.duration)
+  const position = usePosition()
+  const duration = useDuration()
   const { progress, scrub, scrubEnd } = useTrackProgress()
   const playing = usePlaying()
   const canGoPrevious = useCanGoPrevious()
@@ -78,7 +80,8 @@ const FullscreenPlayerBody: FC<{ player: FullscreenPlayerController; book: Playi
 
   useEvent(window, "resize", () => x.set(-pane * paneWidth()))
 
-  const cover = book.coverID ? `/api/stream/images/${book.coverID}` : undefined
+  const coverSrc = useCoverSrc()
+  const cover = coverSrc(book.coverID)
 
   return createPortal(
     <motion.div

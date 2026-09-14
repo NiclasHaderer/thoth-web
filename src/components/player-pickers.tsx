@@ -4,7 +4,7 @@ import { BottomSheet } from "@thoth/components/bottom-sheet"
 import { SheetTrigger } from "@thoth/components/ui/sheet"
 import { rowInteraction } from "@thoth/lib/interactive"
 import { cn } from "@thoth/lib/utils"
-import { audio, useAudio, useSleepTimer } from "@thoth/playback"
+import { audio, useRate, useSleepTimer } from "@thoth/playback"
 import { toReadableTime } from "./track/helpers"
 import { Button } from "./ui/button"
 
@@ -107,7 +107,7 @@ export const SleepTimerPicker: FC = () => {
 const RATES = [0.75, 1, 1.25, 1.5, 1.75, 2]
 
 export const PlaybackRatePicker: FC = () => {
-  const rate = useAudio(media => media.playbackRate)
+  const rate = useRate()
 
   return (
     <PickerSheet
