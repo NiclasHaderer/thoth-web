@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.app.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.worker.tsbuildinfo",
+    "lib": ["WebWorker", "ESNext"],
+    "types": []
+  },
+  "include": ["src/offline/opfs-worker.ts"],
+  "exclude": []
+}

@@ -20,15 +20,21 @@ import {
 } from "lucide-react"
 import { FC, ReactNode, useState } from "react"
 import { Book, UUID } from "@thoth/client"
+import { useCoverSrc } from "@thoth/client/media"
+import { BookDownloadItem, DownloadBadge } from "@thoth/components/book/book-download"
 import { MobileDetailHeader } from "@thoth/components/detail/detail-layout"
+import { DetailSkeleton } from "@thoth/components/detail/detail-skeleton"
+import { PartialSection } from "@thoth/components/detail/partial-section"
 import { ResourceActions } from "@thoth/components/generic/resource-actions"
 import { HtmlViewer } from "@thoth/components/html-editor"
 import { Link } from "@thoth/components/link.tsx"
+import { QueryError } from "@thoth/components/status-page.tsx"
 import { Button } from "@thoth/components/ui/button"
 import { DropdownMenuItem } from "@thoth/components/ui/dropdown-menu"
 import { useBreakpoint } from "@thoth/hooks/use-media-query"
 import { cn } from "@thoth/lib/utils"
 import { isDetailedBook } from "@thoth/models/typeguards"
+import { useCanPlay } from "@thoth/offline"
 import {
   audio,
   startBook,
@@ -40,7 +46,7 @@ import {
 } from "@thoth/playback"
 import { useAutoMatchBook, useBook, useResetBookProgress, useSetBookFinished } from "@thoth/queries/resources"
 import { toReadableTime, toRuntime } from "../track/helpers"
-import { TrackList } from "../track/track-list"
+import { TrackList, TrackListSkeleton } from "../track/track-list"
 import { BookEdit } from "./book-edit"
 
 const RATING_MAX = 5
@@ -104,6 +110,7 @@ const CoverIndicators: FC<{ book: Book }> = ({ book }) => {
 
   return (
     <>
+      <DownloadBadge bookId={book.id} />
       {finished ? (
         <div
           aria-label="Played"
@@ -124,22 +131,25 @@ const CoverIndicators: FC<{ book: Book }> = ({ book }) => {
   )
 }
 
-const Cover: FC<CoverProps> = ({ book, className }) => (
-  <div className={cn("relative overflow-hidden rounded-lg", className)}>
-    {book.coverID ? (
-      <img
-        className="border-border w-full rounded-lg border object-cover shadow-lg shadow-black/25"
-        alt={book.title}
-        src={`/api/stream/images/${book.coverID}`}
-      />
-    ) : (
-      <div className="border-border text-muted-foreground/60 flex aspect-square w-full items-center justify-center rounded-lg border">
-        <ImageOffIcon className="size-2/5" />
-      </div>
-    )}
-    <CoverIndicators book={book} />
-  </div>
-)
+const Cover: FC<CoverProps> = ({ book, className }) => {
+  const cover = useCoverSrc()
+  return (
+    <div className={cn("relative overflow-hidden rounded-lg", className)}>
+      {book.coverID ? (
+        <img
+          className="border-border w-full rounded-lg border object-cover shadow-lg shadow-black/25"
+          alt={book.title}
+          src={cover(book.coverID)}
+        />
+      ) : (
+        <div className="border-border text-muted-foreground/60 flex aspect-square w-full items-center justify-center rounded-lg border">
+          <ImageOffIcon className="size-2/5" />
+        </div>
+      )}
+      <CoverIndicators book={book} />
+    </div>
+  )
+}
 
 interface MetaProps {
   book: Book
@@ -255,12 +265,13 @@ const DesktopHeader: FC<HeaderProps> = ({ book, libraryId, runtime, actions }) =
 )
 
 const MobileHeader: FC<HeaderProps> = ({ book, libraryId, runtime, tracks, actions }) => {
+  const cover = useCoverSrc()
   const tracksLabel = tracks > 0 ? pluralize(tracks, "Track") : undefined
 
   return (
     <MobileDetailHeader
       title={book.title}
-      backdrop={book.coverID ? `/api/stream/images/${book.coverID}` : undefined}
+      backdrop={cover(book.coverID)}
       art={<Cover book={book} className="w-full" />}
       actions={actions}
       revealTop={
@@ -299,13 +310,20 @@ export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId, lib
   const currentTrack = useCurrentTrack()
   const isPlaying = usePlaying()
   const isDesktop = useBreakpoint("md")
-  const { data: book } = useBook(libraryId, bookId)
+  const { data: book, error, refetch, isFetching, isLoadingError, isPending } = useBook(libraryId, bookId)
   const autoMatchBook = useAutoMatchBook()
+  const canPlay = useCanPlay(bookId)
   const setFinished = useSetBookFinished()
   const resetProgress = useResetBookProgress()
   const [isEditing, setEditing] = useState(false)
 
-  if (!book) return <></>
+  if (isLoadingError) return <QueryError error={error} onRetry={refetch} />
+  if (isPending)
+    return (
+      <DetailSkeleton>
+        <TrackListSkeleton />
+      </DetailSkeleton>
+    )
 
   const currentTrackId = isCurrentBook ? currentTrack?.id : undefined
 
@@ -326,7 +344,7 @@ export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId, lib
           if (isCurrentBook) return audio.play()
           if (isDetailedBook(book)) startBook(book, libraryId, inProgress ? book.positionMs : 0)
         }}
-        isDisabled={tracks.length === 0}
+        isDisabled={tracks.length === 0 || !canPlay}
         className="h-11 grow px-5 md:h-10 md:grow-0"
       >
         <CirclePlayIcon className="mr-2" /> {isCurrentBook || inProgress ? "Resume" : "Play"}
@@ -367,6 +385,7 @@ export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId, lib
           <RotateCcwIcon className="text-muted-foreground size-5" />
           Reset progress
         </DropdownMenuItem>
+        {isDetailedBook(book) ? <BookDownloadItem book={book} /> : null}
       </ResourceActions>
       <BookEdit book={book} isOpen={isEditing} onOpenChange={setEditing} />
     </>
@@ -386,10 +405,19 @@ export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId, lib
           tracks={tracks}
           activeId={currentTrackId}
           playing={isPlaying}
+          disabled={!canPlay}
           onStart={startPlayback}
           onToggle={audio.setPlaying}
         />
-      ) : null}
+      ) : (
+        <PartialSection
+          className="pt-8 md:pt-10"
+          title="Tracks"
+          error={error}
+          loading={isFetching}
+          skeleton={<TrackListSkeleton />}
+        />
+      )}
     </div>
   )
 }

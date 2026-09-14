@@ -1,40 +1,43 @@
 import { CheckIcon, ImageOffIcon, PlayIcon } from "lucide-react"
 import { FC, forwardRef, ReactNode } from "react"
+import { UUID } from "@thoth/client"
+import { useCoverSrc } from "@thoth/client/media"
 import { Link } from "@thoth/components/link.tsx"
 import { getSizing } from "@thoth/utils/width.ts"
 
 interface GenericPreviewProps {
-  id: string
-  libraryId: string
+  id: UUID
+  libraryId: UUID
   label: string
   subtitle?: ReactNode
-  imageId?: string
-  stackImageIds?: string[]
+  imageId?: UUID
+  stackImageIds?: UUID[]
   type: "books" | "series" | "authors"
   size: "small" | "normal"
-  roundedPicture?: boolean
+  round?: boolean
   className: string
   onPlay?: () => void
   progress?: number
   finished?: boolean
+  badge?: ReactNode
 }
 
 const STACK_POSITIONS = ["size-[86%] bottom-0 left-0", "size-[86%] top-[7%] right-[7%]", "size-[86%] top-0 right-0"]
 const STACK_DIMMING = ["", "brightness-[.75]", "brightness-[.55]"]
 const STACK_PLACEHOLDER_BG = ["bg-black/45", "bg-black/35", "bg-black/25"]
 
-const CoverStack: FC<{ ids: string[]; alt: string }> = ({ ids, alt }) => {
+const CoverStack: FC<{ ids: UUID[]; alt: string }> = ({ ids, alt }) => {
+  const cover = useCoverSrc()
   return (
     <>
       {[2, 1, 0].map(index =>
         ids[index] ? (
           <img
             key={index}
-            loading="lazy"
             className={`absolute rounded-lg object-cover shadow-md ring-1 ring-black/40 transition-[filter] duration-200 ${STACK_POSITIONS[index]} ${STACK_DIMMING[index]} ${
               index === 0 ? "group-hover:brightness-110 group-focus-visible:brightness-110" : ""
             }`}
-            src={`/api/stream/images/${ids[index]}`}
+            src={cover(ids[index])}
             alt={index === 0 ? alt : ""}
           />
         ) : (
@@ -54,10 +57,11 @@ const CoverStack: FC<{ ids: string[]; alt: string }> = ({ ids, alt }) => {
 }
 
 export const GenericPreview = forwardRef<HTMLDivElement, GenericPreviewProps>(
-  ({ size, roundedPicture = false, stackImageIds, className, subtitle, onPlay, progress, finished, ...item }, ref) => {
+  ({ size, round = false, stackImageIds, className, subtitle, onPlay, progress, finished, badge, ...item }, ref) => {
+    const cover = useCoverSrc()
     const { containerClasses, widthClasses, heightClasses } = getSizing(size)
-    const roundedClasses = roundedPicture ? "rounded-full" : "rounded-xl"
-    const labelCenter = roundedPicture ? "text-center" : "text-left"
+    const roundedClasses = round ? "rounded-full" : "rounded-xl"
+    const labelCenter = round ? "text-center" : "text-left"
     const href = `/libraries/${item.libraryId}/${item.type}/${item.id}`
     const stack = stackImageIds
     const imageId = item.imageId
@@ -86,11 +90,10 @@ export const GenericPreview = forwardRef<HTMLDivElement, GenericPreviewProps>(
                 </>
               ) : imageId ? (
                 <img
-                  loading="lazy"
                   className={`h-full w-full object-cover transition-[filter] duration-200 ${
                     onPlay ? "" : "group-hover:brightness-110 group-focus-visible:brightness-110"
                   }`}
-                  src={`/api/stream/images/${imageId}`}
+                  src={cover(imageId)}
                   alt={item.label}
                 />
               ) : (
@@ -99,6 +102,7 @@ export const GenericPreview = forwardRef<HTMLDivElement, GenericPreviewProps>(
               {onPlay ? (
                 <div className="pointer-events-none absolute inset-0 bg-black/45 opacity-0 transition-opacity duration-200 group-focus-within:opacity-100 group-hover:opacity-100" />
               ) : null}
+              {badge}
               {finished ? (
                 <div
                   aria-label="Played"

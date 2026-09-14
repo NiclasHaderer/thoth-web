@@ -14,3 +14,7 @@ export class ThothApiError extends Error {
 }
 
 export const isAuthError = (error: unknown): boolean => error instanceof ThothApiError && error.status === 401
+
+export const isNotFoundError = (error: unknown): boolean => error instanceof ThothApiError && error.status === 404
+
+export const isNetworkError = (error: unknown): boolean => error instanceof ThothApiError && error.status === undefined

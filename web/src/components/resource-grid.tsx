@@ -12,7 +12,7 @@ interface ResourceGridProps<T> {
   itemAt: (index: number) => T | undefined
   renderItem: (item: T, index: number) => ReactNode
   // Items whose page has not arrived yet. Must have a height, or the grid cannot measure a row.
-  renderPlaceholder: (index: number) => ReactNode
+  renderSkeleton: (index: number) => ReactNode
   loading?: boolean
   onRangeChange?: (range: ListRange) => void
   listClassName?: string
@@ -24,7 +24,7 @@ export const ResourceGrid = <T,>({
   total,
   itemAt,
   renderItem,
-  renderPlaceholder,
+  renderSkeleton,
   loading,
   onRangeChange,
   listClassName,
@@ -53,7 +53,7 @@ export const ResourceGrid = <T,>({
     return (
       <div aria-busy className={listClassName}>
         {Array.from({ length: LOADING_CELLS }, (_, index) => (
-          <div key={index}>{renderPlaceholder(index)}</div>
+          <div key={index}>{renderSkeleton(index)}</div>
         ))}
       </div>
     )
@@ -70,7 +70,7 @@ export const ResourceGrid = <T,>({
       stateChanged={stateChanged}
       itemContent={index => {
         const item = itemAt(index)
-        return item === undefined ? renderPlaceholder(index) : renderItem(item, index)
+        return item === undefined ? renderSkeleton(index) : renderItem(item, index)
       }}
     />
   )

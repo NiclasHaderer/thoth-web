@@ -1,11 +1,14 @@
 import { Content } from "@tiptap/react"
-import { FC, lazy, Suspense } from "react"
-import { Loading } from "@thoth/components/loading.tsx"
+import { FC } from "react"
+import { CardSkeleton } from "@thoth/components/card-skeleton.tsx"
+import { lazyView } from "@thoth/components/lazy-view.tsx"
 import { Skeleton } from "@thoth/components/ui/skeleton"
 import { cn } from "@thoth/lib/utils"
 
-const HtmlEditorImpl = lazy(() => import("./_html-editor.tsx").then(i => ({ default: i.HtmlEditorImpl })))
-const HtmlViewerImpl = lazy(() => import("./_html-viewer.tsx").then(i => ({ default: i.HtmlViewerImpl })))
+const HtmlEditorImpl = lazyView(
+  async () => ({ default: (await import("./_html-editor.tsx")).HtmlEditorImpl }),
+  () => <CardSkeleton count={3} />
+)
 
 export const HtmlEditor: FC<{
   value?: Content
@@ -13,14 +16,10 @@ export const HtmlEditor: FC<{
   className?: string | undefined
   onChange?: (newValue: string | undefined) => void
 }> = props => {
-  return (
-    <Suspense fallback={<Loading count={2} />}>
-      <HtmlEditorImpl {...props} />
-    </Suspense>
-  )
+  return <HtmlEditorImpl {...props} />
 }
 
-const HtmlViewerFallback: FC<{ lines: number }> = ({ lines }) => (
+const HtmlViewerSkeleton: FC<{ lines: number }> = ({ lines }) => (
   <div aria-busy>
     <div className="flex flex-col gap-3">
       {Array.from({ length: lines }, (_, index) => (
@@ -30,6 +29,11 @@ const HtmlViewerFallback: FC<{ lines: number }> = ({ lines }) => (
   </div>
 )
 
+const HtmlViewerImpl = lazyView(
+  async () => ({ default: (await import("./_html-viewer.tsx")).HtmlViewerImpl }),
+  props => <HtmlViewerSkeleton lines={props.collapsedLines ?? 3} />
+)
+
 export const HtmlViewer: FC<{
   content: string | null | undefined
   className?: string | undefined
@@ -37,9 +41,5 @@ export const HtmlViewer: FC<{
 }> = props => {
   if (!props.content) return null
 
-  return (
-    <Suspense fallback={<HtmlViewerFallback lines={props.collapsedLines ?? 3} />}>
-      <HtmlViewerImpl {...props} />
-    </Suspense>
-  )
+  return <HtmlViewerImpl {...props} />
 }

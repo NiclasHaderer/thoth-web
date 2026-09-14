@@ -1,10 +1,10 @@
 import { MutationCache, QueryCache, QueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
-import { isAuthError } from "./error"
+import { isAuthError, isNetworkError, isNotFoundError } from "./error"
 
 declare module "@tanstack/react-query" {
   interface Register {
-    queryMeta: { action: string }
+    queryMeta: { action: string; persist?: false }
     mutationMeta: { action: string }
   }
 }
@@ -12,13 +12,20 @@ declare module "@tanstack/react-query" {
 const report = (error: Error, action: string | undefined) => {
   if (isAuthError(error)) return
   const headline = action ? `Could not ${action}` : "Something went wrong"
-  const detail = error.message && error.message !== headline ? `: ${error.message}` : ""
+  const detail = isNetworkError(error)
+    ? ", you are offline"
+    : error.message && error.message !== headline
+      ? `: ${error.message}`
+      : ""
   toast.error(`${headline}${detail}`, { id: error.message || headline })
 }
 
 export const queryClient = new QueryClient({
   queryCache: new QueryCache({
-    onError: (error, query) => report(error, query.meta?.action),
+    onError: (error, query) => {
+      if (isNetworkError(error) || isNotFoundError(error)) return
+      report(error, query.meta?.action)
+    },
   }),
   mutationCache: new MutationCache({
     onError: (error, _variables, _context, mutation) => report(error, mutation.meta?.action),
@@ -26,8 +33,13 @@ export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: 30_000,
+      gcTime: Infinity,
       retry: false,
       refetchOnWindowFocus: false,
+      networkMode: "offlineFirst",
+    },
+    mutations: {
+      networkMode: "offlineFirst",
     },
   },
 })
