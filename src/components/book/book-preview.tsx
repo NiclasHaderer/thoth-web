@@ -1,7 +1,9 @@
 import { forwardRef, Fragment } from "react"
 import { Book } from "@thoth/client"
+import { DownloadBadge } from "@thoth/components/book/book-download"
 import { GenericPreview } from "@thoth/components/generic/generic-preview.tsx"
 import { Link } from "@thoth/components/link.tsx"
+import { useCanPlay } from "@thoth/offline"
 import { playBookById, useBookProgress } from "@thoth/playback"
 
 interface BookPreviewProps extends Book {
@@ -12,6 +14,7 @@ interface BookPreviewProps extends Book {
 export const BookPreview = forwardRef<HTMLDivElement, BookPreviewProps>(
   ({ size = "normal", className = "", ...book }, ref) => {
     const { finished, inProgress, fraction } = useBookProgress(book)
+    const canPlay = useCanPlay(book.id)
     return (
       <GenericPreview
         size={size}
@@ -35,7 +38,8 @@ export const BookPreview = forwardRef<HTMLDivElement, BookPreviewProps>(
         type="books"
         progress={inProgress ? fraction : undefined}
         finished={finished}
-        onPlay={() => void playBookById(book.libraryId, book.id)}
+        badge={<DownloadBadge bookId={book.id} size="small" />}
+        onPlay={canPlay ? () => void playBookById(book.libraryId, book.id) : undefined}
       />
     )
   }

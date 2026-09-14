@@ -2,6 +2,8 @@ import { UUID } from "@/client"
 import { BookPreview } from "@/components/book/book-preview.tsx"
 import { DetailLayout, detailLabel } from "@/components/detail/detail-layout"
 import { DetailList } from "@/components/detail/detail-list.tsx"
+import { DetailSkeleton } from "@/components/detail/detail-skeleton"
+import { PartialSection } from "@/components/detail/partial-section"
 import { HtmlViewer } from "@/components/html-editor"
 import { ResponsiveGrid } from "@/components/responsive-grid"
 import { isDetailedSeries } from "@/models/typeguards"
@@ -9,15 +11,23 @@ import { useAutoMatchSeries, useSeries } from "@/queries/resources"
 import { pluralize } from "@/utils/utils.ts"
 import { FC, useState } from "react"
 import { EditButton } from "@thoth/components/generic/edit-button"
+import { PreviewGridSkeleton } from "@thoth/components/generic/preview-skeleton"
 import { ResourceActions } from "@thoth/components/generic/resource-actions"
+import { QueryError } from "@thoth/components/status-page.tsx"
 import SeriesEdit from "./series-edit"
 
 export const SeriesDetails: FC<{ seriesId: UUID; libraryId: UUID }> = ({ seriesId, libraryId }) => {
-  const { data: series } = useSeries(libraryId, seriesId)
+  const { data: series, error, refetch, isFetching, isLoadingError, isPending } = useSeries(libraryId, seriesId)
   const autoMatchSeries = useAutoMatchSeries()
   const [isEditing, setEditing] = useState(false)
 
-  if (!series) return <></>
+  if (isLoadingError) return <QueryError error={error} onRetry={refetch} />
+  if (isPending)
+    return (
+      <DetailSkeleton>
+        <PreviewGridSkeleton subtitle />
+      </DetailSkeleton>
+    )
 
   const detailed = isDetailedSeries(series)
 
@@ -70,9 +80,9 @@ export const SeriesDetails: FC<{ seriesId: UUID; libraryId: UUID }> = ({ seriesI
       }
       actions={
         <>
-          {detailed ? <EditButton onPress={() => setEditing(true)} /> : null}
+          <EditButton onPress={() => setEditing(true)} />
           <ResourceActions libraryId={libraryId} id={series.id} label="series" autoMatch={autoMatchSeries} />
-          {detailed ? <SeriesEdit series={series} isOpen={isEditing} onOpenChange={setEditing} /> : null}
+          <SeriesEdit series={series} isOpen={isEditing} onOpenChange={setEditing} />
         </>
       }
     >
@@ -85,7 +95,9 @@ export const SeriesDetails: FC<{ seriesId: UUID; libraryId: UUID }> = ({ seriesI
             ))}
           </ResponsiveGrid>
         </section>
-      ) : null}
+      ) : (
+        <PartialSection title="Books" error={error} loading={isFetching} skeleton={<PreviewGridSkeleton subtitle />} />
+      )}
     </DetailLayout>
   )
 }

@@ -29,7 +29,7 @@ export const AuthorListOutlet = ({ libraryId }: { libraryId: UUID }) => {
         onRangeChange={authors.onRangeChange}
         listClassName={RESPONSIVE_GRID}
         renderItem={author => <AuthorPreview {...author} />}
-        renderPlaceholder={() => <PreviewSkeleton round />}
+        renderSkeleton={() => <PreviewSkeleton round />}
       />
     </>
   )

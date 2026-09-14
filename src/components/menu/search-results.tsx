@@ -1,7 +1,9 @@
-import { ImageOffIcon, UserIcon } from "lucide-react"
+import { CircleArrowDownIcon, ImageOffIcon, UserIcon } from "lucide-react"
 import { FC } from "react"
-import { LibrarySearchResult } from "@thoth/client"
+import { LibrarySearchResult, UUID } from "@thoth/client"
+import { useCoverSrc } from "@thoth/client/media"
 import { Link } from "@thoth/components/link.tsx"
+import { useDownloadEntry } from "@thoth/offline"
 
 export const SearchResults: FC<{ search: LibrarySearchResult; onClose: () => void }> = ({ search, onClose }) => (
   <>
@@ -32,64 +34,67 @@ export const SearchResults: FC<{ search: LibrarySearchResult; onClose: () => voi
   </>
 )
 
+const DownloadDot: FC<{ bookId: UUID }> = ({ bookId }) => {
+  const entry = useDownloadEntry(bookId)
+  if (entry?.state !== "ready") return null
+  return <CircleArrowDownIcon aria-label="Downloaded" className="text-muted-foreground size-4 shrink-0" />
+}
+
 const AuthorSearchResult: FC<{ authors: LibrarySearchResult["authors"]; onClose: () => void }> = ({
   authors,
   onClose,
-}) => (
-  <>
-    {authors.map((author, i) => (
-      <Link
-        href={`/libraries/${author.libraryId}/authors/${author.id}`}
-        onClick={onClose}
-        key={i}
-        aria-label={author.name}
-        className="hover:bg-muted no-touch:focus:bg-muted block rounded-md transition-colors"
-      >
-        <div className="flex items-center p-2">
-          {author.imageID ? (
-            <img
-              className="h-8 w-8 rounded-full"
-              src={`/api/stream/images/${author.imageID}`}
-              alt="Author"
-              loading="lazy"
-            />
-          ) : (
-            <UserIcon className="h-8 w-8 rounded-full" />
-          )}
-          <h4 className="pl-3">{author.name}</h4>
-        </div>
-      </Link>
-    ))}
-  </>
-)
+}) => {
+  const cover = useCoverSrc()
+  return (
+    <>
+      {authors.map((author, i) => (
+        <Link
+          href={`/libraries/${author.libraryId}/authors/${author.id}`}
+          onClick={onClose}
+          key={i}
+          aria-label={author.name}
+          className="hover:bg-muted no-touch:focus:bg-muted block rounded-md transition-colors"
+        >
+          <div className="flex items-center p-2">
+            {author.imageID ? (
+              <img className="h-8 w-8 rounded-full" src={cover(author.imageID)} alt="Author" />
+            ) : (
+              <UserIcon className="h-8 w-8 rounded-full" />
+            )}
+            <h4 className="pl-3">{author.name}</h4>
+          </div>
+        </Link>
+      ))}
+    </>
+  )
+}
 
-const BookSearchResult: FC<{ books: LibrarySearchResult["books"]; onClose: () => void }> = ({ books, onClose }) => (
-  <>
-    {books.map((book, i) => (
-      <Link
-        href={`/libraries/${book.libraryId}/books/${book.id}`}
-        onClick={onClose}
-        key={i}
-        aria-label={book.title}
-        className="hover:bg-muted no-touch:focus:bg-muted block rounded-md transition-colors"
-      >
-        <div className="flex items-center p-2">
-          {book.coverID ? (
-            <img
-              className="h-8 w-8 rounded-md object-cover"
-              src={`/api/stream/images/${book.coverID}`}
-              alt={book.title}
-              loading="lazy"
-            />
-          ) : (
-            <ImageOffIcon className="h-8 w-8 rounded-full" />
-          )}
-          <h4 className="pl-3">{book.title}</h4>
-        </div>
-      </Link>
-    ))}
-  </>
-)
+const BookSearchResult: FC<{ books: LibrarySearchResult["books"]; onClose: () => void }> = ({ books, onClose }) => {
+  const cover = useCoverSrc()
+  return (
+    <>
+      {books.map((book, i) => (
+        <Link
+          href={`/libraries/${book.libraryId}/books/${book.id}`}
+          onClick={onClose}
+          key={i}
+          aria-label={book.title}
+          className="hover:bg-muted no-touch:focus:bg-muted block rounded-md transition-colors"
+        >
+          <div className="flex items-center p-2">
+            {book.coverID ? (
+              <img className="h-8 w-8 rounded-md object-cover" src={cover(book.coverID)} alt={book.title} />
+            ) : (
+              <ImageOffIcon className="h-8 w-8 rounded-full" />
+            )}
+            <h4 className="min-w-0 grow truncate pl-3">{book.title}</h4>
+            <DownloadDot bookId={book.id} />
+          </div>
+        </Link>
+      ))}
+    </>
+  )
+}
 
 const SeriesSearchResult: FC<{ series: LibrarySearchResult["series"]; onClose: () => void }> = ({
   series,

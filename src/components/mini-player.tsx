@@ -3,6 +3,7 @@ import { AnimatePresence, animate, motion, useMotionValue } from "motion/react"
 import { FC, PropsWithChildren, useRef, useState } from "react"
 import { Popover } from "react-aria-components"
 import { Track } from "@thoth/client"
+import { useCoverSrc } from "@thoth/client/media"
 import { FullscreenPlayer } from "@thoth/components/fullscreen-player"
 import { Link } from "@thoth/components/link.tsx"
 import { PlayerButton } from "@thoth/components/player-button"
@@ -28,8 +29,9 @@ import {
   previousOrRestart,
   skip,
   stop,
-  useAudio,
   useCanGoPrevious,
+  useDuration,
+  usePosition,
   useCurrentTrack,
   usePlayback,
   usePlaying,
@@ -87,17 +89,14 @@ const SwipeDock: FC<
   )
 }
 
-const Cover: FC<{ book: PlayingBook }> = ({ book }) =>
-  book.coverID ? (
-    <img
-      className="size-12 rounded-md object-cover md:size-16"
-      alt={book.title}
-      loading="lazy"
-      src={`/api/stream/images/${book.coverID}`}
-    />
+const Cover: FC<{ book: PlayingBook }> = ({ book }) => {
+  const cover = useCoverSrc()
+  return book.coverID ? (
+    <img className="size-12 rounded-md object-cover md:size-16" alt={book.title} src={cover(book.coverID)} />
   ) : (
     <ImageOffIcon className="text-muted-foreground size-12 rounded-md md:size-16" />
   )
+}
 
 const VolumeIcon: FC<{ level: number; className?: string }> = ({ level, className }) => {
   const Icon = level === 0 ? VolumeXIcon : level < 0.5 ? Volume1Icon : Volume2Icon
@@ -122,8 +121,8 @@ export const MiniPlayer: FC<{ player: FullscreenPlayerController }> = ({ player 
   const book = usePlayback(s => s.book)
   const track = useCurrentTrack()
   const hasNext = usePlayback(hasNextTrack)
-  const position = useAudio(media => media.currentTime)
-  const duration = useAudio(media => media.duration)
+  const position = usePosition()
+  const duration = useDuration()
   const { progress, scrub, scrubEnd } = useTrackProgress()
   const playing = usePlaying()
   const canGoPrevious = useCanGoPrevious()

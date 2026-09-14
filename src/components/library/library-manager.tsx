@@ -29,6 +29,9 @@ export const LibraryManager = () => {
       folders: [] as string[],
       metadataAgents: [] as NamedMetadataAgent[],
       fileScanners: [] as FileScanner[],
+      // TODO add these to the library creation dialog
+      combineMetadataAgentFields: false as boolean,
+      combineFileScannerFields: false as boolean,
       mode: "create" as "create" | "edit",
       icon: undefined as string | undefined,
     } satisfies LibraryFormValues,

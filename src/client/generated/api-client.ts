@@ -41,7 +41,6 @@ import type {
   PaginatedResponse,
   PartialUpdateLibrary,
   PlayStatus,
-  Position,
   ProgressUpdate,
   Series,
   SeriesCreate,
@@ -424,44 +423,18 @@ export const createApi = (
       )
     },
     listBooks: (
-      { limit, offset, order, libraryId }: { limit?: number; offset?: number; order?: Order; libraryId: UUID },
+      {
+        limit,
+        offset,
+        order,
+        showInvisible,
+        libraryId,
+      }: { limit?: number; offset?: number; order?: Order; showInvisible?: boolean; libraryId: UUID },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<PaginatedResponse<Book>>> => {
       return _request(
-        _createUrl(`/api/libraries/${libraryId}/books`, { limit, offset, order }),
-        "GET",
-        "json",
-        _mergeHeaders(defaultHeadersImpl, headers),
-        undefined,
-        [...defaultInterceptors, ...interceptors],
-        executor,
-        true
-      )
-    },
-    listBookSorting: (
-      { limit, offset, order, libraryId }: { limit?: number; offset?: number; order?: Order; libraryId: UUID },
-      headers: HeadersInit = {},
-      interceptors: ApiInterceptor[] = []
-    ): Promise<ApiResponse<Array<UUID>>> => {
-      return _request(
-        _createUrl(`/api/libraries/${libraryId}/books/sorting`, { limit, offset, order }),
-        "GET",
-        "json",
-        _mergeHeaders(defaultHeadersImpl, headers),
-        undefined,
-        [...defaultInterceptors, ...interceptors],
-        executor,
-        true
-      )
-    },
-    getBookPosition: (
-      { order, id, libraryId }: { order?: Order; id: UUID; libraryId: UUID },
-      headers: HeadersInit = {},
-      interceptors: ApiInterceptor[] = []
-    ): Promise<ApiResponse<Position>> => {
-      return _request(
-        _createUrl(`/api/libraries/${libraryId}/books/${id}/position`, { order }),
+        _createUrl(`/api/libraries/${libraryId}/books`, { limit, offset, order, showInvisible }),
         "GET",
         "json",
         _mergeHeaders(defaultHeadersImpl, headers),
@@ -537,12 +510,18 @@ export const createApi = (
       )
     },
     listSeries: (
-      { limit, offset, order, libraryId }: { limit?: number; offset?: number; order?: Order; libraryId: UUID },
+      {
+        limit,
+        offset,
+        order,
+        showInvisible,
+        libraryId,
+      }: { limit?: number; offset?: number; order?: Order; showInvisible?: boolean; libraryId: UUID },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<PaginatedResponse<Series>>> => {
       return _request(
-        _createUrl(`/api/libraries/${libraryId}/series`, { limit, offset, order }),
+        _createUrl(`/api/libraries/${libraryId}/series`, { limit, offset, order, showInvisible }),
         "GET",
         "json",
         _mergeHeaders(defaultHeadersImpl, headers),
@@ -564,38 +543,6 @@ export const createApi = (
         "json",
         _mergeHeaders(defaultHeadersImpl, headers),
         body,
-        [...defaultInterceptors, ...interceptors],
-        executor,
-        true
-      )
-    },
-    listSeriesSorting: (
-      { limit, offset, order, libraryId }: { limit?: number; offset?: number; order?: Order; libraryId: UUID },
-      headers: HeadersInit = {},
-      interceptors: ApiInterceptor[] = []
-    ): Promise<ApiResponse<Array<UUID>>> => {
-      return _request(
-        _createUrl(`/api/libraries/${libraryId}/series/sorting`, { limit, offset, order }),
-        "GET",
-        "json",
-        _mergeHeaders(defaultHeadersImpl, headers),
-        undefined,
-        [...defaultInterceptors, ...interceptors],
-        executor,
-        true
-      )
-    },
-    getSeriesPosition: (
-      { order, id, libraryId }: { order?: Order; id: UUID; libraryId: UUID },
-      headers: HeadersInit = {},
-      interceptors: ApiInterceptor[] = []
-    ): Promise<ApiResponse<Position>> => {
-      return _request(
-        _createUrl(`/api/libraries/${libraryId}/series/${id}/position`, { order }),
-        "GET",
-        "json",
-        _mergeHeaders(defaultHeadersImpl, headers),
-        undefined,
         [...defaultInterceptors, ...interceptors],
         executor,
         true
@@ -667,12 +614,18 @@ export const createApi = (
       )
     },
     listAuthors: (
-      { limit, offset, order, libraryId }: { limit?: number; offset?: number; order?: Order; libraryId: UUID },
+      {
+        limit,
+        offset,
+        order,
+        showInvisible,
+        libraryId,
+      }: { limit?: number; offset?: number; order?: Order; showInvisible?: boolean; libraryId: UUID },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<PaginatedResponse<Author>>> => {
       return _request(
-        _createUrl(`/api/libraries/${libraryId}/authors`, { limit, offset, order }),
+        _createUrl(`/api/libraries/${libraryId}/authors`, { limit, offset, order, showInvisible }),
         "GET",
         "json",
         _mergeHeaders(defaultHeadersImpl, headers),
@@ -694,38 +647,6 @@ export const createApi = (
         "json",
         _mergeHeaders(defaultHeadersImpl, headers),
         body,
-        [...defaultInterceptors, ...interceptors],
-        executor,
-        true
-      )
-    },
-    listAuthorSorting: (
-      { limit, offset, order, libraryId }: { limit?: number; offset?: number; order?: Order; libraryId: UUID },
-      headers: HeadersInit = {},
-      interceptors: ApiInterceptor[] = []
-    ): Promise<ApiResponse<Array<UUID>>> => {
-      return _request(
-        _createUrl(`/api/libraries/${libraryId}/authors/sorting`, { limit, offset, order }),
-        "GET",
-        "json",
-        _mergeHeaders(defaultHeadersImpl, headers),
-        undefined,
-        [...defaultInterceptors, ...interceptors],
-        executor,
-        true
-      )
-    },
-    getAuthorPosition: (
-      { order, id, libraryId }: { order?: Order; id: UUID; libraryId: UUID },
-      headers: HeadersInit = {},
-      interceptors: ApiInterceptor[] = []
-    ): Promise<ApiResponse<Position>> => {
-      return _request(
-        _createUrl(`/api/libraries/${libraryId}/authors/${id}/position`, { order }),
-        "GET",
-        "json",
-        _mergeHeaders(defaultHeadersImpl, headers),
-        undefined,
         [...defaultInterceptors, ...interceptors],
         executor,
         true

@@ -29,7 +29,7 @@ export const SeriesListOutlet = ({ libraryId }: { libraryId: UUID }) => {
         onRangeChange={series.onRangeChange}
         listClassName={RESPONSIVE_GRID}
         renderItem={item => <SeriesPreview {...item} />}
-        renderPlaceholder={() => <PreviewSkeleton />}
+        renderSkeleton={() => <PreviewSkeleton />}
       />
     </>
   )

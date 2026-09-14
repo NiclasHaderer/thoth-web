@@ -6,6 +6,7 @@ import { cn } from "@thoth/lib/utils"
 
 export interface DetailLayoutProps {
   title: string
+  titleClassName?: string
   image?: string
   fallbackIcon?: LucideIcon
   round?: boolean
@@ -47,6 +48,7 @@ const ArtFrame: FC<{ expanded: boolean; onClick?: () => void; children: ReactNod
 
 export interface MobileDetailHeaderProps {
   title: string
+  titleClassName?: string
   backdrop?: string
   art?: ReactNode
   stats?: ReactNode
@@ -57,6 +59,7 @@ export interface MobileDetailHeaderProps {
 
 export const MobileDetailHeader: FC<MobileDetailHeaderProps> = ({
   title,
+  titleClassName,
   backdrop,
   art,
   stats,
@@ -105,14 +108,14 @@ export const MobileDetailHeader: FC<MobileDetailHeaderProps> = ({
               onClick={toggle}
               className="flex max-w-full items-center gap-1.5 rounded-lg outline-none"
             >
-              <h1 className="min-w-0 text-xl font-bold tracking-tight text-balance">{title}</h1>
+              <h1 className={cn("min-w-0 text-xl font-bold tracking-tight text-balance", titleClassName)}>{title}</h1>
               <ChevronDownIcon
                 aria-hidden
                 className={cn("size-5 shrink-0 transition-transform duration-300", expanded && "rotate-180")}
               />
             </button>
           ) : (
-            <h1 className="min-w-0 text-xl font-bold tracking-tight text-balance">{title}</h1>
+            <h1 className={cn("min-w-0 text-xl font-bold tracking-tight text-balance", titleClassName)}>{title}</h1>
           )}
         </div>
 
@@ -132,6 +135,7 @@ export const MobileDetailHeader: FC<MobileDetailHeaderProps> = ({
 
 export const DetailLayout: FC<DetailLayoutProps> = ({
   title,
+  titleClassName,
   image,
   fallbackIcon: FallbackIcon,
   round,
@@ -174,6 +178,7 @@ export const DetailLayout: FC<DetailLayoutProps> = ({
       <div className="mx-auto max-w-6xl min-w-0">
         <MobileDetailHeader
           title={title}
+          titleClassName={titleClassName}
           backdrop={image}
           art={art("w-full")}
           stats={
@@ -209,7 +214,9 @@ export const DetailLayout: FC<DetailLayoutProps> = ({
 
         <div className="flex min-w-0 flex-1 flex-col gap-2 pt-1">
           <div className="flex w-full items-start justify-between gap-4">
-            <h1 className="min-w-0 text-4xl font-semibold tracking-tight text-balance">{title}</h1>
+            <h1 className={cn("min-w-0 text-4xl font-semibold tracking-tight text-balance", titleClassName)}>
+              {title}
+            </h1>
 
             {actions ? (
               <div className="flex shrink-0 items-center gap-1.5 pt-1 [&>[data-slot=button]]:h-9">{actions}</div>

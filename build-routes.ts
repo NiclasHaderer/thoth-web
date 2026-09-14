@@ -38,7 +38,7 @@ type Paths = {
 
 const listFolderContent = async (folderPath: string): Promise<{ files: string[]; directories: string[] }> => {
   const content = await nodeFs.promises.readdir(folderPath, { withFileTypes: true })
-  const files = content.filter(item => item.isFile()).map(item => item.name)
+  const files = content.filter(item => item.isFile() && !item.name.startsWith(".")).map(item => item.name)
   const directories = content.filter(item => item.isDirectory()).map(item => item.name)
   return { files, directories }
 }
@@ -222,25 +222,15 @@ const segmentToPath = (segment: string): Segment | IgnoredSegment => {
 
 const loaderName = (page: Page) => `load${page.export}`
 
-const getComponent = (page: Page) => {
-  if (page.lazy) {
-    return `
-    <Suspense fallback={<></>}>
-      <${page.export} {...params}/>
-    </Suspense>
-    `
-  } else {
-    return `<${page.export} {...params}/>`
-  }
-}
+const getComponent = (page: Page) => `<${page.export} {...params}/>`
 
 const buildRoutes = (paths: Path) => {
   const writeImports = (path: Path, imports: string[] = []): string[] => {
     const createImport = (p: Path["layout"] | Path["page"]) => {
       if (p?.lazy) {
         imports.push(
-          `const ${loaderName(p)} = () => import('${p.importPath}').then(i => ({'default': i.${p.export}}))`,
-          `const ${p.export} = lazy(${loaderName(p)})`
+          `const ${loaderName(p)} = async () => ({'default': (await import('${p.importPath}')).${p.export}})`,
+          `const ${p.export} = lazyView(${loaderName(p)})`
         )
       } else if (p) {
         imports.push(`import { ${p.export} } from '${p.importPath}'`)
@@ -254,9 +244,9 @@ const buildRoutes = (paths: Path) => {
     return imports
   }
   const imports = writeImports(paths, [
-    'import { lazy, Suspense } from "react"',
     'import { Route, Router, Switch } from "wouter"',
-    'import { NotFound } from "@thoth/components/not-found.tsx"',
+    'import { lazyView, preloadView } from "@thoth/components/lazy-view.tsx"',
+    'import { NotFound } from "@thoth/components/status-page.tsx"',
     'import { UUID } from "@thoth/client"',
   ])
 
@@ -363,15 +353,10 @@ const buildRoutes = (paths: Path) => {
     ${lazyRoutes.join(",\n")}
   ]
 
-  const prefetched = new Set<() => Promise<unknown>>()
-
   export const prefetchRoute = (path: string) => {
     for (const route of lazyRoutes) {
       if (route.pattern.test(path)) {
-        if (!prefetched.has(route.load)) {
-          prefetched.add(route.load)
-          void route.load()
-        }
+        preloadView(route.load)
         return
       }
     }

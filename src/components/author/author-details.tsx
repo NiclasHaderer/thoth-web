@@ -7,16 +7,28 @@ import { useAuthor, useAutoMatchAuthor } from "@/queries/resources"
 import { formatDate, pluralize } from "@/utils/utils.ts"
 import { UserIcon } from "lucide-react"
 import { FC, Fragment, useState } from "react"
+import { useCoverSrc } from "@thoth/client/media"
 import { DetailLayout, detailLabel, entityLink } from "@thoth/components/detail/detail-layout"
+import { DetailSkeleton } from "@thoth/components/detail/detail-skeleton"
+import { PartialSection } from "@thoth/components/detail/partial-section"
 import { EditButton } from "@thoth/components/generic/edit-button"
+import { PreviewGridSkeleton } from "@thoth/components/generic/preview-skeleton"
 import { ResourceActions } from "@thoth/components/generic/resource-actions"
+import { QueryError } from "@thoth/components/status-page.tsx"
 import AuthorEdit from "./author-edit"
 
 export const AuthorDetails: FC<{ authorId: UUID; libraryId: UUID }> = ({ authorId, libraryId }) => {
-  const { data: author } = useAuthor(libraryId, authorId)
+  const { data: author, error, refetch, isFetching, isLoadingError, isPending } = useAuthor(libraryId, authorId)
   const autoMatchAuthor = useAutoMatchAuthor()
   const [isEditing, setEditing] = useState(false)
-  if (!author) return <></>
+  const cover = useCoverSrc()
+  if (isLoadingError) return <QueryError error={error} onRetry={refetch} />
+  if (isPending)
+    return (
+      <DetailSkeleton round>
+        <PreviewGridSkeleton subtitle />
+      </DetailSkeleton>
+    )
 
   const born = author.birthDate ? formatDate(author.birthDate) : undefined
   const died = author.deathDate ? formatDate(author.deathDate) : undefined
@@ -40,7 +52,7 @@ export const AuthorDetails: FC<{ authorId: UUID; libraryId: UUID }> = ({ authorI
   return (
     <DetailLayout
       title={author.name}
-      image={author.imageID ? `/api/stream/images/${author.imageID}` : undefined}
+      image={cover(author.imageID)}
       fallbackIcon={UserIcon}
       round
       subtitle={lifespan}
@@ -74,7 +86,9 @@ export const AuthorDetails: FC<{ authorId: UUID; libraryId: UUID }> = ({ authorI
             ))}
           </ResponsiveGrid>
         </section>
-      ) : null}
+      ) : (
+        <PartialSection title="Books" error={error} loading={isFetching} skeleton={<PreviewGridSkeleton subtitle />} />
+      )}
     </DetailLayout>
   )
 }

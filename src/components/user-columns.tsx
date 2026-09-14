@@ -1,6 +1,6 @@
 import { ColumnDef } from "@tanstack/react-table"
 import { EyeIcon, PencilIcon, Trash2Icon } from "lucide-react"
-import { ThothUserWithPermissions, UserPermissions } from "@thoth/client"
+import { ThothUserWithPermissions, UserPermissions, UUID } from "@thoth/client"
 import { DataTableColumnHeader } from "@thoth/components/data-table/data-table-column-header"
 import { DataTableRowActions } from "@thoth/components/data-table/data-table-row-actions"
 import { Badge } from "@thoth/components/ui/badge"
@@ -9,7 +9,7 @@ import { DropdownMenuItem } from "@thoth/components/ui/dropdown-menu"
 export type UserRow = ThothUserWithPermissions<UserPermissions>
 
 interface UserColumnsOptions {
-  currentUserId: string | undefined
+  currentUserId: UUID | undefined
   onEdit: (user: UserRow) => void
   onDelete: (user: UserRow) => void
 }

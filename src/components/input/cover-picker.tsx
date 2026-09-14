@@ -1,8 +1,9 @@
 import { ImageOffIcon } from "lucide-react"
 import { FC, useRef } from "react"
+import { useCoverSrc } from "@thoth/client/media"
 import { ResponsiveImage } from "@thoth/components/responsive-image"
 import { Button } from "@thoth/components/ui/button"
-import { isUUID, toBase64 } from "@thoth/utils/utils"
+import { toBase64 } from "@thoth/utils/utils"
 
 export const CoverPicker: FC<{
   alt: string
@@ -10,6 +11,7 @@ export const CoverPicker: FC<{
   onChange: (cover: string) => void
 }> = ({ alt, value, onChange }) => {
   const imageRef = useRef<HTMLInputElement>(null)
+  const cover = useCoverSrc()
   const openPicker = () => imageRef.current && imageRef.current.click()
   return (
     <div className="flex items-center justify-center pr-2">
@@ -17,7 +19,7 @@ export const CoverPicker: FC<{
         {value ? (
           <ResponsiveImage
             className="h-52 min-h-52 w-52 min-w-52 cursor-pointer rounded-md lg:h-72 lg:min-h-72 lg:w-72 lg:min-w-72"
-            src={isUUID(value) ? `/api/stream/images/${value}` : value}
+            src={cover(value) ?? ""}
             alt={alt}
             onClick={openPicker}
           />

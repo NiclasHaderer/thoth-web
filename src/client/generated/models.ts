@@ -100,6 +100,8 @@ export type MetadataRegion = "AU" | "CA" | "DE" | "ES" | "FR" | "IN" | "IT" | "J
 
 export interface Library {
   bookCount: number
+  combineFileScannerFields: boolean
+  combineMetadataAgentFields: boolean
   fileScanners: Array<FileScanner>
   folders: Array<string>
   icon: string | undefined
@@ -112,6 +114,8 @@ export interface Library {
 }
 
 export interface UpdateLibrary {
+  combineFileScannerFields: boolean
+  combineMetadataAgentFields: boolean
   fileScanners: Array<FileScanner>
   folders: Array<string>
   icon: string | undefined
@@ -123,6 +127,8 @@ export interface UpdateLibrary {
 }
 
 export interface PartialUpdateLibrary {
+  combineFileScannerFields: boolean | undefined
+  combineMetadataAgentFields: boolean | undefined
   fileScanners: Array<FileScanner> | undefined
   folders: Array<string> | undefined
   icon: string | undefined
@@ -215,12 +221,6 @@ export interface PaginatedResponse<T> {
 }
 
 export type Order = "ASC" | "DESC"
-
-export interface Position {
-  id: UUID
-  order: Order
-  sortIndex: number
-}
 
 export interface Track {
   book: TitledId

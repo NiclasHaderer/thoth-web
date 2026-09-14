@@ -12,6 +12,7 @@ interface TrackProps {
   index: number
   trackNr?: number | null
   state: TrackState
+  disabled?: boolean
   startPlayback: (index: number) => void
   togglePlayback: (shouldPlay: boolean) => void
 }
@@ -28,7 +29,16 @@ const Equalizer: FC<{ animated: boolean }> = ({ animated }) => (
   </span>
 )
 
-export const Track: FC<TrackProps> = ({ title, durationMs, trackNr, index, state, startPlayback, togglePlayback }) => {
+export const Track: FC<TrackProps> = ({
+  title,
+  durationMs,
+  trackNr,
+  index,
+  state,
+  disabled,
+  startPlayback,
+  togglePlayback,
+}) => {
   const active = state === "playing" || state === "paused"
 
   return (
@@ -38,11 +48,13 @@ export const Track: FC<TrackProps> = ({ title, durationMs, trackNr, index, state
         type="button"
         aria-label={state === "playing" ? `Pause ${title}` : `Play ${title}`}
         aria-current={active ? "true" : undefined}
+        disabled={disabled && !active}
         onClick={() => (active ? togglePlayback(state !== "playing") : startPlayback(index))}
         className={cn(
           rowInteraction,
           "group flex w-full items-center gap-4 rounded-none px-2 py-3.5 text-left [&_svg]:stroke-[1.5]",
-          active && "bg-primary/10"
+          active && "bg-primary/10",
+          disabled && !active && "opacity-50"
         )}
       >
         <span className="flex w-7 shrink-0 items-center justify-center">

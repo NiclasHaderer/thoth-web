@@ -63,6 +63,8 @@ export type LibraryFormValues = {
   folders: string[]
   metadataAgents: NamedMetadataAgent[]
   fileScanners: FileScanner[]
+  combineMetadataAgentFields: boolean
+  combineFileScannerFields: boolean
   mode: "create" | "edit"
   icon: string | undefined
 }
