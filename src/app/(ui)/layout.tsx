@@ -9,7 +9,7 @@ import { useEvent } from "@thoth/hooks/events"
 import { useFullscreenPlayer } from "@thoth/hooks/fullscreen-player"
 import { cn } from "@thoth/lib/utils"
 import { useReconcileDownloads } from "@thoth/offline"
-import { useMountPlayback } from "@thoth/playback"
+import { PlaybackProvider } from "@thoth/playback"
 
 const NAV_HEIGHT = 56
 const MINI_SHRINK = 520
@@ -19,7 +19,6 @@ export const UiLayout: FC<{ children: ReactNode }> = ({ children }) => {
   const bottomRef = useRef<HTMLDivElement>(null)
   useSessionRefresh()
   useReconcileDownloads()
-  useMountPlayback()
   const player = useFullscreenPlayer()
   const miniBottom = useMotionValue(0)
   const bottomHeight = useMotionValue(0)
@@ -47,27 +46,29 @@ export const UiLayout: FC<{ children: ReactNode }> = ({ children }) => {
 
   return (
     <RequireLogin>
-      <AppBar />
-      <motion.div
-        data-scroll-area
-        style={{ "--bottom-height": bottomHeightPx } as MotionStyle}
-        className="flex min-h-0 grow flex-col overflow-y-auto max-md:-mb-(--bottom-height) max-md:pb-(--bottom-height)"
-      >
-        {children}
-      </motion.div>
-      <div ref={bottomRef} className={cn("relative z-40 shrink-0", player.expanded && "pointer-events-none")}>
-        <div ref={playerRef}>
-          <motion.div style={{ y: miniY, scaleY: miniScale }} className="origin-bottom">
-            <MiniPlayer player={player} />
+      <PlaybackProvider>
+        <AppBar />
+        <motion.div
+          data-scroll-area
+          style={{ "--bottom-height": bottomHeightPx } as MotionStyle}
+          className="flex min-h-0 grow flex-col overflow-y-auto max-md:-mb-(--bottom-height) max-md:pb-(--bottom-height)"
+        >
+          {children}
+        </motion.div>
+        <div ref={bottomRef} className={cn("relative z-40 shrink-0", player.expanded && "pointer-events-none")}>
+          <div ref={playerRef}>
+            <motion.div style={{ y: miniY, scaleY: miniScale }} className="origin-bottom">
+              <MiniPlayer player={player} />
+            </motion.div>
+          </div>
+          <motion.div
+            style={{ y: navY, scale: navScale, opacity: navOpacity }}
+            className="bg-card/60 border-border/60 origin-bottom border-t-[0.5px] pb-[env(safe-area-inset-bottom)] backdrop-blur-xl md:hidden"
+          >
+            <MobileTabBar />
           </motion.div>
         </div>
-        <motion.div
-          style={{ y: navY, scale: navScale, opacity: navOpacity }}
-          className="bg-card/60 border-border/60 origin-bottom border-t-[0.5px] pb-[env(safe-area-inset-bottom)] backdrop-blur-xl md:hidden"
-        >
-          <MobileTabBar />
-        </motion.div>
-      </div>
+      </PlaybackProvider>
     </RequireLogin>
   )
 }

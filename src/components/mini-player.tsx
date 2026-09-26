@@ -23,22 +23,14 @@ import {
   PlayingBook,
   SKIP_BACK,
   SKIP_FORWARD,
-  audio,
   hasNextTrack,
-  nextTrack,
-  previousOrRestart,
-  skip,
-  stop,
+  playback,
   useCanGoPrevious,
-  useDuration,
-  usePosition,
-  useCurrentTrack,
   usePlayback,
-  usePlaying,
   useTrackProgress,
   useVolume,
 } from "@thoth/playback"
-import { toReadableTime } from "./track/helpers"
+import { ElapsedTime, TrackDuration } from "./playback-time"
 
 const dockSpring = { type: "spring", stiffness: 520, damping: 32, mass: 0.7 } as const
 const dockCollapse = { type: "spring", stiffness: 520, damping: 46, mass: 0.7 } as const
@@ -119,12 +111,10 @@ const TrackLabel: FC<{ book: PlayingBook; track: Track }> = ({ book, track }) =>
 
 export const MiniPlayer: FC<{ player: FullscreenPlayerController }> = ({ player }) => {
   const book = usePlayback(s => s.book)
-  const track = useCurrentTrack()
+  const track = usePlayback(s => s.track)
   const hasNext = usePlayback(hasNextTrack)
-  const position = usePosition()
-  const duration = useDuration()
   const { progress, scrub, scrubEnd } = useTrackProgress()
-  const playing = usePlaying()
+  const playing = usePlayback(s => !s.paused)
   const canGoPrevious = useCanGoPrevious()
   const volume = useVolume()
   const [volumeOpen, setVolumeOpen] = useState(false)
@@ -156,7 +146,7 @@ export const MiniPlayer: FC<{ player: FullscreenPlayerController }> = ({ player 
             <div className="px-2 pb-2 md:px-3 md:pb-3">
               <SwipeDock
                 enabled={!isDesktop}
-                onDismiss={stop}
+                onDismiss={() => playback.stop()}
                 player={player}
                 className="bg-card/60 md:bg-card relative flex h-20 items-center gap-3 rounded-xl px-3 backdrop-blur-xl md:h-24 md:backdrop-blur-none"
               >
@@ -191,7 +181,7 @@ export const MiniPlayer: FC<{ player: FullscreenPlayerController }> = ({ player 
                 )}
 
                 <div className="text-muted-foreground hidden shrink-0 items-center text-sm tabular-nums md:flex">
-                  {toReadableTime(position)} / {toReadableTime(duration)}
+                  <ElapsedTime /> / <TrackDuration />
                 </div>
 
                 <div ref={volumeRef} className="hidden md:block" onMouseEnter={volumeEnter} onMouseLeave={volumeLeave}>
@@ -224,7 +214,7 @@ export const MiniPlayer: FC<{ player: FullscreenPlayerController }> = ({ player 
                 <div data-dock-control className="flex shrink-0 items-center">
                   <PlayerButton
                     label="Previous track"
-                    onPress={previousOrRestart}
+                    onPress={playback.previous}
                     isDisabled={!canGoPrevious}
                     className="hidden size-10 rounded-full md:flex"
                   >
@@ -232,34 +222,38 @@ export const MiniPlayer: FC<{ player: FullscreenPlayerController }> = ({ player 
                   </PlayerButton>
                   <PlayerButton
                     label={`Skip back ${SKIP_BACK} seconds`}
-                    onPress={() => skip(-SKIP_BACK)}
+                    onPress={() => playback.skip(-SKIP_BACK)}
                     className="size-10 rounded-full"
                   >
                     <RotateCcwIcon className="size-5 max-md:[&_text]:hidden" seconds={SKIP_BACK} />
                   </PlayerButton>
                   <PlayerButton
                     label={playing ? "Pause" : "Play"}
-                    onPress={() => audio.setPlaying(!playing)}
+                    onPress={playback.toggle}
                     className="size-11 rounded-full"
                   >
                     <PlayPauseIcon playing={playing} className="size-6" />
                   </PlayerButton>
                   <PlayerButton
                     label={`Skip forward ${SKIP_FORWARD} seconds`}
-                    onPress={() => skip(SKIP_FORWARD)}
+                    onPress={() => playback.skip(SKIP_FORWARD)}
                     className="size-10 rounded-full"
                   >
                     <RotateCwIcon className="size-5 max-md:[&_text]:hidden" seconds={SKIP_FORWARD} />
                   </PlayerButton>
                   <PlayerButton
                     label="Next track"
-                    onPress={nextTrack}
+                    onPress={playback.next}
                     isDisabled={!hasNext}
                     className="hidden size-10 rounded-full md:flex"
                   >
                     <SkipForwardIcon className="size-5" />
                   </PlayerButton>
-                  <PlayerButton label="Stop" onPress={stop} className="hidden size-10 rounded-full md:flex">
+                  <PlayerButton
+                    label="Stop"
+                    onPress={() => playback.stop()}
+                    className="hidden size-10 rounded-full md:flex"
+                  >
                     <SquareIcon className="size-5" />
                   </PlayerButton>
                 </div>
