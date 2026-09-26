@@ -10,7 +10,11 @@ declare module "@tanstack/react-query" {
 }
 
 const report = (error: Error, action: string | undefined) => {
-  if (isAuthError(error)) return
+  if (isAuthError(error)) {
+    const expired = "Your session expired. Please log in again."
+    toast.error(expired, { id: expired })
+    return
+  }
   const headline = action ? `Could not ${action}` : "Something went wrong"
   const detail = isNetworkError(error)
     ? ", you are offline"

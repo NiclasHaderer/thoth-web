@@ -27,12 +27,11 @@ import {
 import { Form, useForm } from "@thoth/hooks/form.tsx"
 import { useSetUsername } from "@thoth/queries/current-user"
 import { useDeleteUser, useUpdatePassword, useUpdateUsername } from "@thoth/queries/users"
-import { useAuthState } from "@thoth/state/auth.state"
+import { logout } from "@thoth/state/logout"
 import { pluralize } from "@thoth/utils/utils.ts"
 
 export const User: FC<{ user: ThothUserWithPermissions<UserPermissions> }> = ({ user }) => {
   const setUsername = useSetUsername()
-  const logout = useAuthState(s => s.logout)
   const updateUsername = useUpdateUsername()
   const updatePassword = useUpdatePassword()
   const deleteUser = useDeleteUser()

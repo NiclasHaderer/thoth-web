@@ -1,15 +1,15 @@
 import { useMemo, useState } from "react"
 import { toast } from "sonner"
+import { useSession } from "@thoth/client"
 import { DataTable } from "@thoth/components/data-table/data-table"
 import { DataTableToolbar } from "@thoth/components/data-table/data-table-toolbar"
 import { UserRow, userColumns } from "@thoth/components/user-columns"
 import { UserDialog, UserFormValues } from "@thoth/components/user-dialog"
 import { useForm } from "@thoth/hooks/form.tsx"
 import { useDeleteUser, useUpdateUser, useUsers } from "@thoth/queries/users"
-import { useAuthState } from "@thoth/state/auth.state"
 
 export const UserManager = () => {
-  const loggedInUserId = useAuthState(s => s.accessToken?.payload.sub)
+  const loggedInUserId = useSession(s => s.accessToken?.payload.sub)
   const [isOpen, setIsOpen] = useState(false)
   const { data: users } = useUsers()
   const updateUserMutation = useUpdateUser()

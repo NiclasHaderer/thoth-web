@@ -18,7 +18,7 @@ const LIST_ROUTE = /^\/api\/libraries\/[^/]+\/(books|authors|series|narrators|ge
 
 const FS_ROUTE = /^\/api\/fs(?:\?|$)/
 
-const multiplier = (): number => Number(new URLSearchParams(window.location.search).get("fixture")) || 1
+const multiplier = (): number => Number(new URLSearchParams(location.search).get("fixture")) || 1
 
 const copyId = (id: UUID, copy: number): UUID => `${id.slice(0, -4)}${copy.toString().padStart(4, "0")}` as UUID
 

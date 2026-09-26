@@ -1,5 +1,6 @@
 import { motion, MotionStyle, useMotionTemplate, useMotionValue, useTransform } from "motion/react"
 import { FC, ReactNode, useCallback, useEffect, useRef } from "react"
+import { useSessionRefresh } from "@thoth/client"
 import { MobileTabBar } from "@thoth/components/menu/mobile-tab-bar"
 import { AppBar } from "@thoth/components/menu/top-bar"
 import { MiniPlayer } from "@thoth/components/mini-player"
@@ -7,9 +8,8 @@ import { RequireLogin } from "@thoth/components/require-login"
 import { useEvent } from "@thoth/hooks/events"
 import { useFullscreenPlayer } from "@thoth/hooks/fullscreen-player"
 import { cn } from "@thoth/lib/utils"
-import { useMountOffline } from "@thoth/offline"
+import { useReconcileDownloads } from "@thoth/offline"
 import { useMountPlayback } from "@thoth/playback"
-import { useSessionRefresh } from "@thoth/state/auth.state"
 
 const NAV_HEIGHT = 56
 const MINI_SHRINK = 520
@@ -18,7 +18,7 @@ export const UiLayout: FC<{ children: ReactNode }> = ({ children }) => {
   const playerRef = useRef<HTMLDivElement>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
   useSessionRefresh()
-  useMountOffline()
+  useReconcileDownloads()
   useMountPlayback()
   const player = useFullscreenPlayer()
   const miniBottom = useMotionValue(0)
