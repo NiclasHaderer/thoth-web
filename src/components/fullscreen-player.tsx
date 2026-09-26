@@ -11,7 +11,7 @@ import {
   SkipBackIcon,
   SkipForwardIcon,
 } from "@thoth/components/player-icons"
-import { PlaybackRatePicker, SleepTimerPicker } from "@thoth/components/player-pickers"
+import { PlaybackSpeedPicker, SleepTimerPicker } from "@thoth/components/player-pickers"
 import { ProgressBar } from "@thoth/components/progress-bar"
 import { Button } from "@thoth/components/ui/button"
 import { useEvent } from "@thoth/hooks/events"
@@ -231,7 +231,7 @@ const FullscreenPlayerBody: FC<{ player: FullscreenPlayerController; book: Playi
               </div>
 
               <div className="flex items-center justify-between pt-4">
-                <PlaybackRatePicker />
+                <PlaybackSpeedPicker />
                 <SleepTimerPicker />
               </div>
             </div>
