@@ -2,7 +2,7 @@ import { RefreshCwIcon, LockIcon, UserIcon, EyeIcon, EyeOffIcon } from "lucide-r
 import { FC, useEffect, useRef, useState } from "react"
 import { toast } from "sonner"
 import { useLocation, useSearch } from "wouter"
-import { login, register } from "@thoth/client"
+import { session } from "@thoth/client"
 import { Logo } from "@thoth/components/icons/logo"
 import { ManagedInput } from "@thoth/components/input/managed-input"
 import { Link } from "@thoth/components/link.tsx"
@@ -47,7 +47,7 @@ export const LoginRegister: FC<{ type: "register" | "login"; redirectPath?: stri
   const loginOrRegister = async ({ confirmPassword: _confirmPassword, ...credentials }: (typeof form)["fields"]) => {
     setSubmitting(true)
     try {
-      await (isRegister ? register : login)(credentials)
+      await (isRegister ? session.register : session.login)(credentials)
       navigate(redirectPath || "/libraries", { replace: true })
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Something went wrong")

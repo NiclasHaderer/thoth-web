@@ -30,5 +30,5 @@
     "types": ["./src/global.d.ts"]
   },
   "include": ["src", "build-routes.ts", "gen-licenses.ts"],
-  "exclude": ["src/offline/opfs-worker.ts"]
+  "exclude": ["src/offline/backends/opfs-worker.ts"]
 }
