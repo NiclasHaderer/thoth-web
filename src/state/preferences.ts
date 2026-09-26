@@ -1,6 +1,6 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
-import { persistKey } from "@thoth/client/persist"
+import { persistKey } from "@thoth/client/persistence"
 
 interface Preferences {
   volume: number

@@ -24,9 +24,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@thoth/components/ui/dialog"
-import { Form, useForm } from "@thoth/hooks/form.tsx"
-import { useSetUsername } from "@thoth/queries/current-user"
-import { useDeleteUser, useUpdatePassword, useUpdateUsername } from "@thoth/queries/users"
+import { Form, useForm } from "@thoth/hooks/use-form.tsx"
+import { useSetUsername } from "@thoth/queries/current-user-queries"
+import { useDeleteUser, useUpdatePassword, useUpdateUsername } from "@thoth/queries/user-queries"
 import { logout } from "@thoth/state/user-data"
 import { pluralize } from "@thoth/utils/utils.ts"
 

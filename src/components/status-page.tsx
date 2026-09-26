@@ -1,6 +1,6 @@
 import { CloudOffIcon, LucideIcon, TriangleAlertIcon } from "lucide-react"
 import { FC, ReactNode } from "react"
-import { isNetworkError, isNotFoundError } from "@thoth/client/error"
+import { isNetworkError, isNotFoundError } from "@thoth/client/api-error"
 import { Link } from "@thoth/components/link.tsx"
 import { Button, buttonVariants } from "@thoth/components/ui/button"
 

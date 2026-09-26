@@ -10,7 +10,7 @@ import {
   useRef,
   useState,
 } from "react"
-import { useOnMount } from "@thoth/hooks/lifecycle.ts"
+import { useOnMount } from "@thoth/hooks/use-lifecycle.ts"
 import { notNullIsh } from "@thoth/utils/utils"
 
 type SubmitError<T extends Record<string, any>> = Partial<{

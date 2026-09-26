@@ -1,7 +1,7 @@
 import { MotionValue, animate, useMotionValue, useTransform } from "motion/react"
 import { useEffect, useRef, useState } from "react"
 import { useLocation, useSearch } from "wouter"
-import { useEvent } from "@thoth/hooks/events"
+import { useEvent } from "@thoth/hooks/use-event"
 import { useBreakpoint } from "@thoth/hooks/use-media-query"
 import { usePlayback } from "@thoth/playback"
 import { withoutSearchParam } from "@thoth/utils/utils"

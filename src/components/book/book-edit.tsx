@@ -23,8 +23,8 @@ import {
   useCreateAuthor,
   useCreateSeries,
   useUpdateBook,
-} from "@thoth/queries/resources"
-import { FormContext, useForm } from "../../hooks/form"
+} from "@thoth/queries/resource-queries"
+import { FormContext, useForm } from "../../hooks/use-form"
 import { HtmlEditor } from "../html-editor"
 import { BookSearch } from "./book-search"
 

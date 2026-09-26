@@ -4,7 +4,7 @@ import { PreviewSkeleton } from "@/components/generic/preview-skeleton.tsx"
 import { ResourceGrid } from "@/components/resource-grid.tsx"
 import { ResourceListHeader } from "@/components/resource-list-header.tsx"
 import { RESPONSIVE_GRID } from "@/components/responsive-grid.tsx"
-import { useAuthors } from "@/queries/resources.ts"
+import { useAuthors } from "@/queries/resource-queries.ts"
 import { pluralize } from "@/utils/utils.ts"
 import { useState } from "react"
 

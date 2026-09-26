@@ -8,7 +8,7 @@ import { LibraryPicker } from "@thoth/components/menu/library-picker"
 import { ResourceChips } from "@thoth/components/menu/resource-chips"
 import { useScrollSurface } from "@thoth/components/scroll-surface"
 import { cn } from "@thoth/lib/utils"
-import { useLibrary } from "@thoth/queries/libraries"
+import { useLibrary } from "@thoth/queries/library-queries"
 
 const FADE_DISTANCE = 160
 
