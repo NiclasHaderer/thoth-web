@@ -1,7 +1,7 @@
 import { useEffect } from "react"
 import { useLocation } from "wouter"
-import { useCurrentUser } from "@thoth/queries/current-user"
-import { useLibraries } from "@thoth/queries/libraries"
+import { useCurrentUser } from "@thoth/queries/current-user-queries"
+import { useLibraries } from "@thoth/queries/library-queries"
 
 export const LibrariesOutlet = () => {
   const { data: libraries } = useLibraries()

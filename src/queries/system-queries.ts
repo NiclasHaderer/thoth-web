@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
-import { queries } from "./queries"
+import { queries } from "./query-definitions"
 
 export const useFolders = (path: string) => useQuery(queries.folders(path))
 export const useMetadataAgents = () => useQuery(queries.metadataAgents)

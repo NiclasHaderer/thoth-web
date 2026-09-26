@@ -1,6 +1,6 @@
 import { Component, FC, ReactNode, Suspense, lazy, useCallback, useEffect, useState } from "react"
 import { Button } from "@thoth/components/ui/button"
-import { isOnline } from "@thoth/hooks/online"
+import { isOnline } from "@thoth/hooks/online-status"
 
 type Loader<P> = () => Promise<{ default: FC<P> }>
 

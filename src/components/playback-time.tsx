@@ -1,6 +1,6 @@
 import { FC } from "react"
 import { usePlayback } from "@thoth/playback"
-import { toReadableTime } from "./track/helpers"
+import { toReadableTime } from "./track/track-time-format"
 
 export const ElapsedTime: FC = () => {
   const seconds = usePlayback(s => Math.floor(s.currentTime))

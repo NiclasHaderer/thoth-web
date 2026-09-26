@@ -1,5 +1,5 @@
 import { FC, ReactNode } from "react"
-import { isNetworkError } from "@thoth/client/error"
+import { isNetworkError } from "@thoth/client/api-error"
 import { detailLabel } from "@thoth/components/detail/detail-layout"
 
 export const PartialSection: FC<{

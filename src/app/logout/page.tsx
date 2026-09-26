@@ -1,4 +1,4 @@
-import { useOnMount } from "@thoth/hooks/lifecycle"
+import { useOnMount } from "@thoth/hooks/use-lifecycle"
 import { logout } from "@thoth/state/user-data"
 
 export const LogoutOutlet = () => {

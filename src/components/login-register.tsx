@@ -7,7 +7,7 @@ import { Logo } from "@thoth/components/icons/logo"
 import { ManagedInput } from "@thoth/components/input/managed-input"
 import { Link } from "@thoth/components/link.tsx"
 import { Button } from "@thoth/components/ui/button"
-import { Form, useForm } from "@thoth/hooks/form"
+import { Form, useForm } from "@thoth/hooks/use-form"
 
 export const LoginRegister: FC<{ type: "register" | "login"; redirectPath?: string }> = ({ type, redirectPath }) => {
   const isRegister = type === "register"

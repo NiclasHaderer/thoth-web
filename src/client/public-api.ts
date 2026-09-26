@@ -1,4 +1,4 @@
-import { ThothApiError } from "./error"
+import { ThothApiError } from "./api-error"
 import { createApi } from "./generated/api-client"
 import { ApiResponse } from "./generated/client"
 

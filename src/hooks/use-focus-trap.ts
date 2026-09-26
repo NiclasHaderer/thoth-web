@@ -1,4 +1,4 @@
-import { useEvent } from "./events"
+import { useEvent } from "./use-event"
 
 const TAB_SELECTORS = 'a[href], button, input, textarea, select, details, [tabindex]:not([tabindex="-1"])'
 

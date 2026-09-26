@@ -5,7 +5,12 @@ import { BookPreview } from "@thoth/components/book/book-preview.tsx"
 import { PreviewSkeleton } from "@thoth/components/generic/preview-skeleton"
 import { ScrollRow } from "@thoth/components/scroll-row"
 import { SeriesPreview } from "@thoth/components/series/series-preview.tsx"
-import { useAuthorsPreview, useBooksPreview, useContinueListening, useSeriesPreview } from "@thoth/queries/resources"
+import {
+  useAuthorsPreview,
+  useBooksPreview,
+  useContinueListening,
+  useSeriesPreview,
+} from "@thoth/queries/resource-queries"
 
 const PREVIEW_COUNT = 20
 const PREVIEW_SPACING = "mx-3 align-top first:ml-0!"
