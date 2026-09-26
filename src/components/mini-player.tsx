@@ -3,7 +3,6 @@ import { AnimatePresence, animate, motion, useMotionValue } from "motion/react"
 import { FC, PropsWithChildren, useRef, useState } from "react"
 import { Popover } from "react-aria-components"
 import { Track } from "@thoth/client"
-import { useCoverSrc } from "@thoth/client/media"
 import { FullscreenPlayer } from "@thoth/components/fullscreen-player"
 import { Link } from "@thoth/components/link.tsx"
 import { PlayerButton } from "@thoth/components/player-button"
@@ -19,6 +18,7 @@ import { ProgressBar } from "@thoth/components/progress-bar"
 import { FullscreenPlayerController } from "@thoth/hooks/fullscreen-player"
 import { useBreakpoint } from "@thoth/hooks/use-media-query"
 import { cn } from "@thoth/lib/utils"
+import { useCoverSrc } from "@thoth/offline"
 import {
   PlayingBook,
   SKIP_BACK,

@@ -2,7 +2,6 @@ import { ImageOffIcon } from "lucide-react"
 import { animate, motion, useMotionValue } from "motion/react"
 import { FC, Fragment, useEffect, useRef, useState } from "react"
 import { createPortal } from "react-dom"
-import { useCoverSrc } from "@thoth/client/media"
 import { Link } from "@thoth/components/link.tsx"
 import { PlayerButton } from "@thoth/components/player-button"
 import {
@@ -18,6 +17,7 @@ import { Button } from "@thoth/components/ui/button"
 import { useEvent } from "@thoth/hooks/events"
 import { FullscreenPlayerController, playerSpring } from "@thoth/hooks/fullscreen-player"
 import { cn } from "@thoth/lib/utils"
+import { useCoverSrc } from "@thoth/offline"
 import {
   PlayingBook,
   SKIP_BACK,

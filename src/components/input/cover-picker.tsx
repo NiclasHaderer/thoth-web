@@ -1,8 +1,8 @@
 import { ImageOffIcon } from "lucide-react"
 import { FC, useRef } from "react"
-import { useCoverSrc } from "@thoth/client/media"
 import { ResponsiveImage } from "@thoth/components/responsive-image"
 import { Button } from "@thoth/components/ui/button"
+import { useCoverSrc } from "@thoth/offline"
 import { toBase64 } from "@thoth/utils/utils"
 
 export const CoverPicker: FC<{

@@ -20,7 +20,6 @@ import {
 } from "lucide-react"
 import { FC, ReactNode, useState } from "react"
 import { Book, UUID } from "@thoth/client"
-import { useCoverSrc } from "@thoth/client/media"
 import { BookDownloadItem, DownloadBadge } from "@thoth/components/book/book-download"
 import { MobileDetailHeader } from "@thoth/components/detail/detail-layout"
 import { DetailSkeleton } from "@thoth/components/detail/detail-skeleton"
@@ -34,7 +33,7 @@ import { DropdownMenuItem } from "@thoth/components/ui/dropdown-menu"
 import { useBreakpoint } from "@thoth/hooks/use-media-query"
 import { cn } from "@thoth/lib/utils"
 import { isDetailedBook } from "@thoth/models/typeguards"
-import { useCanPlay } from "@thoth/offline"
+import { useCanPlay, useCoverSrc } from "@thoth/offline"
 import {
   audio,
   startBook,
