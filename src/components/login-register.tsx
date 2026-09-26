@@ -2,12 +2,12 @@ import { RefreshCwIcon, LockIcon, UserIcon, EyeIcon, EyeOffIcon } from "lucide-r
 import { FC, useEffect, useRef, useState } from "react"
 import { toast } from "sonner"
 import { useLocation, useSearch } from "wouter"
+import { login, register } from "@thoth/client"
 import { Logo } from "@thoth/components/icons/logo"
 import { ManagedInput } from "@thoth/components/input/managed-input"
 import { Link } from "@thoth/components/link.tsx"
 import { Button } from "@thoth/components/ui/button"
 import { Form, useForm } from "@thoth/hooks/form"
-import { useAuthState } from "@thoth/state/auth.state"
 
 export const LoginRegister: FC<{ type: "register" | "login"; redirectPath?: string }> = ({ type, redirectPath }) => {
   const isRegister = type === "register"
@@ -43,13 +43,11 @@ export const LoginRegister: FC<{ type: "register" | "login"; redirectPath?: stri
 
   const [passwordVisible, setPasswordVisible] = useState(false)
   const [submitting, setSubmitting] = useState(false)
-  const userState = useAuthState()
 
   const loginOrRegister = async ({ confirmPassword: _confirmPassword, ...credentials }: (typeof form)["fields"]) => {
     setSubmitting(true)
     try {
-      const cb = isRegister ? userState.register : userState.login
-      await cb(credentials)
+      await (isRegister ? register : login)(credentials)
       navigate(redirectPath || "/libraries", { replace: true })
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Something went wrong")
