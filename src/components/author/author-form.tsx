@@ -1,11 +1,11 @@
+import { toBase64 } from "@/utils/utils.ts"
 import { LinkIcon, MapPinIcon, PartyPopperIcon, SkullIcon, UserIcon, UploadIcon } from "lucide-react"
 import { FC, useRef } from "react"
 import { AuthorUpdate } from "@thoth/client"
-import { useCoverSrc } from "@thoth/client/media"
 import { ManagedInput } from "@thoth/components/input/managed-input"
 import { ResponsiveImage } from "@thoth/components/responsive-image"
+import { useCoverSrc } from "@thoth/offline"
 import { FormContext } from "../../hooks/form"
-import { toBase64 } from "../../utils/utils"
 import { HtmlEditor } from "../html-editor"
 
 export const AuthorForm: FC<{ form: FormContext<AuthorUpdate> }> = ({ form }) => {

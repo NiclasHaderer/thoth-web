@@ -1,8 +1,8 @@
 import { CheckIcon, ImageOffIcon, PlayIcon } from "lucide-react"
 import { FC, forwardRef, ReactNode } from "react"
 import { UUID } from "@thoth/client"
-import { useCoverSrc } from "@thoth/client/media"
 import { Link } from "@thoth/components/link.tsx"
+import { useCoverSrc } from "@thoth/offline"
 import { getSizing } from "@thoth/utils/width.ts"
 
 interface GenericPreviewProps {
