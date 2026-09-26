@@ -104,22 +104,22 @@ export const SleepTimerPicker: FC = () => {
   )
 }
 
-const RATES = [0.75, 1, 1.25, 1.5, 1.75, 2]
+const SPEEDS = [0.75, 1, 1.25, 1.5, 1.75, 2]
 
-export const PlaybackRatePicker: FC = () => {
-  const rate = usePlayback(s => s.rate)
+export const PlaybackSpeedPicker: FC = () => {
+  const speed = usePlayback(s => s.speed)
 
   return (
     <PickerSheet
       title="Playback speed"
-      label={`${rate}x`}
-      ariaLabel={`Playback speed ${rate}x`}
+      label={`${speed}x`}
+      ariaLabel={`Playback speed ${speed}x`}
       icon={<GaugeIcon className="size-4" />}
-      active={rate !== 1}
-      options={RATES.map(option => ({
+      active={speed !== 1}
+      options={SPEEDS.map(option => ({
         label: `${option}x`,
-        active: rate === option,
-        onSelect: () => playback.setRate(option),
+        active: speed === option,
+        onSelect: () => playback.setSpeed(option),
       }))}
     />
   )
