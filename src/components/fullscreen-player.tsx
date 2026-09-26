@@ -22,20 +22,13 @@ import {
   PlayingBook,
   SKIP_BACK,
   SKIP_FORWARD,
-  audio,
   hasNextTrack,
-  jumpToTrack,
-  nextTrack,
-  previousOrRestart,
-  skip,
+  playback,
   useCanGoPrevious,
-  useDuration,
-  usePosition,
   usePlayback,
-  usePlaying,
   useTrackProgress,
 } from "@thoth/playback"
-import { toReadableTime } from "./track/helpers"
+import { ElapsedTime, TrackDuration } from "./playback-time"
 import { TrackList } from "./track/track-list"
 
 const CLOSE_FRACTION = 0.22
@@ -61,10 +54,8 @@ const FullscreenPlayerBody: FC<{ player: FullscreenPlayerController; book: Playi
   const index = usePlayback(s => s.trackIndex)
   const track = book.tracks[index]
   const hasNext = usePlayback(hasNextTrack)
-  const position = usePosition()
-  const duration = useDuration()
   const { progress, scrub, scrubEnd } = useTrackProgress()
-  const playing = usePlaying()
+  const playing = usePlayback(s => !s.paused)
   const canGoPrevious = useCanGoPrevious()
   const [pane, setPane] = useState(0)
   const [queueAtTop, setQueueAtTop] = useState(true)
@@ -190,15 +181,19 @@ const FullscreenPlayerBody: FC<{ player: FullscreenPlayerController; book: Playi
                   onScrubEnd={scrubEnd}
                 />
                 <div className="text-muted-foreground flex items-center justify-between text-xs tabular-nums">
-                  <span>{toReadableTime(position)}</span>
-                  <span>{toReadableTime(duration)}</span>
+                  <span>
+                    <ElapsedTime />
+                  </span>
+                  <span>
+                    <TrackDuration />
+                  </span>
                 </div>
               </div>
 
               <div className="flex items-center justify-between pt-4">
                 <PlayerButton
                   label="Previous track"
-                  onPress={previousOrRestart}
+                  onPress={playback.previous}
                   isDisabled={!canGoPrevious}
                   className="size-11 rounded-full"
                 >
@@ -206,28 +201,28 @@ const FullscreenPlayerBody: FC<{ player: FullscreenPlayerController; book: Playi
                 </PlayerButton>
                 <PlayerButton
                   label={`Skip back ${SKIP_BACK} seconds`}
-                  onPress={() => skip(-SKIP_BACK)}
+                  onPress={() => playback.skip(-SKIP_BACK)}
                   className="size-12 rounded-full"
                 >
                   <RotateCcwIcon className="size-7" seconds={SKIP_BACK} />
                 </PlayerButton>
                 <Button
                   aria-label={playing ? "Pause" : "Play"}
-                  onPress={() => audio.setPlaying(!playing)}
+                  onPress={playback.toggle}
                   className="size-16 rounded-full [&_svg]:stroke-[1.5]"
                 >
                   <PlayPauseIcon playing={playing} className="size-8" />
                 </Button>
                 <PlayerButton
                   label={`Skip forward ${SKIP_FORWARD} seconds`}
-                  onPress={() => skip(SKIP_FORWARD)}
+                  onPress={() => playback.skip(SKIP_FORWARD)}
                   className="size-12 rounded-full"
                 >
                   <RotateCwIcon className="size-7" seconds={SKIP_FORWARD} />
                 </PlayerButton>
                 <PlayerButton
                   label="Next track"
-                  onPress={nextTrack}
+                  onPress={playback.next}
                   isDisabled={!hasNext}
                   className="size-11 rounded-full"
                 >
@@ -253,8 +248,8 @@ const FullscreenPlayerBody: FC<{ player: FullscreenPlayerController; book: Playi
                   tracks={book.tracks}
                   activeId={track.id}
                   playing={playing}
-                  onStart={jumpToTrack}
-                  onToggle={audio.setPlaying}
+                  onStart={playback.jumpTo}
+                  onToggle={playback.setPlaying}
                 />
               </div>
             </div>

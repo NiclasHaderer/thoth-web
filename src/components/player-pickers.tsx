@@ -4,7 +4,7 @@ import { BottomSheet } from "@thoth/components/bottom-sheet"
 import { SheetTrigger } from "@thoth/components/ui/sheet"
 import { rowInteraction } from "@thoth/lib/interactive"
 import { cn } from "@thoth/lib/utils"
-import { audio, useRate, useSleepTimer } from "@thoth/playback"
+import { playback, usePlayback } from "@thoth/playback"
 import { toReadableTime } from "./track/helpers"
 import { Button } from "./ui/button"
 
@@ -69,7 +69,7 @@ const PickerSheet: FC<{
 const SLEEP_OPTIONS = [5, 10, 15, 30, 45, 60]
 
 export const SleepTimerPicker: FC = () => {
-  const { minutes, endsAt, untilEndOfTrack, startCountdown, stopAfterTrack, clear } = useSleepTimer()
+  const { minutes, endsAt, afterTrack } = usePlayback(s => s.sleep)
   const [now, setNow] = useState(() => Date.now())
 
   useEffect(() => {
@@ -78,18 +78,18 @@ export const SleepTimerPicker: FC = () => {
     return () => clearInterval(tick)
   }, [endsAt])
 
-  const active = Boolean(endsAt) || untilEndOfTrack
+  const active = Boolean(endsAt) || afterTrack
   const remaining = endsAt ? Math.max(0, Math.round((endsAt - now) / 1000)) : 0
-  const label = endsAt ? toReadableTime(remaining) : untilEndOfTrack ? "Track" : "Off"
+  const label = endsAt ? toReadableTime(remaining) : afterTrack ? "Track" : "Off"
 
   const options: PickerOption[] = [
     ...SLEEP_OPTIONS.map(option => ({
       label: `${option} minutes`,
       active: minutes === option,
-      onSelect: () => startCountdown(option),
+      onSelect: () => playback.sleepIn(option),
     })),
-    { label: "End of track", active: untilEndOfTrack, onSelect: stopAfterTrack },
-    ...(active ? [{ label: "Off", separated: true, onSelect: clear }] : []),
+    { label: "End of track", active: afterTrack, onSelect: playback.sleepAfterTrack },
+    ...(active ? [{ label: "Off", separated: true, onSelect: playback.cancelSleep }] : []),
   ]
 
   return (
@@ -107,7 +107,7 @@ export const SleepTimerPicker: FC = () => {
 const RATES = [0.75, 1, 1.25, 1.5, 1.75, 2]
 
 export const PlaybackRatePicker: FC = () => {
-  const rate = useRate()
+  const rate = usePlayback(s => s.rate)
 
   return (
     <PickerSheet
@@ -119,7 +119,7 @@ export const PlaybackRatePicker: FC = () => {
       options={RATES.map(option => ({
         label: `${option}x`,
         active: rate === option,
-        onSelect: () => audio.setRate(option),
+        onSelect: () => playback.setRate(option),
       }))}
     />
   )

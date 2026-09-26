@@ -69,21 +69,6 @@ export const slug = (label: string): string =>
     .slice(0, 60)
     .replace(/^-+|-+$/g, "") || "untitled"
 
-// tick() runs fn at most once per interval; now() runs it immediately and restarts the window.
-export const throttled = (interval: number, fn: () => void) => {
-  let last = 0
-  const now = () => {
-    last = Date.now()
-    fn()
-  }
-  return {
-    now,
-    tick: () => {
-      if (Date.now() - last >= interval) now()
-    },
-  }
-}
-
 export const withoutSearchParam = (path: string, search: string, name: string): string => {
   const params = new URLSearchParams(search)
   params.delete(name)
