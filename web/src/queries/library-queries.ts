@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { Api, PartialUpdateLibrary, UUID, UpdateLibrary } from "@thoth/client"
-import { invalidateMembership } from "./cache"
-import { queries } from "./queries"
+import { invalidateMembership } from "./query-cache"
+import { queries } from "./query-definitions"
 
 export const useLibraries = () => useQuery(queries.libraries)
 

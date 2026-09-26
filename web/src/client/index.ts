@@ -5,7 +5,7 @@ import { throwing } from "./public-api"
 import { authorizationHeader, renewedAuthorizationHeader } from "./session"
 
 export * from "./generated/models"
-export * from "./error"
+export * from "./api-error"
 export * from "./public-api"
 export * from "./session"
 

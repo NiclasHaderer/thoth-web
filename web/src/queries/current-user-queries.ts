@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query"
-import { queries } from "./queries"
+import { queries } from "./query-definitions"
 
 export const useCurrentUser = () => useQuery(queries.currentUser)
 

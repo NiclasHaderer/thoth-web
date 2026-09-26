@@ -6,10 +6,10 @@ import { BottomSheet } from "@thoth/components/bottom-sheet"
 import { LibraryAvatar } from "@thoth/components/library/library-avatar"
 import { Link } from "@thoth/components/link.tsx"
 import { SheetTrigger } from "@thoth/components/ui/sheet"
-import { rowInteraction } from "@thoth/lib/interactive"
+import { rowInteraction } from "@thoth/lib/interaction-styles"
 import { cn } from "@thoth/lib/utils"
-import { useCurrentUser } from "@thoth/queries/current-user"
-import { useLibraries } from "@thoth/queries/libraries"
+import { useCurrentUser } from "@thoth/queries/current-user-queries"
+import { useLibraries } from "@thoth/queries/library-queries"
 import { pluralize } from "@thoth/utils/utils"
 
 export const LibraryPicker: FC<{ libraryId: UUID; name: string; className?: string }> = ({

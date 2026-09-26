@@ -2,10 +2,10 @@ import { CheckIcon, GaugeIcon, MoonIcon } from "lucide-react"
 import { FC, ReactNode, useEffect, useState } from "react"
 import { BottomSheet } from "@thoth/components/bottom-sheet"
 import { SheetTrigger } from "@thoth/components/ui/sheet"
-import { rowInteraction } from "@thoth/lib/interactive"
+import { rowInteraction } from "@thoth/lib/interaction-styles"
 import { cn } from "@thoth/lib/utils"
 import { playback, usePlayback } from "@thoth/playback"
-import { toReadableTime } from "./track/helpers"
+import { toReadableTime } from "./track/track-time-format"
 import { Button } from "./ui/button"
 
 interface PickerOption {
