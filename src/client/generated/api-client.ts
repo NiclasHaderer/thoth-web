@@ -80,6 +80,7 @@ export const createApi = (
 ) => {
   const defaultHeadersImpl = new Headers(defaultHeaders)
   return {
+    apiVersion: "0.0.1",
     loginUser: (
       body: ThothLoginUser,
       headers: HeadersInit = {},

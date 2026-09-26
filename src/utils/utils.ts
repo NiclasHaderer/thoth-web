@@ -1,3 +1,5 @@
+import type { UUID } from "@thoth/client/generated/models"
+
 export const toBase64 = (file: File) =>
   new Promise<string>((resolve, reject) => {
     const reader = new FileReader()
@@ -7,7 +9,7 @@ export const toBase64 = (file: File) =>
     reader.onerror = reject
   })
 
-export const isUUID = (uuidString: string): boolean => {
+export const isUUID = (uuidString: string): uuidString is UUID => {
   return /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i.test(uuidString)
 }
 
@@ -47,7 +49,7 @@ export const fromFormDate = (date?: string | null): number | null => {
 
 export const toRealURL = (baseUrl: string): string => {
   if (baseUrl.startsWith("/")) {
-    return `${window.location.protocol}//${window.location.host}${baseUrl}`
+    return `${location.protocol}//${location.host}${baseUrl}`
   }
   return baseUrl
 }
@@ -59,6 +61,13 @@ export const unique = <T>(list?: T[]): T[] => {
 export const pluralize = (count: number, singular: string, plural = `${singular}s`): string => {
   return `${count} ${count === 1 ? singular : plural}`
 }
+
+export const slug = (label: string): string =>
+  label
+    .toLowerCase()
+    .replace(/[^\p{Letter}\p{Number}]+/gu, "-")
+    .slice(0, 60)
+    .replace(/^-+|-+$/g, "") || "untitled"
 
 // tick() runs fn at most once per interval; now() runs it immediately and restarts the window.
 export const throttled = (interval: number, fn: () => void) => {

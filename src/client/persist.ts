@@ -1,9 +1,10 @@
 import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister"
 import { clear, createStore, del, get, set } from "idb-keyval"
+import { PublicApi } from "./public-api"
 
 export const idbStore = createStore("thoth", "offline")
 
-export const CACHE_BUSTER = __APP_VERSION__
+export const CACHE_BUSTER = PublicApi.apiVersion
 
 export const persister = createAsyncStoragePersister({
   key: "query-cache",
