@@ -1,11 +1,11 @@
-import { useEffect } from "react"
-import { useStore } from "zustand"
+import { FC, ReactNode, useEffect } from "react"
+import { create } from "zustand"
 import { createJSONStorage, persist } from "zustand/middleware"
-import { createStore } from "zustand/vanilla"
 import { decodeJWT, Jwt } from "@thoth/utils/jwt"
 import { isNetworkError } from "./error"
 import { ApiError, ApiResponse, ApiSuccess } from "./generated/client"
 import { ThothLoginUser } from "./generated/models"
+import { persistKey } from "./persist"
 import { PublicApi } from "./public-api"
 import { queryClient } from "./query-client"
 
@@ -21,29 +21,31 @@ const NOT_LOGGED_IN: ApiError = { success: false, error: "Not logged in", status
 
 const SIGNED_OUT: Session = { loggedIn: false, accessTokenStr: undefined, accessToken: undefined }
 
-export const sessionStore = createStore<Session>()(
-  persist((): Session => SIGNED_OUT, { name: "auth", storage: createJSONStorage(() => localStorage) })
+export const useSession = create<Session>()(
+  persist((): Session => SIGNED_OUT, {
+    name: persistKey("session"),
+    version: 1,
+    storage: createJSONStorage(() => localStorage),
+  })
 )
 
-export const useSession = <T>(selector: (session: Session) => T): T => useStore(sessionStore, selector)
-
-export const adoptAccessToken = (accessToken: string): void => {
-  sessionStore.setState({ loggedIn: true, accessTokenStr: accessToken, accessToken: decodeJWT(accessToken) }, true)
+const adopt = (accessToken: string): void => {
+  useSession.setState({ loggedIn: true, accessTokenStr: accessToken, accessToken: decodeJWT(accessToken) }, true)
 }
 
-export const login = async (userPw: ThothLoginUser): Promise<void> => {
+const login = async (userPw: ThothLoginUser): Promise<void> => {
   const { accessToken } = await PublicApi.loginUser(userPw)
   queryClient.clear()
-  adoptAccessToken(accessToken)
+  adopt(accessToken)
 }
 
-export const register = async (userPw: ThothLoginUser): Promise<void> => {
+const register = async (userPw: ThothLoginUser): Promise<void> => {
   await PublicApi.registerUser(userPw)
   await login(userPw)
 }
 
-export const endSession = async (): Promise<void> => {
-  sessionStore.setState(SIGNED_OUT, true)
+const end = async (): Promise<void> => {
+  useSession.setState(SIGNED_OUT, true)
   await PublicApi.logoutUser().catch(() => undefined)
 }
 
@@ -52,7 +54,7 @@ let refreshInFlight: Promise<RefreshResult> | undefined
 const refresh = (): Promise<RefreshResult> => {
   refreshInFlight ??= PublicApi.refreshAccessToken()
     .then(({ accessToken }): RefreshResult => {
-      adoptAccessToken(accessToken)
+      adopt(accessToken)
       return "ok"
     })
     .catch((error: unknown): RefreshResult => (isNetworkError(error) ? "offline" : "failed"))
@@ -60,25 +62,27 @@ const refresh = (): Promise<RefreshResult> => {
   return refreshInFlight
 }
 
-export const renewSession = async (): Promise<RefreshResult> => {
+const renew = async (): Promise<RefreshResult> => {
   const refreshed = await refresh()
-  if (refreshed === "failed") await endSession()
+  if (refreshed === "failed") await end()
   return refreshed
 }
 
-const bearer = (): ApiSuccess<string> => ({ success: true, body: `Bearer ${sessionStore.getState().accessTokenStr}` })
+export const session = { login, register, end, renew }
+
+const bearer = (): ApiSuccess<string> => ({ success: true, body: `Bearer ${useSession.getState().accessTokenStr}` })
 
 export const renewedAuthorizationHeader = async (): Promise<ApiResponse<string>> => {
-  const refreshed = await renewSession()
+  const refreshed = await renew()
   if (refreshed === "offline") return OFFLINE
   if (refreshed === "failed") return SESSION_EXPIRED
   return bearer()
 }
 
 export const authorizationHeader = async (): Promise<ApiResponse<string>> => {
-  const session = sessionStore.getState()
-  if (!session.loggedIn) return NOT_LOGGED_IN
-  if (dueForRenewal(session.accessToken)) return renewedAuthorizationHeader()
+  const current = useSession.getState()
+  if (!current.loggedIn) return NOT_LOGGED_IN
+  if (dueForRenewal(current.accessToken)) return renewedAuthorizationHeader()
   return bearer()
 }
 
@@ -87,19 +91,24 @@ const RENEW_CHECK_MS = 15_000
 
 const dueForRenewal = (token: Jwt): boolean => token.payload.exp * 1000 - RENEW_LEEWAY_MS <= Date.now()
 
-export const useSessionRefresh = () => {
+const useRenewWhileLoggedIn = () => {
   const loggedIn = useSession(s => s.loggedIn)
 
   useEffect(() => {
     if (!loggedIn) return
 
     const renewIfDue = () => {
-      const token = sessionStore.getState().accessToken
-      if (token && dueForRenewal(token)) void renewSession()
+      const token = useSession.getState().accessToken
+      if (token && dueForRenewal(token)) void renew()
     }
 
     renewIfDue()
     const timer = setInterval(renewIfDue, RENEW_CHECK_MS)
     return () => clearInterval(timer)
   }, [loggedIn])
+}
+
+export const SessionProvider: FC<{ children: ReactNode }> = ({ children }) => {
+  useRenewWhileLoggedIn()
+  return children
 }

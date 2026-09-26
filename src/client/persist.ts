@@ -1,19 +1,30 @@
 import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister"
-import { clear, createStore, del, get, set } from "idb-keyval"
+import { createStore, del, get, set } from "idb-keyval"
+import type { StateStorage } from "zustand/middleware"
 import { PublicApi } from "./public-api"
+import { queryClient } from "./query-client"
 
-export const idbStore = createStore("thoth", "offline")
+export const persistKey = (name: string) => `thoth.${name}`
+
+const idbStore = createStore("thoth", "offline")
+
+export const idbStorage = {
+  getItem: (key: string) => get<string>(key, idbStore).then(value => value ?? null),
+  setItem: (key: string, value: string) => set(key, value, idbStore),
+  removeItem: (key: string) => del(key, idbStore),
+} satisfies StateStorage<Promise<void>>
 
 export const CACHE_BUSTER = PublicApi.apiVersion
 
 export const persister = createAsyncStoragePersister({
-  key: "query-cache",
+  key: persistKey("query-cache"),
   throttleTime: 1000,
-  storage: {
-    getItem: key => get<string>(key, idbStore),
-    setItem: (key, value) => set(key, value, idbStore),
-    removeItem: key => del(key, idbStore),
-  },
+  storage: idbStorage,
 })
 
-export const purgePersistedCache = () => clear(idbStore)
+export const cache = {
+  reset: async () => {
+    queryClient.clear()
+    await persister.removeClient()
+  },
+}
