@@ -1,4 +1,4 @@
-import type { WorkerReply, WorkerRequest } from "./worker-protocol"
+import type { WorkerReply, WorkerRequest } from "./opfs-file-writer-protocol"
 
 const PROGRESS_STEP = 0.01
 
@@ -10,7 +10,7 @@ const directory = async (segments: string[]) => {
   return dir
 }
 
-const stream = async (request: WorkerRequest, body: ReadableStream<Uint8Array>, total: number) => {
+const writeToFile = async (request: WorkerRequest, body: ReadableStream<Uint8Array>, total: number) => {
   const dir = await directory(request.dir)
   const file = await dir.getFileHandle(request.name, { create: true })
   const handle = await file.createSyncAccessHandle()
@@ -45,7 +45,7 @@ const run = async (request: WorkerRequest) => {
   if (!response.ok) throw new Error(`The server answered with ${response.status}`)
   if (!response.body) throw new Error("The server sent no data")
 
-  await stream(request, response.body, Number(response.headers.get("content-length")))
+  await writeToFile(request, response.body, Number(response.headers.get("content-length")))
   reply({ id: request.id, type: "done" })
 }
 

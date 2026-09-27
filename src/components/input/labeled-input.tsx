@@ -3,7 +3,7 @@ import { InputError } from "@thoth/components/input/input-error"
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@thoth/components/ui/input-group"
 import { cn } from "@thoth/lib/utils"
 
-export type InputProps = Omit<Omit<ComponentProps<"input">, "defaultValue">, "value"> & {
+export type LabeledInputProps = Omit<Omit<ComponentProps<"input">, "defaultValue">, "value"> & {
   label?: string | undefined
   leftIcon?: ReactNode | undefined
   rightIcon?: ReactNode | undefined
@@ -21,7 +21,7 @@ export type InputProps = Omit<Omit<ComponentProps<"input">, "defaultValue">, "va
   onEnter?: (event: KeyboardEvent<HTMLInputElement>) => void
 }
 
-export const Input: FC<InputProps> = memo(
+export const LabeledInput: FC<LabeledInputProps> = memo(
   ({
     leftIcon,
     rightIcon,
@@ -91,4 +91,4 @@ export const Input: FC<InputProps> = memo(
     )
   }
 )
-Input.displayName = "Input"
+LabeledInput.displayName = "LabeledInput"

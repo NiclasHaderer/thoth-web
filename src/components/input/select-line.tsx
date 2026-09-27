@@ -1,7 +1,7 @@
 import { ReactNode } from "react"
 import { InputError } from "@thoth/components/input/input-error"
-import { Select, SelectProps } from "@thoth/components/input/select"
-import { useField } from "@thoth/hooks/form"
+import { OptionSelect, OptionSelectProps } from "@thoth/components/input/option-select"
+import { useField } from "@thoth/hooks/use-form"
 
 type SelectLineProps = {
   name: string
@@ -18,7 +18,7 @@ export function SelectLine<T, MULTIPLE extends boolean = false>({
   icon,
   name,
   ...props
-}: SelectProps<T, MULTIPLE> & SelectLineProps) {
+}: OptionSelectProps<T, MULTIPLE> & SelectLineProps) {
   const { value, touched, setValue, setTouched, errors } = useField<Record<string, unknown>, string>(name)
 
   return (
@@ -26,11 +26,11 @@ export function SelectLine<T, MULTIPLE extends boolean = false>({
       <label className={`flex items-center ${wrapperClassName ?? ""}`}>
         {label ? <div className={`shrink-0 px-2 whitespace-nowrap ${labelClassName ?? ""}`}>{label}</div> : null}
         <div className="grow">
-          <Select
+          <OptionSelect
             onBlur={() => setTouched(true)}
             {...props}
             leftIcon={icon}
-            value={value as SelectProps<T, MULTIPLE>["value"]}
+            value={value as OptionSelectProps<T, MULTIPLE>["value"]}
             placeholderButtonClassName="w-full"
             placeholderClassName="w-full"
             outerClassName="w-full"

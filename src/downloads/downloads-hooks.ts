@@ -1,11 +1,11 @@
 import { UUID } from "@thoth/client"
-import { coverStreamUrl } from "@thoth/client/media"
-import { useOnline } from "@thoth/hooks/online"
+import { coverStreamUrl } from "@thoth/client/media-urls"
+import { useOnline } from "@thoth/hooks/online-status"
 import { isUUID } from "@thoth/utils/utils"
-import { useDownloads, useLocalUrls } from "./store"
+import { useDownloads } from "./downloads-store"
 
 export const useCoverSrc = () => {
-  const urls = useLocalUrls(state => state.urls)
+  const urls = useDownloads(state => state.urls)
   return (id: string | undefined): string | undefined => {
     if (!id) return undefined
     // For edits, it can also be a data url or a http url
