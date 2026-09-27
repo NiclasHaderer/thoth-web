@@ -5,6 +5,6 @@
     "lib": ["WebWorker", "ESNext"],
     "types": []
   },
-  "include": ["src/offline/backends/opfs-worker.ts"],
+  "include": ["src/downloads/opfs-file-writer.worker.ts"],
   "exclude": []
 }

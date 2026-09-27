@@ -14,10 +14,10 @@ import {
 import { PlaybackSpeedPicker, SleepTimerPicker } from "@thoth/components/player-pickers"
 import { ProgressBar } from "@thoth/components/progress-bar"
 import { Button } from "@thoth/components/ui/button"
-import { useEvent } from "@thoth/hooks/events"
-import { FullscreenPlayerController, playerSpring } from "@thoth/hooks/fullscreen-player"
+import { useCoverSrc } from "@thoth/downloads"
+import { useEvent } from "@thoth/hooks/use-event"
+import { FullscreenPlayerController, playerSpring } from "@thoth/hooks/use-fullscreen-player"
 import { cn } from "@thoth/lib/utils"
-import { useCoverSrc } from "@thoth/offline"
 import {
   PlayingBook,
   SKIP_BACK,

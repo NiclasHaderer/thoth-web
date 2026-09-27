@@ -14,16 +14,16 @@ import {
 import { AnimatePresence, motion } from "motion/react"
 import { FC, useState } from "react"
 import { FileScanner, MetadataLanguage, MetadataRegion, NamedMetadataAgent, UUID } from "@thoth/client"
-import { Dialog } from "@thoth/components/dialog"
 import { FolderManager } from "@thoth/components/file-manager"
 import { InputError } from "@thoth/components/input/input-error"
 import { ManagedInput } from "@thoth/components/input/managed-input"
 import { SelectLine } from "@thoth/components/input/select-line"
+import { TitledDialog } from "@thoth/components/titled-dialog"
 import { Button } from "@thoth/components/ui/button"
 import { DialogFooter } from "@thoth/components/ui/dialog"
-import { Form, FormContext } from "@thoth/hooks/form"
+import { Form, FormContext } from "@thoth/hooks/use-form"
 import { useBreakpoint } from "@thoth/hooks/use-media-query"
-import { useFileScanners, useMetadataAgents } from "@thoth/queries/system"
+import { useFileScanners, useMetadataAgents } from "@thoth/queries/system-queries"
 import { unique } from "@thoth/utils/utils"
 
 // The `satisfies Record<MetadataLanguage, ...>` forces every union member to be
@@ -226,7 +226,7 @@ export const LibraryDialog: FC<LibraryDialogProps> = ({ isOpen, setIsOpen, form,
   )
 
   return (
-    <Dialog
+    <TitledDialog
       isOpen={isOpen}
       onOpenChange={setIsOpen}
       title={form.fields.mode === "create" ? "Create new Library" : "Edit Library"}
@@ -284,6 +284,6 @@ export const LibraryDialog: FC<LibraryDialogProps> = ({ isOpen, setIsOpen, form,
           <Button type="submit">Submit</Button>
         </DialogFooter>
       </Form>
-    </Dialog>
+    </TitledDialog>
   )
 }

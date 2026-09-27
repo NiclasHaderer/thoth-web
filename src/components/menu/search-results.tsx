@@ -2,7 +2,7 @@ import { CircleArrowDownIcon, ImageOffIcon, UserIcon } from "lucide-react"
 import { FC } from "react"
 import { LibrarySearchResult, UUID } from "@thoth/client"
 import { Link } from "@thoth/components/link.tsx"
-import { useCoverSrc, useDownloadEntry } from "@thoth/offline"
+import { useCoverSrc, useDownloadEntry } from "@thoth/downloads"
 
 export const SearchResults: FC<{ search: LibrarySearchResult; onClose: () => void }> = ({ search, onClose }) => (
   <>

@@ -1,9 +1,9 @@
 import { SearchIcon } from "lucide-react"
 import { Logo } from "@thoth/components/icons/logo"
-import { Input } from "@thoth/components/input/input"
+import { LabeledInput } from "@thoth/components/input/labeled-input"
 import { Link } from "@thoth/components/link.tsx"
 import { SearchResults } from "@thoth/components/menu/search-results"
-import { useLibrarySearch } from "@thoth/queries/library-search"
+import { useLibrarySearch } from "@thoth/queries/library-search-query"
 
 // TODO: add recent searches
 export const SearchOutlet = () => {
@@ -16,7 +16,7 @@ export const SearchOutlet = () => {
           <Logo className="h-8 w-auto" />
         </Link>
         <div className="min-w-0 grow">
-          <Input
+          <LabeledInput
             hideError
             autoFocus
             data-search-input

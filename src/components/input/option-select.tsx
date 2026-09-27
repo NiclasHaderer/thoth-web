@@ -8,7 +8,7 @@ import {
   SelectValue as SelectValueDisplay,
 } from "@thoth/components/ui/select"
 import { cn } from "@thoth/lib/utils"
-import { deepEquals } from "@thoth/utils/equals"
+import { deepEquals } from "@thoth/utils/deep-equals"
 
 type SelectValue<T> = {
   value: T
@@ -18,7 +18,7 @@ type SelectValue<T> = {
 
 type ExtractedSelectValue<T> = T extends SelectValue<infer U> ? SelectValue<U> : T
 
-export type SelectProps<T, MULTIPLE extends boolean = false> = {
+export type OptionSelectProps<T, MULTIPLE extends boolean = false> = {
   options: readonly SelectValue<T>[] | readonly T[]
   title: string
   displayValue?: (v: ExtractedSelectValue<T>) => string
@@ -71,7 +71,7 @@ function isDisabledOption<T>(option: SelectValue<T> | T): boolean {
   return typeof option === "object" && option !== null && "disabled" in option ? !!option.disabled : false
 }
 
-export function Select<T, MULTIPLE extends boolean = false>({
+export function OptionSelect<T, MULTIPLE extends boolean = false>({
   options,
   disabled,
   title,
@@ -88,7 +88,7 @@ export function Select<T, MULTIPLE extends boolean = false>({
   multiple,
   onBlur,
   displayValue = (v: ExtractedSelectValue<T>) => v?.toString() ?? "",
-}: SelectProps<T, MULTIPLE>) {
+}: OptionSelectProps<T, MULTIPLE>) {
   const opts = options as readonly (SelectValue<T> | T)[]
 
   const toDisplayValue = (value: SelectValue<T> | T): string => {

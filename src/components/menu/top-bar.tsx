@@ -4,13 +4,13 @@ import { Button, MenuTrigger } from "react-aria-components"
 import { UUID } from "@thoth/client"
 import { Logo } from "@thoth/components/icons/logo"
 import { Link } from "@thoth/components/link.tsx"
-import { Search } from "@thoth/components/menu/search"
+import { LibrarySearch } from "@thoth/components/menu/library-search"
 import { accountItem } from "@thoth/components/menu/settings-nav"
 import { Avatar, AvatarFallback } from "@thoth/components/ui/avatar"
 import { DropdownMenu, DropdownMenuItem } from "@thoth/components/ui/dropdown-menu"
-import { useCurrentLibraryId } from "@thoth/hooks/current-library"
+import { useCurrentLibraryId } from "@thoth/hooks/use-current-library"
 import { cn } from "@thoth/lib/utils"
-import { useCurrentUser } from "@thoth/queries/current-user"
+import { useCurrentUser } from "@thoth/queries/current-user-queries"
 
 export const AppBar: FC = () => {
   const libraryId = useCurrentLibraryId()
@@ -18,7 +18,7 @@ export const AppBar: FC = () => {
   return (
     <div className="bg-card mx-3 mt-3 hidden h-16 min-h-16 shrink-0 items-center rounded-xl pr-3 md:flex">
       <LogoLink libraryId={libraryId} className="h-16" />
-      <Search />
+      <LibrarySearch />
       <AccountMenu />
     </div>
   )

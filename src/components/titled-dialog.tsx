@@ -2,7 +2,7 @@ import { FC, ReactNode } from "react"
 import { Dialog as UIDialog, DialogHeader, DialogTitle } from "@thoth/components/ui/dialog"
 import { cn } from "@thoth/lib/utils"
 
-export const Dialog: FC<{
+export const TitledDialog: FC<{
   isOpen: boolean
   onOpenChange: (open: boolean) => void
   title: ReactNode

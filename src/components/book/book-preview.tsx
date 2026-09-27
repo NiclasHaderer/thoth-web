@@ -3,7 +3,7 @@ import { Book } from "@thoth/client"
 import { DownloadBadge } from "@thoth/components/book/book-download"
 import { GenericPreview } from "@thoth/components/generic/generic-preview.tsx"
 import { Link } from "@thoth/components/link.tsx"
-import { useCanPlay } from "@thoth/offline"
+import { useCanPlay } from "@thoth/downloads"
 import { playback, useBookProgress } from "@thoth/playback"
 
 interface BookPreviewProps extends Book {

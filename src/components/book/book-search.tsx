@@ -2,10 +2,10 @@ import { SearchIcon } from "lucide-react"
 import { FC, useState } from "react"
 import { MetadataBook, UUID } from "@thoth/client"
 import { MetadataResults } from "@thoth/components/generic/metadata-results"
-import { Input } from "@thoth/components/input/input"
+import { LabeledInput } from "@thoth/components/input/labeled-input"
 import { LoadingCards } from "@thoth/components/loading-card"
 import { Button } from "@thoth/components/ui/button"
-import { useBookMetadataSearch } from "@thoth/queries/metadata"
+import { useBookMetadataSearch } from "@thoth/queries/metadata-queries"
 
 export const BookSearch: FC<{
   authors?: string[] | null | undefined
@@ -28,7 +28,7 @@ export const BookSearch: FC<{
     <>
       <div className="mb-4 flex items-center gap-2">
         <div className="grow">
-          <Input
+          <LabeledInput
             labelClassName="w-28"
             label="Author"
             defaultValue={authors}
@@ -39,7 +39,7 @@ export const BookSearch: FC<{
           />
         </div>
         <div className="grow">
-          <Input label="Book" onValue={setBook} defaultValue={book} onEnter={search} preventSubmit hideError />
+          <LabeledInput label="Book" onValue={setBook} defaultValue={book} onEnter={search} preventSubmit hideError />
         </div>
         <Button variant="secondary" size="icon" aria-label="Search" onPress={search}>
           <SearchIcon />

@@ -5,10 +5,10 @@ import { MobileTabBar } from "@thoth/components/menu/mobile-tab-bar"
 import { AppBar } from "@thoth/components/menu/top-bar"
 import { MiniPlayer } from "@thoth/components/mini-player"
 import { RequireLogin } from "@thoth/components/require-login"
-import { useEvent } from "@thoth/hooks/events"
-import { useFullscreenPlayer } from "@thoth/hooks/fullscreen-player"
+import { DownloadsProvider } from "@thoth/downloads"
+import { useEvent } from "@thoth/hooks/use-event"
+import { useFullscreenPlayer } from "@thoth/hooks/use-fullscreen-player"
 import { cn } from "@thoth/lib/utils"
-import { OfflineProvider } from "@thoth/offline"
 import { PlaybackProvider } from "@thoth/playback"
 
 const NAV_HEIGHT = 56
@@ -45,7 +45,7 @@ export const UiLayout: FC<{ children: ReactNode }> = ({ children }) => {
   return (
     <SessionProvider>
       <RequireLogin>
-        <OfflineProvider>
+        <DownloadsProvider>
           <PlaybackProvider>
             <AppBar />
             <motion.div
@@ -69,7 +69,7 @@ export const UiLayout: FC<{ children: ReactNode }> = ({ children }) => {
               </motion.div>
             </div>
           </PlaybackProvider>
-        </OfflineProvider>
+        </DownloadsProvider>
       </RequireLogin>
     </SessionProvider>
   )
