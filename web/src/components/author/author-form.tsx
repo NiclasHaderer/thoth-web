@@ -4,8 +4,8 @@ import { FC, useRef } from "react"
 import { AuthorUpdate } from "@thoth/client"
 import { ManagedInput } from "@thoth/components/input/managed-input"
 import { ResponsiveImage } from "@thoth/components/responsive-image"
-import { useCoverSrc } from "@thoth/offline"
-import { FormContext } from "../../hooks/form"
+import { useCoverSrc } from "@thoth/downloads"
+import { FormContext } from "../../hooks/use-form"
 import { HtmlEditor } from "../html-editor"
 
 export const AuthorForm: FC<{ form: FormContext<AuthorUpdate> }> = ({ form }) => {

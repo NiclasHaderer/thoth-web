@@ -3,7 +3,7 @@ import { FC } from "react"
 import { toast } from "sonner"
 import { BookDetailed, UUID } from "@thoth/client"
 import { DropdownMenuItem } from "@thoth/components/ui/dropdown-menu"
-import { offline, useDownloadEntry } from "@thoth/offline"
+import { downloads, useDownloadEntry } from "@thoth/downloads"
 
 const menuItem = "gap-2.5 rounded-lg px-2.5 py-2 text-sm"
 
@@ -32,7 +32,7 @@ const DownloadRing: FC<{ progress: number; className?: string }> = ({ progress, 
 
 export const BookDownloadItem: FC<{ book: BookDetailed }> = ({ book }) => {
   const entry = useDownloadEntry(book.id)
-  if (!offline.supported) return null
+  if (!downloads.supported) return null
 
   if (entry?.state === "downloading") {
     return (
@@ -45,7 +45,7 @@ export const BookDownloadItem: FC<{ book: BookDetailed }> = ({ book }) => {
 
   if (entry?.state === "ready") {
     return (
-      <DropdownMenuItem className={menuItem} onAction={() => void offline.remove(book.id)}>
+      <DropdownMenuItem className={menuItem} onAction={() => void downloads.remove(book.id)}>
         <TrashIcon className="text-muted-foreground size-5" />
         Remove download
       </DropdownMenuItem>
@@ -57,7 +57,7 @@ export const BookDownloadItem: FC<{ book: BookDetailed }> = ({ book }) => {
       className={menuItem}
       isDisabled={book.tracks.length === 0}
       onAction={() => {
-        offline
+        downloads
           .download(book)
           .then(() => toast.success(`Downloaded ${book.title}`))
           .catch((error: Error) => toast.error(`Could not download ${book.title}: ${error.message}`))

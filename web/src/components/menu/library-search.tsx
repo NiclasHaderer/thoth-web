@@ -1,10 +1,10 @@
 import { CommandIcon, SearchIcon } from "lucide-react"
 import { FC, KeyboardEvent, ReactNode, useRef, useState } from "react"
-import { Input } from "@thoth/components/input/input"
+import { LabeledInput } from "@thoth/components/input/labeled-input"
 import { SearchResults } from "@thoth/components/menu/search-results"
-import { useLibrarySearch } from "@thoth/queries/library-search"
-import { useEvent } from "../../hooks/events"
-import { useFocusTrap } from "../../hooks/trap-focus"
+import { useLibrarySearch } from "@thoth/queries/library-search-query"
+import { useEvent } from "../../hooks/use-event"
+import { useFocusTrap } from "../../hooks/use-focus-trap"
 
 const KeyCap: FC<{ children: ReactNode }> = ({ children }) => (
   <kbd className="border-border/60 text-muted-foreground/80 flex h-5 min-w-5 items-center justify-center rounded-md border px-1 text-[0.7rem] font-medium shadow-xs">
@@ -12,7 +12,7 @@ const KeyCap: FC<{ children: ReactNode }> = ({ children }) => (
   </kbd>
 )
 
-export const Search: FC = () => {
+export const LibrarySearch: FC = () => {
   const { query, setQuery, result } = useLibrarySearch()
   const [resultVisible, setResultVisible] = useState(false)
   const [prevQuery, setPrevQuery] = useState("")
@@ -54,7 +54,7 @@ export const Search: FC = () => {
 
   return (
     <div className="relative mx-auto w-full max-w-xl px-3 shadow-none" onKeyDown={modifyFocus} ref={setSearchOverlay}>
-      <Input
+      <LabeledInput
         hideError
         groupClassName="group bg-popover dark:bg-popover focus-within:bg-accent dark:focus-within:bg-accent rounded-3xl! h-auto py-1 border-0 transition-colors has-[[data-slot=input-group-control]:focus-visible]:ring-0 has-[[data-slot=input-group-control]:focus-visible]:border-0"
         leftIcon={<SearchIcon className="mx-1 size-5" />}
