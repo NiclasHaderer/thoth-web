@@ -228,7 +228,7 @@ export interface Track {
   fileModifiedAt: number
   id: UUID
   title: string
-  trackNr: number | undefined
+  trackNr: number
 }
 
 export interface BookDetailed extends Book {

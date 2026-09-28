@@ -98,8 +98,7 @@ const VolumeIcon: FC<{ level: number; className?: string }> = ({ level, classNam
 const TrackLabel: FC<{ book: PlayingBook; track: Track }> = ({ book, track }) => (
   <div className="min-w-0 grow">
     <div className="truncate text-sm font-medium">
-      {track.trackNr ? `${track.trackNr}. ` : null}
-      {track.title}
+      {track.trackNr}. {track.title}
     </div>
     <div className="text-muted-foreground truncate text-xs">
       {book.authors.map(author => author.name).join(", ")}
