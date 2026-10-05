@@ -5,7 +5,7 @@ import { MobileTabBar } from "@thoth/components/menu/mobile-tab-bar"
 import { AppBar } from "@thoth/components/menu/top-bar"
 import { MiniPlayer } from "@thoth/components/mini-player"
 import { RequireLogin } from "@thoth/components/require-login"
-import { DownloadsProvider } from "@thoth/downloads"
+import { BookDownloadsProvider } from "@thoth/downloads"
 import { useEvent } from "@thoth/hooks/use-event"
 import { useFullscreenPlayer } from "@thoth/hooks/use-fullscreen-player"
 import { cn } from "@thoth/lib/utils"
@@ -45,7 +45,7 @@ export const UiLayout: FC<{ children: ReactNode }> = ({ children }) => {
   return (
     <SessionProvider>
       <RequireLogin>
-        <DownloadsProvider>
+        <BookDownloadsProvider>
           <PlaybackProvider>
             <AppBar />
             <motion.div
@@ -69,7 +69,7 @@ export const UiLayout: FC<{ children: ReactNode }> = ({ children }) => {
               </motion.div>
             </div>
           </PlaybackProvider>
-        </DownloadsProvider>
+        </BookDownloadsProvider>
       </RequireLogin>
     </SessionProvider>
   )
