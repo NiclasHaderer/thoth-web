@@ -1,8 +1,8 @@
 import { useQueries } from "@tanstack/react-query"
 import { useState } from "react"
 import { ListRange } from "react-virtuoso"
-import { Order, UUID } from "@thoth/client"
-import { PagedQueries } from "./queries"
+import { isNetworkError, Order, UUID } from "@thoth/client"
+import { PagedQueries } from "./query-definitions"
 
 export const usePagedList = <T>(group: PagedQueries<T>, libraryId: UUID, order: Order) => {
   const { pageSize } = group
@@ -28,6 +28,7 @@ export const usePagedList = <T>(group: PagedQueries<T>, libraryId: UUID, order: 
     listKey,
     total: results.find(result => result.data)?.data?.total ?? 0,
     loading: results.some(result => result.isPending),
+    offline: pages.size === 0 && results.some(result => isNetworkError(result.error)),
     itemAt: (index: number) => pages.get(pageOf(index))?.[index % pageSize],
     onRangeChange: setRange,
   }

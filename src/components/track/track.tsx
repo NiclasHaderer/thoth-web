@@ -10,7 +10,7 @@ interface TrackProps {
   title: string
   durationMs: number
   index: number
-  trackNr?: number | null
+  trackNr: number
   state: TrackState
   disabled?: boolean
   startPlayback: (index: number) => void
@@ -61,7 +61,7 @@ export const Track: FC<TrackProps> = ({
           {active ? (
             <Equalizer animated={state === "playing"} />
           ) : (
-            <span className="text-muted-foreground/70 text-xs tabular-nums">{trackNr ?? index + 1}</span>
+            <span className="text-muted-foreground/70 text-xs tabular-nums">{trackNr}</span>
           )}
         </span>
 

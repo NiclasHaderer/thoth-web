@@ -2,7 +2,7 @@ import { CircleArrowDownIcon, ImageOffIcon, UserIcon } from "lucide-react"
 import { FC } from "react"
 import { LibrarySearchResult, UUID } from "@thoth/client"
 import { Link } from "@thoth/components/link.tsx"
-import { useCoverSrc, useDownloadEntry } from "@thoth/downloads"
+import { useCoverSrc, useBookDownload } from "@thoth/downloads"
 
 export const SearchResults: FC<{ search: LibrarySearchResult; onClose: () => void }> = ({ search, onClose }) => (
   <>
@@ -34,7 +34,7 @@ export const SearchResults: FC<{ search: LibrarySearchResult; onClose: () => voi
 )
 
 const DownloadDot: FC<{ bookId: UUID }> = ({ bookId }) => {
-  const entry = useDownloadEntry(bookId)
+  const entry = useBookDownload(bookId)
   if (entry?.state !== "ready") return null
   return <CircleArrowDownIcon aria-label="Downloaded" className="text-muted-foreground size-4 shrink-0" />
 }

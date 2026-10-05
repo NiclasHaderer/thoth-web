@@ -147,8 +147,7 @@ const FullscreenPlayerBody: FC<{ player: FullscreenPlayerController; book: Playi
                   href={`/libraries/${book.libraryId}/books/${book.id}`}
                   className="block truncate text-xl font-bold tracking-tight outline-none"
                 >
-                  {track.trackNr ? `${track.trackNr}. ` : null}
-                  {track.title}
+                  {track.trackNr}. {track.title}
                 </Link>
                 <div className="text-muted-foreground truncate text-sm">
                   {book.authors.map((author, position) => (
