@@ -10,6 +10,7 @@ import { Button } from "@thoth/components/ui/button"
 import { DialogClose, DialogDescription, DialogFooter } from "@thoth/components/ui/dialog"
 import { FormContext, useForm } from "@thoth/hooks/use-form"
 import { useCreateLibrary, useDeleteLibrary, useLibraries, useUpdateLibrary } from "@thoth/queries/library-queries"
+import { changedFields } from "@thoth/utils/changed-fields"
 
 export const LibraryManager = () => {
   const { data: libraries } = useLibraries()
@@ -48,12 +49,13 @@ export const LibraryManager = () => {
     }
   )
 
-  const onSubmit = ({ language, region, ...values }: LibraryFormValues) => {
+  const onSubmit = ({ language, region, mode, id, ...values }: LibraryFormValues) => {
     if (!language || !region) return
     const handlers = { onSuccess: () => setIsOpen(false) }
     const library = { ...values, language, region }
-    if (values.mode === "create") createLibrary.mutate(library, handlers)
-    else updateLibrary.mutate({ id: values.id!, library }, handlers)
+    if (mode === "create") return createLibrary.mutate(library, handlers)
+    const saved = libraries!.find(saved => saved.id === id)!
+    updateLibrary.mutate({ id: saved.id, library: changedFields(saved, library) }, handlers)
   }
 
   const openEdit = (library: Library) => {
