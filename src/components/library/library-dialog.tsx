@@ -13,7 +13,7 @@ import {
 } from "lucide-react"
 import { AnimatePresence, motion } from "motion/react"
 import { FC, useState } from "react"
-import { FileScanner, MetadataLanguage, MetadataRegion, NamedMetadataAgent, UUID } from "@thoth/client"
+import { FileScanner, MetadataLanguage, MetadataRegion, NamedMetadataAgent } from "@thoth/client"
 import { FolderManager } from "@thoth/components/file-manager"
 import { InputError } from "@thoth/components/input/input-error"
 import { ManagedInput } from "@thoth/components/input/managed-input"
@@ -55,7 +55,6 @@ const REGIONS = Object.keys({
 } satisfies Record<MetadataRegion, unknown>) as MetadataRegion[]
 
 export type LibraryFormValues = {
-  id: UUID | undefined
   name: string
   language: MetadataLanguage | ""
   region: MetadataRegion | ""
@@ -65,18 +64,18 @@ export type LibraryFormValues = {
   fileScanners: FileScanner[]
   combineMetadataAgentFields: boolean
   combineFileScannerFields: boolean
-  mode: "create" | "edit"
-  icon: string | undefined
+  icon: string | null
 }
 
 interface LibraryDialogProps {
+  mode: "create" | "edit"
   isOpen: boolean
   setIsOpen: (open: boolean) => void
   onSubmit: (library: LibraryFormValues) => void
   form: FormContext<LibraryFormValues>
 }
 
-export const LibraryDialog: FC<LibraryDialogProps> = ({ isOpen, setIsOpen, form, onSubmit }) => {
+export const LibraryDialog: FC<LibraryDialogProps> = ({ mode, isOpen, setIsOpen, form, onSubmit }) => {
   const { data: availableAgents } = useMetadataAgents()
   const { data: fileScanners } = useFileScanners()
   const [browserOpen, setBrowserOpen] = useState(false)
@@ -229,7 +228,7 @@ export const LibraryDialog: FC<LibraryDialogProps> = ({ isOpen, setIsOpen, form,
     <TitledDialog
       isOpen={isOpen}
       onOpenChange={setIsOpen}
-      title={form.fields.mode === "create" ? "Create new Library" : "Edit Library"}
+      title={mode === "create" ? "Create new Library" : "Edit Library"}
       className={browserOpen ? "sm:max-w-[min(95vw,72rem)]" : undefined}
     >
       <Form

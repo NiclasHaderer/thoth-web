@@ -10,7 +10,7 @@ interface GenericPreviewProps {
   libraryId: UUID
   label: string
   subtitle?: ReactNode
-  imageId?: UUID
+  imageId?: UUID | null
   stackImageIds?: UUID[]
   type: "books" | "series" | "authors"
   size: "small" | "normal"
