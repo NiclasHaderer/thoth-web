@@ -1,6 +1,7 @@
 import { queryOptions } from "@tanstack/react-query"
 import webLicensesUrl from "@thoth/assets/third-party-licenses.json?url"
-import { Api, Order, PaginatedResponse, ThirdPartyLicense, UUID } from "@thoth/client"
+import { Api, isNetworkError, Order, PaginatedResponse, ThirdPartyLicense, UUID } from "@thoth/client"
+import { cachedLibrarySearch } from "./query-cache"
 
 export type Resource = "books" | "series" | "authors"
 export type NameResource = "narrators" | "genres"
@@ -13,6 +14,7 @@ export type ListFn<T> = (params: {
   limit?: number
   offset?: number
   order?: Order
+  showInvisible?: boolean
 }) => Promise<PaginatedResponse<T>>
 
 const PAGE_SIZE = 30
@@ -20,14 +22,16 @@ const NAME_PAGE_SIZE = 50
 
 const libraryScope = (libraryId: UUID) => ["library", libraryId] as const
 
-const listAllPages = async <T>(listFn: ListFn<T>, libraryId: UUID): Promise<T[]> => {
+const listAllPages = async <T>(listFn: ListFn<T>, libraryId: UUID, showInvisible?: boolean): Promise<T[]> => {
   const pageSize = 500
-  const first = await listFn({ libraryId, limit: pageSize, offset: 0, order: "ASC" })
+  const first = await listFn({ libraryId, limit: pageSize, offset: 0, order: "ASC", showInvisible })
   if (first.items.length === 0 || first.items.length >= first.total) return first.items
 
   const offsets: number[] = []
   for (let offset = first.items.length; offset < first.total; offset += pageSize) offsets.push(offset)
-  const rest = await Promise.all(offsets.map(offset => listFn({ libraryId, limit: pageSize, offset, order: "ASC" })))
+  const rest = await Promise.all(
+    offsets.map(offset => listFn({ libraryId, limit: pageSize, offset, order: "ASC", showInvisible }))
+  )
   return [first, ...rest].flatMap(page => page.items)
 }
 
@@ -48,7 +52,7 @@ const pagedList = <T>(resource: LibraryResource, listFn: ListFn<T>, pageSize: nu
     all: (libraryId: UUID) =>
       queryOptions({
         queryKey: [...scope(libraryId), "all"] as const,
-        queryFn: () => listAllPages(listFn, libraryId),
+        queryFn: () => listAllPages(listFn, libraryId, true),
         meta: { action: `load ${resource}` },
       }),
   }
@@ -59,16 +63,21 @@ const entity = <T extends Identifiable, D extends T>(
   singular: string,
   listFn: ListFn<T>,
   getFn: (params: { libraryId: UUID; id: UUID }) => Promise<D>
-) => ({
-  ...pagedList(resource, listFn, PAGE_SIZE),
-  singular,
-  detail: (libraryId: UUID, id: UUID) =>
-    queryOptions({
-      queryKey: [...libraryScope(libraryId), resource, "detail", id] as const,
-      queryFn: () => getFn({ libraryId, id }),
-      meta: { action: `load the ${singular}` },
-    }),
-})
+) => {
+  const list = pagedList(resource, listFn, PAGE_SIZE)
+  const details = (libraryId: UUID) => [...list.scope(libraryId), "detail"] as const
+  return {
+    ...list,
+    singular,
+    details,
+    detail: (libraryId: UUID, id: UUID) =>
+      queryOptions({
+        queryKey: [...details(libraryId), id] as const,
+        queryFn: () => getFn({ libraryId, id }),
+        meta: { action: `load the ${singular}` },
+      }),
+  }
+}
 
 const named = <T, D>(
   resource: NameResource,
@@ -130,7 +139,7 @@ export const queries = {
     queryOptions({
       queryKey: ["folders", path] as const,
       queryFn: () => Api.listFoldersAtACertainPath({ path }),
-      meta: { action: "load folders" },
+      meta: { action: "load folders", persist: false },
     }),
 
   serverLicenses: queryOptions({
@@ -149,8 +158,15 @@ export const queries = {
   librarySearch: (q: string) =>
     queryOptions({
       queryKey: ["library-search", q] as const,
-      queryFn: () => Api.searchInAllLibraries({ q }),
-      meta: { action: "run the search" },
+      queryFn: async ({ client }) => {
+        try {
+          return await Api.searchInAllLibraries({ q })
+        } catch (error) {
+          if (isNetworkError(error)) return cachedLibrarySearch(client, q)
+          throw error
+        }
+      },
+      meta: { action: "run the search", persist: false },
     }),
 
   metadataSearch: {
@@ -158,19 +174,19 @@ export const queries = {
       queryOptions({
         queryKey: metadataSearchKey("authors", libraryId, params),
         queryFn: () => Api.searchAuthorMetadata({ ...params, libraryId }),
-        meta: { action: "search for author metadata" },
+        meta: { action: "search for author metadata", persist: false },
       }),
     books: (libraryId: UUID, params: { q: string; authorName?: string }) =>
       queryOptions({
         queryKey: metadataSearchKey("books", libraryId, params),
         queryFn: () => Api.searchBookMetadata({ ...params, libraryId }),
-        meta: { action: "search for book metadata" },
+        meta: { action: "search for book metadata", persist: false },
       }),
     series: (libraryId: UUID, params: { q: string; authorName?: string }) =>
       queryOptions({
         queryKey: metadataSearchKey("series", libraryId, params),
         queryFn: () => Api.searchSeriesMetadata({ ...params, libraryId }),
-        meta: { action: "search for series metadata" },
+        meta: { action: "search for series metadata", persist: false },
       }),
   },
 
