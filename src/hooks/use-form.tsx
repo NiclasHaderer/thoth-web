@@ -11,6 +11,7 @@ import {
   useState,
 } from "react"
 import { useOnMount } from "@thoth/hooks/use-lifecycle.ts"
+import { changedFields } from "@thoth/utils/changed-fields"
 import { notNullIsh } from "@thoth/utils/utils"
 
 type SubmitError<T extends Record<string, any>> = Partial<{
@@ -21,6 +22,7 @@ export interface FormContext<T extends Record<string, any>> {
   fields: T
   setFields: (newValue: Partial<T>) => void
   setAllFields: (newValue: T) => void
+  changedFields: () => Partial<T>
   errors: SubmitError<T>
   setErrors: (newValue: Partial<{ [K in keyof T]: string | undefined }>) => void
   hasErrors: () => boolean
@@ -53,6 +55,7 @@ const CONTEXT = createContext<FormContext<Record<any, any>>>({
   fields: {},
   setFields: () => {},
   setAllFields: () => {},
+  changedFields: () => ({}),
   errors: {},
   setErrors: () => {},
   touched: {},
@@ -167,6 +170,7 @@ export const useForm = <T extends Record<string, any>>(
       setFields({ ...newValue })
       validateFields(newValue)
     },
+    changedFields: () => changedFields(initialState, currentFields.current),
     errors,
     setErrors: (newValue: Partial<Record<keyof T, string | undefined>>) => {
       setErrors({ ...currentErrors.current, ...newValue })

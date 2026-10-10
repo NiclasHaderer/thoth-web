@@ -30,7 +30,6 @@ const seriesToUpdate = (series: Series): SeriesUpdate => {
     providerID: series.providerID,
     title: series.title,
     totalBooks: series.totalBooks,
-    books: undefined,
   }
 }
 
@@ -45,6 +44,7 @@ export const SeriesEdit: FC<{ series: Series; isOpen: boolean; onOpenChange: (op
       primaryWorks: fromFormNumber,
       totalBooks: fromFormNumber,
     },
+    validate: { title: title => !!title || "Title is required" },
   })
 
   return (
@@ -52,8 +52,8 @@ export const SeriesEdit: FC<{ series: Series; isOpen: boolean; onOpenChange: (op
       form={form}
       isOpen={isOpen}
       onOpenChange={onOpenChange}
-      onSubmit={async (values, closeModal) => {
-        await updateSeries.mutateAsync({ libraryId: series.libraryId, id: series.id, data: values })
+      onSubmit={async (changes, closeModal) => {
+        await updateSeries.mutateAsync({ libraryId: series.libraryId, id: series.id, data: changes })
         closeModal()
       }}
       title="Edit Series"

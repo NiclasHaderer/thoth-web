@@ -17,7 +17,7 @@ export function GenericEdit<T extends Record<string, any>>({
   onOpenChange,
 }: {
   form: FormContext<T>
-  onSubmit: (values: T, closeModal: () => void) => void | Promise<void>
+  onSubmit: (changes: Partial<T>, closeModal: () => void) => void | Promise<void>
   title: string
   information: ReactNode
   search: (onSelect: () => void) => ReactNode
@@ -42,10 +42,10 @@ export function GenericEdit<T extends Record<string, any>>({
     <TitledDialog isOpen={isOpen} onOpenChange={setOpen} title={title} className="sm:max-w-[85%] lg:max-w-4xl">
       <Form
         form={form}
-        onSubmit={async values => {
+        onSubmit={async () => {
           setSubmitting(true)
           try {
-            await onSubmit(values, closeModal)
+            await onSubmit(form.changedFields(), closeModal)
           } finally {
             setSubmitting(false)
           }

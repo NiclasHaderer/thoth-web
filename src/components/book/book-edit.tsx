@@ -74,13 +74,14 @@ export const BookEdit: FC<{ book: Book; isOpen: boolean; onOpenChange: (open: bo
       narrators: value => value?.join(", "),
     },
     fromForm: {
-      releaseDate: value => fromFormDate(value) ?? undefined,
+      releaseDate: fromFormDate,
       narrators: value =>
         value
           ?.split(",")
           .map(narrator => narrator.trim())
           .filter(Boolean) ?? [],
     },
+    validate: { title: title => !!title || "Title is required" },
   })
 
   return (
@@ -89,8 +90,8 @@ export const BookEdit: FC<{ book: Book; isOpen: boolean; onOpenChange: (open: bo
       form={form}
       isOpen={isOpen}
       onOpenChange={onOpenChange}
-      onSubmit={async (values, closeModal) => {
-        await updateBook.mutateAsync({ libraryId: book.libraryId, id: book.id, data: values })
+      onSubmit={async (changes, closeModal) => {
+        await updateBook.mutateAsync({ libraryId: book.libraryId, id: book.id, data: changes })
         closeModal()
       }}
       information={<BookForm form={form} libraryId={book.libraryId} />}

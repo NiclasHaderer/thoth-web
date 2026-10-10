@@ -24,7 +24,6 @@ const authorToUpdateModel = (author: Author): AuthorUpdate => {
   return {
     biography: author.biography,
     birthDate: author.birthDate,
-    books: undefined,
     bornIn: author.bornIn,
     deathDate: author.deathDate,
     image: author.imageID,
@@ -47,9 +46,10 @@ export const AuthorEdit: FC<{ author: Author; isOpen: boolean; onOpenChange: (op
       deathDate: value => value && toFormDate(value),
     },
     fromForm: {
-      birthDate: value => fromFormDate(value) ?? undefined,
-      deathDate: value => fromFormDate(value) ?? undefined,
+      birthDate: fromFormDate,
+      deathDate: fromFormDate,
     },
+    validate: { name: name => !!name || "Name is required" },
   })
 
   return (
@@ -58,8 +58,8 @@ export const AuthorEdit: FC<{ author: Author; isOpen: boolean; onOpenChange: (op
       form={form}
       isOpen={isOpen}
       onOpenChange={onOpenChange}
-      onSubmit={async (values, closeModal) => {
-        await updateAuthor.mutateAsync({ libraryId: author.libraryId, id: author.id, data: values })
+      onSubmit={async (changes, closeModal) => {
+        await updateAuthor.mutateAsync({ libraryId: author.libraryId, id: author.id, data: changes })
         closeModal()
       }}
       information={<AuthorForm form={form} />}
