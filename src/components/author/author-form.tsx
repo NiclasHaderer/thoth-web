@@ -89,7 +89,7 @@ export const AuthorForm: FC<{ form: FormContext<AuthorUpdate> }> = ({ form }) =>
         className="grow"
         placeholder="Biography"
         value={form.fields.biography}
-        onChange={bio => form.setFields({ biography: bio ?? "" })}
+        onChange={biography => form.setFields({ biography })}
       />
     </>
   )

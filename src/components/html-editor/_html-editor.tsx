@@ -15,7 +15,7 @@ export const HtmlEditorImpl: FC<{
   value?: Content
   placeholder?: string
   className?: string | undefined
-  onChange?: (newValue: string | undefined) => void
+  onChange?: (newValue: string | null) => void
 }> = ({ value, className, onChange, placeholder = "..." }) => {
   const editor = useEditor({
     extensions: [
@@ -33,21 +33,21 @@ export const HtmlEditorImpl: FC<{
     autofocus: false,
   })
 
-  const lastEmitted = useRef<string | undefined>(undefined)
+  const lastEmitted = useRef<string | null>(null)
 
   useEffect(() => {
     if (!editor || !editor.isInitialized) return
     if (value != null && typeof value !== "string") return
-    const normalized = value || undefined
+    const normalized = value || null
     if (normalized === lastEmitted.current) return
-    const current = editor.isEmpty ? undefined : editor.getHTML()
+    const current = editor.isEmpty ? null : editor.getHTML()
     if (normalized !== current) editor.commands.setContent(value ?? "")
   }, [editor, value])
 
   useEffect(() => {
     const update = () => {
       if (!editor) return
-      lastEmitted.current = editor.isEmpty ? undefined : editor.getHTML()
+      lastEmitted.current = editor.isEmpty ? null : editor.getHTML()
       onChange?.(lastEmitted.current)
     }
     editor?.on("update", update)
