@@ -33,7 +33,7 @@ export const LibraryManager = () => {
       combineMetadataAgentFields: false as boolean,
       combineFileScannerFields: false as boolean,
       mode: "create" as "create" | "edit",
-      icon: undefined as string | undefined,
+      icon: null as string | null,
     } satisfies LibraryFormValues,
     {
       validate: {

@@ -66,7 +66,7 @@ export type LibraryFormValues = {
   combineMetadataAgentFields: boolean
   combineFileScannerFields: boolean
   mode: "create" | "edit"
-  icon: string | undefined
+  icon: string | null
 }
 
 interface LibraryDialogProps {
