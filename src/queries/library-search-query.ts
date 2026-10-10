@@ -1,6 +1,6 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query"
 import { useEffect, useState } from "react"
-import { queries } from "./queries"
+import { queries } from "./query-definitions"
 
 export const useLibrarySearch = (debounceMs = 100) => {
   const [query, setQuery] = useState("")
