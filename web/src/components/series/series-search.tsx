@@ -2,10 +2,10 @@ import { SearchIcon } from "lucide-react"
 import { FC, useState } from "react"
 import { MetadataSeries, UUID } from "@thoth/client"
 import { MetadataResults } from "@thoth/components/generic/metadata-results"
-import { Input } from "@thoth/components/input/input"
+import { LabeledInput } from "@thoth/components/input/labeled-input"
 import { LoadingCards } from "@thoth/components/loading-card"
 import { Button } from "@thoth/components/ui/button"
-import { useSeriesMetadataSearch } from "@thoth/queries/metadata"
+import { useSeriesMetadataSearch } from "@thoth/queries/metadata-queries"
 
 export const SeriesSearch: FC<{
   series?: string | null | undefined
@@ -28,7 +28,7 @@ export const SeriesSearch: FC<{
     <>
       <div className="mb-4 flex items-center gap-2">
         <div className="grow">
-          <Input
+          <LabeledInput
             labelClassName="w-28"
             label="Series"
             onValue={setSeries}
@@ -39,7 +39,14 @@ export const SeriesSearch: FC<{
           />
         </div>
         <div className="grow">
-          <Input label="Author" onValue={setAuthors} defaultValue={authors} onEnter={search} preventSubmit hideError />
+          <LabeledInput
+            label="Author"
+            onValue={setAuthors}
+            defaultValue={authors}
+            onEnter={search}
+            preventSubmit
+            hideError
+          />
         </div>
         <Button variant="secondary" size="icon" aria-label="Search" onPress={search}>
           <SearchIcon />

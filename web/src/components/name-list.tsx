@@ -5,10 +5,10 @@ import { Link } from "@thoth/components/link.tsx"
 import { ResourceGrid } from "@thoth/components/resource-grid"
 import { ResourceListHeader } from "@thoth/components/resource-list-header"
 import { Skeleton } from "@thoth/components/ui/skeleton"
-import { rowInteraction } from "@thoth/lib/interactive"
+import { rowInteraction } from "@thoth/lib/interaction-styles"
 import { cn } from "@thoth/lib/utils"
-import { NameResource } from "@thoth/queries/queries"
-import { useNameList } from "@thoth/queries/resources"
+import { NameResource } from "@thoth/queries/query-definitions"
+import { useNameList } from "@thoth/queries/resource-queries"
 import { pluralize } from "@thoth/utils/utils"
 
 const LIST_CLASSES =

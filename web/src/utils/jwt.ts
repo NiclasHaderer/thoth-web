@@ -1,3 +1,5 @@
+import type { UUID } from "@thoth/client/generated/models"
+
 interface JwtHeader {
   alg: string
   typ: string
@@ -7,7 +9,7 @@ interface JwtHeader {
 type JwtPayload = {
   exp: number
   iss: string
-  sub: string
+  sub: UUID
   type: "access"
 }
 
@@ -19,11 +21,7 @@ export interface Jwt {
 export const decodeJWT = (jwt: string): Jwt => {
   const [header, payload] = jwt.split(".")
   return {
-    header: JSON.parse(window.atob(header)) as JwtHeader,
-    payload: JSON.parse(window.atob(payload)) as JwtPayload,
+    header: JSON.parse(atob(header)) as JwtHeader,
+    payload: JSON.parse(atob(payload)) as JwtPayload,
   }
-}
-
-export const isExpired = (jwt: Jwt): boolean => {
-  return jwt.payload.exp * 1000 < Date.now()
 }

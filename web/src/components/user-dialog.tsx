@@ -1,14 +1,14 @@
 import { UUID } from "crypto"
 import { FolderCogIcon, LibraryIcon, UserIcon } from "lucide-react"
 import { FC, useMemo } from "react"
-import { Dialog } from "@thoth/components/dialog"
 import { ManagedInput } from "@thoth/components/input/managed-input"
 import { SelectLine } from "@thoth/components/input/select-line"
+import { TitledDialog } from "@thoth/components/titled-dialog"
 import { Button } from "@thoth/components/ui/button"
 import { DialogFooter } from "@thoth/components/ui/dialog"
 import { Tooltip, TooltipTrigger } from "@thoth/components/ui/tooltip"
-import { Form, FormContext } from "@thoth/hooks/form"
-import { useLibraries } from "@thoth/queries/libraries"
+import { Form, FormContext } from "@thoth/hooks/use-form"
+import { useLibraries } from "@thoth/queries/library-queries"
 
 export interface UserFormValues {
   id?: UUID
@@ -27,7 +27,7 @@ export const UserDialog: FC<{
   const libraries = useMemo(() => (_libraries ?? []).map(l => ({ label: l.name, value: l.id })), [_libraries])
 
   return (
-    <Dialog isOpen={isOpen} onOpenChange={setIsOpen} title="Edit User">
+    <TitledDialog isOpen={isOpen} onOpenChange={setIsOpen} title="Edit User">
       <Form form={form} onSubmit={(user: UserFormValues) => onSubmit(user)}>
         <ManagedInput required={true} name="username" labelClassName="w-28" label="Name" leftIcon={<UserIcon />} />
         <SelectLine
@@ -75,6 +75,6 @@ export const UserDialog: FC<{
           <Button type="submit">Submit</Button>
         </DialogFooter>
       </Form>
-    </Dialog>
+    </TitledDialog>
   )
 }

@@ -6,7 +6,7 @@ import { accountItem, adminItems, adminPaths, licensesItem } from "@thoth/compon
 import { SideMenu } from "@thoth/components/menu/side-menu"
 import { useBreakpoint } from "@thoth/hooks/use-media-query"
 import { cn } from "@thoth/lib/utils"
-import { useCurrentUser } from "@thoth/queries/current-user"
+import { useCurrentUser } from "@thoth/queries/current-user-queries"
 
 export const SettingsLayout: FC<{ children: ReactNode }> = ({ children }) => {
   const { data: user } = useCurrentUser()

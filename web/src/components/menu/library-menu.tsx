@@ -13,8 +13,8 @@ import {
   DropdownMenuSeparator,
 } from "@thoth/components/ui/dropdown-menu"
 import { cn } from "@thoth/lib/utils"
-import { useCurrentUser } from "@thoth/queries/current-user"
-import { useLibraries, useLibrary } from "@thoth/queries/libraries"
+import { useCurrentUser } from "@thoth/queries/current-user-queries"
+import { useLibraries, useLibrary } from "@thoth/queries/library-queries"
 import { pluralize } from "@thoth/utils/utils"
 
 export const LibraryMenu: FC<{ libraryId: UUID; className?: string }> = ({ libraryId, className }) => {

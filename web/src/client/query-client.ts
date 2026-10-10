@@ -1,6 +1,6 @@
 import { MutationCache, QueryCache, QueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
-import { isAuthError, isNetworkError, isNotFoundError } from "./error"
+import { isAuthError, isNetworkError, isNotFoundError } from "./api-error"
 
 declare module "@tanstack/react-query" {
   interface Register {
