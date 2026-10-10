@@ -140,6 +140,7 @@ export const MiniPlayer: FC<{ player: FullscreenPlayerController }> = ({ player 
               >
                 <div data-dock-control className="absolute -top-[3px] right-0 left-0 z-10 max-md:pointer-events-none">
                   <ProgressBar
+                    label="Seek"
                     className="w-full"
                     trackClassName="h-3.5 rounded-t-xl [--bar-h:0.25rem] md:[--bar-h:0.375rem]"
                     progress={progress}
@@ -181,16 +182,18 @@ export const MiniPlayer: FC<{ player: FullscreenPlayerController }> = ({ player 
                     <VolumeIcon level={volume.level} className="size-5" />
                   </PlayerButton>
                   <div className="w-0 overflow-hidden opacity-0 transition-[width,opacity] duration-150 group-focus-within/volume:w-24 group-focus-within/volume:opacity-100 group-hover/volume:w-24 group-hover/volume:opacity-100">
-                    <Slider
-                      aria-label="Volume"
-                      className="h-10 w-24 px-3"
-                      minValue={0}
-                      maxValue={1}
-                      step={0.01}
-                      formatOptions={{ style: "percent" }}
-                      value={volume.level}
-                      onChange={volume.set}
-                    />
+                    <div className="w-24 px-3">
+                      <Slider
+                        aria-label="Volume"
+                        className="h-10"
+                        minValue={0}
+                        maxValue={1}
+                        step={0.01}
+                        formatOptions={{ style: "percent" }}
+                        value={volume.level}
+                        onChange={volume.set}
+                      />
+                    </div>
                   </div>
                 </div>
 

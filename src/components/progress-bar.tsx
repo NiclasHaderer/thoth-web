@@ -1,17 +1,18 @@
-import { MotionValue, motion, useTransform } from "motion/react"
-import { FC, PointerEventHandler, useCallback, useLayoutEffect, useRef, useState } from "react"
+import { MotionValue, motion, useMotionValueEvent, useTransform } from "motion/react"
+import { FC, useLayoutEffect, useRef, useState } from "react"
 import { useEvent } from "@thoth/hooks/use-event"
 import { cn } from "@thoth/lib/utils"
 
 export const ProgressBar: FC<{
+  label: string
   className?: string
   trackClassName?: string
   progress: MotionValue<number>
   onScrub?: (percentage: number) => void
   onScrubEnd?: (percentage: number) => void
-}> = ({ progress, onScrub, onScrubEnd, className, trackClassName }) => {
+}> = ({ label, progress, onScrub, onScrubEnd, className, trackClassName }) => {
   const track = useRef<HTMLDivElement>(null)
-  const container = useRef<HTMLDivElement>(null)
+  const input = useRef<HTMLInputElement>(null)
   const [trackSize, setTrackSize] = useState(0)
   const [scrubbing, setScrubbing] = useState(false)
   const thumbOffset = useTransform(progress, p => p * trackSize)
@@ -24,42 +25,42 @@ export const ProgressBar: FC<{
     return () => observer.disconnect()
   }, [])
 
-  const percentageAt = useCallback((clientX: number) => {
-    const rect = track.current?.getBoundingClientRect()
-    if (!rect?.width) return 0
-    return Math.min(1, Math.max(0, (clientX - rect.left) / rect.width))
-  }, [])
-
-  useEvent(container, "pointerdown", event => {
-    event.stopPropagation()
-    container.current?.setPointerCapture(event.pointerId)
-    setScrubbing(true)
-    onScrub?.(percentageAt(event.clientX))
+  useMotionValueEvent(progress, "change", value => {
+    if (input.current) input.current.value = String(value)
   })
 
-  const move: PointerEventHandler<HTMLDivElement> = e => {
-    if (!scrubbing) return
-    onScrub?.(percentageAt(e.clientX))
+  const end = () => {
+    if (!input.current) return
+    setScrubbing(false)
+    onScrubEnd?.(input.current.valueAsNumber)
   }
 
-  const up: PointerEventHandler<HTMLDivElement> = e => {
-    if (!scrubbing) return
-    setScrubbing(false)
-    onScrubEnd?.(percentageAt(e.clientX))
-  }
+  // Native change, not React's onChange: it fires once per committed value.
+  useEvent(input, "change", end)
 
   return (
-    <div
-      ref={container}
-      className={cn(
-        "group relative cursor-pointer touch-none pt-[3px] pb-2",
-        "touch:after:absolute touch:after:inset-x-0 touch:after:-top-2.5 touch:after:-bottom-2.5 touch:after:content-['']",
-        className
-      )}
-      onPointerMove={move}
-      onPointerUp={up}
-      onPointerCancel={up}
-    >
+    <div className={cn("group relative pt-[3px] pb-2", className)}>
+      {/* 1px thumb: a range input insets the pointer mapping by half its thumb width. */}
+      <input
+        ref={input}
+        type="range"
+        aria-label={label}
+        min={0}
+        max={1}
+        step={0.001}
+        defaultValue={progress.get()}
+        onChange={event => {
+          setScrubbing(true)
+          onScrub?.(event.currentTarget.valueAsNumber)
+        }}
+        onPointerCancel={end}
+        className={cn(
+          "peer absolute inset-0 z-10 size-full cursor-pointer touch-none appearance-none opacity-0",
+          "touch:-top-2.5 touch:h-[calc(100%+1.25rem)]",
+          "[&::-moz-range-thumb]:w-px [&::-moz-range-thumb]:border-0",
+          "[&::-webkit-slider-thumb]:w-px [&::-webkit-slider-thumb]:appearance-none"
+        )}
+      />
       <div ref={track} className={cn("relative h-1.5 overflow-hidden", trackClassName)}>
         <div className="bg-secondary/60 absolute inset-x-0 top-0 h-[var(--bar-h,0.375rem)]" />
         <motion.div
@@ -69,8 +70,9 @@ export const ProgressBar: FC<{
       </div>
       <motion.div
         className={cn(
-          "bg-primary pointer-events-none absolute top-0 size-3 -translate-x-1/2 rounded-full",
+          "bg-primary ring-ring/50 pointer-events-none absolute top-0 size-3 -translate-x-1/2 rounded-full",
           "opacity-0 transition-opacity group-hover:opacity-100",
+          "peer-focus-visible:opacity-100 peer-focus-visible:ring-3",
           scrubbing && "opacity-100"
         )}
         style={{ x: thumbOffset }}

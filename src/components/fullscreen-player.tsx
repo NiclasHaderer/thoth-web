@@ -173,6 +173,7 @@ const FullscreenPlayerBody: FC<{ player: FullscreenPlayerController; book: Playi
 
               <div className="pt-6">
                 <ProgressBar
+                  label="Seek"
                   className="w-full"
                   trackClassName="rounded-full"
                   progress={progress}
