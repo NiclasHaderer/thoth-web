@@ -1,22 +1,17 @@
 import { useAnimationFrame, useMotionValue } from "motion/react"
 import { useEffect, useRef } from "react"
 import { Book } from "@thoth/client"
-import { audio, useAudio } from "./audio"
-import { RESTART_THRESHOLD } from "./controller"
-import { currentTrack, usePlayback, usePlaybackProgress } from "./state"
+import { audio } from "./active-audio-output"
+import { playback, RESTART_THRESHOLD } from "./playback-actions"
+import { PlaybackState, usePlayback } from "./playback-store"
+import { trackStartMs } from "./track-position"
 
-export const useCurrentTrack = () => usePlayback(currentTrack)
+export const useCanGoPrevious = () => usePlayback(s => s.trackIndex > 0 || s.currentTime > RESTART_THRESHOLD)
 
-export const usePlaying = () => useAudio(media => !media.paused)
-
-export const useCanGoPrevious = () => {
-  const hasPrevious = usePlayback(s => s.trackIndex > 0)
-  const position = useAudio(media => media.currentTime)
-  return hasPrevious || position > RESTART_THRESHOLD
+const currentFraction = () => {
+  const { currentTime, duration } = audio.snapshot()
+  return Number.isFinite(duration) && duration > 0 ? currentTime / duration : 0
 }
-
-const currentFraction = (media: HTMLAudioElement) =>
-  Number.isFinite(media.duration) && media.duration > 0 ? media.currentTime / media.duration : 0
 
 // Scrubbable track progress as a motion value, sampled per frame instead of per timeupdate.
 export const useTrackProgress = () => {
@@ -25,7 +20,7 @@ export const useTrackProgress = () => {
 
   useAnimationFrame(() => {
     if (scrubbing.current) return
-    const next = currentFraction(audio.element())
+    const next = currentFraction()
     if (progress.get() !== next) progress.set(next)
   })
 
@@ -38,29 +33,34 @@ export const useTrackProgress = () => {
     scrubEnd: (fraction: number) => {
       progress.set(fraction)
       const duration = audio.duration()
-      if (Number.isFinite(duration)) audio.seek(duration * fraction)
+      if (Number.isFinite(duration)) playback.seek(duration * fraction)
       scrubbing.current = false
     },
   }
 }
 
 export const useVolume = () => {
-  const level = useAudio(media => media.volume)
+  const level = usePlayback(s => s.volume)
   const progress = useMotionValue(level)
 
   useEffect(() => {
     progress.set(level)
   }, [level, progress])
 
-  return { level, progress, set: audio.setVolume }
+  return { level, progress, set: playback.setVolume }
 }
 
 // Live book-level progress: follows playback for the book that is playing, the cached position
-// otherwise. The selectors keep books that are not playing from re-rendering on playback ticks.
+// otherwise. The selectors keep books that are not playing from re-rendering on playback ticks,
+// and whole seconds keep the playing one to one render per second.
+const playing = (s: PlaybackState, book: Book) => s.book?.id === book.id && s.book.libraryId === book.libraryId
+
 export const useBookProgress = (book: Book) => {
-  const isCurrent = usePlaybackProgress(s => s.bookId === book.id && s.libraryId === book.libraryId)
-  const positionMs = usePlaybackProgress(s =>
-    s.bookId === book.id && s.libraryId === book.libraryId ? s.positionMs : book.positionMs
+  const isCurrent = usePlayback(s => playing(s, book))
+  const positionMs = usePlayback(s =>
+    s.book && playing(s, book)
+      ? trackStartMs(s.book.tracks, s.trackIndex) + Math.floor(s.currentTime) * 1000
+      : book.positionMs
   )
   const finished = book.status === "FINISHED"
 
