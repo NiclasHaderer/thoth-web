@@ -7,7 +7,7 @@ import { toBase64 } from "@thoth/utils/utils"
 
 export const CoverPicker: FC<{
   alt: string
-  value: string | undefined
+  value: string | null | undefined
   onChange: (cover: string) => void
 }> = ({ alt, value, onChange }) => {
   const imageRef = useRef<HTMLInputElement>(null)
