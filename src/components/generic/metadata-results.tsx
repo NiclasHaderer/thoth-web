@@ -9,8 +9,8 @@ export const MetadataResults = <T,>({
 }: {
   results: T[]
   onSelect: (result: T) => void
-  title: (result: T) => string | undefined
-  description: (result: T) => string | undefined
+  title: (result: T) => string | null
+  description: (result: T) => string | null
   image?: (result: T) => ReactNode
 }) => (
   <>
