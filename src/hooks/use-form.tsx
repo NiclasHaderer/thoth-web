@@ -11,6 +11,7 @@ import {
   useState,
 } from "react"
 import { useOnMount } from "@thoth/hooks/use-lifecycle.ts"
+import { changedFields } from "@thoth/utils/changed-fields"
 import { notNullIsh } from "@thoth/utils/utils"
 
 type SubmitError<T extends Record<string, any>> = Partial<{
@@ -21,6 +22,7 @@ export interface FormContext<T extends Record<string, any>> {
   fields: T
   setFields: (newValue: Partial<T>) => void
   setAllFields: (newValue: T) => void
+  changedFields: () => Partial<T>
   errors: SubmitError<T>
   setErrors: (newValue: Partial<{ [K in keyof T]: string | undefined }>) => void
   hasErrors: () => boolean
@@ -53,6 +55,7 @@ const CONTEXT = createContext<FormContext<Record<any, any>>>({
   fields: {},
   setFields: () => {},
   setAllFields: () => {},
+  changedFields: () => ({}),
   errors: {},
   setErrors: () => {},
   touched: {},
@@ -93,19 +96,25 @@ const useCurrentState = <T = undefined,>(value: T) => {
   ] as const
 }
 
+export interface FormOptions<T extends Record<string, any>> {
+  toForm?: FormContext<T>["toFormTransformers"]
+  fromForm?: FormContext<T>["fromFormTransformers"]
+  validate?: FormContext<T>["formValidators"]
+  reloadOnInitialChange?: boolean
+}
+
 export const useForm = <T extends Record<string, any>>(
   initialState: T,
-  {
-    reloadOnInitialChange,
-    ...options
-  }: {
-    toForm?: FormContext<T>["toFormTransformers"]
-    fromForm?: FormContext<T>["fromFormTransformers"]
-    validate?: FormContext<T>["formValidators"]
-    reloadOnInitialChange?: boolean
-  } = {}
+  { reloadOnInitialChange, ...options }: FormOptions<T> = {}
 ): FormContext<T> => {
   const [fields, setFields, currentFields] = useCurrentState(initialState)
+  // What the fields were last seeded with. changedFields diffs against this and not initialState, which follows
+  // the entity as it refetches under a form that still holds the older values.
+  const seeded = useRef(initialState)
+  const seed = (state: T) => {
+    seeded.current = state
+    setFields(state)
+  }
   const [touched, setTouched, currentTouched] = useCurrentState(
     getFilledObject<keyof T, boolean>(Object.keys(initialState), false)
   )
@@ -141,7 +150,7 @@ export const useForm = <T extends Record<string, any>>(
 
   useEffect(() => {
     if (reloadOnInitialChange) {
-      setFields(initialState)
+      seed(initialState)
     }
   }, [initialState, reloadOnInitialChange])
 
@@ -167,6 +176,7 @@ export const useForm = <T extends Record<string, any>>(
       setFields({ ...newValue })
       validateFields(newValue)
     },
+    changedFields: () => changedFields(seeded.current, currentFields.current),
     errors,
     setErrors: (newValue: Partial<Record<keyof T, string | undefined>>) => {
       setErrors({ ...currentErrors.current, ...newValue })
@@ -188,7 +198,7 @@ export const useForm = <T extends Record<string, any>>(
       setTouched({ ...currentTouched.current, ...newValue })
     },
     restoreInitial: () => {
-      setFields(initialState)
+      seed(initialState)
       setTouched(getFilledObject<keyof T, boolean>(Object.keys(initialState), false))
       validateFields(initialState)
     },

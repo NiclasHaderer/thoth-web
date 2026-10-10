@@ -2,7 +2,6 @@ import { FC } from "react"
 import { Author, AuthorUpdate, MetadataAuthor } from "@thoth/client"
 import { GenericEdit } from "@thoth/components/generic/generic-edit.tsx"
 import { useUpdateAuthor } from "@thoth/queries/resource-queries"
-import { useForm } from "../../hooks/use-form"
 import { fromFormDate, toFormDate } from "../../utils/utils"
 import { AuthorForm } from "./author-form"
 import { AuthorSearch } from "./author-search"
@@ -24,7 +23,6 @@ const authorToUpdateModel = (author: Author): AuthorUpdate => {
   return {
     biography: author.biography,
     birthDate: author.birthDate,
-    books: undefined,
     bornIn: author.bornIn,
     deathDate: author.deathDate,
     image: author.imageID,
@@ -41,29 +39,30 @@ export const AuthorEdit: FC<{ author: Author; isOpen: boolean; onOpenChange: (op
   onOpenChange,
 }) => {
   const updateAuthor = useUpdateAuthor()
-  const form = useForm(authorToUpdateModel(author), {
-    toForm: {
-      birthDate: value => value && toFormDate(value),
-      deathDate: value => value && toFormDate(value),
-    },
-    fromForm: {
-      birthDate: value => fromFormDate(value) ?? undefined,
-      deathDate: value => fromFormDate(value) ?? undefined,
-    },
-  })
 
   return (
     <GenericEdit
       title="Edit Author"
-      form={form}
+      initial={authorToUpdateModel(author)}
+      options={{
+        toForm: {
+          birthDate: value => value && toFormDate(value),
+          deathDate: value => value && toFormDate(value),
+        },
+        fromForm: {
+          birthDate: fromFormDate,
+          deathDate: fromFormDate,
+        },
+        validate: { name: name => !!name || "Name is required" },
+      }}
       isOpen={isOpen}
       onOpenChange={onOpenChange}
-      onSubmit={async (values, closeModal) => {
-        await updateAuthor.mutateAsync({ libraryId: author.libraryId, id: author.id, data: values })
+      onSubmit={async (changes, closeModal) => {
+        await updateAuthor.mutateAsync({ libraryId: author.libraryId, id: author.id, data: changes })
         closeModal()
       }}
-      information={<AuthorForm form={form} />}
-      search={onSelect => (
+      information={form => <AuthorForm form={form} />}
+      search={(form, onSelect) => (
         <AuthorSearch
           libraryId={author.libraryId}
           authorSearch={form.fields.name}
