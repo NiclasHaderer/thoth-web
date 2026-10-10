@@ -3,8 +3,8 @@ import { Book } from "@thoth/client"
 import { DownloadBadge } from "@thoth/components/book/book-download"
 import { GenericPreview } from "@thoth/components/generic/generic-preview.tsx"
 import { Link } from "@thoth/components/link.tsx"
-import { useCanPlay } from "@thoth/offline"
-import { playBookById, useBookProgress } from "@thoth/playback"
+import { useCanPlay } from "@thoth/downloads"
+import { playback, useBookProgress } from "@thoth/playback"
 
 interface BookPreviewProps extends Book {
   size?: "small" | "normal"
@@ -39,7 +39,7 @@ export const BookPreview = forwardRef<HTMLDivElement, BookPreviewProps>(
         progress={inProgress ? fraction : undefined}
         finished={finished}
         badge={<DownloadBadge bookId={book.id} size="small" />}
-        onPlay={canPlay ? () => void playBookById(book.libraryId, book.id) : undefined}
+        onPlay={canPlay ? () => void playback.play({ libraryId: book.libraryId, bookId: book.id }) : undefined}
       />
     )
   }

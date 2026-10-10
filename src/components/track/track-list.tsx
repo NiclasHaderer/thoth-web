@@ -27,7 +27,7 @@ export interface TrackListEntry {
   id: UUID
   title: string
   durationMs: number
-  trackNr?: number | null
+  trackNr: number
 }
 
 export const TrackList: FC<{

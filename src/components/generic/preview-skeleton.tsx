@@ -2,7 +2,7 @@ import { FC } from "react"
 import { RESPONSIVE_GRID } from "@thoth/components/responsive-grid"
 import { Skeleton } from "@thoth/components/ui/skeleton"
 import { cn } from "@thoth/lib/utils"
-import { getSizing } from "@thoth/utils/width"
+import { getSizing } from "@thoth/utils/responsive-sizing"
 
 export const PreviewSkeleton: FC<{
   round?: boolean

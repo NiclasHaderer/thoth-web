@@ -1,6 +1,6 @@
 import { FC, ReactNode } from "react"
 import { Sheet, SheetHeader, SheetTitle } from "@thoth/components/ui/sheet"
-import { useSwipeDismiss } from "@thoth/hooks/swipe-dismiss"
+import { useSwipeDismiss } from "@thoth/hooks/use-swipe-dismiss"
 
 export const BottomSheet: FC<{ title: string; onDismiss: () => void; children: ReactNode }> = ({
   title,
