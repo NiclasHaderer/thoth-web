@@ -246,6 +246,7 @@ const FullscreenPlayerBody: FC<{ player: FullscreenPlayerController; book: Playi
                 <TrackList
                   tracks={book.tracks}
                   activeId={track.id}
+                  playedCount={index}
                   playing={playing}
                   onStart={playback.jumpTo}
                   onToggle={playback.setPlaying}
