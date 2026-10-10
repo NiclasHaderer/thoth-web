@@ -6,7 +6,7 @@ import { useBookDownloads } from "./book-downloads-store"
 
 export const useCoverSrc = () => {
   const urls = useBookDownloads(state => state.urls)
-  return (id: string | undefined): string | undefined => {
+  return (id: string | null | undefined): string | undefined => {
     if (!id) return undefined
     // For edits, it can also be a data url or a http url
     if (!isUUID(id)) return id

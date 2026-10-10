@@ -24,7 +24,7 @@ import {
   useCreateSeries,
   useUpdateBook,
 } from "@thoth/queries/resource-queries"
-import { FormContext, useForm } from "../../hooks/use-form"
+import { FormContext } from "../../hooks/use-form"
 import { HtmlEditor } from "../html-editor"
 import { BookSearch } from "./book-search"
 
@@ -68,33 +68,34 @@ export const BookEdit: FC<{ book: Book; isOpen: boolean; onOpenChange: (open: bo
   onOpenChange,
 }) => {
   const updateBook = useUpdateBook()
-  const form = useForm(bookToUpdate(book), {
-    toForm: {
-      releaseDate: value => value && toFormDate(value),
-      narrators: value => value?.join(", "),
-    },
-    fromForm: {
-      releaseDate: value => fromFormDate(value) ?? undefined,
-      narrators: value =>
-        value
-          ?.split(",")
-          .map(narrator => narrator.trim())
-          .filter(Boolean) ?? [],
-    },
-  })
 
   return (
     <GenericEdit
       title="Edit Book"
-      form={form}
+      initial={bookToUpdate(book)}
+      options={{
+        toForm: {
+          releaseDate: value => value && toFormDate(value),
+          narrators: value => value?.join(", "),
+        },
+        fromForm: {
+          releaseDate: fromFormDate,
+          narrators: value =>
+            value
+              ?.split(",")
+              .map(narrator => narrator.trim())
+              .filter(Boolean) ?? [],
+        },
+        validate: { title: title => !!title || "Title is required" },
+      }}
       isOpen={isOpen}
       onOpenChange={onOpenChange}
-      onSubmit={async (values, closeModal) => {
-        await updateBook.mutateAsync({ libraryId: book.libraryId, id: book.id, data: values })
+      onSubmit={async (changes, closeModal) => {
+        await updateBook.mutateAsync({ libraryId: book.libraryId, id: book.id, data: changes })
         closeModal()
       }}
-      information={<BookForm form={form} libraryId={book.libraryId} />}
-      search={onSelect => (
+      information={form => <BookForm form={form} libraryId={book.libraryId} />}
+      search={(form, onSelect) => (
         <BookSearch
           libraryId={book.libraryId}
           book={book.title}
@@ -176,7 +177,7 @@ const BookForm: FC<{ form: FormContext<BookUpdate>; libraryId: UUID }> = ({ form
       <HtmlEditor
         placeholder="Description"
         value={form.fields.description}
-        onChange={description => form.setFields({ description: description ?? "" })}
+        onChange={description => form.setFields({ description })}
       />
     </>
   )
