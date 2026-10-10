@@ -37,8 +37,8 @@ export const toFormDate = (date: Date | number | string): string | null => {
   return `${parsed.getFullYear()}-${month}-${day}`
 }
 
-export const fromFormNumber = (value?: string | null): number | undefined => {
-  return value ? Number(value) : undefined
+export const fromFormNumber = (value?: string | null): number | null => {
+  return value ? Number(value) : null
 }
 
 export const fromFormDate = (date?: string | null): number | null => {

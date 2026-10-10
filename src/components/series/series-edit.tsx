@@ -5,7 +5,7 @@ import { GenericEdit } from "@thoth/components/generic/generic-edit.tsx"
 import { CoverPicker } from "@thoth/components/input/cover-picker"
 import { ManagedInput } from "@thoth/components/input/managed-input"
 import { useUpdateSeries } from "@thoth/queries/resource-queries"
-import { FormContext, useForm } from "../../hooks/use-form"
+import { FormContext } from "../../hooks/use-form"
 import { fromFormNumber } from "../../utils/utils"
 import { HtmlEditor } from "../html-editor"
 import { SeriesSearch } from "./series-search"
@@ -30,7 +30,6 @@ const seriesToUpdate = (series: Series): SeriesUpdate => {
     providerID: series.providerID,
     title: series.title,
     totalBooks: series.totalBooks,
-    books: undefined,
   }
 }
 
@@ -40,25 +39,26 @@ export const SeriesEdit: FC<{ series: Series; isOpen: boolean; onOpenChange: (op
   onOpenChange,
 }) => {
   const updateSeries = useUpdateSeries()
-  const form = useForm(seriesToUpdate(series), {
-    fromForm: {
-      primaryWorks: fromFormNumber,
-      totalBooks: fromFormNumber,
-    },
-  })
 
   return (
     <GenericEdit
-      form={form}
+      initial={seriesToUpdate(series)}
+      options={{
+        fromForm: {
+          primaryWorks: fromFormNumber,
+          totalBooks: fromFormNumber,
+        },
+        validate: { title: title => !!title || "Title is required" },
+      }}
       isOpen={isOpen}
       onOpenChange={onOpenChange}
-      onSubmit={async (values, closeModal) => {
-        await updateSeries.mutateAsync({ libraryId: series.libraryId, id: series.id, data: values })
+      onSubmit={async (changes, closeModal) => {
+        await updateSeries.mutateAsync({ libraryId: series.libraryId, id: series.id, data: changes })
         closeModal()
       }}
       title="Edit Series"
-      information={<SeriesForm form={form} />}
-      search={onSelect => (
+      information={form => <SeriesForm form={form} />}
+      search={(form, onSelect) => (
         <SeriesSearch
           libraryId={series.libraryId}
           series={form.fields.title}

@@ -8,7 +8,7 @@ export interface PlayingBook {
   title: string
   durationMs: number
   authors: NamedId[]
-  coverID: UUID | undefined
+  coverID: UUID | null
   tracks: Track[]
 }
 

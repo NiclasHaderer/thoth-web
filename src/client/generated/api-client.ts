@@ -4,13 +4,18 @@
 // @ts-nocheck
 import { ApiCallData, ApiInterceptor, ApiResponse, _request, _createUrl, _mergeHeaders } from "./client"
 import type {
+  ApiVersion,
   Author,
   AuthorCreate,
   AuthorDetailed,
+  AuthorField,
   AuthorUpdate,
   Book,
   BookDetailed,
+  BookField,
   BookUpdate,
+  Chapter,
+  ChapterMark,
   Empty,
   FileScanner,
   FileSystemItem,
@@ -27,6 +32,7 @@ import type {
   MetadataAuthor,
   MetadataBook,
   MetadataBookSeries,
+  MetadataChapters,
   MetadataLanguage,
   MetadataRegion,
   MetadataSearchAuthor,
@@ -45,6 +51,7 @@ import type {
   Series,
   SeriesCreate,
   SeriesDetailed,
+  SeriesField,
   SeriesUpdate,
   SetDismissed,
   SetFinished,
@@ -80,7 +87,7 @@ export const createApi = (
 ) => {
   const defaultHeadersImpl = new Headers(defaultHeaders)
   return {
-    apiVersion: "0.0.1",
+    apiVersion: "0.0.2",
     loginUser: (
       body: ThothLoginUser,
       headers: HeadersInit = {},
@@ -830,6 +837,22 @@ export const createApi = (
         true
       )
     },
+    getBookChapterMetadata: (
+      { provider, id, libraryId }: { provider: string; id: string; libraryId: UUID },
+      headers: HeadersInit = {},
+      interceptors: ApiInterceptor[] = []
+    ): Promise<ApiResponse<MetadataChapters>> => {
+      return _request(
+        _createUrl(`/api/libraries/${libraryId}/metadata/book/${id}/chapters`, { provider }),
+        "GET",
+        "json",
+        _mergeHeaders(defaultHeadersImpl, headers),
+        undefined,
+        [...defaultInterceptors, ...interceptors],
+        executor,
+        true
+      )
+    },
     searchBookMetadata: (
       {
         authorName,
@@ -1021,6 +1044,21 @@ export const createApi = (
         `/api/ping`,
         "POST",
         "text",
+        _mergeHeaders(defaultHeadersImpl, headers),
+        undefined,
+        [...defaultInterceptors, ...interceptors],
+        executor,
+        false
+      )
+    },
+    getApiVersion: (
+      headers: HeadersInit = {},
+      interceptors: ApiInterceptor[] = []
+    ): Promise<ApiResponse<ApiVersion>> => {
+      return _request(
+        `/api/version`,
+        "GET",
+        "json",
         _mergeHeaders(defaultHeadersImpl, headers),
         undefined,
         [...defaultInterceptors, ...interceptors],
