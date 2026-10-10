@@ -1,83 +1,87 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ReactNode, useState } from "react"
 import { Key } from "react-aria-components"
 import { TitledDialog } from "@thoth/components/titled-dialog"
 import { Button } from "@thoth/components/ui/button"
 import { DialogFooter } from "@thoth/components/ui/dialog"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@thoth/components/ui/tabs"
-import { Form, FormContext } from "@thoth/hooks/use-form.tsx"
+import { Form, FormContext, FormOptions, useForm } from "@thoth/hooks/use-form.tsx"
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+interface EditSessionProps<T extends Record<string, any>> {
+  initial: T
+  options?: FormOptions<T>
+  onSubmit: (changes: Partial<T>, closeModal: () => void) => void | Promise<void>
+  information: (form: FormContext<T>) => ReactNode
+  search: (form: FormContext<T>, onSelect: () => void) => ReactNode
+}
+
 export function GenericEdit<T extends Record<string, any>>({
-  form,
-  onSubmit,
   title,
-  information,
-  search,
   isOpen,
   onOpenChange,
-}: {
-  form: FormContext<T>
-  onSubmit: (values: T, closeModal: () => void) => void | Promise<void>
+  ...session
+}: EditSessionProps<T> & {
   title: string
-  information: ReactNode
-  search: (onSelect: () => void) => ReactNode
   isOpen: boolean
   onOpenChange: (open: boolean) => void
 }) {
+  return (
+    <TitledDialog isOpen={isOpen} onOpenChange={onOpenChange} title={title} className="sm:max-w-[85%] lg:max-w-4xl">
+      <EditSession {...session} closeModal={() => onOpenChange(false)} />
+    </TitledDialog>
+  )
+}
+
+function EditSession<T extends Record<string, any>>({
+  initial,
+  options,
+  onSubmit,
+  information,
+  search,
+  closeModal,
+}: EditSessionProps<T> & { closeModal: () => void }) {
+  const form = useForm(initial, options)
   const [selectedTab, setSelectedTab] = useState<Key>("information")
   const [submitting, setSubmitting] = useState(false)
 
-  // Reset on close, so the opener does not have to reach in here to get a pristine form.
-  const setOpen = (open: boolean) => {
-    if (!open) {
-      form.restoreInitial()
-      setSelectedTab("information")
-    }
-    onOpenChange(open)
-  }
-
-  const closeModal = () => setOpen(false)
-
   return (
-    <TitledDialog isOpen={isOpen} onOpenChange={setOpen} title={title} className="sm:max-w-[85%] lg:max-w-4xl">
-      <Form
-        form={form}
-        onSubmit={async values => {
-          setSubmitting(true)
-          try {
-            await onSubmit(values, closeModal)
-          } finally {
-            setSubmitting(false)
-          }
-        }}
-      >
-        <Tabs selectedKey={selectedTab} onSelectionChange={setSelectedTab}>
-          <TabsList className="w-full">
-            <TabsTrigger id="information" className="w-1/2">
-              Information
-            </TabsTrigger>
-            <TabsTrigger id="lookup" className="w-1/2">
-              Find match
-            </TabsTrigger>
-          </TabsList>
-          <div className="mt-2 grid [&>*]:col-start-1 [&>*]:row-start-1 [&>[inert]]:invisible">
-            <TabsContent id="information" shouldForceMount>
-              {information}
-            </TabsContent>
-            <TabsContent id="lookup" shouldForceMount className="flex flex-col">
-              {search(() => setSelectedTab("information"))}
-            </TabsContent>
-          </div>
-        </Tabs>
-        <DialogFooter>
-          <Button type="button" variant="secondary" onPress={closeModal}>
-            Cancel
-          </Button>
-          <Button type="submit" isDisabled={submitting}>
-            Submit
-          </Button>
-        </DialogFooter>
-      </Form>
-    </TitledDialog>
+    <Form
+      form={form}
+      onSubmit={async () => {
+        setSubmitting(true)
+        try {
+          await onSubmit(form.changedFields(), closeModal)
+        } finally {
+          setSubmitting(false)
+        }
+      }}
+    >
+      <Tabs selectedKey={selectedTab} onSelectionChange={setSelectedTab}>
+        <TabsList className="w-full">
+          <TabsTrigger id="information" className="w-1/2">
+            Information
+          </TabsTrigger>
+          <TabsTrigger id="lookup" className="w-1/2">
+            Find match
+          </TabsTrigger>
+        </TabsList>
+        <div className="mt-2 grid [&>*]:col-start-1 [&>*]:row-start-1 [&>[inert]]:invisible">
+          <TabsContent id="information" shouldForceMount>
+            {information(form)}
+          </TabsContent>
+          <TabsContent id="lookup" shouldForceMount className="flex flex-col">
+            {search(form, () => setSelectedTab("information"))}
+          </TabsContent>
+        </div>
+      </Tabs>
+      <DialogFooter>
+        <Button type="button" variant="secondary" onPress={closeModal}>
+          Cancel
+        </Button>
+        <Button type="submit" isDisabled={submitting}>
+          Submit
+        </Button>
+      </DialogFooter>
+    </Form>
   )
 }

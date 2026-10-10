@@ -81,7 +81,7 @@ export interface ThothChangePassword {
 
 export interface FileSystemItem {
   name: string
-  parent: string | undefined
+  parent: string | null
   path: string
 }
 
@@ -104,7 +104,7 @@ export interface Library {
   combineMetadataAgentFields: boolean
   fileScanners: Array<FileScanner>
   folders: Array<string>
-  icon: string | undefined
+  icon: string | null
   id: UUID
   language: MetadataLanguage
   metadataAgents: Array<NamedMetadataAgent>
@@ -118,7 +118,7 @@ export interface UpdateLibrary {
   combineMetadataAgentFields: boolean
   fileScanners: Array<FileScanner>
   folders: Array<string>
-  icon: string | undefined
+  icon: string | null
   language: MetadataLanguage
   metadataAgents: Array<NamedMetadataAgent>
   name: string
@@ -127,30 +127,30 @@ export interface UpdateLibrary {
 }
 
 export interface PartialUpdateLibrary {
-  combineFileScannerFields: boolean | undefined
-  combineMetadataAgentFields: boolean | undefined
-  fileScanners: Array<FileScanner> | undefined
-  folders: Array<string> | undefined
-  icon: string | undefined
-  language: MetadataLanguage | undefined
-  metadataAgents: Array<NamedMetadataAgent> | undefined
-  name: string | undefined
-  preferEmbeddedMetadata: boolean | undefined
-  region: MetadataRegion | undefined
+  combineFileScannerFields?: boolean
+  combineMetadataAgentFields?: boolean
+  fileScanners?: Array<FileScanner>
+  folders?: Array<string>
+  icon?: string | null
+  language?: MetadataLanguage
+  metadataAgents?: Array<NamedMetadataAgent>
+  name?: string
+  preferEmbeddedMetadata?: boolean
+  region?: MetadataRegion
 }
 
 export interface Author {
-  biography: string | undefined
-  birthDate: number | undefined
-  bornIn: string | undefined
-  deathDate: number | undefined
+  biography: string | null
+  birthDate: number | null
+  bornIn: string | null
+  deathDate: number | null
   id: UUID
-  imageID: UUID | undefined
+  imageID: UUID | null
   libraryId: UUID
   name: string
-  provider: string | undefined
-  providerID: string | undefined
-  website: string | undefined
+  provider: string | null
+  providerID: string | null
+  website: string | null
 }
 
 export interface NamedId {
@@ -167,21 +167,21 @@ export type PlayStatus = "UNPLAYED" | "IN_PROGRESS" | "FINISHED"
 
 export interface Book {
   authors: Array<NamedId>
-  coverID: UUID | undefined
-  description: string | undefined
+  coverID: UUID | null
+  description: string | null
   durationMs: number
   genres: Array<string>
   id: UUID
-  isbn: string | undefined
-  language: MetadataLanguage | undefined
+  isbn: string | null
+  language: MetadataLanguage | null
   libraryId: UUID
   narrators: Array<string>
   positionMs: number
-  provider: string | undefined
-  providerID: string | undefined
-  providerRating: number | undefined
-  publisher: string | undefined
-  releaseDate: number | undefined
+  provider: string | null
+  providerID: string | null
+  providerRating: number | null
+  publisher: string | null
+  releaseDate: number | null
   series: Array<TitledId>
   status: PlayStatus
   title: string
@@ -190,16 +190,16 @@ export interface Book {
 export interface Series {
   authors: Array<NamedId>
   bookCoverIDs: Array<UUID>
-  coverID: UUID | undefined
-  description: string | undefined
+  coverID: UUID | null
+  description: string | null
   genres: Array<string>
   id: UUID
   libraryId: UUID
-  primaryWorks: number | undefined
-  provider: string | undefined
-  providerID: string | undefined
+  primaryWorks: number | null
+  provider: string | null
+  providerID: string | null
   title: string
-  totalBooks: number | undefined
+  totalBooks: number | null
 }
 
 export interface LibrarySearchResult {
@@ -222,6 +222,30 @@ export interface PaginatedResponse<T> {
 
 export type Order = "ASC" | "DESC"
 
+export interface Chapter {
+  endMs: number
+  startMs: number
+  title: string | null
+  trackId: UUID
+}
+
+export type BookField =
+  | "TITLE"
+  | "AUTHORS"
+  | "SERIES"
+  | "PROVIDER"
+  | "PROVIDER_ID"
+  | "PROVIDER_RATING"
+  | "RELEASE_DATE"
+  | "PUBLISHER"
+  | "LANGUAGE"
+  | "DESCRIPTION"
+  | "NARRATORS"
+  | "GENRES"
+  | "ISBN"
+  | "COVER_ID"
+  | "CHAPTERS"
+
 export interface Track {
   book: TitledId
   durationMs: number
@@ -232,25 +256,37 @@ export interface Track {
 }
 
 export interface BookDetailed extends Book {
+  chapters: Array<Chapter>
+  overridden: Array<BookField>
   tracks: Array<Track>
 }
 
-export interface BookUpdate {
-  authors: Array<UUID> | undefined
-  cover: string | undefined
-  description: string | undefined
-  genres: Array<string> | undefined
-  isbn: string | undefined
-  language: MetadataLanguage | undefined
-  narrators: Array<string> | undefined
-  provider: string | undefined
-  providerID: string | undefined
-  providerRating: number | undefined
-  publisher: string | undefined
-  releaseDate: number | undefined
-  series: Array<UUID> | undefined
-  title: string | undefined
+export interface ChapterMark {
+  startMs: number
+  title: string | null
 }
+
+export interface BookUpdate {
+  authors?: Array<UUID>
+  chapters?: Array<ChapterMark>
+  cover?: string | null
+  description?: string | null
+  genres?: Array<string> | null
+  isbn?: string | null
+  language?: MetadataLanguage | null
+  narrators?: Array<string> | null
+  provider?: string | null
+  providerID?: string | null
+  providerRating?: number | null
+  publisher?: string | null
+  releaseDate?: number | null
+  reset?: Array<BookField>
+  series?: Array<UUID> | null
+  title?: string
+}
+
+export type SeriesField =
+  "TITLE" | "PROVIDER" | "PROVIDER_ID" | "TOTAL_BOOKS" | "PRIMARY_WORKS" | "COVER_ID" | "DESCRIPTION"
 
 export interface YearRange {
   end: number
@@ -260,7 +296,8 @@ export interface YearRange {
 export interface SeriesDetailed extends Series {
   books: Array<Book>
   narrators: Array<string>
-  yearRange: YearRange | undefined
+  overridden: Array<SeriesField>
+  yearRange: YearRange | null
 }
 
 export interface SeriesCreate {
@@ -268,18 +305,23 @@ export interface SeriesCreate {
 }
 
 export interface SeriesUpdate {
-  books: Array<UUID> | undefined
-  cover: string | undefined
-  description: string | undefined
-  primaryWorks: number | undefined
-  provider: string | undefined
-  providerID: string | undefined
-  title: string | undefined
-  totalBooks: number | undefined
+  books?: Array<UUID>
+  cover?: string | null
+  description?: string | null
+  primaryWorks?: number | null
+  provider?: string | null
+  providerID?: string | null
+  reset?: Array<SeriesField>
+  title?: string
+  totalBooks?: number | null
 }
+
+export type AuthorField =
+  "NAME" | "PROVIDER" | "PROVIDER_ID" | "BIOGRAPHY" | "IMAGE_ID" | "WEBSITE" | "BORN_IN" | "BIRTH_DATE" | "DEATH_DATE"
 
 export interface AuthorDetailed extends Author {
   books: Array<Book>
+  overridden: Array<AuthorField>
   series: Array<Series>
 }
 
@@ -288,16 +330,17 @@ export interface AuthorCreate {
 }
 
 export interface AuthorUpdate {
-  biography: string | undefined
-  birthDate: number | undefined
-  books: Array<UUID> | undefined
-  bornIn: string | undefined
-  deathDate: number | undefined
-  image: string | undefined
-  name: string | undefined
-  provider: string | undefined
-  providerID: string | undefined
-  website: string | undefined
+  biography?: string | null
+  birthDate?: number | null
+  books?: Array<UUID>
+  bornIn?: string | null
+  deathDate?: number | null
+  image?: string | null
+  name?: string
+  provider?: string | null
+  providerID?: string | null
+  reset?: Array<AuthorField>
+  website?: string | null
 }
 
 export interface Narrator {
@@ -328,56 +371,61 @@ export interface MetadataAgentID {
 export interface MetadataSearchAuthor {
   id: MetadataAgentID
   link: string
-  name: string | undefined
+  name: string | null
 }
 
 export interface MetadataAuthor extends MetadataSearchAuthor {
-  biography: string | undefined
-  birthDate: number | undefined
-  bornIn: string | undefined
-  deathDate: number | undefined
-  imageURL: string | undefined
-  website: string | undefined
+  biography: string | null
+  birthDate: number | null
+  bornIn: string | null
+  deathDate: number | null
+  imageURL: string | null
+  website: string | null
 }
 
 export interface MetadataBookSeries {
   id: MetadataAgentID
-  index: number | undefined
+  index: number | null
   link: string
-  title: string | undefined
+  title: string | null
 }
 
 export interface MetadataSearchBook {
-  authors: Array<MetadataSearchAuthor> | undefined
-  coverURL: string | undefined
+  authors: Array<MetadataSearchAuthor> | null
+  coverURL: string | null
   id: MetadataAgentID
-  language: MetadataLanguage | undefined
-  link: string | undefined
+  language: MetadataLanguage | null
+  link: string | null
   narrators: Array<string>
-  releaseDate: number | undefined
+  releaseDate: number | null
   series: Array<MetadataBookSeries>
-  title: string | undefined
+  title: string | null
 }
 
 export interface MetadataBook extends MetadataSearchBook {
-  description: string | undefined
-  isbn: string | undefined
-  providerRating: number | undefined
-  publisher: string | undefined
+  description: string | null
+  isbn: string | null
+  providerRating: number | null
+  publisher: string | null
+}
+
+export interface MetadataChapters {
+  chapters: Array<ChapterMark>
+  runtimeMs: number
 }
 
 export type MetadataSearchCount = "Small" | "Medium" | "Large" | "ExtraLarge"
 
 export interface MetadataSeries {
-  authors: Array<string> | undefined
-  books: Array<MetadataSearchBook> | undefined
-  coverURL: string | undefined
-  description: string | undefined
+  authors: Array<string> | null
+  books: Array<MetadataSearchBook> | null
+  coverURL: string | null
+  description: string | null
   id: MetadataAgentID
   link: string
-  primaryWorks: number | undefined
-  title: string | undefined
-  totalBooks: number | undefined
+  primaryWorks: number | null
+  title: string | null
+  totalBooks: number | null
 }
 
 export interface ProgressUpdate {
@@ -399,11 +447,15 @@ export interface ListeningHistoryEntry {
   positionMs: number
 }
 
+export interface ApiVersion {
+  version: string
+}
+
 export interface ThirdPartyLicense {
   license: string
-  licenseUrl: string | undefined
+  licenseUrl: string | null
   name: string
-  repository: string | undefined
-  text: string | undefined
+  repository: string | null
+  text: string | null
   version: string
 }

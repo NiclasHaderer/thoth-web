@@ -14,7 +14,7 @@ export const HtmlEditor: FC<{
   value?: Content
   placeholder?: string
   className?: string | undefined
-  onChange?: (newValue: string | undefined) => void
+  onChange?: (newValue: string | null) => void
 }> = props => {
   return <HtmlEditorImpl {...props} />
 }
