@@ -20,7 +20,6 @@ import {
 } from "lucide-react"
 import { FC, ReactNode, useState } from "react"
 import { Book, UUID } from "@thoth/client"
-import { useCoverSrc } from "@thoth/client/media"
 import { BookDownloadItem, DownloadBadge } from "@thoth/components/book/book-download"
 import { MobileDetailHeader } from "@thoth/components/detail/detail-layout"
 import { DetailSkeleton } from "@thoth/components/detail/detail-skeleton"
@@ -31,22 +30,14 @@ import { Link } from "@thoth/components/link.tsx"
 import { QueryError } from "@thoth/components/status-page.tsx"
 import { Button } from "@thoth/components/ui/button"
 import { DropdownMenuItem } from "@thoth/components/ui/dropdown-menu"
+import { useCanPlay, useCoverSrc } from "@thoth/downloads"
 import { useBreakpoint } from "@thoth/hooks/use-media-query"
 import { cn } from "@thoth/lib/utils"
-import { isDetailedBook } from "@thoth/models/typeguards"
-import { useCanPlay } from "@thoth/offline"
-import {
-  audio,
-  startBook,
-  startTrack,
-  useBookProgress,
-  useCurrentTrack,
-  usePlayback,
-  usePlaying,
-} from "@thoth/playback"
-import { useAutoMatchBook, useBook, useResetBookProgress, useSetBookFinished } from "@thoth/queries/resources"
-import { toReadableTime, toRuntime } from "../track/helpers"
+import { isDetailedBook } from "@thoth/models/model-typeguards"
+import { playback, useBookProgress, usePlayback } from "@thoth/playback"
+import { useAutoMatchBook, useBook, useResetBookProgress, useSetBookFinished } from "@thoth/queries/resource-queries"
 import { TrackList, TrackListSkeleton } from "../track/track-list"
+import { toReadableTime, toRuntime } from "../track/track-time-format"
 import { BookEdit } from "./book-edit"
 
 const RATING_MAX = 5
@@ -307,8 +298,8 @@ const MobileHeader: FC<HeaderProps> = ({ book, libraryId, runtime, tracks, actio
 
 export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId, libraryId }) => {
   const isCurrentBook = usePlayback(s => s.book?.id === bookId)
-  const currentTrack = useCurrentTrack()
-  const isPlaying = usePlaying()
+  const currentTrack = usePlayback(s => s.track)
+  const isPlaying = usePlayback(s => !s.paused)
   const isDesktop = useBreakpoint("md")
   const { data: book, error, refetch, isFetching, isLoadingError, isPending } = useBook(libraryId, bookId)
   const autoMatchBook = useAutoMatchBook()
@@ -331,7 +322,7 @@ export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId, lib
   const totalDuration = tracks.reduce((sum, track) => sum + track.durationMs / 1000, 0)
 
   const startPlayback = (index: number) => {
-    if (isDetailedBook(book)) startTrack(book, libraryId, index)
+    if (isDetailedBook(book)) void playback.play(book, { track: index })
   }
 
   const inProgress = book.status === "IN_PROGRESS" && book.durationMs > 0
@@ -341,8 +332,7 @@ export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId, lib
     <>
       <Button
         onPress={() => {
-          if (isCurrentBook) return audio.play()
-          if (isDetailedBook(book)) startBook(book, libraryId, inProgress ? book.positionMs : 0)
+          if (isDetailedBook(book)) void playback.play(book)
         }}
         isDisabled={tracks.length === 0 || !canPlay}
         className="h-11 grow px-5 md:h-10 md:grow-0"
@@ -379,7 +369,7 @@ export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId, lib
           onAction={() => {
             resetProgress.mutate({ libraryId, id: book.id })
             // Otherwise the running playback keeps its position and syncs it straight back.
-            if (isCurrentBook && isDetailedBook(book)) startBook(book, libraryId, 0, isPlaying)
+            if (isCurrentBook && isDetailedBook(book)) void playback.play(book, { at: 0, autoplay: isPlaying })
           }}
         >
           <RotateCcwIcon className="text-muted-foreground size-5" />
@@ -407,7 +397,7 @@ export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId, lib
           playing={isPlaying}
           disabled={!canPlay}
           onStart={startPlayback}
-          onToggle={audio.setPlaying}
+          onToggle={playback.setPlaying}
         />
       ) : (
         <PartialSection

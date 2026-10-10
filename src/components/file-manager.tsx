@@ -12,7 +12,7 @@ import {
 import { Button } from "@thoth/components/ui/button"
 import { ButtonGroup } from "@thoth/components/ui/button-group"
 import { DropdownMenu, DropdownMenuItem, DropdownMenuTrigger } from "@thoth/components/ui/dropdown-menu"
-import { useFolders } from "@thoth/queries/system"
+import { useFolders } from "@thoth/queries/system-queries"
 
 export const FolderManager: FC<{
   onSelectFolder?: (path: string) => void

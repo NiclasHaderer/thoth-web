@@ -1,10 +1,10 @@
 import { ReactNode, useState } from "react"
 import { Key } from "react-aria-components"
-import { Dialog } from "@thoth/components/dialog"
+import { TitledDialog } from "@thoth/components/titled-dialog"
 import { Button } from "@thoth/components/ui/button"
 import { DialogFooter } from "@thoth/components/ui/dialog"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@thoth/components/ui/tabs"
-import { Form, FormContext } from "@thoth/hooks/form.tsx"
+import { Form, FormContext } from "@thoth/hooks/use-form.tsx"
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function GenericEdit<T extends Record<string, any>>({
@@ -39,7 +39,7 @@ export function GenericEdit<T extends Record<string, any>>({
   const closeModal = () => setOpen(false)
 
   return (
-    <Dialog isOpen={isOpen} onOpenChange={setOpen} title={title} className="sm:max-w-[85%] lg:max-w-4xl">
+    <TitledDialog isOpen={isOpen} onOpenChange={setOpen} title={title} className="sm:max-w-[85%] lg:max-w-4xl">
       <Form
         form={form}
         onSubmit={async values => {
@@ -78,6 +78,6 @@ export function GenericEdit<T extends Record<string, any>>({
           </Button>
         </DialogFooter>
       </Form>
-    </Dialog>
+    </TitledDialog>
   )
 }

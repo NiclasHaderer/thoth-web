@@ -5,8 +5,8 @@ import { DataTable } from "@thoth/components/data-table/data-table"
 import { DataTableToolbar } from "@thoth/components/data-table/data-table-toolbar"
 import { UserRow, userColumns } from "@thoth/components/user-columns"
 import { UserDialog, UserFormValues } from "@thoth/components/user-dialog"
-import { useForm } from "@thoth/hooks/form.tsx"
-import { useDeleteUser, useUpdateUser, useUsers } from "@thoth/queries/users"
+import { useForm } from "@thoth/hooks/use-form.tsx"
+import { useDeleteUser, useUpdateUser, useUsers } from "@thoth/queries/user-queries"
 
 export const UserManager = () => {
   const loggedInUserId = useSession(s => s.accessToken?.payload.sub)

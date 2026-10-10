@@ -1,11 +1,10 @@
 import { LucideIcon, PanelLeftCloseIcon, PanelLeftOpenIcon } from "lucide-react"
 import { motion } from "motion/react"
-import { FC, ReactNode, useState } from "react"
+import { FC, ReactNode } from "react"
 import { Button } from "react-aria-components"
 import { NavItem } from "@thoth/components/menu/nav-item"
 import { cn } from "@thoth/lib/utils"
-
-const COLLAPSED_KEY = "thoth-side-menu-collapsed"
+import { preferences, usePreferences } from "@thoth/state/preferences"
 
 export type SideMenuEntry = {
   href: string
@@ -20,14 +19,7 @@ export const SideMenu: FC<{
   items: SideMenuEntry[]
   className?: string
 }> = ({ header, items, className }) => {
-  const [collapsed, setCollapsed] = useState(() => localStorage.getItem(COLLAPSED_KEY) === "true")
-
-  const toggleCollapsed = () => {
-    setCollapsed(previous => {
-      localStorage.setItem(COLLAPSED_KEY, String(!previous))
-      return !previous
-    })
-  }
+  const collapsed = usePreferences(s => s.sideMenuCollapsed)
 
   const ToggleIcon = collapsed ? PanelLeftOpenIcon : PanelLeftCloseIcon
 
@@ -51,7 +43,7 @@ export const SideMenu: FC<{
       <div className="mt-auto flex flex-col gap-2 pt-2">
         <Button
           aria-label={collapsed ? "Expand menu" : "Collapse menu"}
-          onPress={toggleCollapsed}
+          onPress={preferences.toggleSideMenu}
           className={cn(
             "text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:bg-muted flex size-10 cursor-pointer items-center justify-center rounded-lg transition-colors outline-none",
             collapsed ? "mx-auto" : "ml-auto"

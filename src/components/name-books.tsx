@@ -7,8 +7,8 @@ import { PreviewGridSkeleton, PreviewSkeleton } from "@thoth/components/generic/
 import { ResourceGrid } from "@thoth/components/resource-grid"
 import { RESPONSIVE_GRID } from "@thoth/components/responsive-grid"
 import { QueryError } from "@thoth/components/status-page.tsx"
-import { NameResource } from "@thoth/queries/queries"
-import { useNameDetail } from "@thoth/queries/resources"
+import { NameResource } from "@thoth/queries/query-definitions"
+import { useNameDetail } from "@thoth/queries/resource-queries"
 import { pluralize } from "@thoth/utils/utils"
 
 export const NameBooks: FC<{ resource: NameResource; libraryId: UUID; name: string }> = ({

@@ -3,13 +3,13 @@ import { useMemo, useState } from "react"
 import { FileScanner, Library, MetadataLanguage, MetadataRegion, NamedMetadataAgent, UUID } from "@thoth/client"
 import { DataTable } from "@thoth/components/data-table/data-table"
 import { DataTableToolbar } from "@thoth/components/data-table/data-table-toolbar"
-import { Dialog } from "@thoth/components/dialog"
 import { libraryColumns } from "@thoth/components/library/library-columns"
 import { LibraryDialog, LibraryFormValues } from "@thoth/components/library/library-dialog"
+import { TitledDialog } from "@thoth/components/titled-dialog"
 import { Button } from "@thoth/components/ui/button"
 import { DialogClose, DialogDescription, DialogFooter } from "@thoth/components/ui/dialog"
-import { FormContext, useForm } from "@thoth/hooks/form"
-import { useCreateLibrary, useDeleteLibrary, useLibraries, useUpdateLibrary } from "@thoth/queries/libraries"
+import { FormContext, useForm } from "@thoth/hooks/use-form"
+import { useCreateLibrary, useDeleteLibrary, useLibraries, useUpdateLibrary } from "@thoth/queries/library-queries"
 
 export const LibraryManager = () => {
   const { data: libraries } = useLibraries()
@@ -97,7 +97,7 @@ export const LibraryManager = () => {
         />
       </div>
       <LibraryDialog onSubmit={onSubmit} isOpen={isOpen} setIsOpen={setIsOpen} form={form} />
-      <Dialog
+      <TitledDialog
         isOpen={libraryToDelete !== undefined}
         onOpenChange={open => !open && setLibraryToDelete(undefined)}
         title={`Delete ${libraryToDelete?.name}?`}
@@ -112,7 +112,7 @@ export const LibraryManager = () => {
             Delete library
           </Button>
         </DialogFooter>
-      </Dialog>
+      </TitledDialog>
     </>
   )
 }

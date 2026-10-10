@@ -2,9 +2,9 @@ import { FC, useState } from "react"
 import { useLocation } from "wouter"
 import { BrowseTabIcon, HomeTabIcon, SearchTabIcon, TabIconProps, YouTabIcon } from "@thoth/components/icons/tab-icons"
 import { Link } from "@thoth/components/link.tsx"
-import { useCurrentLibraryId } from "@thoth/hooks/current-library"
+import { useCurrentLibraryId } from "@thoth/hooks/use-current-library"
 import { cn } from "@thoth/lib/utils"
-import { useLibraries } from "@thoth/queries/libraries"
+import { useLibraries } from "@thoth/queries/library-queries"
 
 const focusSearchInput = () => {
   const input = document.querySelector<HTMLInputElement>("[data-search-input]")
