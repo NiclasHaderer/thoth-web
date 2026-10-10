@@ -35,12 +35,13 @@ export const TrackList: FC<{
   label?: string
   trailing?: ReactNode
   activeId?: UUID
+  playedCount?: number
   playing: boolean
   disabled?: boolean
   className?: string
   onStart: (index: number) => void
   onToggle: (shouldPlay: boolean) => void
-}> = memo(({ tracks, label, trailing, activeId, playing, disabled, className, onStart, onToggle }) => (
+}> = memo(({ tracks, label, trailing, activeId, playedCount = 0, playing, disabled, className, onStart, onToggle }) => (
   <section className={className}>
     {label ? (
       <h2 className={`${detailLabel} border-border/60 flex items-center justify-between border-y py-2.5`}>
@@ -54,6 +55,7 @@ export const TrackList: FC<{
           key={track.id}
           {...track}
           index={index}
+          played={index < playedCount}
           disabled={disabled}
           state={track.id === activeId ? (playing ? "playing" : "paused") : "idle"}
           startPlayback={onStart}

@@ -35,6 +35,7 @@ import { useBreakpoint } from "@thoth/hooks/use-media-query"
 import { cn } from "@thoth/lib/utils"
 import { isDetailedBook } from "@thoth/models/model-typeguards"
 import { playback, useBookProgress, usePlayback } from "@thoth/playback"
+import { locateTrack } from "@thoth/playback/track-position"
 import { useAutoMatchBook, useBook, useResetBookProgress, useSetBookFinished } from "@thoth/queries/resource-queries"
 import { TrackList, TrackListSkeleton } from "../track/track-list"
 import { toReadableTime, toRuntime } from "../track/track-time-format"
@@ -299,6 +300,7 @@ const MobileHeader: FC<HeaderProps> = ({ book, libraryId, runtime, tracks, actio
 export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId, libraryId }) => {
   const isCurrentBook = usePlayback(s => s.book?.id === bookId)
   const currentTrack = usePlayback(s => s.track)
+  const currentTrackIndex = usePlayback(s => s.trackIndex)
   const isPlaying = usePlayback(s => !s.paused)
   const isDesktop = useBreakpoint("md")
   const { data: book, error, refetch, isFetching, isLoadingError, isPending } = useBook(libraryId, bookId)
@@ -327,6 +329,11 @@ export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId, lib
 
   const inProgress = book.status === "IN_PROGRESS" && book.durationMs > 0
   const isFinished = book.status === "FINISHED"
+  const playedCount = isCurrentBook
+    ? currentTrackIndex
+    : isFinished
+      ? tracks.length
+      : locateTrack(tracks, book.positionMs).index
 
   const actions = (
     <>
@@ -394,6 +401,7 @@ export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId, lib
           trailing={totalDuration ? toRuntime(totalDuration) : undefined}
           tracks={tracks}
           activeId={currentTrackId}
+          playedCount={playedCount}
           playing={isPlaying}
           disabled={!canPlay}
           onStart={startPlayback}
