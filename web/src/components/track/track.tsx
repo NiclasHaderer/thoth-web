@@ -12,6 +12,7 @@ interface TrackProps {
   index: number
   trackNr: number
   state: TrackState
+  played?: boolean
   disabled?: boolean
   startPlayback: (index: number) => void
   togglePlayback: (shouldPlay: boolean) => void
@@ -35,6 +36,7 @@ export const Track: FC<TrackProps> = ({
   trackNr,
   index,
   state,
+  played,
   disabled,
   startPlayback,
   togglePlayback,
@@ -65,7 +67,15 @@ export const Track: FC<TrackProps> = ({
           )}
         </span>
 
-        <span className={cn("min-w-0 grow truncate text-sm sm:text-base", active && "font-medium")}>{title}</span>
+        <span
+          className={cn(
+            "min-w-0 grow truncate text-sm sm:text-base",
+            active && "font-medium",
+            played && !active && "text-muted-foreground/60"
+          )}
+        >
+          {title}
+        </span>
 
         <span className="text-muted-foreground shrink-0 text-xs tabular-nums">{toReadableTime(durationMs / 1000)}</span>
 

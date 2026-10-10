@@ -1,7 +1,6 @@
 import { ImageOffIcon, Volume1Icon, Volume2Icon, VolumeXIcon } from "lucide-react"
 import { AnimatePresence, animate, motion, useMotionValue } from "motion/react"
-import { FC, PropsWithChildren, useRef, useState } from "react"
-import { Popover } from "react-aria-components"
+import { FC, PropsWithChildren, useRef } from "react"
 import { Track } from "@thoth/client"
 import { FullscreenPlayer } from "@thoth/components/fullscreen-player"
 import { Link } from "@thoth/components/link.tsx"
@@ -15,6 +14,7 @@ import {
   SquareIcon,
 } from "@thoth/components/player-icons"
 import { ProgressBar } from "@thoth/components/progress-bar"
+import { Slider } from "@thoth/components/ui/slider"
 import { useCoverSrc } from "@thoth/downloads"
 import { FullscreenPlayerController } from "@thoth/hooks/use-fullscreen-player"
 import { useBreakpoint } from "@thoth/hooks/use-media-query"
@@ -116,17 +116,6 @@ export const MiniPlayer: FC<{ player: FullscreenPlayerController }> = ({ player 
   const playing = usePlayback(s => !s.paused)
   const canGoPrevious = useCanGoPrevious()
   const volume = useVolume()
-  const [volumeOpen, setVolumeOpen] = useState(false)
-  const volumeRef = useRef<HTMLDivElement>(null)
-  const volumeCloseTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
-  const volumeEnter = () => {
-    clearTimeout(volumeCloseTimer.current)
-    setVolumeOpen(true)
-  }
-  const volumeLeave = () => {
-    clearTimeout(volumeCloseTimer.current)
-    volumeCloseTimer.current = setTimeout(() => setVolumeOpen(false), 150)
-  }
   const isDesktop = useBreakpoint("md")
 
   return (
@@ -151,6 +140,7 @@ export const MiniPlayer: FC<{ player: FullscreenPlayerController }> = ({ player 
               >
                 <div data-dock-control className="absolute -top-[3px] right-0 left-0 z-10 max-md:pointer-events-none">
                   <ProgressBar
+                    label="Seek"
                     className="w-full"
                     trackClassName="h-3.5 rounded-t-xl [--bar-h:0.25rem] md:[--bar-h:0.375rem]"
                     progress={progress}
@@ -183,32 +173,29 @@ export const MiniPlayer: FC<{ player: FullscreenPlayerController }> = ({ player 
                   <ElapsedTime /> / <TrackDuration />
                 </div>
 
-                <div ref={volumeRef} className="hidden md:block" onMouseEnter={volumeEnter} onMouseLeave={volumeLeave}>
-                  <PlayerButton label="Volume" onPress={() => setVolumeOpen(true)} className="size-10 rounded-full">
+                <div className="group/volume hidden shrink-0 items-center md:flex">
+                  <PlayerButton
+                    label={volume.level > 0 ? "Mute" : "Unmute"}
+                    onPress={volume.toggleMute}
+                    className="size-10 rounded-full"
+                  >
                     <VolumeIcon level={volume.level} className="size-5" />
                   </PlayerButton>
-                </div>
-                <Popover
-                  triggerRef={volumeRef}
-                  isOpen={volumeOpen}
-                  onOpenChange={setVolumeOpen}
-                  isNonModal
-                  placement="top"
-                  offset={8}
-                  className="bg-popover ring-foreground/10 data-entering:animate-in data-entering:fade-in-0 data-entering:zoom-in-95 data-exiting:animate-out data-exiting:fade-out-0 data-exiting:zoom-out-95 data-[placement=top]:slide-in-from-bottom-2 rounded-lg px-2 py-3 shadow-md ring-1 duration-100 outline-none"
-                >
-                  <div onMouseEnter={volumeEnter} onMouseLeave={volumeLeave}>
-                    <ProgressBar
-                      vertical
-                      thumb={false}
-                      className="px-2"
-                      trackClassName="h-24 w-1 rounded-full [--bar-h:0.25rem]"
-                      progress={volume.progress}
-                      onScrub={volume.set}
-                      onScrubEnd={volume.set}
-                    />
+                  <div className="w-0 overflow-hidden opacity-0 transition-[width,opacity] duration-150 group-focus-within/volume:w-24 group-focus-within/volume:opacity-100 group-hover/volume:w-24 group-hover/volume:opacity-100">
+                    <div className="w-24 px-3">
+                      <Slider
+                        aria-label="Volume"
+                        className="h-10"
+                        minValue={0}
+                        maxValue={1}
+                        step={0.01}
+                        formatOptions={{ style: "percent" }}
+                        value={volume.level}
+                        onChange={volume.set}
+                      />
+                    </div>
                   </div>
-                </Popover>
+                </div>
 
                 <div data-dock-control className="flex shrink-0 items-center">
                   <PlayerButton

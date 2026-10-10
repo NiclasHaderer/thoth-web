@@ -173,6 +173,7 @@ const FullscreenPlayerBody: FC<{ player: FullscreenPlayerController; book: Playi
 
               <div className="pt-6">
                 <ProgressBar
+                  label="Seek"
                   className="w-full"
                   trackClassName="rounded-full"
                   progress={progress}
@@ -246,6 +247,7 @@ const FullscreenPlayerBody: FC<{ player: FullscreenPlayerController; book: Playi
                 <TrackList
                   tracks={book.tracks}
                   activeId={track.id}
+                  playedCount={index}
                   playing={playing}
                   onStart={playback.jumpTo}
                   onToggle={playback.setPlaying}

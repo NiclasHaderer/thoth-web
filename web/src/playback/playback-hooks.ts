@@ -41,13 +41,17 @@ export const useTrackProgress = () => {
 
 export const useVolume = () => {
   const level = usePlayback(s => s.volume)
-  const progress = useMotionValue(level)
+  const audible = useRef(level || 1)
 
   useEffect(() => {
-    progress.set(level)
-  }, [level, progress])
+    if (level > 0) audible.current = level
+  }, [level])
 
-  return { level, progress, set: playback.setVolume }
+  return {
+    level,
+    set: playback.setVolume,
+    toggleMute: () => playback.setVolume(level > 0 ? 0 : audible.current),
+  }
 }
 
 // Live book-level progress: follows playback for the book that is playing, the cached position
