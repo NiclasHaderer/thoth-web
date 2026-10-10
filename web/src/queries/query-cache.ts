@@ -1,6 +1,6 @@
 import { QueryClient } from "@tanstack/react-query"
-import { Book, PaginatedResponse, UUID } from "@thoth/client"
-import { EntityQueries, Identifiable, queries } from "./queries"
+import { Book, LibrarySearchResult, PaginatedResponse, UUID } from "@thoth/client"
+import { EntityQueries, Identifiable, queries } from "./query-definitions"
 
 export const invalidateLibraryContent = (queryClient: QueryClient, libraryId: UUID) =>
   Promise.all([
@@ -26,14 +26,11 @@ export const cachedListItem = <T extends Identifiable, D extends T>(
   group: EntityQueries<T, D>,
   libraryId: UUID,
   id: UUID
-): T | undefined => {
-  const pages = queryClient.getQueriesData<PaginatedResponse<T>>({ queryKey: group.lists(libraryId) })
-  for (const [, page] of pages) {
-    const hit = page?.items.find(item => item.id === id)
-    if (hit) return hit
-  }
-  return queryClient.getQueryData(group.all(libraryId).queryKey)?.find(item => item.id === id)
-}
+): T | undefined =>
+  queryClient
+    .getQueriesData<PaginatedResponse<T>>({ queryKey: group.lists(libraryId) })
+    .flatMap(([, page]) => page?.items ?? [])
+    .find(item => item.id === id)
 
 // Whatever the caches currently claim about a book, from the detail entry or from any list.
 export const cachedBook = (queryClient: QueryClient, libraryId: UUID, id: UUID): Book | undefined =>
@@ -68,4 +65,45 @@ export const patchBook = (
   queryClient.setQueryData(queries.continueListening.queryKey, list =>
     list?.map(book => (book.id === id ? { ...book, ...merge(book) } : book))
   )
+}
+
+const RESULT_LIMIT = 25
+
+const matches = (haystack: string | undefined, needle: string) => !!haystack?.toLowerCase().includes(needle)
+
+const cachedEntities = <T extends Identifiable, D extends T>(
+  queryClient: QueryClient,
+  group: EntityQueries<T, D>
+): T[] => {
+  const byId = new Map<UUID, T>()
+  const collect = (item: T | undefined) => item && byId.set(item.id, item)
+
+  for (const { id: libraryId } of queryClient.getQueryData(queries.libraries.queryKey) ?? []) {
+    for (const [, page] of queryClient.getQueriesData<PaginatedResponse<T>>({ queryKey: group.lists(libraryId) })) {
+      page?.items.forEach(collect)
+    }
+    for (const [, item] of queryClient.getQueriesData<D>({ queryKey: group.details(libraryId) })) collect(item)
+  }
+  return [...byId.values()]
+}
+
+export const cachedLibrarySearch = (queryClient: QueryClient, q: string): LibrarySearchResult => {
+  const needle = q.trim().toLowerCase()
+  if (!needle) return { books: [], authors: [], series: [] }
+
+  const continueListening = queryClient.getQueryData(queries.continueListening.queryKey) ?? []
+  const books = new Map<UUID, Book>()
+  for (const book of [...cachedEntities(queryClient, queries.books), ...continueListening]) books.set(book.id, book)
+
+  return {
+    books: [...books.values()]
+      .filter(book => matches(book.title, needle) || book.authors.some(author => matches(author.name, needle)))
+      .slice(0, RESULT_LIMIT),
+    authors: cachedEntities(queryClient, queries.authors)
+      .filter(author => matches(author.name, needle))
+      .slice(0, RESULT_LIMIT),
+    series: cachedEntities(queryClient, queries.series)
+      .filter(series => matches(series.title, needle))
+      .slice(0, RESULT_LIMIT),
+  }
 }
