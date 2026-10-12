@@ -2,8 +2,7 @@ import { ImageOffIcon, Volume1Icon, Volume2Icon, VolumeXIcon } from "lucide-reac
 import { AnimatePresence, animate, motion, useMotionValue } from "motion/react"
 import { FC, PropsWithChildren, useRef } from "react"
 import { Track } from "@thoth/client"
-import { FullscreenPlayer } from "@thoth/components/fullscreen-player"
-import { Link } from "@thoth/components/link.tsx"
+import { BookByline, FullscreenPlayer } from "@thoth/components/fullscreen-player"
 import { PlayerButton } from "@thoth/components/player-button"
 import {
   PlayPauseIcon,
@@ -95,15 +94,21 @@ const VolumeIcon: FC<{ level: number; className?: string }> = ({ level, classNam
   return <Icon className={className} />
 }
 
-const TrackLabel: FC<{ book: PlayingBook; track: Track }> = ({ book, track }) => (
+const TrackLabel: FC<{ book: PlayingBook; track: Track; linked?: boolean }> = ({ book, track, linked }) => (
   <div className="min-w-0 grow">
     <div className="truncate text-sm font-medium">
       {track.trackNr}. {track.title}
     </div>
     <div className="text-muted-foreground truncate text-xs">
-      {book.authors.map(author => author.name).join(", ")}
-      {book.authors.length ? " - " : null}
-      {book.title}
+      {linked ? (
+        <BookByline book={book} />
+      ) : (
+        <>
+          {book.authors.map(author => author.name).join(", ")}
+          {book.authors.length ? " - " : null}
+          {book.title}
+        </>
+      )}
     </div>
   </div>
 )
@@ -150,14 +155,10 @@ export const MiniPlayer: FC<{ player: FullscreenPlayerController }> = ({ player 
                 </div>
 
                 {isDesktop ? (
-                  <Link
-                    href={`/libraries/${book.libraryId}/books/${book.id}`}
-                    className="flex min-w-0 grow items-center gap-3 outline-none"
-                    aria-label={track.title}
-                  >
+                  <div className="mr-auto flex min-w-0 items-center gap-3">
                     <Cover book={book} />
-                    <TrackLabel book={book} track={track} />
-                  </Link>
+                    <TrackLabel book={book} track={track} linked />
+                  </div>
                 ) : (
                   <button
                     type="button"
