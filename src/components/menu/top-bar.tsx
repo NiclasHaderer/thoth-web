@@ -28,12 +28,12 @@ const LogoLink: FC<{ libraryId: UUID | undefined; className?: string }> = ({ lib
   <Link
     href={libraryId ? `/libraries/${libraryId}` : "/libraries"}
     className={cn(
-      "focus-visible:bg-accent flex w-16 shrink-0 items-center justify-center rounded-l-xl transition-colors outline-none",
+      "focus-visible:bg-accent flex w-16 shrink-0 items-center justify-center rounded-l-xl px-1 transition-colors outline-none",
       className
     )}
     aria-label="Thoth home"
   >
-    <Logo className="h-12 w-auto" />
+    <Logo className="size-full object-contain" />
   </Link>
 )
 
