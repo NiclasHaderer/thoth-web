@@ -36,6 +36,25 @@ const CLOSE_VELOCITY = 600
 const PANE_DISTANCE = 60
 const PANE_VELOCITY = 400
 
+const bylineLink = "hover:underline focus-visible:underline focus-visible:outline-none"
+
+export const BookByline: FC<{ book: PlayingBook }> = ({ book }) => (
+  <>
+    {book.authors.map((author, position) => (
+      <Fragment key={author.id}>
+        {position > 0 ? ", " : null}
+        <Link href={`/libraries/${book.libraryId}/authors/${author.id}`} className={bylineLink}>
+          {author.name}
+        </Link>
+      </Fragment>
+    ))}
+    {book.authors.length ? " - " : null}
+    <Link href={`/libraries/${book.libraryId}/books/${book.id}`} className={bylineLink}>
+      {book.title}
+    </Link>
+  </>
+)
+
 export const FullscreenPlayer: FC<{ player: FullscreenPlayerController; enabled: boolean }> = ({ player, enabled }) => {
   const { visible, close } = player
   const book = usePlayback(s => s.book)
@@ -150,24 +169,7 @@ const FullscreenPlayerBody: FC<{ player: FullscreenPlayerController; book: Playi
                   {track.trackNr}. {track.title}
                 </Link>
                 <div className="text-muted-foreground truncate text-sm">
-                  {book.authors.map((author, position) => (
-                    <Fragment key={author.id}>
-                      {position > 0 ? ", " : null}
-                      <Link
-                        href={`/libraries/${book.libraryId}/authors/${author.id}`}
-                        className="hover:underline focus-visible:underline focus-visible:outline-none"
-                      >
-                        {author.name}
-                      </Link>
-                    </Fragment>
-                  ))}
-                  {book.authors.length ? " - " : null}
-                  <Link
-                    href={`/libraries/${book.libraryId}/books/${book.id}`}
-                    className="hover:underline focus-visible:underline focus-visible:outline-none"
-                  >
-                    {book.title}
-                  </Link>
+                  <BookByline book={book} />
                 </div>
               </div>
 
