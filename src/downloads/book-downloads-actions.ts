@@ -41,9 +41,9 @@ const download = async (book: BookDetailed): Promise<void> => {
   try {
     const stored = await offlineBookFiles.download(book, progress => patchEntry(book.id, { progress }))
     if (!useBookDownloads.getState().entries[book.id]) return offlineBookFiles.remove(stored)
-    const urls = await offlineBookFiles.open(stored)
+    const { urls, bytes } = await offlineBookFiles.open(stored)
     useBookDownloads.setState(state => ({
-      entries: { ...state.entries, [book.id]: { book, state: "ready", progress: 1, files: stored } },
+      entries: { ...state.entries, [book.id]: { book, state: "ready", progress: 1, files: stored, bytes } },
       urls: { ...state.urls, ...urls },
     }))
   } catch (error) {
@@ -63,8 +63,13 @@ const restore = async (): Promise<void> => {
   await hydrated()
   for (const entry of Object.values(useBookDownloads.getState().entries)) {
     if (!entry.files) continue
-    const urls = await offlineBookFiles.open(entry.files).catch(() => undefined)
-    useBookDownloads.setState(state => (urls ? { urls: { ...state.urls, ...urls } } : withoutBook(state, entry.book)))
+    const opened = await offlineBookFiles.open(entry.files).catch(() => undefined)
+    if (!opened) {
+      useBookDownloads.setState(state => withoutBook(state, entry.book))
+      continue
+    }
+    useBookDownloads.setState(state => ({ urls: { ...state.urls, ...opened.urls } }))
+    patchEntry(entry.book.id, { bytes: opened.bytes })
   }
 
   const keep = Object.values(useBookDownloads.getState().entries).flatMap(entry => entry.files ?? [])

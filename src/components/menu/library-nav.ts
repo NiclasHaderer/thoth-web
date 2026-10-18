@@ -1,4 +1,13 @@
-import { BookIcon, BookMarkedIcon, HomeIcon, LucideIcon, MicIcon, TagsIcon, UserIcon } from "lucide-react"
+import {
+  ArrowDownToLineIcon,
+  BookIcon,
+  BookMarkedIcon,
+  HomeIcon,
+  LucideIcon,
+  MicIcon,
+  TagsIcon,
+  UserIcon,
+} from "lucide-react"
 import { UUID } from "@thoth/client"
 
 export type LibraryDestination = {
@@ -15,4 +24,5 @@ export const libraryDestinations = (libraryId: UUID): LibraryDestination[] => [
   { href: `/libraries/${libraryId}/authors`, Icon: UserIcon, label: "Authors" },
   { href: `/libraries/${libraryId}/narrators`, Icon: MicIcon, label: "Narrators" },
   { href: `/libraries/${libraryId}/genres`, Icon: TagsIcon, label: "Genres" },
+  { href: `/libraries/${libraryId}/downloads`, Icon: ArrowDownToLineIcon, label: "Downloads" },
 ]

@@ -8,12 +8,18 @@ import { bookDownloads, useBookDownload } from "@thoth/downloads"
 const menuItem = "gap-2.5 rounded-lg px-2.5 py-2 text-sm"
 
 const fraction = (progress: number) => Math.min(1, Math.max(0, progress))
-const percent = (progress: number) => Math.round(fraction(progress) * 100)
+export const percent = (progress: number) => Math.round(fraction(progress) * 100)
+
+export const startDownload = (book: BookDetailed) =>
+  bookDownloads
+    .download(book)
+    .then(() => toast.success(`Downloaded ${book.title}`))
+    .catch((error: Error) => toast.error(`Could not download ${book.title}: ${error.message}`))
 
 const RADIUS = 8
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS
 
-const DownloadRing: FC<{ progress: number; className?: string }> = ({ progress, className }) => (
+export const DownloadRing: FC<{ progress: number; className?: string }> = ({ progress, className }) => (
   <svg className={className} fill="none" viewBox="0 0 20 20">
     <circle cx="10" cy="10" r={RADIUS} stroke="currentColor" strokeOpacity={0.25} strokeWidth={2.5} />
     <circle
@@ -56,12 +62,7 @@ export const BookDownloadItem: FC<{ book: BookDetailed }> = ({ book }) => {
     <DropdownMenuItem
       className={menuItem}
       isDisabled={book.tracks.length === 0}
-      onAction={() => {
-        bookDownloads
-          .download(book)
-          .then(() => toast.success(`Downloaded ${book.title}`))
-          .catch((error: Error) => toast.error(`Could not download ${book.title}: ${error.message}`))
-      }}
+      onAction={() => void startDownload(book)}
     >
       <ArrowDownToLineIcon className="text-muted-foreground size-5" />
       {entry?.state === "error" ? "Retry download" : "Download"}

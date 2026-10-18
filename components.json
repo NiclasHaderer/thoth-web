@@ -14,7 +14,7 @@
   "rtl": false,
   "aliases": {
     "components": "@thoth/components",
-    "utils": "@thoth/lib/utils",
+    "utils": "cn",
     "ui": "@thoth/components/ui",
     "lib": "@thoth/lib",
     "hooks": "@thoth/hooks"

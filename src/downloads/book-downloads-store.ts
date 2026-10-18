@@ -11,6 +11,7 @@ export interface BookDownload {
   state: BookDownloadState
   progress: number
   files?: StoredFiles
+  bytes?: number
 }
 
 export interface BookDownloadsState {
