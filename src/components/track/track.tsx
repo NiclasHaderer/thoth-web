@@ -1,7 +1,7 @@
+import { cn } from "cn"
 import { PauseIcon, PlayIcon } from "lucide-react"
 import { FC } from "react"
 import { rowInteraction } from "@thoth/lib/interaction-styles"
-import { cn } from "@thoth/lib/utils"
 import { toReadableTime } from "./track-time-format"
 
 export type TrackState = "playing" | "paused" | "idle"

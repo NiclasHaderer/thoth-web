@@ -1,10 +1,12 @@
+"use client"
+
 import { cva, type VariantProps } from "class-variance-authority"
+import { cn } from "cn"
 import * as React from "react"
 import { Group, type GroupProps } from "react-aria-components"
 import { Button } from "@thoth/components/ui/button"
 import { Input } from "@thoth/components/ui/input"
 import { Textarea } from "@thoth/components/ui/textarea"
-import { cn } from "@thoth/lib/utils"
 
 function InputGroup({ className, ...props }: GroupProps) {
   return (

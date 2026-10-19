@@ -1,3 +1,4 @@
+import { cn } from "cn"
 import { ChevronDownIcon, XIcon, CheckIcon } from "lucide-react"
 import * as React from "react"
 import {
@@ -32,7 +33,6 @@ import {
 } from "react-aria-components"
 import { Button } from "@thoth/components/ui/button"
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "@thoth/components/ui/input-group"
-import { cn } from "@thoth/lib/utils"
 
 function ComboboxValue<T>({ ...props }: ComboBoxValueProps<T>) {
   return <ComboBoxValuePrimitive data-slot="combobox-value" {...props} />

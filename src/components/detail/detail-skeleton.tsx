@@ -1,7 +1,7 @@
+import { cn } from "cn"
 import { FC, ReactNode } from "react"
 import { Skeleton } from "@thoth/components/ui/skeleton"
 import { useBreakpoint } from "@thoth/hooks/use-media-query"
-import { cn } from "@thoth/lib/utils"
 
 export const DetailSkeleton: FC<{ round?: boolean; children?: ReactNode }> = ({ round, children }) => {
   const isDesktop = useBreakpoint("md")

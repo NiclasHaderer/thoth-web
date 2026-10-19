@@ -1,9 +1,9 @@
+import { cn } from "cn"
 import { LucideIcon, PanelLeftCloseIcon, PanelLeftOpenIcon } from "lucide-react"
 import { motion } from "motion/react"
 import { FC, ReactNode } from "react"
 import { Button } from "react-aria-components"
 import { NavItem } from "@thoth/components/menu/nav-item"
-import { cn } from "@thoth/lib/utils"
 import { preferences, usePreferences } from "@thoth/state/preferences"
 
 export type SideMenuEntry = {

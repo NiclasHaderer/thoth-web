@@ -1,3 +1,4 @@
+import { cn } from "cn"
 import { motion, useMotionValue } from "motion/react"
 import { FC, useEffect } from "react"
 import { useLocation } from "wouter"
@@ -7,7 +8,6 @@ import { libraryDestinations } from "@thoth/components/menu/library-nav"
 import { LibraryPicker } from "@thoth/components/menu/library-picker"
 import { ResourceChips } from "@thoth/components/menu/resource-chips"
 import { useScrollSurface } from "@thoth/components/scroll-surface"
-import { cn } from "@thoth/lib/utils"
 import { useLibrary } from "@thoth/queries/library-queries"
 
 const FADE_DISTANCE = 160

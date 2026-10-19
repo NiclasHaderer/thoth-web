@@ -1,6 +1,6 @@
+import { cn } from "cn"
 import { useAnimate, useReducedMotion } from "motion/react"
 import { FC, useEffect, useRef } from "react"
-import { cn } from "@thoth/lib/utils"
 
 type Shape = {
   d: string

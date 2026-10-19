@@ -1,10 +1,10 @@
+import { cn } from "cn"
 import { motion } from "motion/react"
 import { FC } from "react"
 import { useLocation } from "wouter"
 import { UUID } from "@thoth/client"
 import { Link } from "@thoth/components/link.tsx"
 import { libraryDestinations } from "@thoth/components/menu/library-nav"
-import { cn } from "@thoth/lib/utils"
 
 export const ResourceChips: FC<{ libraryId: UUID; className?: string }> = ({ libraryId, className }) => {
   const [pathname] = useLocation()

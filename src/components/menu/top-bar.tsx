@@ -1,3 +1,4 @@
+import { cn } from "cn"
 import { ChevronDownIcon, LogOutIcon, UserIcon, SettingsIcon } from "lucide-react"
 import { FC, ReactNode } from "react"
 import { Button, MenuTrigger } from "react-aria-components"
@@ -9,7 +10,6 @@ import { accountItem } from "@thoth/components/menu/settings-nav"
 import { Avatar, AvatarFallback } from "@thoth/components/ui/avatar"
 import { DropdownMenu, DropdownMenuItem } from "@thoth/components/ui/dropdown-menu"
 import { useCurrentLibraryId } from "@thoth/hooks/use-current-library"
-import { cn } from "@thoth/lib/utils"
 import { useCurrentUser } from "@thoth/queries/current-user-queries"
 
 export const AppBar: FC = () => {

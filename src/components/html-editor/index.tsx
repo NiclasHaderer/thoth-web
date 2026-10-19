@@ -1,9 +1,9 @@
 import { Content } from "@tiptap/react"
+import { cn } from "cn"
 import { FC } from "react"
 import { CardSkeleton } from "@thoth/components/card-skeleton.tsx"
 import { lazyView } from "@thoth/components/lazy-view.tsx"
 import { Skeleton } from "@thoth/components/ui/skeleton"
-import { cn } from "@thoth/lib/utils"
 
 const HtmlEditorImpl = lazyView(
   async () => ({ default: (await import("./_html-editor.tsx")).HtmlEditorImpl }),
