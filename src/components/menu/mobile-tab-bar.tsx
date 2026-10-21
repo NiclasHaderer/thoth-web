@@ -1,10 +1,17 @@
+import { cn } from "cn"
 import { FC, useState } from "react"
 import { useLocation } from "wouter"
-import { BrowseTabIcon, HomeTabIcon, SearchTabIcon, TabIconProps, YouTabIcon } from "@thoth/components/icons/tab-icons"
+import {
+  BrowseTabIcon,
+  DownloadsTabIcon,
+  HomeTabIcon,
+  SearchTabIcon,
+  TabIconProps,
+  YouTabIcon,
+} from "@thoth/components/icons/tab-icons"
 import { Link } from "@thoth/components/link.tsx"
-import { useCurrentLibraryId } from "@thoth/hooks/use-current-library"
-import { cn } from "@thoth/lib/utils"
-import { useLibraries } from "@thoth/queries/library-queries"
+import { downloadsDestination } from "@thoth/components/menu/library-nav"
+import { useActiveLibraryId } from "@thoth/hooks/use-current-library"
 
 const focusSearchInput = () => {
   const input = document.querySelector<HTMLInputElement>("[data-search-input]")
@@ -27,11 +34,9 @@ const scrollContentToTop = () => {
 
 export const MobileTabBar: FC = () => {
   const [pathname] = useLocation()
-  const currentLibraryId = useCurrentLibraryId()
-  const libraries = useLibraries().data ?? []
+  const libraryId = useActiveLibraryId()
   const [retapCount, setRetapCount] = useState(0)
 
-  const libraryId = currentLibraryId ?? libraries[0]?.id
   const home = libraryId ? `/libraries/${libraryId}` : "/libraries"
 
   const tabs: Tab[] = [
@@ -48,6 +53,12 @@ export const MobileTabBar: FC = () => {
       label: "Search",
       active: pathname.startsWith("/search"),
       onRetap: focusSearchInput,
+    },
+    {
+      href: downloadsDestination.href,
+      Icon: DownloadsTabIcon,
+      label: downloadsDestination.label,
+      active: pathname.startsWith(downloadsDestination.href),
     },
     {
       href: "/you",

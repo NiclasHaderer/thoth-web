@@ -34,7 +34,7 @@ export const SideMenu: FC<{
 
       <ul className="mt-4 flex flex-col gap-1">
         {items.map(item => (
-          <li key={item.href}>
+          <li key={item.label}>
             <NavItem {...item} collapsed={collapsed} />
           </li>
         ))}

@@ -1,5 +1,6 @@
 import { CheckIcon, ImageOffIcon, PlayIcon } from "lucide-react"
-import { FC, forwardRef, ReactNode } from "react"
+import { FC, forwardRef, ReactNode, useState } from "react"
+import { useLongPress } from "react-aria"
 import { UUID } from "@thoth/client"
 import { Link } from "@thoth/components/link.tsx"
 import { useCoverSrc } from "@thoth/downloads"
@@ -20,6 +21,8 @@ interface GenericPreviewProps {
   progress?: number
   finished?: boolean
   badge?: ReactNode
+  // Rendered over the cover; opened by its own trigger or, on touch, by a long press anywhere on the cover.
+  menu?: (state: { isOpen: boolean; onOpenChange: (open: boolean) => void }) => ReactNode
 }
 
 const STACK_POSITIONS = ["size-[86%] bottom-0 left-0", "size-[86%] top-[7%] right-[7%]", "size-[86%] top-0 right-0"]
@@ -57,8 +60,17 @@ const CoverStack: FC<{ ids: UUID[]; alt: string }> = ({ ids, alt }) => {
 }
 
 export const GenericPreview = forwardRef<HTMLDivElement, GenericPreviewProps>(
-  ({ size, round = false, stackImageIds, className, subtitle, onPlay, progress, finished, badge, ...item }, ref) => {
+  (
+    { size, round = false, stackImageIds, className, subtitle, onPlay, progress, finished, badge, menu, ...item },
+    ref
+  ) => {
     const cover = useCoverSrc()
+    const [menuOpen, setMenuOpen] = useState(false)
+    const { longPressProps } = useLongPress({
+      isDisabled: !menu,
+      onLongPress: () => setMenuOpen(true),
+      accessibilityDescription: "Long press to open the menu",
+    })
     const { containerClasses, widthClasses, heightClasses } = getSizing(size)
     const roundedClasses = round ? "rounded-full" : "rounded-xl"
     const labelCenter = round ? "text-center" : "text-left"
@@ -67,7 +79,10 @@ export const GenericPreview = forwardRef<HTMLDivElement, GenericPreviewProps>(
     const imageId = item.imageId
     return (
       <div className={`${className} ${containerClasses}`} ref={ref}>
-        <div className="group relative w-full">
+        <div
+          className={`group relative w-full ${menu ? "select-none [-webkit-touch-callout:none]" : ""}`}
+          {...longPressProps}
+        >
           <Link className="block focus-visible:outline-none" href={href} aria-label={item.label}>
             <div
               className={`${widthClasses} ${heightClasses} ${roundedClasses} relative transition-shadow duration-200 ${
@@ -127,13 +142,14 @@ export const GenericPreview = forwardRef<HTMLDivElement, GenericPreviewProps>(
               type="button"
               aria-label={`Play ${item.label}`}
               onClick={onPlay}
-              className={`bg-primary text-primary-foreground pointer-events-none absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full opacity-0 shadow-lg transition duration-200 group-hover:pointer-events-auto group-hover:opacity-100 hover:scale-110 hover:brightness-125 focus-visible:pointer-events-auto focus-visible:opacity-100 focus-visible:outline-none ${
+              className={`pointer-events-none absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white/20 text-white opacity-0 shadow-lg ring-1 ring-white/30 backdrop-blur-md transition duration-200 group-hover:pointer-events-auto group-hover:opacity-100 hover:scale-110 hover:bg-white/30 focus-visible:pointer-events-auto focus-visible:opacity-100 focus-visible:outline-none ${
                 size === "small" ? "size-11" : "size-14"
               }`}
             >
               <PlayIcon className="size-1/2 translate-x-[5%] fill-current" />
             </button>
           ) : null}
+          {menu?.({ isOpen: menuOpen, onOpenChange: setMenuOpen })}
         </div>
 
         <Link

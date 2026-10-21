@@ -1,10 +1,10 @@
+import { cn } from "cn"
 import { ChevronRightIcon, LogOutIcon, UserIcon } from "lucide-react"
 import { Logo } from "@thoth/components/icons/logo"
 import { Link } from "@thoth/components/link.tsx"
 import { accountItem, adminItems, licensesItem } from "@thoth/components/menu/settings-nav"
 import { Avatar, AvatarFallback } from "@thoth/components/ui/avatar"
 import { rowInteraction } from "@thoth/lib/interaction-styles"
-import { cn } from "@thoth/lib/utils"
 import { useCurrentUser } from "@thoth/queries/current-user-queries"
 
 export const YouOutlet = () => {

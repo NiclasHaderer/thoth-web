@@ -182,5 +182,3 @@ const BookForm: FC<{ form: FormContext<BookUpdate>; libraryId: UUID }> = ({ form
     </>
   )
 }
-
-export default BookEdit

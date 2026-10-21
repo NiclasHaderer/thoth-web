@@ -2,14 +2,16 @@ import { Component, FC, ReactNode, Suspense, lazy, useCallback, useEffect, useSt
 import { Button } from "@thoth/components/ui/button"
 import { isOnline } from "@thoth/hooks/online-status"
 
-type Loader<P> = () => Promise<{ default: FC<P> }>
+export type Loader<P> = () => Promise<{ default: FC<P> }>
 
-const resident = new WeakSet<object>()
+// Keyed by loader. A view found here is rendered directly instead of through a fresh lazy(), which would suspend
+// on every mount and make React hold back the reveal for its 300ms Suspense throttle on each navigation.
+const resident = new WeakMap<object, FC<never>>()
 
-export const preloadView = (load: () => Promise<unknown>) => {
+export const preloadView = (load: Loader<never>) => {
   if (resident.has(load) || !isOnline()) return
   void load().then(
-    () => resident.add(load),
+    view => resident.set(load, view.default),
     () => undefined
   )
 }
@@ -49,12 +51,15 @@ export const lazyView = <P extends object>(
   const whenReachable: Loader<P> = async () => {
     if (!resident.has(load) && !isOnline()) throw new Error("Offline, refusing to request the module")
     const view = await load()
-    resident.add(load)
+    resident.set(load, view.default)
     return view
   }
 
   return props => {
-    const [state, setState] = useState(() => ({ attempt: 0, View: lazy(whenReachable) }))
+    const [state, setState] = useState(() => ({
+      attempt: 0,
+      View: (resident.get(load) as FC<P> | undefined) ?? lazy(whenReachable),
+    }))
 
     const retry = useCallback(
       () => setState(previous => ({ attempt: previous.attempt + 1, View: lazy(whenReachable) })),

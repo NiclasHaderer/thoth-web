@@ -1,10 +1,11 @@
+import { cn } from "cn"
 import { CheckIcon, ChevronDownIcon, LibraryIcon, SettingsIcon } from "lucide-react"
 import { FC } from "react"
 import { Button, MenuTrigger } from "react-aria-components"
 import { UUID } from "@thoth/client"
 import { LibraryAvatar } from "@thoth/components/library/library-avatar"
 import { CollapsibleLabel } from "@thoth/components/menu/collapsible-label"
-import { libraryDestinations } from "@thoth/components/menu/library-nav"
+import { downloadsDestination, libraryDestinations } from "@thoth/components/menu/library-nav"
 import { SideMenu } from "@thoth/components/menu/side-menu"
 import {
   DropdownMenu,
@@ -12,16 +13,15 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
 } from "@thoth/components/ui/dropdown-menu"
-import { cn } from "@thoth/lib/utils"
 import { useCurrentUser } from "@thoth/queries/current-user-queries"
-import { useLibraries, useLibrary } from "@thoth/queries/library-queries"
+import { useLibraries } from "@thoth/queries/library-queries"
 import { pluralize } from "@thoth/utils/utils"
 
-export const LibraryMenu: FC<{ libraryId: UUID; className?: string }> = ({ libraryId, className }) => {
+export const LibraryMenu: FC<{ libraryId: UUID | undefined; className?: string }> = ({ libraryId, className }) => {
   const libraries = useLibraries().data ?? []
-  const library = useLibrary(libraryId)
+  const library = libraries.find(entry => entry.id === libraryId)
   const isAdmin = useCurrentUser().data?.permissions.isAdmin ?? false
-  const destinations = libraryDestinations(libraryId)
+  const destinations = [...libraryDestinations(libraryId), downloadsDestination]
 
   const libraryName = library?.name ?? "Library"
 

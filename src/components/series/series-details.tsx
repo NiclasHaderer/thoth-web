@@ -9,17 +9,18 @@ import { ResponsiveGrid } from "@/components/responsive-grid"
 import { isDetailedSeries } from "@/models/model-typeguards"
 import { useAutoMatchSeries, useSeries } from "@/queries/resource-queries"
 import { pluralize } from "@/utils/utils.ts"
-import { FC, useState } from "react"
+import { FC } from "react"
+import { openDialog } from "@thoth/components/dialogs"
 import { EditButton } from "@thoth/components/generic/edit-button"
 import { PreviewGridSkeleton } from "@thoth/components/generic/preview-skeleton"
 import { ResourceActions } from "@thoth/components/generic/resource-actions"
 import { QueryError } from "@thoth/components/status-page.tsx"
-import SeriesEdit from "./series-edit"
+
+const loadSeriesEdit = () => import("./series-edit").then(module => module.SeriesEdit)
 
 export const SeriesDetails: FC<{ seriesId: UUID; libraryId: UUID }> = ({ seriesId, libraryId }) => {
   const { data: series, error, refetch, isFetching, isLoadingError, isPending } = useSeries(libraryId, seriesId)
   const autoMatchSeries = useAutoMatchSeries()
-  const [isEditing, setEditing] = useState(false)
 
   if (isLoadingError) return <QueryError error={error} onRetry={refetch} />
   if (isPending)
@@ -80,9 +81,8 @@ export const SeriesDetails: FC<{ seriesId: UUID; libraryId: UUID }> = ({ seriesI
       }
       actions={
         <>
-          <EditButton onPress={() => setEditing(true)} />
+          <EditButton onPress={() => openDialog(loadSeriesEdit, { series })} />
           <ResourceActions libraryId={libraryId} id={series.id} label="series" autoMatch={autoMatchSeries} />
-          <SeriesEdit series={series} isOpen={isEditing} onOpenChange={setEditing} />
         </>
       }
     >
