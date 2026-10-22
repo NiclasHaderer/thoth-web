@@ -3,7 +3,13 @@ import { FC } from "react"
 import { Book } from "@thoth/client"
 import { BookDownloadItem } from "@thoth/components/book/book-download"
 import { openDialog } from "@thoth/components/dialogs"
-import { menuItem, ResourceActions } from "@thoth/components/generic/resource-actions"
+import {
+  ContextMenuTarget,
+  menuItem,
+  ResourceActions,
+  ResourceContextMenu,
+  ResourceMenuProps,
+} from "@thoth/components/generic/resource-actions"
 import { DropdownMenuItem } from "@thoth/components/ui/dropdown-menu"
 import { useCanPlay } from "@thoth/downloads"
 import { playback, usePlayback } from "@thoth/playback"
@@ -47,56 +53,53 @@ export const useBookActions = (book: Book) => {
 // bundle.
 const loadBookEdit = () => import("./book-edit").then(module => module.BookEdit)
 
-export const BookActionsMenu: FC<{
-  book: Book
-  // The book page shows play and played as buttons next to the menu; everywhere else they live in it.
-  withPlayback?: boolean
-  isOpen?: boolean
-  onOpenChange?: (open: boolean) => void
-  triggerClassName?: string
-}> = ({ book, withPlayback = false, isOpen, onOpenChange, triggerClassName }) => {
+// The book page shows play and played as buttons next to the menu; everywhere else they live in it.
+const useBookMenu = (book: Book, withPlayback: boolean): ResourceMenuProps => {
   const actions = useBookActions(book)
   const autoMatch = useAutoMatchBook()
 
-  return (
-    <ResourceActions
-      libraryId={book.libraryId}
-      id={book.id}
-      label="book"
-      autoMatch={autoMatch}
-      onEdit={() => openDialog(loadBookEdit, { book })}
-      isOpen={isOpen}
-      onOpenChange={onOpenChange}
-      triggerClassName={triggerClassName}
-      placement="bottom start"
-      leading={
-        withPlayback ? (
-          <>
-            <DropdownMenuItem className={menuItem} isDisabled={actions.play.isDisabled} onAction={actions.play.run}>
-              <CirclePlayIcon className="text-muted-foreground size-5" />
-              {actions.play.label}
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              className={menuItem}
-              isDisabled={actions.finished.isDisabled}
-              onAction={actions.finished.run}
-            >
-              <CircleCheckIcon className="text-muted-foreground size-5" />
-              {actions.finished.label}
-            </DropdownMenuItem>
-          </>
-        ) : null
-      }
-    >
-      <DropdownMenuItem
-        className={menuItem}
-        isDisabled={actions.resetProgress.isDisabled}
-        onAction={actions.resetProgress.run}
-      >
-        <RotateCcwIcon className="text-muted-foreground size-5" />
-        {actions.resetProgress.label}
-      </DropdownMenuItem>
-      <BookDownloadItem book={book} />
-    </ResourceActions>
-  )
+  return {
+    libraryId: book.libraryId,
+    id: book.id,
+    label: "book",
+    autoMatch,
+    onEdit: () => openDialog(loadBookEdit, { book }),
+    leading: withPlayback ? (
+      <>
+        <DropdownMenuItem className={menuItem} isDisabled={actions.play.isDisabled} onAction={actions.play.run}>
+          <CirclePlayIcon className="text-muted-foreground size-5" />
+          {actions.play.label}
+        </DropdownMenuItem>
+        <DropdownMenuItem className={menuItem} isDisabled={actions.finished.isDisabled} onAction={actions.finished.run}>
+          <CircleCheckIcon className="text-muted-foreground size-5" />
+          {actions.finished.label}
+        </DropdownMenuItem>
+      </>
+    ) : null,
+    children: (
+      <>
+        <DropdownMenuItem
+          className={menuItem}
+          isDisabled={actions.resetProgress.isDisabled}
+          onAction={actions.resetProgress.run}
+        >
+          <RotateCcwIcon className="text-muted-foreground size-5" />
+          {actions.resetProgress.label}
+        </DropdownMenuItem>
+        <BookDownloadItem book={book} />
+      </>
+    ),
+  }
 }
+
+export const BookActionsMenu: FC<{ book: Book; withPlayback?: boolean; triggerClassName?: string }> = ({
+  book,
+  withPlayback = false,
+  triggerClassName,
+}) => (
+  <ResourceActions {...useBookMenu(book, withPlayback)} triggerClassName={triggerClassName} placement="bottom start" />
+)
+
+export const BookContextMenu: FC<{ book: Book; target: ContextMenuTarget }> = ({ book, target }) => (
+  <ResourceContextMenu {...useBookMenu(book, true)} target={target} />
+)

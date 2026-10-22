@@ -1,6 +1,6 @@
 import { forwardRef, Fragment } from "react"
 import { Book } from "@thoth/client"
-import { BookActionsMenu } from "@thoth/components/book/book-actions"
+import { BookActionsMenu, BookContextMenu } from "@thoth/components/book/book-actions"
 import { DownloadBadge } from "@thoth/components/book/book-download"
 import { GenericPreview } from "@thoth/components/generic/generic-preview.tsx"
 import { Link } from "@thoth/components/link.tsx"
@@ -41,15 +41,15 @@ export const BookPreview = forwardRef<HTMLDivElement, BookPreviewProps>(
         finished={finished}
         badge={<DownloadBadge bookId={book.id} size="small" />}
         onPlay={canPlay ? () => void playback.play({ libraryId: book.libraryId, bookId: book.id }) : undefined}
-        menu={state => (
+        menu={
           <BookActionsMenu
             book={book}
             withPlayback
-            // Hidden on touch, where a long press on the cover opens the menu; it still anchors the popover there.
-            triggerClassName="touch:pointer-events-none touch:aria-expanded:opacity-0 no-touch:group-hover:opacity-100 absolute right-1 bottom-2 h-8! bg-transparent! text-white/80 opacity-0 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] hover:text-white focus-visible:opacity-100 aria-expanded:opacity-100 sm:h-8! [&_svg]:size-4!"
-            {...state}
+            // On touch the context menu (long press on the cover) replaces it.
+            triggerClassName="touch:hidden no-touch:group-hover:opacity-100 absolute right-1 bottom-2 h-8! bg-transparent! text-white/80 opacity-0 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] hover:text-white focus-visible:opacity-100 aria-expanded:opacity-100 sm:h-8! [&_svg]:size-4!"
           />
-        )}
+        }
+        contextMenu={target => <BookContextMenu book={book} target={target} />}
       />
     )
   }

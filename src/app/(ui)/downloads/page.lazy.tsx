@@ -1,8 +1,7 @@
 import { cn } from "cn"
 import { ArrowDownToLineIcon, ImageOffIcon, RotateCcwIcon, TrashIcon, XIcon } from "lucide-react"
-import { FC, useState } from "react"
-import { useLongPress } from "react-aria"
-import { BookActionsMenu } from "@thoth/components/book/book-actions"
+import { FC } from "react"
+import { BookActionsMenu, BookContextMenu } from "@thoth/components/book/book-actions"
 import { confirmRemoveDownload, percent, startDownload } from "@thoth/components/book/book-download"
 import { Link } from "@thoth/components/link.tsx"
 import { toRuntime } from "@thoth/components/track/track-time-format"
@@ -86,14 +85,9 @@ const DownloadRow: FC<{ entry: BookDownload }> = ({ entry }) => {
   // The entry holds the book as it was when downloaded; the menu needs its current play state.
   const book = useBook(entry.book.libraryId, entry.book.id).data ?? entry.book
   const href = `/libraries/${book.libraryId}/books/${book.id}`
-  const [menuOpen, setMenuOpen] = useState(false)
-  const { longPressProps } = useLongPress({
-    onLongPress: () => setMenuOpen(true),
-    accessibilityDescription: "Long press to open the menu",
-  })
 
   return (
-    <div role="listitem" {...longPressProps} className="-mx-3 select-none [-webkit-touch-callout:none]">
+    <div role="listitem" className="-mx-3 select-none [-webkit-touch-callout:none]">
       <Item className="no-touch:hover:bg-muted has-[a:active]:bg-muted has-[a:focus-visible]:ring-ring/50 relative has-[a:focus-visible]:ring-3">
         <ItemMedia variant="image" className="relative size-14 rounded-lg bg-black/45">
           {book.coverID ? (
@@ -106,10 +100,16 @@ const DownloadRow: FC<{ entry: BookDownload }> = ({ entry }) => {
         <ItemContent className="min-w-0">
           <ItemTitle className="w-auto">
             {/* An item cannot be a link with buttons inside, so the title's ::after stretches the link over the whole
-              row; the actions are relative so they stay on top. */}
-            <Link href={href} className="truncate outline-none after:absolute after:inset-0">
-              {book.title}
-            </Link>
+              row, which also makes the whole row the context menu target; the actions are relative so they stay on
+              top. */}
+            <BookContextMenu
+              book={book}
+              target={
+                <Link href={href} className="truncate outline-none after:absolute after:inset-0">
+                  {book.title}
+                </Link>
+              }
+            />
           </ItemTitle>
           {book.authors.length ? (
             <ItemDescription className="line-clamp-1 text-xs">
@@ -143,9 +143,7 @@ const DownloadRow: FC<{ entry: BookDownload }> = ({ entry }) => {
           <BookActionsMenu
             book={book}
             withPlayback
-            isOpen={menuOpen}
-            onOpenChange={setMenuOpen}
-            triggerClassName="no-touch:opacity-0 no-touch:group-hover/item:opacity-100 touch:pointer-events-none touch:absolute touch:right-2 touch:opacity-0 relative h-8! focus-visible:opacity-100 aria-expanded:opacity-100 sm:h-8! [&_svg]:size-4!"
+            triggerClassName="touch:hidden opacity-0 group-hover/item:opacity-100 aria-expanded:opacity-100 relative h-8! focus-visible:opacity-100 sm:h-8! [&_svg]:size-4!"
           />
         </ItemActions>
       </Item>
