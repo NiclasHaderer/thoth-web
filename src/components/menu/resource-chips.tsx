@@ -4,11 +4,14 @@ import { FC } from "react"
 import { useLocation } from "wouter"
 import { UUID } from "@thoth/client"
 import { Link } from "@thoth/components/link.tsx"
-import { libraryDestinations } from "@thoth/components/menu/library-nav"
+import { browseDestinations } from "@thoth/components/menu/library-nav"
+
+const reveal = (chip: HTMLAnchorElement | null) =>
+  chip?.scrollIntoView({ block: "nearest", inline: "nearest", behavior: "smooth" })
 
 export const ResourceChips: FC<{ libraryId: UUID; className?: string }> = ({ libraryId, className }) => {
   const [pathname] = useLocation()
-  const destinations = libraryDestinations(libraryId).filter(destination => !destination.exact)
+  const destinations = browseDestinations(libraryId)
 
   return (
     <div className={cn("no-scrollbar flex gap-2 overflow-x-auto px-4 pb-2", className)}>
@@ -17,6 +20,7 @@ export const ResourceChips: FC<{ libraryId: UUID; className?: string }> = ({ lib
         return (
           <Link
             key={href}
+            ref={active ? reveal : undefined}
             href={href}
             aria-current={active ? "page" : undefined}
             className={cn(

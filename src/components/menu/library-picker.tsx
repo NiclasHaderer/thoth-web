@@ -22,7 +22,9 @@ export const LibraryPicker: FC<{ libraryId: UUID; name: string; className?: stri
   const [isOpen, setIsOpen] = useState(false)
 
   if (libraries.length <= 1) {
-    return <h1 className={cn("min-w-0 truncate px-2 text-2xl font-bold", className)}>{name}</h1>
+    return (
+      <h1 className={cn("min-h-11 min-w-0 truncate pr-2.5 pl-3 text-2xl leading-11 font-bold", className)}>{name}</h1>
+    )
   }
 
   return (

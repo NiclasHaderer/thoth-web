@@ -175,7 +175,7 @@ export const DetailLayout: FC<DetailLayoutProps> = ({
 
   if (!isDesktop) {
     return (
-      <div className="mx-auto max-w-6xl min-w-0">
+      <div className="mx-auto w-full max-w-6xl min-w-0">
         <MobileDetailHeader
           title={title}
           titleClassName={titleClassName}
@@ -208,7 +208,7 @@ export const DetailLayout: FC<DetailLayoutProps> = ({
   }
 
   return (
-    <div className="mx-auto max-w-6xl min-w-0">
+    <div className="mx-auto w-full max-w-6xl min-w-0">
       <header className="flex items-start gap-9">
         {art(artSize)}
 

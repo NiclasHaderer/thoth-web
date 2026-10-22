@@ -362,7 +362,7 @@ export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId, lib
   const Header = isDesktop ? DesktopHeader : MobileHeader
 
   return (
-    <div className="mx-auto max-w-5xl min-w-0">
+    <div className="mx-auto w-full max-w-5xl min-w-0">
       <Header book={book} libraryId={libraryId} runtime={totalDuration} tracks={tracks.length} actions={actions} />
 
       {tracks.length > 0 ? (

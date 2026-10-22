@@ -53,7 +53,7 @@ export const UiLayout: FC<{ children: ReactNode }> = ({ children }) => {
             <motion.div
               data-scroll-area
               style={{ "--bottom-height": bottomHeightPx } as MotionStyle}
-              className="flex min-h-0 grow flex-col overflow-y-auto max-md:-mb-(--bottom-height) max-md:pb-(--bottom-height)"
+              className="flex min-h-0 grow [scrollbar-gutter:stable] flex-col overflow-y-auto max-md:-mb-(--bottom-height) max-md:pb-(--bottom-height)"
             >
               {children}
             </motion.div>

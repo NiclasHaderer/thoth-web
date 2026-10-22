@@ -31,6 +31,9 @@ export const libraryDestinations = (libraryId: UUID | undefined): LibraryDestina
   ]
 }
 
+export const browseDestinations = (libraryId: UUID | undefined) =>
+  libraryDestinations(libraryId).filter(destination => !destination.exact)
+
 export const downloadsDestination: LibraryDestination = {
   href: "/downloads",
   Icon: ArrowDownToLineIcon,

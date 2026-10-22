@@ -1,7 +1,7 @@
 import { cn } from "cn"
 import { ChevronRightIcon, LogOutIcon, UserIcon } from "lucide-react"
-import { Logo } from "@thoth/components/icons/logo"
 import { Link } from "@thoth/components/link.tsx"
+import { MobileTopBar } from "@thoth/components/menu/mobile-top-bar"
 import { accountItem, adminItems, licensesItem } from "@thoth/components/menu/settings-nav"
 import { Avatar, AvatarFallback } from "@thoth/components/ui/avatar"
 import { rowInteraction } from "@thoth/lib/interaction-styles"
@@ -15,13 +15,7 @@ export const YouOutlet = () => {
 
   return (
     <div className="mx-auto flex min-h-full w-full max-w-3xl flex-col px-5 pb-4 md:pt-4">
-      <div className="bg-background/75 sticky top-0 z-10 -mx-5 px-5 pt-4 pb-3 backdrop-blur-xl md:hidden">
-        <div className="flex h-10 items-center">
-          <Link href="/libraries" aria-label="Thoth home" className="shrink-0 outline-none">
-            <Logo className="h-8 w-auto" />
-          </Link>
-        </div>
-      </div>
+      <MobileTopBar className="bg-background/75 md:hidden" />
 
       <div className="flex flex-col items-center gap-2 py-6 text-center">
         <Avatar className="size-16">

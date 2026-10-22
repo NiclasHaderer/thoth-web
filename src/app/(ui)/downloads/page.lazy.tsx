@@ -4,6 +4,8 @@ import { FC } from "react"
 import { BookActionsMenu, BookContextMenu } from "@thoth/components/book/book-actions"
 import { confirmRemoveDownload, percent, startDownload } from "@thoth/components/book/book-download"
 import { Link } from "@thoth/components/link.tsx"
+import { MobileTopBar } from "@thoth/components/menu/mobile-top-bar"
+import { ResourceListHeader } from "@thoth/components/resource-list-header"
 import { toRuntime } from "@thoth/components/track/track-time-format"
 import { Button } from "@thoth/components/ui/button"
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@thoth/components/ui/empty"
@@ -21,8 +23,6 @@ import { BookDownload, bookDownloads, useBookDownloads, useCoverSrc } from "@tho
 import { StorageUsage, useStorageUsage } from "@thoth/hooks/use-storage-usage"
 import { useBook } from "@thoth/queries/resource-queries"
 import { formatGigabytes, pluralize } from "@thoth/utils/utils"
-
-const STATE_ORDER: Record<BookDownload["state"], number> = { downloading: 0, error: 1, ready: 2 }
 
 const StorageBar: FC<{ downloadBytes: number; storage: StorageUsage }> = ({ downloadBytes, storage }) => {
   const available = Math.max(0, storage.quota - storage.usage)
@@ -46,11 +46,6 @@ const StorageBar: FC<{ downloadBytes: number; storage: StorageUsage }> = ({ down
           </li>
         ))}
       </ul>
-      {storage.persisted ? null : (
-        <p className="text-muted-foreground text-xs">
-          Your browser may delete downloads when the device runs low on storage.
-        </p>
-      )}
     </div>
   )
 }
@@ -152,18 +147,16 @@ const DownloadRow: FC<{ entry: BookDownload }> = ({ entry }) => {
 }
 
 const DownloadList: FC = () => {
-  const downloads = Object.values(useBookDownloads(state => state.entries)).sort(
-    (a, b) => STATE_ORDER[a.state] - STATE_ORDER[b.state] || a.book.title.localeCompare(b.book.title)
+  const downloads = Object.values(useBookDownloads(state => state.entries)).sort((a, b) =>
+    a.book.title.localeCompare(b.book.title)
   )
   const downloadBytes = downloads.reduce((sum, entry) => sum + (entry.bytes ?? 0), 0)
   const storage = useStorageUsage(downloadBytes)
 
   return (
-    <div className="-mb-4 flex grow flex-col max-md:pt-4">
-      <div className="mb-4 flex min-w-0 items-baseline gap-3">
-        <h2 className="shrink-0 text-2xl font-bold">Downloads</h2>
-        <p className="text-muted-foreground truncate text-xs md:text-sm">{pluralize(downloads.length, "book")}</p>
-      </div>
+    <div className="-mb-4 flex grow flex-col">
+      <MobileTopBar className="bg-background/75 md:hidden" />
+      <ResourceListHeader title="Downloads" subtitle={pluralize(downloads.length, "book")} />
 
       {downloads.length ? (
         <ItemGroup className="gap-1">

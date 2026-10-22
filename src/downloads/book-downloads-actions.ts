@@ -35,6 +35,8 @@ const hydrated = (): Promise<void> =>
       })
 
 const download = async (book: BookDetailed): Promise<void> => {
+  // Otherwise the browser may evict downloads when storage runs low. Asking again once decided is a no-op.
+  void navigator.storage.persist()
   useBookDownloads.setState(state => ({
     entries: { ...state.entries, [book.id]: { book, state: "downloading", progress: 0 } },
   }))

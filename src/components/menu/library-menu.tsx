@@ -23,7 +23,7 @@ export const LibraryMenu: FC<{ libraryId: UUID | undefined; className?: string }
   const isAdmin = useCurrentUser().data?.permissions.isAdmin ?? false
   const destinations = [...libraryDestinations(libraryId), downloadsDestination]
 
-  const libraryName = library?.name ?? "Library"
+  const libraryName = library?.name ?? ""
 
   return (
     <SideMenu
