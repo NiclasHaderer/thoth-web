@@ -1,5 +1,7 @@
+"use client"
+
+import { cn } from "cn"
 import { Separator as SeparatorPrimitive } from "react-aria-components"
-import { cn } from "@thoth/lib/utils"
 
 function Separator({
   className,

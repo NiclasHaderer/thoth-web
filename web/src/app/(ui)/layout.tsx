@@ -1,6 +1,8 @@
+import { cn } from "cn"
 import { motion, MotionStyle, useMotionTemplate, useMotionValue, useTransform } from "motion/react"
 import { FC, ReactNode, useCallback, useEffect, useRef } from "react"
 import { SessionProvider } from "@thoth/client"
+import { DialogHost } from "@thoth/components/dialogs"
 import { MobileTabBar } from "@thoth/components/menu/mobile-tab-bar"
 import { AppBar } from "@thoth/components/menu/top-bar"
 import { MiniPlayer } from "@thoth/components/mini-player"
@@ -8,7 +10,6 @@ import { RequireLogin } from "@thoth/components/require-login"
 import { BookDownloadsProvider } from "@thoth/downloads"
 import { useEvent } from "@thoth/hooks/use-event"
 import { useFullscreenPlayer } from "@thoth/hooks/use-fullscreen-player"
-import { cn } from "@thoth/lib/utils"
 import { PlaybackProvider } from "@thoth/playback"
 
 const NAV_HEIGHT = 56
@@ -48,10 +49,11 @@ export const UiLayout: FC<{ children: ReactNode }> = ({ children }) => {
         <BookDownloadsProvider>
           <PlaybackProvider>
             <AppBar />
+            <DialogHost />
             <motion.div
               data-scroll-area
               style={{ "--bottom-height": bottomHeightPx } as MotionStyle}
-              className="flex min-h-0 grow flex-col overflow-y-auto max-md:-mb-(--bottom-height) max-md:pb-(--bottom-height)"
+              className="flex min-h-0 grow [scrollbar-gutter:stable] flex-col overflow-y-auto max-md:-mb-(--bottom-height) max-md:pb-(--bottom-height)"
             >
               {children}
             </motion.div>

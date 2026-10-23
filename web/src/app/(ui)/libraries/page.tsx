@@ -1,23 +1,25 @@
 import { useEffect } from "react"
 import { useLocation } from "wouter"
+import { useActiveLibraryId } from "@thoth/hooks/use-current-library"
 import { useCurrentUser } from "@thoth/queries/current-user-queries"
 import { useLibraries } from "@thoth/queries/library-queries"
 
 export const LibrariesOutlet = () => {
   const { data: libraries } = useLibraries()
+  const libraryId = useActiveLibraryId()
   const { data: user } = useCurrentUser()
   const [, navigate] = useLocation()
 
   useEffect(() => {
     if (!libraries) return
-    if (libraries.length > 0) {
-      navigate(`/libraries/${libraries[0].id}`, { replace: true })
+    if (libraryId) {
+      navigate(`/libraries/${libraryId}`, { replace: true })
       return
     }
     // Only admins can create libraries (in settings). Regular users stay here
     // and get the contact-your-admin message below.
     if (user?.permissions.isAdmin) navigate("/settings")
-  }, [libraries, user, navigate])
+  }, [libraries, libraryId, user, navigate])
 
   if (!libraries || libraries.length > 0) return null
 

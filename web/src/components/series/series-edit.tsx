@@ -107,4 +107,3 @@ const SeriesForm: FC<{ form: FormContext<SeriesUpdate> }> = ({ form }) => {
     </>
   )
 }
-export default SeriesEdit

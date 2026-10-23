@@ -1,9 +1,9 @@
+import { cn } from "cn"
 import { MoreHorizontalIcon } from "lucide-react"
 import { ReactNode } from "react"
 import { MenuTrigger } from "react-aria-components"
 import { Button } from "@thoth/components/ui/button"
 import { DropdownMenu } from "@thoth/components/ui/dropdown-menu"
-import { cn } from "@thoth/lib/utils"
 
 interface DataTableRowActionsProps {
   /** DropdownMenuItem elements. */

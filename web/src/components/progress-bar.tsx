@@ -1,7 +1,7 @@
+import { cn } from "cn"
 import { MotionValue, motion, useMotionValueEvent, useTransform } from "motion/react"
 import { FC, useLayoutEffect, useRef, useState } from "react"
 import { useEvent } from "@thoth/hooks/use-event"
-import { cn } from "@thoth/lib/utils"
 
 export const ProgressBar: FC<{
   label: string

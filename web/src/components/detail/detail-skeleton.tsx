@@ -1,7 +1,7 @@
+import { cn } from "cn"
 import { FC, ReactNode } from "react"
 import { Skeleton } from "@thoth/components/ui/skeleton"
 import { useBreakpoint } from "@thoth/hooks/use-media-query"
-import { cn } from "@thoth/lib/utils"
 
 export const DetailSkeleton: FC<{ round?: boolean; children?: ReactNode }> = ({ round, children }) => {
   const isDesktop = useBreakpoint("md")
@@ -9,7 +9,7 @@ export const DetailSkeleton: FC<{ round?: boolean; children?: ReactNode }> = ({ 
 
   if (!isDesktop) {
     return (
-      <div className="mx-auto max-w-6xl min-w-0">
+      <div className="mx-auto w-full max-w-6xl min-w-0">
         <div className="flex flex-col items-center gap-3 text-center">
           <Skeleton className={cn("aspect-square w-52", artShape)} />
           <Skeleton className="h-[1lh] w-2/3 text-xl" />
@@ -21,7 +21,7 @@ export const DetailSkeleton: FC<{ round?: boolean; children?: ReactNode }> = ({ 
   }
 
   return (
-    <div className="mx-auto max-w-6xl min-w-0">
+    <div className="mx-auto w-full max-w-6xl min-w-0">
       <header className="flex items-start gap-9">
         <Skeleton className={cn("aspect-square w-60 shrink-0", artShape)} />
         <div className="flex min-w-0 flex-1 flex-col gap-2 pt-1">

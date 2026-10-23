@@ -1,5 +1,6 @@
 import { DetailList } from "@/components/detail/detail-list.tsx"
 import { pluralize } from "@/utils/utils.ts"
+import { cn } from "cn"
 import {
   BarcodeIcon,
   BuildingIcon,
@@ -13,33 +14,29 @@ import {
   LayersIcon,
   LucideIcon,
   MicIcon,
-  RotateCcwIcon,
   StarIcon,
   TagsIcon,
   UserIcon,
 } from "lucide-react"
-import { FC, ReactNode, useState } from "react"
+import { FC, ReactNode } from "react"
 import { Book, UUID } from "@thoth/client"
-import { BookDownloadItem, DownloadBadge } from "@thoth/components/book/book-download"
+import { BookActionsMenu, useBookActions } from "@thoth/components/book/book-actions"
+import { DownloadBadge } from "@thoth/components/book/book-download"
 import { MobileDetailHeader } from "@thoth/components/detail/detail-layout"
 import { DetailSkeleton } from "@thoth/components/detail/detail-skeleton"
 import { PartialSection } from "@thoth/components/detail/partial-section"
-import { ResourceActions } from "@thoth/components/generic/resource-actions"
 import { HtmlViewer } from "@thoth/components/html-editor"
 import { Link } from "@thoth/components/link.tsx"
 import { QueryError } from "@thoth/components/status-page.tsx"
 import { Button } from "@thoth/components/ui/button"
-import { DropdownMenuItem } from "@thoth/components/ui/dropdown-menu"
 import { useCanPlay, useCoverSrc } from "@thoth/downloads"
 import { useBreakpoint } from "@thoth/hooks/use-media-query"
-import { cn } from "@thoth/lib/utils"
 import { isDetailedBook } from "@thoth/models/model-typeguards"
 import { playback, useBookProgress, usePlayback } from "@thoth/playback"
 import { locateTrack } from "@thoth/playback/track-position"
-import { useAutoMatchBook, useBook, useResetBookProgress, useSetBookFinished } from "@thoth/queries/resource-queries"
+import { useBook } from "@thoth/queries/resource-queries"
 import { TrackList, TrackListSkeleton } from "../track/track-list"
 import { toReadableTime, toRuntime } from "../track/track-time-format"
-import { BookEdit } from "./book-edit"
 
 const RATING_MAX = 5
 
@@ -297,6 +294,36 @@ const MobileHeader: FC<HeaderProps> = ({ book, libraryId, runtime, tracks, actio
   )
 }
 
+const BookPageActions: FC<{ book: Book }> = ({ book }) => {
+  const { play, finished } = useBookActions(book)
+
+  return (
+    <>
+      <Button onPress={play.run} isDisabled={play.isDisabled} className="h-11 grow px-5 md:h-10 md:grow-0">
+        <CirclePlayIcon className="mr-2" /> {play.label}
+      </Button>
+      <Button
+        variant="ghost"
+        size="icon-lg"
+        aria-label={finished.label}
+        isDisabled={finished.isDisabled}
+        onPress={finished.run}
+        className={cn(
+          "aspect-square h-11 w-auto! shrink-0 grow-0! rounded-full px-0! sm:h-10",
+          finished.isFinished ? "text-primary" : "text-muted-foreground hover:text-foreground"
+        )}
+      >
+        {finished.isFinished ? (
+          <CircleCheckIcon className="[&>path]:stroke-background size-5 fill-current" />
+        ) : (
+          <CircleCheckIcon className="size-5" />
+        )}
+      </Button>
+      <BookActionsMenu book={book} />
+    </>
+  )
+}
+
 export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId, libraryId }) => {
   const isCurrentBook = usePlayback(s => s.book?.id === bookId)
   const currentTrack = usePlayback(s => s.track)
@@ -304,11 +331,7 @@ export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId, lib
   const isPlaying = usePlayback(s => !s.paused)
   const isDesktop = useBreakpoint("md")
   const { data: book, error, refetch, isFetching, isLoadingError, isPending } = useBook(libraryId, bookId)
-  const autoMatchBook = useAutoMatchBook()
   const canPlay = useCanPlay(bookId)
-  const setFinished = useSetBookFinished()
-  const resetProgress = useResetBookProgress()
-  const [isEditing, setEditing] = useState(false)
 
   if (isLoadingError) return <QueryError error={error} onRetry={refetch} />
   if (isPending)
@@ -327,7 +350,6 @@ export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId, lib
     if (isDetailedBook(book)) void playback.play(book, { track: index })
   }
 
-  const inProgress = book.status === "IN_PROGRESS" && book.durationMs > 0
   const isFinished = book.status === "FINISHED"
   const playedCount = isCurrentBook
     ? currentTrackIndex
@@ -335,63 +357,12 @@ export const BookDetails: FC<{ bookId: UUID; libraryId: UUID }> = ({ bookId, lib
       ? tracks.length
       : locateTrack(tracks, book.positionMs).index
 
-  const actions = (
-    <>
-      <Button
-        onPress={() => {
-          if (isDetailedBook(book)) void playback.play(book)
-        }}
-        isDisabled={tracks.length === 0 || !canPlay}
-        className="h-11 grow px-5 md:h-10 md:grow-0"
-      >
-        <CirclePlayIcon className="mr-2" /> {isCurrentBook || inProgress ? "Resume" : "Play"}
-      </Button>
-      <Button
-        variant="ghost"
-        size="icon-lg"
-        aria-label={isFinished ? "Mark as unplayed" : "Mark as played"}
-        isDisabled={setFinished.isPending}
-        onPress={() => setFinished.mutate({ libraryId, id: book.id, finished: !isFinished })}
-        className={cn(
-          "aspect-square h-11 w-auto! shrink-0 grow-0! rounded-full px-0! sm:h-10",
-          isFinished ? "text-primary" : "text-muted-foreground hover:text-foreground"
-        )}
-      >
-        {isFinished ? (
-          <CircleCheckIcon className="[&>path]:stroke-background size-5 fill-current" />
-        ) : (
-          <CircleCheckIcon className="size-5" />
-        )}
-      </Button>
-      <ResourceActions
-        libraryId={libraryId}
-        id={book.id}
-        label="book"
-        autoMatch={autoMatchBook}
-        onEdit={() => setEditing(true)}
-      >
-        <DropdownMenuItem
-          className="gap-2.5 rounded-lg px-2.5 py-2 text-sm"
-          isDisabled={resetProgress.isPending || (book.positionMs === 0 && book.status === "UNPLAYED")}
-          onAction={() => {
-            resetProgress.mutate({ libraryId, id: book.id })
-            // Otherwise the running playback keeps its position and syncs it straight back.
-            if (isCurrentBook && isDetailedBook(book)) void playback.play(book, { at: 0, autoplay: isPlaying })
-          }}
-        >
-          <RotateCcwIcon className="text-muted-foreground size-5" />
-          Reset progress
-        </DropdownMenuItem>
-        {isDetailedBook(book) ? <BookDownloadItem book={book} /> : null}
-      </ResourceActions>
-      <BookEdit book={book} isOpen={isEditing} onOpenChange={setEditing} />
-    </>
-  )
+  const actions = <BookPageActions book={book} />
 
   const Header = isDesktop ? DesktopHeader : MobileHeader
 
   return (
-    <div className="mx-auto max-w-5xl min-w-0">
+    <div className="mx-auto w-full max-w-5xl min-w-0">
       <Header book={book} libraryId={libraryId} runtime={totalDuration} tracks={tracks.length} actions={actions} />
 
       {tracks.length > 0 ? (

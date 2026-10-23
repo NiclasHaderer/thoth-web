@@ -1,6 +1,6 @@
+import { cn } from "cn"
 import { useAnimate, useReducedMotion } from "motion/react"
 import { FC, useEffect, useRef } from "react"
-import { cn } from "@thoth/lib/utils"
 
 type Shape = {
   d: string
@@ -11,7 +11,13 @@ type Shape = {
 
 export type TabIconProps = { active?: boolean; retap?: number; className?: string }
 
-const TabIcon: FC<TabIconProps & { shapes: Shape[] }> = ({ active, retap = 0, className, shapes }) => {
+const TabIcon: FC<TabIconProps & { shapes: Shape[]; solid?: string }> = ({
+  active,
+  retap = 0,
+  className,
+  shapes,
+  solid,
+}) => {
   const [scope, animate] = useAnimate<SVGSVGElement>()
   const reducedMotion = useReducedMotion()
   const wasActive = useRef(active)
@@ -48,13 +54,18 @@ const TabIcon: FC<TabIconProps & { shapes: Shape[] }> = ({ active, retap = 0, cl
           active ? "opacity-100" : "opacity-0"
         )}
       >
+        {solid ? <path d={solid} /> : shapes.map((shape, index) => <path key={index} {...shape} />)}
+      </g>
+      <g
+        className={cn(
+          "transition-opacity duration-300 motion-reduce:transition-none",
+          solid && active ? "opacity-0" : "opacity-100"
+        )}
+      >
         {shapes.map((shape, index) => (
           <path key={index} {...shape} />
         ))}
       </g>
-      {shapes.map((shape, index) => (
-        <path key={index} {...shape} />
-      ))}
     </svg>
   )
 }
@@ -100,6 +111,14 @@ const SEARCH: Shape[] = [
   { d: "M338.29 338.29 448 448", strokeLinecap: "round", strokeMiterlimit: 10 },
 ]
 
+const DOWNLOADS: Shape[] = [
+  { d: "M176 262.62L256 342l80-79.38M256 330.97V170", strokeLinecap: "round", strokeLinejoin: "round" },
+  { d: "M256 64C150 64 64 150 64 256s86 192 192 192 192-86 192-192S362 64 256 64z", strokeMiterlimit: 10 },
+]
+
+const DOWNLOADS_SOLID =
+  "M256 464c114.87 0 208-93.13 208-208S370.87 48 256 48 48 141.13 48 256s93.13 208 208 208zm-91.36-212.65a16 16 0 0122.63-.09L240 303.58V170a16 16 0 0132 0v133.58l52.73-52.32A16 16 0 11347.27 274l-80 79.39a16 16 0 01-22.54 0l-80-79.39a16 16 0 01-.09-22.65z"
+
 const YOU: Shape[] = [
   {
     d: "M344 144c-3.92 52.87-44 96-88 96s-84.15-43.12-88-96c-4-55 35-96 88-96s92 42 88 96",
@@ -117,5 +136,9 @@ export const HomeTabIcon: FC<TabIconProps> = props => <TabIcon {...props} shapes
 export const BrowseTabIcon: FC<TabIconProps> = props => <TabIcon {...props} shapes={BROWSE} />
 
 export const SearchTabIcon: FC<TabIconProps> = props => <TabIcon {...props} shapes={SEARCH} />
+
+export const DownloadsTabIcon: FC<TabIconProps> = props => (
+  <TabIcon {...props} shapes={DOWNLOADS} solid={DOWNLOADS_SOLID} />
+)
 
 export const YouTabIcon: FC<TabIconProps> = props => <TabIcon {...props} shapes={YOU} />

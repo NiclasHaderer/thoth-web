@@ -1,7 +1,6 @@
 import { SearchIcon } from "lucide-react"
-import { Logo } from "@thoth/components/icons/logo"
 import { LabeledInput } from "@thoth/components/input/labeled-input"
-import { Link } from "@thoth/components/link.tsx"
+import { MobileTopBar } from "@thoth/components/menu/mobile-top-bar"
 import { SearchResults } from "@thoth/components/menu/search-results"
 import { useLibrarySearch } from "@thoth/queries/library-search-query"
 
@@ -11,10 +10,7 @@ export const SearchOutlet = () => {
 
   return (
     <div className="mx-auto flex min-h-0 w-full max-w-3xl flex-col px-5 pb-4">
-      <div className="bg-background/75 sticky top-0 z-10 -mx-5 flex items-center gap-2 px-5 pt-4 pb-3 backdrop-blur-xl">
-        <Link href="/libraries" aria-label="Thoth home" className="shrink-0 outline-none md:hidden">
-          <Logo className="h-8 w-auto" />
-        </Link>
+      <MobileTopBar className="bg-background/75">
         <div className="min-w-0 grow">
           <LabeledInput
             hideError
@@ -27,7 +23,7 @@ export const SearchOutlet = () => {
             onValue={setQuery}
           />
         </div>
-      </div>
+      </MobileTopBar>
 
       {query.trim() !== "" ? (
         result ? (

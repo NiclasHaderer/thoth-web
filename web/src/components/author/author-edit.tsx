@@ -75,5 +75,3 @@ export const AuthorEdit: FC<{ author: Author; isOpen: boolean; onOpenChange: (op
     />
   )
 }
-
-export default AuthorEdit

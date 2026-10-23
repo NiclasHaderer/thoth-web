@@ -62,6 +62,15 @@ export const pluralize = (count: number, singular: string, plural = `${singular}
   return `${count} ${count === 1 ? singular : plural}`
 }
 
+const gigabytes = new Intl.NumberFormat(undefined, {
+  style: "unit",
+  unit: "gigabyte",
+  unitDisplay: "short",
+  maximumFractionDigits: 1,
+})
+
+export const formatGigabytes = (bytes: number): string => gigabytes.format(bytes / 1e9)
+
 export const slug = (label: string): string =>
   label
     .toLowerCase()

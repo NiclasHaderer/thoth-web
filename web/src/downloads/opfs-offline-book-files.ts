@@ -9,7 +9,7 @@ import {
 } from "@thoth/client"
 import { coverStreamUrl, trackStreamUrl } from "@thoth/client/media-urls"
 import { slug } from "@thoth/utils/utils"
-import type { OfflineBookFiles, LocalUrls, StoredFiles } from "./offline-book-files"
+import type { OfflineBookFiles, OpenedFiles, StoredFiles } from "./offline-book-files"
 import type { WorkerReply, WorkerRequest } from "./opfs-file-writer-protocol"
 
 const ROOT = "books"
@@ -23,10 +23,10 @@ const supported =
   typeof navigator.storage?.getDirectory === "function" &&
   typeof Worker !== "undefined"
 
-const opened = new Map<string, LocalUrls>()
+const opened = new Map<string, OpenedFiles>()
 
 const close = (dir: string) => {
-  Object.values(opened.get(dir) ?? {}).forEach(url => URL.revokeObjectURL(url))
+  Object.values(opened.get(dir)?.urls ?? {}).forEach(url => URL.revokeObjectURL(url))
   opened.delete(dir)
 }
 
@@ -111,16 +111,19 @@ const download = async (book: BookDetailed, onProgress: (fraction: number) => vo
   }
 }
 
-const open = async (stored: StoredFiles): Promise<LocalUrls> => {
+const open = async (stored: StoredFiles): Promise<OpenedFiles> => {
   const cached = opened.get(stored.dir)
   if (cached) return cached
 
   const dir = await booksDir(false).then(books => books.getDirectoryHandle(stored.dir))
-  const urls: LocalUrls = {}
-  for (const [id, name] of Object.entries(stored.names))
-    urls[id as UUID] = URL.createObjectURL(await dir.getFileHandle(name).then(handle => handle.getFile()))
-  opened.set(stored.dir, urls)
-  return urls
+  const files: OpenedFiles = { urls: {}, bytes: 0 }
+  for (const [id, name] of Object.entries(stored.names)) {
+    const file = await dir.getFileHandle(name).then(handle => handle.getFile())
+    files.urls[id as UUID] = URL.createObjectURL(file)
+    files.bytes += file.size
+  }
+  opened.set(stored.dir, files)
+  return files
 }
 
 const remove = async (stored: StoredFiles): Promise<void> => {

@@ -1,3 +1,4 @@
+import { cn } from "cn"
 import {
   SliderFill,
   Slider as SliderPrimitive,
@@ -5,7 +6,6 @@ import {
   SliderTrack,
   type SliderProps as SliderPrimitiveProps,
 } from "react-aria-components"
-import { cn } from "@thoth/lib/utils"
 
 type SliderValue = number | number[]
 type SliderProps<T extends SliderValue = SliderValue> = Omit<SliderPrimitiveProps<T>, "className"> & {

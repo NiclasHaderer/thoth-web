@@ -1,3 +1,4 @@
+import { cn } from "cn"
 import { ImageOffIcon, Volume1Icon, Volume2Icon, VolumeXIcon } from "lucide-react"
 import { AnimatePresence, animate, motion, useMotionValue } from "motion/react"
 import { FC, PropsWithChildren, useRef } from "react"
@@ -17,7 +18,6 @@ import { Slider } from "@thoth/components/ui/slider"
 import { useCoverSrc } from "@thoth/downloads"
 import { FullscreenPlayerController } from "@thoth/hooks/use-fullscreen-player"
 import { useBreakpoint } from "@thoth/hooks/use-media-query"
-import { cn } from "@thoth/lib/utils"
 import {
   PlayingBook,
   SKIP_BACK,

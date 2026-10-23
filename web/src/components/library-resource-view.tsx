@@ -5,7 +5,7 @@ import { ScrollSurface } from "@thoth/components/scroll-surface"
 import { useBreakpoint } from "@thoth/hooks/use-media-query"
 
 interface LibraryResourceViewProps extends PropsWithChildren {
-  libraryId: UUID
+  libraryId: UUID | undefined
 }
 
 export const LibraryResourceView: FC<LibraryResourceViewProps> = ({ children, libraryId }) => {
@@ -17,7 +17,7 @@ export const LibraryResourceView: FC<LibraryResourceViewProps> = ({ children, li
       <ScrollSurface
         as="main"
         tabIndex={-1}
-        className="min-w-0 grow overflow-x-hidden overflow-y-auto px-5 pb-4 focus-visible:outline-none max-md:pb-[calc(var(--bottom-height)+--spacing(4))] md:mt-3"
+        className="flex min-w-0 grow [scrollbar-gutter:stable] flex-col overflow-y-auto px-5 pb-4 focus-visible:outline-none max-md:pb-[calc(var(--bottom-height)+--spacing(4))] md:mt-3"
       >
         {children}
       </ScrollSurface>

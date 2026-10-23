@@ -1,5 +1,5 @@
+import { cn } from "cn"
 import * as React from "react"
-import { cn } from "@thoth/lib/utils"
 
 function Avatar({
   className,

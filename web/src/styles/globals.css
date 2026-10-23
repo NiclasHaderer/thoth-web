@@ -104,6 +104,12 @@
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
   }
+  /* Turns off the browser's horizontal swipe back/forward where it is supported (desktop Chrome, Firefox); the app
+     navigates between pages itself. */
+  html,
+  body {
+    overscroll-behavior-x: none;
+  }
   form {
     display: contents;
   }

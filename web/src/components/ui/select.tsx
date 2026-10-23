@@ -1,5 +1,6 @@
 "use client"
 
+import { cn } from "cn"
 import { ChevronDownIcon, SearchIcon, CheckIcon } from "lucide-react"
 import * as React from "react"
 import {
@@ -21,7 +22,6 @@ import {
   type SelectValueProps,
 } from "react-aria-components"
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@thoth/components/ui/input-group"
-import { cn } from "@thoth/lib/utils"
 
 function Select<T extends object, M extends "single" | "multiple" = "single">({
   className,

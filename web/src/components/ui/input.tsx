@@ -1,8 +1,6 @@
-"use client"
-
+import { cn } from "cn"
 import * as React from "react"
 import { composeRenderProps, Input as InputPrimitive } from "react-aria-components"
-import { cn } from "@thoth/lib/utils"
 
 function Input({ className, type, ...props }: React.ComponentProps<typeof InputPrimitive>) {
   return (

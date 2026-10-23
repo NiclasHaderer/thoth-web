@@ -1,3 +1,4 @@
+import { cn } from "cn"
 import { ReactNode, useMemo } from "react"
 import { Key } from "react-aria-components"
 import {
@@ -7,7 +8,6 @@ import {
   SelectTrigger,
   SelectValue as SelectValueDisplay,
 } from "@thoth/components/ui/select"
-import { cn } from "@thoth/lib/utils"
 import { deepEquals } from "@thoth/utils/deep-equals"
 
 type SelectValue<T> = {

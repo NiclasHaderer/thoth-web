@@ -1,5 +1,4 @@
-"use client"
-
+import { cn } from "cn"
 import { XIcon } from "lucide-react"
 import * as React from "react"
 import {
@@ -13,7 +12,6 @@ import {
   type DialogTriggerProps as SheetTriggerPrimitiveProps,
 } from "react-aria-components"
 import { Button } from "@thoth/components/ui/button"
-import { cn } from "@thoth/lib/utils"
 
 function SheetTrigger({ ...props }: SheetTriggerPrimitiveProps) {
   return <SheetTriggerPrimitive data-slot="sheet-trigger" {...props} />

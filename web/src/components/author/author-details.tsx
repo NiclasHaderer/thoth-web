@@ -6,21 +6,22 @@ import { isDetailedAuthor } from "@/models/model-typeguards"
 import { useAuthor, useAutoMatchAuthor } from "@/queries/resource-queries"
 import { formatDate, pluralize } from "@/utils/utils.ts"
 import { UserIcon } from "lucide-react"
-import { FC, Fragment, useState } from "react"
+import { FC, Fragment } from "react"
 import { DetailLayout, detailLabel, entityLink } from "@thoth/components/detail/detail-layout"
 import { DetailSkeleton } from "@thoth/components/detail/detail-skeleton"
 import { PartialSection } from "@thoth/components/detail/partial-section"
+import { openDialog } from "@thoth/components/dialogs"
 import { EditButton } from "@thoth/components/generic/edit-button"
 import { PreviewGridSkeleton } from "@thoth/components/generic/preview-skeleton"
 import { ResourceActions } from "@thoth/components/generic/resource-actions"
 import { QueryError } from "@thoth/components/status-page.tsx"
 import { useCoverSrc } from "@thoth/downloads"
-import AuthorEdit from "./author-edit"
+
+const loadAuthorEdit = () => import("./author-edit").then(module => module.AuthorEdit)
 
 export const AuthorDetails: FC<{ authorId: UUID; libraryId: UUID }> = ({ authorId, libraryId }) => {
   const { data: author, error, refetch, isFetching, isLoadingError, isPending } = useAuthor(libraryId, authorId)
   const autoMatchAuthor = useAutoMatchAuthor()
-  const [isEditing, setEditing] = useState(false)
   const cover = useCoverSrc()
   if (isLoadingError) return <QueryError error={error} onRetry={refetch} />
   if (isPending)
@@ -71,9 +72,8 @@ export const AuthorDetails: FC<{ authorId: UUID; libraryId: UUID }> = ({ authorI
       body={author.biography ? <HtmlViewer className="prose-sm" content={author.biography} collapsedLines={3} /> : null}
       actions={
         <>
-          <EditButton onPress={() => setEditing(true)} />
+          <EditButton onPress={() => openDialog(loadAuthorEdit, { author })} />
           <ResourceActions libraryId={libraryId} id={author.id} label="author" autoMatch={autoMatchAuthor} />
-          <AuthorEdit author={author} isOpen={isEditing} onOpenChange={setEditing} />
         </>
       }
     >

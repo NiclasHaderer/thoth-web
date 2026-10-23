@@ -1,9 +1,9 @@
+import { cn } from "cn"
 import { LucideIcon } from "lucide-react"
 import { FC } from "react"
 import { useLocation } from "wouter"
 import { Link } from "@thoth/components/link.tsx"
 import { CollapsibleLabel } from "@thoth/components/menu/collapsible-label"
-import { cn } from "@thoth/lib/utils"
 
 export const NavItem: FC<{
   href: string

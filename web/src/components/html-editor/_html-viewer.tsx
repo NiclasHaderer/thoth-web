@@ -1,6 +1,6 @@
 import dompurify from "dompurify"
 import { motion } from "motion/react"
-import { CSSProperties, FC, useEffect, useRef, useState } from "react"
+import { CSSProperties, FC, useLayoutEffect, useRef, useState } from "react"
 import { Button } from "@thoth/components/ui/button"
 
 export const HtmlViewerImpl: FC<{
@@ -14,12 +14,11 @@ export const HtmlViewerImpl: FC<{
   const [collapsedHeight, setCollapsedHeight] = useState<number>()
   const [overflows, setOverflows] = useState(false)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const element = contentRef.current
     if (!element || collapsedLines === undefined) return
-    const height = parseFloat(getComputedStyle(element).lineHeight) * collapsedLines
-    setCollapsedHeight(Math.min(height, element.scrollHeight))
-    setOverflows(element.scrollHeight > height + 1)
+    setCollapsedHeight(element.offsetHeight)
+    setOverflows(element.scrollHeight > element.clientHeight + 1)
   }, [content, collapsedLines])
 
   if (!content) return null

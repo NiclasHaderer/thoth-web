@@ -1,19 +1,71 @@
 import { ArrowDownToLineIcon, CircleArrowDownIcon, TrashIcon } from "lucide-react"
 import { FC } from "react"
 import { toast } from "sonner"
-import { BookDetailed, UUID } from "@thoth/client"
+import { Book, UUID } from "@thoth/client"
+import { queryClient } from "@thoth/client/query-client"
+import { DialogProps, openDialog } from "@thoth/components/dialogs"
+import { menuItem } from "@thoth/components/generic/resource-actions"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@thoth/components/ui/alert-dialog"
 import { DropdownMenuItem } from "@thoth/components/ui/dropdown-menu"
 import { bookDownloads, useBookDownload } from "@thoth/downloads"
-
-const menuItem = "gap-2.5 rounded-lg px-2.5 py-2 text-sm"
+import { isDetailedBook } from "@thoth/models/model-typeguards"
+import { queries } from "@thoth/queries/query-definitions"
 
 const fraction = (progress: number) => Math.min(1, Math.max(0, progress))
-const percent = (progress: number) => Math.round(fraction(progress) * 100)
+export const percent = (progress: number) => Math.round(fraction(progress) * 100)
+
+// The download store only learns about a book once its tracks are fetched; until then a second tap would start a
+// second download of the same book.
+const fetchingTracks = new Set<UUID>()
+
+const withTracks = async (book: Book) =>
+  isDetailedBook(book) ? book : queryClient.query(queries.books.detail(book.libraryId, book.id))
+
+export const startDownload = async (book: Book) => {
+  if (fetchingTracks.has(book.id)) return
+  fetchingTracks.add(book.id)
+  try {
+    const detailed = await withTracks(book).finally(() => fetchingTracks.delete(book.id))
+    await bookDownloads.download(detailed)
+    toast.success(`Downloaded ${book.title}`)
+  } catch (error) {
+    toast.error(`Could not download ${book.title}: ${(error as Error).message}`)
+  }
+}
+
+const RemoveDownloadDialog: FC<{ book: Book } & DialogProps> = ({ book, isOpen, onOpenChange }) => (
+  <AlertDialog isOpen={isOpen} onOpenChange={onOpenChange}>
+    <AlertDialogHeader>
+      <AlertDialogTitle>Remove download?</AlertDialogTitle>
+      <AlertDialogDescription>
+        <span className="text-foreground font-medium">{book.title}</span> will be deleted from this device.
+      </AlertDialogDescription>
+    </AlertDialogHeader>
+    <AlertDialogFooter>
+      <AlertDialogCancel>Cancel</AlertDialogCancel>
+      <AlertDialogAction variant="destructive" onPress={() => void bookDownloads.remove(book.id)}>
+        Remove download
+      </AlertDialogAction>
+    </AlertDialogFooter>
+  </AlertDialog>
+)
+
+const loadRemoveDownload = () => Promise.resolve(RemoveDownloadDialog)
+
+export const confirmRemoveDownload = (book: Book) => openDialog(loadRemoveDownload, { book })
 
 const RADIUS = 8
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS
 
-const DownloadRing: FC<{ progress: number; className?: string }> = ({ progress, className }) => (
+export const DownloadRing: FC<{ progress: number; className?: string }> = ({ progress, className }) => (
   <svg className={className} fill="none" viewBox="0 0 20 20">
     <circle cx="10" cy="10" r={RADIUS} stroke="currentColor" strokeOpacity={0.25} strokeWidth={2.5} />
     <circle
@@ -30,7 +82,7 @@ const DownloadRing: FC<{ progress: number; className?: string }> = ({ progress, 
   </svg>
 )
 
-export const BookDownloadItem: FC<{ book: BookDetailed }> = ({ book }) => {
+export const BookDownloadItem: FC<{ book: Book }> = ({ book }) => {
   const entry = useBookDownload(book.id)
   if (!bookDownloads.supported) return null
 
@@ -45,7 +97,7 @@ export const BookDownloadItem: FC<{ book: BookDetailed }> = ({ book }) => {
 
   if (entry?.state === "ready") {
     return (
-      <DropdownMenuItem className={menuItem} onAction={() => void bookDownloads.remove(book.id)}>
+      <DropdownMenuItem className={menuItem} onAction={() => confirmRemoveDownload(book)}>
         <TrashIcon className="text-muted-foreground size-5" />
         Remove download
       </DropdownMenuItem>
@@ -53,16 +105,7 @@ export const BookDownloadItem: FC<{ book: BookDetailed }> = ({ book }) => {
   }
 
   return (
-    <DropdownMenuItem
-      className={menuItem}
-      isDisabled={book.tracks.length === 0}
-      onAction={() => {
-        bookDownloads
-          .download(book)
-          .then(() => toast.success(`Downloaded ${book.title}`))
-          .catch((error: Error) => toast.error(`Could not download ${book.title}: ${error.message}`))
-      }}
-    >
+    <DropdownMenuItem className={menuItem} isDisabled={book.durationMs === 0} onAction={() => void startDownload(book)}>
       <ArrowDownToLineIcon className="text-muted-foreground size-5" />
       {entry?.state === "error" ? "Retry download" : "Download"}
     </DropdownMenuItem>

@@ -1,5 +1,5 @@
+import { cn } from "cn"
 import { FC } from "react"
-import { cn } from "@thoth/lib/utils"
 
 export const LibraryAvatar: FC<{ name: string; className?: string }> = ({ name, className }) => (
   <span

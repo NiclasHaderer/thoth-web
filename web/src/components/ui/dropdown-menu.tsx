@@ -1,4 +1,7 @@
+"use client"
+
 import { cva } from "class-variance-authority"
+import { cn } from "cn"
 import { CheckIcon, ChevronRightIcon } from "lucide-react"
 import * as React from "react"
 import {
@@ -14,7 +17,6 @@ import {
   type MenuItemProps as MenuItemPrimitiveProps,
   type MenuSectionProps as MenuSectionPrimitiveProps,
 } from "react-aria-components"
-import { cn } from "@thoth/lib/utils"
 
 function DropdownMenuTrigger({ ...props }: React.ComponentProps<typeof MenuTriggerPrimitive>) {
   return <MenuTriggerPrimitive data-slot="dropdown-menu-trigger" {...props} />
@@ -45,7 +47,7 @@ function DropdownMenu({
         className
       )}
     >
-      <MenuPrimitive className="outline-hidden" {...props}>
+      <MenuPrimitive className="max-h-[inherit] overflow-x-hidden overflow-y-auto outline-hidden" {...props}>
         {children}
       </MenuPrimitive>
     </PopoverPrimitive>

@@ -1,3 +1,6 @@
+"use client"
+
+import { cn } from "cn"
 import * as React from "react"
 import {
   Focusable,
@@ -5,7 +8,6 @@ import {
   Tooltip as TooltipPrimitive,
   TooltipTrigger as TooltipTriggerPrimitive,
 } from "react-aria-components"
-import { cn } from "@thoth/lib/utils"
 
 function TooltipTrigger({ delay = 0, children, ...props }: React.ComponentProps<typeof TooltipTriggerPrimitive>) {
   const [trigger, tooltip] = React.Children.toArray(children)

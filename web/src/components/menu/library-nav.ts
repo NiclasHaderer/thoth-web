@@ -1,4 +1,13 @@
-import { BookIcon, BookMarkedIcon, HomeIcon, LucideIcon, MicIcon, TagsIcon, UserIcon } from "lucide-react"
+import {
+  ArrowDownToLineIcon,
+  BookIcon,
+  BookMarkedIcon,
+  HomeIcon,
+  LucideIcon,
+  MicIcon,
+  TagsIcon,
+  UserIcon,
+} from "lucide-react"
 import { UUID } from "@thoth/client"
 
 export type LibraryDestination = {
@@ -8,11 +17,25 @@ export type LibraryDestination = {
   exact?: boolean
 }
 
-export const libraryDestinations = (libraryId: UUID): LibraryDestination[] => [
-  { href: `/libraries/${libraryId}`, Icon: HomeIcon, label: "Home", exact: true },
-  { href: `/libraries/${libraryId}/books`, Icon: BookIcon, label: "Books" },
-  { href: `/libraries/${libraryId}/series`, Icon: BookMarkedIcon, label: "Series" },
-  { href: `/libraries/${libraryId}/authors`, Icon: UserIcon, label: "Authors" },
-  { href: `/libraries/${libraryId}/narrators`, Icon: MicIcon, label: "Narrators" },
-  { href: `/libraries/${libraryId}/genres`, Icon: TagsIcon, label: "Genres" },
-]
+// Without a library (list still loading, or none exist) every link falls back to /libraries, which redirects once
+// the list is known, so menus keep their final shape instead of growing in.
+export const libraryDestinations = (libraryId: UUID | undefined): LibraryDestination[] => {
+  const href = (path: string) => (libraryId ? `/libraries/${libraryId}${path}` : "/libraries")
+  return [
+    { href: href(""), Icon: HomeIcon, label: "Home", exact: true },
+    { href: href("/books"), Icon: BookIcon, label: "Books" },
+    { href: href("/series"), Icon: BookMarkedIcon, label: "Series" },
+    { href: href("/authors"), Icon: UserIcon, label: "Authors" },
+    { href: href("/narrators"), Icon: MicIcon, label: "Narrators" },
+    { href: href("/genres"), Icon: TagsIcon, label: "Genres" },
+  ]
+}
+
+export const browseDestinations = (libraryId: UUID | undefined) =>
+  libraryDestinations(libraryId).filter(destination => !destination.exact)
+
+export const downloadsDestination: LibraryDestination = {
+  href: "/downloads",
+  Icon: ArrowDownToLineIcon,
+  label: "Downloads",
+}

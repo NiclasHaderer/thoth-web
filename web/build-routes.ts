@@ -245,7 +245,7 @@ const buildRoutes = (paths: Path) => {
   }
   const imports = writeImports(paths, [
     'import { Route, Router, Switch } from "wouter"',
-    'import { lazyView, preloadView } from "@thoth/components/lazy-view.tsx"',
+    'import { lazyView, preloadView, type Loader } from "@thoth/components/lazy-view.tsx"',
     'import { NotFound } from "@thoth/components/status-page.tsx"',
     'import { UUID } from "@thoth/client"',
   ])
@@ -349,7 +349,7 @@ const buildRoutes = (paths: Path) => {
   `
 
   const prefetch = `
-  const lazyRoutes: { pattern: RegExp; load: () => Promise<unknown> }[] = [
+  const lazyRoutes: { pattern: RegExp; load: Loader<never> }[] = [
     ${lazyRoutes.join(",\n")}
   ]
 

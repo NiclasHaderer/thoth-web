@@ -1,3 +1,4 @@
+import { cn } from "cn"
 import { ImageOffIcon } from "lucide-react"
 import { animate, motion, useMotionValue } from "motion/react"
 import { FC, Fragment, useEffect, useRef, useState } from "react"
@@ -17,7 +18,6 @@ import { Button } from "@thoth/components/ui/button"
 import { useCoverSrc } from "@thoth/downloads"
 import { useEvent } from "@thoth/hooks/use-event"
 import { FullscreenPlayerController, playerSpring } from "@thoth/hooks/use-fullscreen-player"
-import { cn } from "@thoth/lib/utils"
 import {
   PlayingBook,
   SKIP_BACK,

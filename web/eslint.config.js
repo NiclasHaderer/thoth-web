@@ -4,7 +4,13 @@ import globals from "globals"
 import tseslint from "typescript-eslint"
 
 export default tseslint.config(
-  { ignores: ["dist"] },
+  {
+    ignores: [
+      "dist",
+      // shadcn
+      "src/components/ui",
+    ],
+  },
   {
     files: ["**/*.{ts,tsx}"],
     extends: [eslint.configs.recommended, tseslint.configs.recommendedTypeChecked],
