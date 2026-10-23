@@ -14,20 +14,9 @@ plugins {
     alias(libs.plugins.ktlint)
 }
 
-val gitDir = layout.projectDirectory.file(".git").asFile
-val installGitHooks =
-    tasks.register<Copy>("installGitHooks") {
-        onlyIf { gitDir.isDirectory }
-        from(layout.projectDirectory.dir(".githooks"))
-        into(gitDir.resolve("hooks"))
-        filePermissions { unix("rwxr-xr-x") }
-    }
-
 subprojects {
     group = "io.thoth"
     version = "0.0.1"
-
-    tasks.matching { it.name == "compileKotlin" }.configureEach { dependsOn(installGitHooks) }
 
     apply<KtlintPlugin>()
     configure<KtlintExtension> {

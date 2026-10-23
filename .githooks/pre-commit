@@ -2,11 +2,12 @@
 set -e
 
 staged=$(git diff --cached --name-only --diff-filter=ACM -- '*.kt' '*.kts')
-[ -z "$staged" ] && exit 0
+if [ -n "$staged" ]; then
+    out=$(./gradlew ktlintFormat --quiet 2>&1) || {
+        echo "$out" >&2
+        exit 1
+    }
+    echo "$staged" | tr '\n' '\0' | xargs -0 git add --
+fi
 
-out=$(./gradlew ktlintFormat --quiet 2>&1) || {
-    echo "$out" >&2
-    exit 1
-}
-
-echo "$staged" | tr '\n' '\0' | xargs -0 git add --
+git diff --cached --quiet -- web || (cd web && node_modules/.bin/pretty-quick --staged --pattern 'web/**')
