@@ -23,6 +23,8 @@
           ffmpeg             # regenerates the audio test fixtures
           actionlint
           ktlint
+          fnm
+          git-filter-repo
         ];
 
         shellHook = ''
