@@ -1,0 +1,26 @@
+import { FC, PropsWithChildren } from "react"
+import { UUID } from "@thoth/client"
+import { LibraryMenu } from "@thoth/components/menu/library-menu"
+import { ScrollSurface } from "@thoth/components/scroll-surface"
+import { useBreakpoint } from "@thoth/hooks/use-media-query"
+
+interface LibraryResourceViewProps extends PropsWithChildren {
+  libraryId: UUID | undefined
+}
+
+export const LibraryResourceView: FC<LibraryResourceViewProps> = ({ children, libraryId }) => {
+  const isDesktop = useBreakpoint("md")
+
+  return (
+    <div className="flex min-h-0 grow overflow-hidden max-md:-mb-(--bottom-height)">
+      {isDesktop ? <LibraryMenu libraryId={libraryId} /> : null}
+      <ScrollSurface
+        as="main"
+        tabIndex={-1}
+        className="flex min-w-0 grow [scrollbar-gutter:stable] flex-col overflow-y-auto px-5 pb-4 focus-visible:outline-none max-md:pb-[calc(var(--bottom-height)+--spacing(4))] md:mt-3"
+      >
+        {children}
+      </ScrollSurface>
+    </div>
+  )
+}

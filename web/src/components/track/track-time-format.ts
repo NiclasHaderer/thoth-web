@@ -1,0 +1,19 @@
+export const toReadableTime = (totalSeconds: number | undefined) => {
+  if (!totalSeconds) return "00:00"
+  const hours = Math.floor(totalSeconds / 3600)
+  const minutes = Math.floor((totalSeconds - hours * 3600) / 60)
+  const seconds = Math.floor(totalSeconds - hours * 3600 - minutes * 60)
+
+  const hourString = hours < 10 ? `0${hours}` : hours.toString()
+  const minuteString = minutes < 10 ? `0${minutes}` : minutes.toString()
+  const secondString = seconds < 10 ? `0${seconds}` : seconds.toString()
+
+  return (hourString !== "00" ? `${hourString}:` : "") + `${minuteString}:` + secondString
+}
+
+export const toRuntime = (totalSeconds: number) => {
+  const hours = Math.floor(totalSeconds / 3600)
+  const minutes = Math.round((totalSeconds - hours * 3600) / 60)
+  if (!hours) return `${Math.max(minutes, 1)} min`
+  return minutes ? `${hours} h ${minutes} min` : `${hours} h`
+}
