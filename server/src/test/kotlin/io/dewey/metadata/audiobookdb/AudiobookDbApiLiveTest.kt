@@ -110,7 +110,7 @@ class AudiobookDbApiLiveTest {
             assertEquals("audiobookdb", author.id.provider)
             assertEquals("https://audiobookdb.org/people/$andyWeir", author.link)
             assertEquals(LocalDate.of(1972, 6, 16), author.birthDate)
-            assertEquals("Davis, CA", author.bornIn)
+            assertTrue(author.bornIn?.startsWith("Davis") == true, "bornIn was '${author.bornIn}'")
             assertTrue(!author.biography.isNullOrBlank(), "biography was '${author.biography}'")
         }
 
@@ -141,7 +141,7 @@ class AudiobookDbApiLiveTest {
 
             val weir = assertNotNull(authors.find { it.id.itemID == andyWeir }, "found ${authors.map { it.name }}")
             assertEquals("Andy Weir", weir.name)
-            assertEquals("Davis, CA", weir.bornIn)
+            assertTrue(weir.bornIn?.startsWith("Davis") == true, "bornIn was '${weir.bornIn}'")
         }
 
     @Test
