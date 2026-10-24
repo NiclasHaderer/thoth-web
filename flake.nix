@@ -24,7 +24,6 @@
           actionlint
           ktlint
           fnm
-          git-filter-repo
         ];
 
         shellHook = ''
