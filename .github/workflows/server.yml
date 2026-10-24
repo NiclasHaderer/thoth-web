@@ -1,12 +1,7 @@
-name: Build
+name: Server
 
 on:
-  push:
-    branches: [main]
-    paths-ignore: [web/**]
-  pull_request:
-    types: [opened, synchronize, reopened, labeled]
-    paths-ignore: [web/**]
+  workflow_call:
 
 jobs:
   # Fails a PR whose API is not bwc and fwc
