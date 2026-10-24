@@ -1,10 +1,10 @@
 import { FC, ReactNode, useEffect } from "react"
 import { useLocation, useSearch } from "wouter"
-import { ThothApiError } from "@thoth/client"
-import { queryClient } from "@thoth/client/query-client"
-import { queries } from "@thoth/queries/query-definitions"
-import { usePreferences } from "@thoth/state/preferences"
-import { withoutSearchParam } from "@thoth/utils/utils"
+import { DeweyApiError } from "@dewey/client"
+import { queryClient } from "@dewey/client/query-client"
+import { queries } from "@dewey/queries/query-definitions"
+import { usePreferences } from "@dewey/state/preferences"
+import { withoutSearchParam } from "@dewey/utils/utils"
 import { audio } from "./active-audio-output"
 import { playback } from "./playback-actions"
 import { clearResume, syncCurrentProgress, writeResume } from "./playback-progress"
@@ -102,7 +102,7 @@ const useRestorePlayback = () => {
         }
       })
       .catch((error: unknown) => {
-        if (error instanceof ThothApiError && error.status === 404) clearResume()
+        if (error instanceof DeweyApiError && error.status === 404) clearResume()
         clearPlayerParam()
       })
     // eslint-disable-next-line react-hooks/exhaustive-deps

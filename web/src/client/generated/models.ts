@@ -2,11 +2,11 @@
 // @ts-nocheck
 import type { Pair } from "./utility-types"
 
-export interface ThothAccessToken {
+export interface DeweyAccessToken {
   accessToken: string
 }
 
-export interface ThothLoginUser {
+export interface DeweyLoginUser {
   password: string
   username: string
 }
@@ -15,12 +15,12 @@ export type Empty = ""
 
 export type UUID = `${string}-${string}-${string}-${string}-${string}`
 
-export interface ThothUser {
+export interface DeweyUser {
   id: UUID
   username: string
 }
 
-export interface ThothRegisterUser {
+export interface DeweyRegisterUser {
   password: string
   username: string
 }
@@ -33,7 +33,7 @@ export interface JWK {
   use: string
 }
 
-export interface ThothJWKs {
+export interface DeweyJWKs {
   keys: Array<JWK>
 }
 
@@ -49,7 +49,7 @@ export interface UpdateUserPermissions {
   libraries: Array<UpdateLibraryPermissions>
 }
 
-export interface ThothModifyPermissions<PERMISSIONS> {
+export interface DeweyModifyPermissions<PERMISSIONS> {
   permissions: PERMISSIONS
 }
 
@@ -64,17 +64,17 @@ export interface UserPermissions {
   libraries: Array<LibraryPermissions>
 }
 
-export interface ThothUserWithPermissions<PERMISSIONS extends NonNullable<any>> {
+export interface DeweyUserWithPermissions<PERMISSIONS extends NonNullable<any>> {
   id: UUID
   permissions: PERMISSIONS
   username: string
 }
 
-export interface ThothRenameUser {
+export interface DeweyRenameUser {
   username: string
 }
 
-export interface ThothChangePassword {
+export interface DeweyChangePassword {
   currentPassword: string
   newPassword: string
 }
@@ -257,7 +257,7 @@ export interface Track {
 
 export interface BookDetailed extends Book {
   chapters: Array<Chapter>
-  overridden: Array<BookField>
+  locked: Array<BookField>
   tracks: Array<Track>
 }
 
@@ -280,9 +280,9 @@ export interface BookUpdate {
   providerRating?: number | null
   publisher?: string | null
   releaseDate?: number | null
-  reset?: Array<BookField>
   series?: Array<UUID> | null
   title?: string
+  unlock?: Array<BookField>
 }
 
 export type SeriesField =
@@ -295,8 +295,8 @@ export interface YearRange {
 
 export interface SeriesDetailed extends Series {
   books: Array<Book>
+  locked: Array<SeriesField>
   narrators: Array<string>
-  overridden: Array<SeriesField>
   yearRange: YearRange | null
 }
 
@@ -311,9 +311,9 @@ export interface SeriesUpdate {
   primaryWorks?: number | null
   provider?: string | null
   providerID?: string | null
-  reset?: Array<SeriesField>
   title?: string
   totalBooks?: number | null
+  unlock?: Array<SeriesField>
 }
 
 export type AuthorField =
@@ -321,7 +321,7 @@ export type AuthorField =
 
 export interface AuthorDetailed extends Author {
   books: Array<Book>
-  overridden: Array<AuthorField>
+  locked: Array<AuthorField>
   series: Array<Series>
 }
 
@@ -339,7 +339,7 @@ export interface AuthorUpdate {
   name?: string
   provider?: string | null
   providerID?: string | null
-  reset?: Array<AuthorField>
+  unlock?: Array<AuthorField>
   website?: string | null
 }
 
@@ -458,4 +458,20 @@ export interface ThirdPartyLicense {
   repository: string | null
   text: string | null
   version: string
+}
+
+export type ChangedEntity = "LIBRARY" | "BOOK" | "AUTHOR" | "SERIES"
+
+export type ChangeType = "CREATED" | "UPDATED" | "DELETED"
+
+export interface ChangeEvent {
+  entity: ChangedEntity
+  id: UUID
+  libraryId: UUID
+  type: ChangeType
+}
+
+export interface ChangeEventBatch {
+  events: Array<ChangeEvent>
+  missedPreviousEvents: boolean
 }

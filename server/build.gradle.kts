@@ -4,19 +4,19 @@ plugins {
     alias(libs.plugins.shadow)
     application
     // Bundles third-party-licenses.json into the jar for the /api/licenses endpoint
-    id("thoth.license-report")
+    id("dewey.license-report")
 }
 
 application {
     // :taglib reaches TagLib through the FFM API, which needs native access granted.
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=true", "--enable-native-access=ALL-UNNAMED")
-    mainClass.set("io.thoth.server.ApplicationKt")
+    mainClass.set("io.dewey.server.ApplicationKt")
     tasks.run.get().workingDir = rootProject.projectDir
 }
 
 // Shadow task depends on Jar task, so these configs are reflected for Shadow as well
 tasks.jar {
-    manifest.attributes["Main-Class"] = "io.thoth.server.ApplicationKt"
+    manifest.attributes["Main-Class"] = "io.dewey.server.ApplicationKt"
     manifest.attributes["Enable-Native-Access"] = "ALL-UNNAMED"
 }
 
@@ -104,7 +104,7 @@ dependencies {
 tasks.register<JavaExec>("generateClients") {
     group = "build"
     description = "Regenerates the Kotlin and TypeScript API clients from the current routes"
-    mainClass.set("io.thoth.server.GenerateClientsKt")
+    mainClass.set("io.dewey.server.GenerateClientsKt")
     classpath = sourceSets["main"].runtimeClasspath
     workingDir = rootProject.projectDir
 }

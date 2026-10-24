@@ -2,13 +2,13 @@ import {
   authorizationHeader,
   BookDetailed,
   renewedAuthorizationHeader,
-  ThothApiError,
+  DeweyApiError,
   Track,
   unwrap,
   UUID,
-} from "@thoth/client"
-import { coverStreamUrl, trackStreamUrl } from "@thoth/client/media-urls"
-import { slug } from "@thoth/utils/utils"
+} from "@dewey/client"
+import { coverStreamUrl, trackStreamUrl } from "@dewey/client/media-urls"
+import { slug } from "@dewey/utils/utils"
 import type { OfflineBookFiles, OpenedFiles, StoredFiles } from "./offline-book-files"
 import type { WorkerReply, WorkerRequest } from "./opfs-file-writer-protocol"
 
@@ -78,7 +78,7 @@ const downloadFile = async (
   if (outcome === "done") return
 
   const retry = await ask({ ...request, authorization: await unwrap(renewedAuthorizationHeader()) }, onProgress)
-  if (retry !== "done") throw new ThothApiError({ success: false, error: "Session expired", status: 401 })
+  if (retry !== "done") throw new DeweyApiError({ success: false, error: "Session expired", status: 401 })
 }
 
 const download = async (book: BookDetailed, onProgress: (fraction: number) => void): Promise<StoredFiles> => {

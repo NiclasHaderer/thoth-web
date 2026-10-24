@@ -1,12 +1,12 @@
 import { ColumnDef } from "@tanstack/react-table"
 import { EyeIcon, PencilIcon, Trash2Icon } from "lucide-react"
-import { ThothUserWithPermissions, UserPermissions, UUID } from "@thoth/client"
-import { DataTableColumnHeader } from "@thoth/components/data-table/data-table-column-header"
-import { DataTableRowActions } from "@thoth/components/data-table/data-table-row-actions"
-import { Badge } from "@thoth/components/ui/badge"
-import { DropdownMenuItem } from "@thoth/components/ui/dropdown-menu"
+import { DeweyUserWithPermissions, UserPermissions, UUID } from "@dewey/client"
+import { DataTableColumnHeader } from "@dewey/components/data-table/data-table-column-header"
+import { DataTableRowActions } from "@dewey/components/data-table/data-table-row-actions"
+import { Badge } from "@dewey/components/ui/badge"
+import { DropdownMenuItem } from "@dewey/components/ui/dropdown-menu"
 
-export type UserRow = ThothUserWithPermissions<UserPermissions>
+export type UserRow = DeweyUserWithPermissions<UserPermissions>
 
 interface UserColumnsOptions {
   currentUserId: UUID | undefined

@@ -9,7 +9,7 @@ import {
   ComboboxEmpty,
   ComboboxItem,
   ComboboxList,
-} from "@thoth/components/ui/combobox"
+} from "@dewey/components/ui/combobox"
 
 interface Option<K extends string> {
   id: K

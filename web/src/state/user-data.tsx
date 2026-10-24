@@ -1,8 +1,8 @@
 import { FC, ReactNode, useEffect, useState } from "react"
-import { session, useSession } from "@thoth/client"
-import { cache, persistKey } from "@thoth/client/persistence"
-import { bookDownloads } from "@thoth/downloads"
-import { playback } from "@thoth/playback"
+import { session, useSession } from "@dewey/client"
+import { cache, persistKey } from "@dewey/client/persistence"
+import { bookDownloads } from "@dewey/downloads"
+import { playback } from "@dewey/playback"
 
 const RESET_PENDING = persistKey("reset-pending")
 

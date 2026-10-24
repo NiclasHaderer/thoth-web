@@ -2,7 +2,7 @@ import { cn } from "cn"
 import { ChevronDownIcon, LucideIcon } from "lucide-react"
 import { motion } from "motion/react"
 import { FC, ReactNode, useState } from "react"
-import { useBreakpoint } from "@thoth/hooks/use-media-query"
+import { useBreakpoint } from "@dewey/hooks/use-media-query"
 
 export interface DetailLayoutProps {
   title: string

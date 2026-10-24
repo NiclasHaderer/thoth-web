@@ -1,9 +1,9 @@
 import { Table } from "@tanstack/react-table"
 import { XIcon } from "lucide-react"
 import { ComponentType, ReactNode } from "react"
-import { DataTableFacetedFilter } from "@thoth/components/data-table/data-table-faceted-filter"
-import { DataTableViewOptions } from "@thoth/components/data-table/data-table-view-options"
-import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "@thoth/components/ui/input-group"
+import { DataTableFacetedFilter } from "@dewey/components/data-table/data-table-faceted-filter"
+import { DataTableViewOptions } from "@dewey/components/data-table/data-table-view-options"
+import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "@dewey/components/ui/input-group"
 
 interface FacetFilter {
   columnId: string

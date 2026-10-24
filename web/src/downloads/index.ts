@@ -1,5 +1,5 @@
-import { Track } from "@thoth/client"
-import { trackStreamUrl } from "@thoth/client/media-urls"
+import { Track } from "@dewey/client"
+import { trackStreamUrl } from "@dewey/client/media-urls"
 import { localUrl } from "./book-downloads-store"
 
 export const trackSrc = (track: Track): string => localUrl(track.id) ?? trackStreamUrl(track.id)

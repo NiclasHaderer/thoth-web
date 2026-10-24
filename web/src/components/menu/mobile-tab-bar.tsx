@@ -8,10 +8,10 @@ import {
   SearchTabIcon,
   TabIconProps,
   YouTabIcon,
-} from "@thoth/components/icons/tab-icons"
-import { Link } from "@thoth/components/link.tsx"
-import { downloadsDestination } from "@thoth/components/menu/library-nav"
-import { useActiveLibraryId } from "@thoth/hooks/use-current-library"
+} from "@dewey/components/icons/tab-icons"
+import { Link } from "@dewey/components/link.tsx"
+import { downloadsDestination } from "@dewey/components/menu/library-nav"
+import { useActiveLibraryId } from "@dewey/hooks/use-current-library"
 
 const focusSearchInput = () => {
   const input = document.querySelector<HTMLInputElement>("[data-search-input]")

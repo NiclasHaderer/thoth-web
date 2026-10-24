@@ -1,8 +1,8 @@
 import { SearchIcon } from "lucide-react"
-import { LabeledInput } from "@thoth/components/input/labeled-input"
-import { MobileTopBar } from "@thoth/components/menu/mobile-top-bar"
-import { SearchResults } from "@thoth/components/menu/search-results"
-import { useLibrarySearch } from "@thoth/queries/library-search-query"
+import { LabeledInput } from "@dewey/components/input/labeled-input"
+import { MobileTopBar } from "@dewey/components/menu/mobile-top-bar"
+import { SearchResults } from "@dewey/components/menu/search-results"
+import { useLibrarySearch } from "@dewey/queries/library-search-query"
 
 // TODO: add recent searches
 export const SearchOutlet = () => {

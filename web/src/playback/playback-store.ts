@@ -1,5 +1,5 @@
 import { create } from "zustand"
-import { NamedId, Track, UUID } from "@thoth/client"
+import { NamedId, Track, UUID } from "@dewey/client"
 import { PlaybackSnapshot } from "./audio-output"
 
 export interface PlayingBook {

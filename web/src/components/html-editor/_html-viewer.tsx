@@ -1,7 +1,7 @@
 import dompurify from "dompurify"
 import { motion } from "motion/react"
 import { CSSProperties, FC, useLayoutEffect, useRef, useState } from "react"
-import { Button } from "@thoth/components/ui/button"
+import { Button } from "@dewey/components/ui/button"
 
 export const HtmlViewerImpl: FC<{
   content: string | null | undefined

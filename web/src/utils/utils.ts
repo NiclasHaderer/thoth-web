@@ -1,4 +1,4 @@
-import type { UUID } from "@thoth/client/generated/models"
+import type { UUID } from "@dewey/client/generated/models"
 
 export const toBase64 = (file: File) =>
   new Promise<string>((resolve, reject) => {

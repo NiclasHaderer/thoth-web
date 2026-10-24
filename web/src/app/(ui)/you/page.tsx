@@ -1,11 +1,11 @@
 import { cn } from "cn"
 import { ChevronRightIcon, LogOutIcon, UserIcon } from "lucide-react"
-import { Link } from "@thoth/components/link.tsx"
-import { MobileTopBar } from "@thoth/components/menu/mobile-top-bar"
-import { accountItem, adminItems, licensesItem } from "@thoth/components/menu/settings-nav"
-import { Avatar, AvatarFallback } from "@thoth/components/ui/avatar"
-import { rowInteraction } from "@thoth/lib/interaction-styles"
-import { useCurrentUser } from "@thoth/queries/current-user-queries"
+import { Link } from "@dewey/components/link.tsx"
+import { MobileTopBar } from "@dewey/components/menu/mobile-top-bar"
+import { accountItem, adminItems, licensesItem } from "@dewey/components/menu/settings-nav"
+import { Avatar, AvatarFallback } from "@dewey/components/ui/avatar"
+import { rowInteraction } from "@dewey/lib/interaction-styles"
+import { useCurrentUser } from "@dewey/queries/current-user-queries"
 
 export const YouOutlet = () => {
   const { data: user } = useCurrentUser()

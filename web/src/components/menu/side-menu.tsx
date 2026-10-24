@@ -3,8 +3,8 @@ import { LucideIcon, PanelLeftCloseIcon, PanelLeftOpenIcon } from "lucide-react"
 import { motion } from "motion/react"
 import { FC, ReactNode } from "react"
 import { Button } from "react-aria-components"
-import { NavItem } from "@thoth/components/menu/nav-item"
-import { preferences, usePreferences } from "@thoth/state/preferences"
+import { NavItem } from "@dewey/components/menu/nav-item"
+import { preferences, usePreferences } from "@dewey/state/preferences"
 
 export type SideMenuEntry = {
   href: string

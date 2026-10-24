@@ -1,10 +1,10 @@
 import { CheckIcon, ImageOffIcon, PlayIcon } from "lucide-react"
 import { FC, forwardRef, ReactNode } from "react"
-import { UUID } from "@thoth/client"
-import { ContextMenuTarget } from "@thoth/components/generic/resource-actions"
-import { Link } from "@thoth/components/link.tsx"
-import { useCoverSrc } from "@thoth/downloads"
-import { getSizing } from "@thoth/utils/responsive-sizing.ts"
+import { UUID } from "@dewey/client"
+import { ContextMenuTarget } from "@dewey/components/generic/resource-actions"
+import { Link } from "@dewey/components/link.tsx"
+import { useCoverSrc } from "@dewey/downloads"
+import { getSizing } from "@dewey/utils/responsive-sizing.ts"
 
 interface GenericPreviewProps {
   id: UUID

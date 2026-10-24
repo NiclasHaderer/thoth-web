@@ -2,20 +2,20 @@ import { cn } from "cn"
 import { CheckIcon, ChevronDownIcon, LibraryIcon, SettingsIcon } from "lucide-react"
 import { FC } from "react"
 import { Button, MenuTrigger } from "react-aria-components"
-import { UUID } from "@thoth/client"
-import { LibraryAvatar } from "@thoth/components/library/library-avatar"
-import { CollapsibleLabel } from "@thoth/components/menu/collapsible-label"
-import { downloadsDestination, libraryDestinations } from "@thoth/components/menu/library-nav"
-import { SideMenu } from "@thoth/components/menu/side-menu"
+import { UUID } from "@dewey/client"
+import { LibraryAvatar } from "@dewey/components/library/library-avatar"
+import { CollapsibleLabel } from "@dewey/components/menu/collapsible-label"
+import { downloadsDestination, libraryDestinations } from "@dewey/components/menu/library-nav"
+import { SideMenu } from "@dewey/components/menu/side-menu"
 import {
   DropdownMenu,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-} from "@thoth/components/ui/dropdown-menu"
-import { useCurrentUser } from "@thoth/queries/current-user-queries"
-import { useLibraries } from "@thoth/queries/library-queries"
-import { pluralize } from "@thoth/utils/utils"
+} from "@dewey/components/ui/dropdown-menu"
+import { useCurrentUser } from "@dewey/queries/current-user-queries"
+import { useLibraries } from "@dewey/queries/library-queries"
+import { pluralize } from "@dewey/utils/utils"
 
 export const LibraryMenu: FC<{ libraryId: UUID | undefined; className?: string }> = ({ libraryId, className }) => {
   const libraries = useLibraries().data ?? []

@@ -15,9 +15,9 @@ import {
   SeriesDetailed,
   SeriesUpdate,
   UUID,
-} from "@thoth/client"
-import { useDownloadedBook } from "@thoth/downloads"
-import { playback, usePlayback } from "@thoth/playback"
+} from "@dewey/client"
+import { useDownloadedBook } from "@dewey/downloads"
+import { playback, usePlayback } from "@dewey/playback"
 import { usePagedList } from "./paged-list-query"
 import { cachedListItem, invalidateLibraryContent, invalidatePlayState, patchBook, patchEntity } from "./query-cache"
 import { EntityQueries, Identifiable, NameResource, PagedQueries, queries } from "./query-definitions"

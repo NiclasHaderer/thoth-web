@@ -2,15 +2,15 @@ import { cn } from "cn"
 import { ChevronDownIcon, LogOutIcon, UserIcon, SettingsIcon } from "lucide-react"
 import { FC, ReactNode } from "react"
 import { Button, MenuTrigger } from "react-aria-components"
-import { UUID } from "@thoth/client"
-import { Logo } from "@thoth/components/icons/logo"
-import { Link } from "@thoth/components/link.tsx"
-import { LibrarySearch } from "@thoth/components/menu/library-search"
-import { accountItem } from "@thoth/components/menu/settings-nav"
-import { Avatar, AvatarFallback } from "@thoth/components/ui/avatar"
-import { DropdownMenu, DropdownMenuItem } from "@thoth/components/ui/dropdown-menu"
-import { useCurrentLibraryId } from "@thoth/hooks/use-current-library"
-import { useCurrentUser } from "@thoth/queries/current-user-queries"
+import { UUID } from "@dewey/client"
+import { Logo } from "@dewey/components/icons/logo"
+import { Link } from "@dewey/components/link.tsx"
+import { LibrarySearch } from "@dewey/components/menu/library-search"
+import { accountItem } from "@dewey/components/menu/settings-nav"
+import { Avatar, AvatarFallback } from "@dewey/components/ui/avatar"
+import { DropdownMenu, DropdownMenuItem } from "@dewey/components/ui/dropdown-menu"
+import { useCurrentLibraryId } from "@dewey/hooks/use-current-library"
+import { useCurrentUser } from "@dewey/queries/current-user-queries"
 
 export const AppBar: FC = () => {
   const libraryId = useCurrentLibraryId()
@@ -31,7 +31,7 @@ const LogoLink: FC<{ libraryId: UUID | undefined; className?: string }> = ({ lib
       "focus-visible:bg-accent flex w-16 shrink-0 items-center justify-center rounded-l-xl px-1 transition-colors outline-none",
       className
     )}
-    aria-label="Thoth home"
+    aria-label="Dewey home"
   >
     <Logo className="size-full object-contain" />
   </Link>

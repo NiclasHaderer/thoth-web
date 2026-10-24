@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ReactNode, useState } from "react"
 import { Key } from "react-aria-components"
-import { TitledDialog } from "@thoth/components/titled-dialog"
-import { Button } from "@thoth/components/ui/button"
-import { DialogFooter } from "@thoth/components/ui/dialog"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@thoth/components/ui/tabs"
-import { Form, FormContext, FormOptions, useForm } from "@thoth/hooks/use-form.tsx"
+import { TitledDialog } from "@dewey/components/titled-dialog"
+import { Button } from "@dewey/components/ui/button"
+import { DialogFooter } from "@dewey/components/ui/dialog"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@dewey/components/ui/tabs"
+import { Form, FormContext, FormOptions, useForm } from "@dewey/hooks/use-form.tsx"
 
 interface EditSessionProps<T extends Record<string, any>> {
   initial: T

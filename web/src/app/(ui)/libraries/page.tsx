@@ -1,8 +1,8 @@
 import { useEffect } from "react"
 import { useLocation } from "wouter"
-import { useActiveLibraryId } from "@thoth/hooks/use-current-library"
-import { useCurrentUser } from "@thoth/queries/current-user-queries"
-import { useLibraries } from "@thoth/queries/library-queries"
+import { useActiveLibraryId } from "@dewey/hooks/use-current-library"
+import { useCurrentUser } from "@dewey/queries/current-user-queries"
+import { useLibraries } from "@dewey/queries/library-queries"
 
 export const LibrariesOutlet = () => {
   const { data: libraries } = useLibraries()

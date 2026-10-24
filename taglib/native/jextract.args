@@ -1,7 +1,7 @@
 # Symbols exposed to Kotlin. Read-only surface only: no taglib_*_set*, no save.
 # Consumed by ./gradlew :taglib:jextract, which regenerates src/main/java.
 --target-package
-io.thoth.taglib.ffi
+io.dewey.taglib.ffi
 --header-class-name
 TagLibC
 --include-function

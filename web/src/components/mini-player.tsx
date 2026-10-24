@@ -2,9 +2,9 @@ import { cn } from "cn"
 import { ImageOffIcon, Volume1Icon, Volume2Icon, VolumeXIcon } from "lucide-react"
 import { AnimatePresence, animate, motion, useMotionValue } from "motion/react"
 import { FC, PropsWithChildren, useRef } from "react"
-import { Track } from "@thoth/client"
-import { BookByline, FullscreenPlayer } from "@thoth/components/fullscreen-player"
-import { PlayerButton } from "@thoth/components/player-button"
+import { Track } from "@dewey/client"
+import { BookByline, FullscreenPlayer } from "@dewey/components/fullscreen-player"
+import { PlayerButton } from "@dewey/components/player-button"
 import {
   PlayPauseIcon,
   RotateCcwIcon,
@@ -12,12 +12,12 @@ import {
   SkipBackIcon,
   SkipForwardIcon,
   SquareIcon,
-} from "@thoth/components/player-icons"
-import { ProgressBar } from "@thoth/components/progress-bar"
-import { Slider } from "@thoth/components/ui/slider"
-import { useCoverSrc } from "@thoth/downloads"
-import { FullscreenPlayerController } from "@thoth/hooks/use-fullscreen-player"
-import { useBreakpoint } from "@thoth/hooks/use-media-query"
+} from "@dewey/components/player-icons"
+import { ProgressBar } from "@dewey/components/progress-bar"
+import { Slider } from "@dewey/components/ui/slider"
+import { useCoverSrc } from "@dewey/downloads"
+import { FullscreenPlayerController } from "@dewey/hooks/use-fullscreen-player"
+import { useBreakpoint } from "@dewey/hooks/use-media-query"
 import {
   PlayingBook,
   SKIP_BACK,
@@ -28,7 +28,7 @@ import {
   usePlayback,
   useTrackProgress,
   useVolume,
-} from "@thoth/playback"
+} from "@dewey/playback"
 import { ElapsedTime, TrackDuration } from "./playback-time"
 
 const dockSpring = { type: "spring", stiffness: 520, damping: 32, mass: 0.7 } as const

@@ -1,6 +1,6 @@
 import { Component, FC, ReactNode, Suspense, lazy, useCallback, useEffect, useState } from "react"
-import { Button } from "@thoth/components/ui/button"
-import { isOnline } from "@thoth/hooks/online-status"
+import { Button } from "@dewey/components/ui/button"
+import { isOnline } from "@dewey/hooks/online-status"
 
 export type Loader<P> = () => Promise<{ default: FC<P> }>
 

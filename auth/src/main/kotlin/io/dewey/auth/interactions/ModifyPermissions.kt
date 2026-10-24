@@ -1,0 +1,33 @@
+package io.dewey.auth.interactions
+
+import io.dewey.auth.deweyAuthConfig
+import io.dewey.auth.models.DeweyModifyPermissions
+import io.dewey.auth.models.DeweyUser
+import io.dewey.auth.utils.DeweyPrincipal
+import io.dewey.auth.utils.deweyPrincipal
+import io.dewey.auth.utils.wrap
+import io.dewey.auth.withUserMutation
+import io.dewey.openapi.ktor.errors.ErrorResponse
+import io.ktor.server.routing.RoutingContext
+import java.util.UUID
+
+interface DeweyModifyPermissionsParams {
+    val id: UUID
+}
+
+fun <UPDATE_PERMISSIONS> RoutingContext.modifyUserPermissions(
+    params: DeweyModifyPermissionsParams,
+    body: DeweyModifyPermissions<UPDATE_PERMISSIONS>,
+): DeweyUser {
+    val principal = deweyPrincipal<DeweyPrincipal>()
+    val config = deweyAuthConfig<Any, UPDATE_PERMISSIONS>()
+
+    if (!config.isAdmin(principal)) {
+        throw ErrorResponse.forbidden("Modify", "permissions")
+    }
+
+    return withUserMutation {
+        val user = config.getUserById(params.id) ?: throw ErrorResponse.notFound("User", params.id)
+        config.updateUserPermissions(user, body.permissions).wrap()
+    }
+}

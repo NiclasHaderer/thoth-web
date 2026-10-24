@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
-import { UUID } from "@thoth/client"
+import { UUID } from "@dewey/client"
 import { queries } from "./query-definitions"
 
 type Search = { q: string; authorName?: string }

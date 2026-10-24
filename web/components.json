@@ -13,11 +13,11 @@
   "iconLibrary": "lucide",
   "rtl": false,
   "aliases": {
-    "components": "@thoth/components",
+    "components": "@dewey/components",
     "utils": "cn",
-    "ui": "@thoth/components/ui",
-    "lib": "@thoth/lib",
-    "hooks": "@thoth/hooks"
+    "ui": "@dewey/components/ui",
+    "lib": "@dewey/lib",
+    "hooks": "@dewey/hooks"
   },
   "menuColor": "default",
   "menuAccent": "subtle",

@@ -1,8 +1,8 @@
 import { CircleArrowDownIcon, ImageOffIcon, UserIcon } from "lucide-react"
 import { FC } from "react"
-import { LibrarySearchResult, UUID } from "@thoth/client"
-import { Link } from "@thoth/components/link.tsx"
-import { useCoverSrc, useBookDownload } from "@thoth/downloads"
+import { LibrarySearchResult, UUID } from "@dewey/client"
+import { Link } from "@dewey/components/link.tsx"
+import { useCoverSrc, useBookDownload } from "@dewey/downloads"
 
 export const SearchResults: FC<{ search: LibrarySearchResult; onClose: () => void }> = ({ search, onClose }) => (
   <>

@@ -1,14 +1,14 @@
 import { cn } from "cn"
 import { ArrowDownToLineIcon, ImageOffIcon, RotateCcwIcon, TrashIcon, XIcon } from "lucide-react"
 import { FC } from "react"
-import { BookActionsMenu, BookContextMenu } from "@thoth/components/book/book-actions"
-import { confirmRemoveDownload, percent, startDownload } from "@thoth/components/book/book-download"
-import { Link } from "@thoth/components/link.tsx"
-import { MobileTopBar } from "@thoth/components/menu/mobile-top-bar"
-import { ResourceListHeader } from "@thoth/components/resource-list-header"
-import { toRuntime } from "@thoth/components/track/track-time-format"
-import { Button } from "@thoth/components/ui/button"
-import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@thoth/components/ui/empty"
+import { BookActionsMenu, BookContextMenu } from "@dewey/components/book/book-actions"
+import { confirmRemoveDownload, percent, startDownload } from "@dewey/components/book/book-download"
+import { Link } from "@dewey/components/link.tsx"
+import { MobileTopBar } from "@dewey/components/menu/mobile-top-bar"
+import { ResourceListHeader } from "@dewey/components/resource-list-header"
+import { toRuntime } from "@dewey/components/track/track-time-format"
+import { Button } from "@dewey/components/ui/button"
+import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@dewey/components/ui/empty"
 import {
   Item,
   ItemActions,
@@ -17,12 +17,12 @@ import {
   ItemGroup,
   ItemMedia,
   ItemTitle,
-} from "@thoth/components/ui/item"
-import { Progress, ProgressValue } from "@thoth/components/ui/progress"
-import { BookDownload, bookDownloads, useBookDownloads, useCoverSrc } from "@thoth/downloads"
-import { StorageUsage, useStorageUsage } from "@thoth/hooks/use-storage-usage"
-import { useBook } from "@thoth/queries/resource-queries"
-import { formatGigabytes, pluralize } from "@thoth/utils/utils"
+} from "@dewey/components/ui/item"
+import { Progress, ProgressValue } from "@dewey/components/ui/progress"
+import { BookDownload, bookDownloads, useBookDownloads, useCoverSrc } from "@dewey/downloads"
+import { StorageUsage, useStorageUsage } from "@dewey/hooks/use-storage-usage"
+import { useBook } from "@dewey/queries/resource-queries"
+import { formatGigabytes, pluralize } from "@dewey/utils/utils"
 
 const StorageBar: FC<{ downloadBytes: number; storage: StorageUsage }> = ({ downloadBytes, storage }) => {
   const available = Math.max(0, storage.quota - storage.usage)

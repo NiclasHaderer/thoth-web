@@ -1,7 +1,7 @@
 import { ReactNode } from "react"
-import { InputError } from "@thoth/components/input/input-error"
-import { OptionSelect, OptionSelectProps } from "@thoth/components/input/option-select"
-import { useField } from "@thoth/hooks/use-form"
+import { InputError } from "@dewey/components/input/input-error"
+import { OptionSelect, OptionSelectProps } from "@dewey/components/input/option-select"
+import { useField } from "@dewey/hooks/use-form"
 
 type SelectLineProps = {
   name: string

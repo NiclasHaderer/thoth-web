@@ -10,9 +10,9 @@ import {
   useRef,
   useState,
 } from "react"
-import { useOnMount } from "@thoth/hooks/use-lifecycle.ts"
-import { changedFields } from "@thoth/utils/changed-fields"
-import { notNullIsh } from "@thoth/utils/utils"
+import { useOnMount } from "@dewey/hooks/use-lifecycle.ts"
+import { changedFields } from "@dewey/utils/changed-fields"
+import { notNullIsh } from "@dewey/utils/utils"
 
 type SubmitError<T extends Record<string, any>> = Partial<{
   [K in keyof T]: string[] | undefined

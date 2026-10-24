@@ -10,11 +10,11 @@ import {
 } from "lucide-react"
 import { FC, useEffect, useMemo, useRef, useState } from "react"
 import { toast } from "sonner"
-import { ThothUserWithPermissions, UserPermissions } from "@thoth/client"
-import { ManagedInput } from "@thoth/components/input/managed-input.tsx"
-import { Avatar, AvatarFallback } from "@thoth/components/ui/avatar"
-import { Badge } from "@thoth/components/ui/badge"
-import { Button } from "@thoth/components/ui/button"
+import { DeweyUserWithPermissions, UserPermissions } from "@dewey/client"
+import { ManagedInput } from "@dewey/components/input/managed-input.tsx"
+import { Avatar, AvatarFallback } from "@dewey/components/ui/avatar"
+import { Badge } from "@dewey/components/ui/badge"
+import { Button } from "@dewey/components/ui/button"
 import {
   Dialog,
   DialogClose,
@@ -23,14 +23,14 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@thoth/components/ui/dialog"
-import { Form, useForm } from "@thoth/hooks/use-form.tsx"
-import { useSetUsername } from "@thoth/queries/current-user-queries"
-import { useDeleteUser, useUpdatePassword, useUpdateUsername } from "@thoth/queries/user-queries"
-import { logout } from "@thoth/state/user-data"
-import { pluralize } from "@thoth/utils/utils.ts"
+} from "@dewey/components/ui/dialog"
+import { Form, useForm } from "@dewey/hooks/use-form.tsx"
+import { useSetUsername } from "@dewey/queries/current-user-queries"
+import { useDeleteUser, useUpdatePassword, useUpdateUsername } from "@dewey/queries/user-queries"
+import { logout } from "@dewey/state/user-data"
+import { pluralize } from "@dewey/utils/utils.ts"
 
-export const User: FC<{ user: ThothUserWithPermissions<UserPermissions> }> = ({ user }) => {
+export const User: FC<{ user: DeweyUserWithPermissions<UserPermissions> }> = ({ user }) => {
   const setUsername = useSetUsername()
   const updateUsername = useUpdateUsername()
   const updatePassword = useUpdatePassword()

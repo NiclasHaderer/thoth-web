@@ -1,6 +1,6 @@
 import { ComponentProps, FC, useEffect } from "react"
 import { Link as WouterLink } from "wouter"
-import { prefetchRoute } from "@thoth/routes.tsx"
+import { prefetchRoute } from "@dewey/routes.tsx"
 
 type PrefetchMode = "render" | "intent" | "none"
 

@@ -1,7 +1,7 @@
 import { create } from "zustand"
 import { createJSONStorage, persist } from "zustand/middleware"
-import { UUID } from "@thoth/client"
-import { persistKey } from "@thoth/client/persistence"
+import { UUID } from "@dewey/client"
+import { persistKey } from "@dewey/client/persistence"
 
 interface LastLibrary {
   lastLibraryId?: UUID

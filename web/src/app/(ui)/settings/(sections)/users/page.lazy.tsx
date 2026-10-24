@@ -1,5 +1,5 @@
-import { SettingsSection } from "@thoth/components/settings/settings-section"
-import { UserManager } from "@thoth/components/user-manager"
+import { SettingsSection } from "@dewey/components/settings/settings-section"
+import { UserManager } from "@dewey/components/user-manager"
 
 export const SettingsUsersOutlet = () => {
   return (

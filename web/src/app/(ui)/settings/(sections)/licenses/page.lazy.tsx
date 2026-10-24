@@ -1,9 +1,9 @@
 import { ChevronRightIcon } from "lucide-react"
 import { FC } from "react"
-import { ThirdPartyLicense } from "@thoth/client"
-import { SettingsSection } from "@thoth/components/settings/settings-section"
-import { Badge } from "@thoth/components/ui/badge"
-import { useServerLicenses, useWebLicenses } from "@thoth/queries/system-queries"
+import { ThirdPartyLicense } from "@dewey/client"
+import { SettingsSection } from "@dewey/components/settings/settings-section"
+import { Badge } from "@dewey/components/ui/badge"
+import { useServerLicenses, useWebLicenses } from "@dewey/queries/system-queries"
 
 const LicenseList: FC<{ licenses: ThirdPartyLicense[] }> = ({ licenses }) => (
   <div className="flex flex-col gap-2">
@@ -56,7 +56,7 @@ export const SettingsLicensesOutlet = () => {
   return (
     <SettingsSection
       title="Open source licenses"
-      description="Thoth is built on open source software. Thank you to their authors."
+      description="Dewey is built on open source software. Thank you to their authors."
     >
       <h3 className="mb-3 text-lg">Web ({web.data?.length ?? 0})</h3>
       {web.isError ? (

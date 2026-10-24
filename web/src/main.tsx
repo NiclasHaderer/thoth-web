@@ -3,11 +3,11 @@ import { StrictMode } from "react"
 import { RouterProvider } from "react-aria-components"
 import { createRoot } from "react-dom/client"
 import { navigate } from "wouter/use-browser-location"
-import { CACHE_BUSTER, persister } from "@thoth/client/persistence"
-import { queryClient } from "@thoth/client/query-client"
-import { Toaster } from "@thoth/components/ui/sonner.tsx"
-import { Routes } from "@thoth/routes.tsx"
-import { UserDataProvider } from "@thoth/state/user-data"
+import { CACHE_BUSTER, persister } from "@dewey/client/persistence"
+import { queryClient } from "@dewey/client/query-client"
+import { Toaster } from "@dewey/components/ui/sonner.tsx"
+import { Routes } from "@dewey/routes.tsx"
+import { UserDataProvider } from "@dewey/state/user-data"
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

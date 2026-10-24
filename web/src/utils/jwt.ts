@@ -1,4 +1,4 @@
-import type { UUID } from "@thoth/client/generated/models"
+import type { UUID } from "@dewey/client/generated/models"
 
 interface JwtHeader {
   alg: string

@@ -27,16 +27,16 @@ fun Application.module() {
 And then configure the OpenApi routing.
 
 ```kotlin
-import io.thoth.openapi.ktor.errors.configureStatusPages
-import io.thoth.openapi.ktor.plugins.OpenAPIRouting
-import io.thoth.openapi.ktor.plugins.OpenAPISchemaType
-import io.thoth.openapi.ktor.plugins.OpenAPIWebUI
+import io.dewey.openapi.ktor.errors.configureStatusPages
+import io.dewey.openapi.ktor.plugins.OpenAPIRouting
+import io.dewey.openapi.ktor.plugins.OpenAPISchemaType
+import io.dewey.openapi.ktor.plugins.OpenAPIWebUI
 
 fun Application.openApiModule() {
     // Specify the openapi information
     install(OpenAPIRouting) {
         info {
-            title = "Thoth"
+            title = "Dewey"
             version = "0.0.1"
             description = "Audiobook server"
         }
@@ -100,8 +100,8 @@ class Api {
 ### Using the defined routes
 
 ```kotlin
-import io.thoth.openapi.ktor.get
-import io.thoth.openapi.ktor.post
+import io.dewey.openapi.ktor.get
+import io.dewey.openapi.ktor.post
 
 
 class SomeModel

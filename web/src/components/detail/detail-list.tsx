@@ -2,7 +2,7 @@ import { entityLink } from "@/components/detail/detail-layout.tsx"
 import { Button, buttonVariants } from "@/components/ui/button.tsx"
 import { DropdownMenu, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu.tsx"
 import { FC, useLayoutEffect, useRef, useState } from "react"
-import { Link } from "@thoth/components/link.tsx"
+import { Link } from "@dewey/components/link.tsx"
 
 export interface DetailListItem {
   key: string

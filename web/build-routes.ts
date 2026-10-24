@@ -93,7 +93,7 @@ const insertPath = (folderPath: string, layout: Path["layout"], page: Path["page
 const resolvePaths = async (root: string, paths: Path) => {
   const { files, directories } = await listFolderContent(root)
   for (const file of files) {
-    const importPath = `${root.replace(rootDir, "")}/${file}`.replace("/src", "@thoth")
+    const importPath = `${root.replace(rootDir, "")}/${file}`.replace("/src", "@dewey")
 
     const exportSymbol = await resolveExport(`${root}/${file}`)
 
@@ -245,9 +245,9 @@ const buildRoutes = (paths: Path) => {
   }
   const imports = writeImports(paths, [
     'import { Route, Router, Switch } from "wouter"',
-    'import { lazyView, preloadView, type Loader } from "@thoth/components/lazy-view.tsx"',
-    'import { NotFound } from "@thoth/components/status-page.tsx"',
-    'import { UUID } from "@thoth/client"',
+    'import { lazyView, preloadView, type Loader } from "@dewey/components/lazy-view.tsx"',
+    'import { NotFound } from "@dewey/components/status-page.tsx"',
+    'import { UUID } from "@dewey/client"',
   ])
 
   const cleanupPath = (path: string) => {

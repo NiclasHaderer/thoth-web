@@ -31,8 +31,8 @@ import {
   type TagListProps,
   type TagProps,
 } from "react-aria-components"
-import { Button } from "@thoth/components/ui/button"
-import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "@thoth/components/ui/input-group"
+import { Button } from "@dewey/components/ui/button"
+import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "@dewey/components/ui/input-group"
 
 function ComboboxValue<T>({ ...props }: ComboBoxValueProps<T>) {
   return <ComboBoxValuePrimitive data-slot="combobox-value" {...props} />

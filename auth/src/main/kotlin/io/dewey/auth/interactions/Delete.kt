@@ -1,0 +1,30 @@
+package io.dewey.auth.interactions
+
+import io.dewey.auth.deweyAuthConfig
+import io.dewey.auth.utils.DeweyPrincipal
+import io.dewey.auth.utils.deweyPrincipal
+import io.dewey.auth.withUserMutation
+import io.dewey.openapi.ktor.errors.ErrorResponse
+import io.ktor.server.routing.RoutingContext
+import java.util.UUID
+
+interface DeweyDeleteUserParams {
+    val id: UUID
+}
+
+fun RoutingContext.deleteUser(
+    params: DeweyDeleteUserParams,
+    body: Unit,
+) {
+    val principal = deweyPrincipal<DeweyPrincipal>()
+    val config = deweyAuthConfig<Any, Any>()
+
+    if (principal.userId != params.id && !config.isAdmin(principal)) {
+        throw ErrorResponse.forbidden("Delete", "user")
+    }
+
+    withUserMutation {
+        val user = config.getUserById(params.id) ?: throw ErrorResponse.userError("User not found")
+        config.deleteUser(user)
+    }
+}

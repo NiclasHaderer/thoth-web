@@ -7,8 +7,8 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue as SelectValueDisplay,
-} from "@thoth/components/ui/select"
-import { deepEquals } from "@thoth/utils/deep-equals"
+} from "@dewey/components/ui/select"
+import { deepEquals } from "@dewey/utils/deep-equals"
 
 type SelectValue<T> = {
   value: T

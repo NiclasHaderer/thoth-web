@@ -1,7 +1,7 @@
 import { ArrowDownAZIcon, ArrowDownZAIcon } from "lucide-react"
 import { FC } from "react"
-import { Order } from "@thoth/client"
-import { Button } from "@thoth/components/ui/button"
+import { Order } from "@dewey/client"
+import { Button } from "@dewey/components/ui/button"
 
 export const ResourceListHeader: FC<{
   title: string

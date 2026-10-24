@@ -1,7 +1,7 @@
-import { UUID } from "@thoth/client"
-import { coverStreamUrl } from "@thoth/client/media-urls"
-import { useOnline } from "@thoth/hooks/online-status"
-import { isUUID } from "@thoth/utils/utils"
+import { UUID } from "@dewey/client"
+import { coverStreamUrl } from "@dewey/client/media-urls"
+import { useOnline } from "@dewey/hooks/online-status"
+import { isUUID } from "@dewey/utils/utils"
 import { useBookDownloads } from "./book-downloads-store"
 
 export const useCoverSrc = () => {

@@ -1,10 +1,10 @@
 import { MotionValue, animate, useMotionValue, useTransform } from "motion/react"
 import { useEffect, useRef, useState } from "react"
 import { useLocation, useSearch } from "wouter"
-import { useEvent } from "@thoth/hooks/use-event"
-import { useBreakpoint } from "@thoth/hooks/use-media-query"
-import { usePlayback } from "@thoth/playback"
-import { withoutSearchParam } from "@thoth/utils/utils"
+import { useEvent } from "@dewey/hooks/use-event"
+import { useBreakpoint } from "@dewey/hooks/use-media-query"
+import { usePlayback } from "@dewey/playback"
+import { withoutSearchParam } from "@dewey/utils/utils"
 
 export const playerSpring = { type: "spring", stiffness: 420, damping: 38, mass: 0.8 } as const
 
