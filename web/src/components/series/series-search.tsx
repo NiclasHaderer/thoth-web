@@ -1,11 +1,11 @@
 import { SearchIcon } from "lucide-react"
 import { FC, useState } from "react"
-import { MetadataSeries, UUID } from "@thoth/client"
-import { MetadataResults } from "@thoth/components/generic/metadata-results"
-import { LabeledInput } from "@thoth/components/input/labeled-input"
-import { LoadingCards } from "@thoth/components/loading-card"
-import { Button } from "@thoth/components/ui/button"
-import { useSeriesMetadataSearch } from "@thoth/queries/metadata-queries"
+import { MetadataSeries, UUID } from "@dewey/client"
+import { MetadataResults } from "@dewey/components/generic/metadata-results"
+import { LabeledInput } from "@dewey/components/input/labeled-input"
+import { LoadingCards } from "@dewey/components/loading-card"
+import { Button } from "@dewey/components/ui/button"
+import { useSeriesMetadataSearch } from "@dewey/queries/metadata-queries"
 
 export const SeriesSearch: FC<{
   series?: string | null | undefined

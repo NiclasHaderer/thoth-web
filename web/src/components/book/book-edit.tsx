@@ -11,11 +11,11 @@ import {
   SearchIcon,
 } from "lucide-react"
 import { FC, useMemo } from "react"
-import { Book, BookUpdate, MetadataBook, UUID } from "@thoth/client"
-import { GenericEdit } from "@thoth/components/generic/generic-edit.tsx"
-import { CoverPicker } from "@thoth/components/input/cover-picker"
-import { ManagedInput } from "@thoth/components/input/managed-input"
-import { MultiCombobox } from "@thoth/components/input/multi-combobox"
+import { Book, BookUpdate, MetadataBook, UUID } from "@dewey/client"
+import { GenericEdit } from "@dewey/components/generic/generic-edit.tsx"
+import { CoverPicker } from "@dewey/components/input/cover-picker"
+import { ManagedInput } from "@dewey/components/input/managed-input"
+import { MultiCombobox } from "@dewey/components/input/multi-combobox"
 import {
   useAllAuthors,
   useAllGenres,
@@ -23,7 +23,7 @@ import {
   useCreateAuthor,
   useCreateSeries,
   useUpdateBook,
-} from "@thoth/queries/resource-queries"
+} from "@dewey/queries/resource-queries"
 import { FormContext } from "../../hooks/use-form"
 import { HtmlEditor } from "../html-editor"
 import { BookSearch } from "./book-search"

@@ -1,6 +1,6 @@
 import { cn } from "cn"
 import { FC, ReactNode } from "react"
-import { Dialog as UIDialog, DialogHeader, DialogTitle } from "@thoth/components/ui/dialog"
+import { Dialog as UIDialog, DialogHeader, DialogTitle } from "@dewey/components/ui/dialog"
 
 export const TitledDialog: FC<{
   isOpen: boolean

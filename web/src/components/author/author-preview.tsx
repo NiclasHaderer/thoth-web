@@ -1,6 +1,6 @@
 import { forwardRef } from "react"
-import { Author } from "@thoth/client"
-import { GenericPreview } from "@thoth/components/generic/generic-preview.tsx"
+import { Author } from "@dewey/client"
+import { GenericPreview } from "@dewey/components/generic/generic-preview.tsx"
 
 interface AuthorProps extends Author {
   size?: "small" | "normal"

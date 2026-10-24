@@ -1,10 +1,10 @@
 import { ArrowDownToLineIcon, CircleArrowDownIcon, TrashIcon } from "lucide-react"
 import { FC } from "react"
 import { toast } from "sonner"
-import { Book, UUID } from "@thoth/client"
-import { queryClient } from "@thoth/client/query-client"
-import { DialogProps, openDialog } from "@thoth/components/dialogs"
-import { menuItem } from "@thoth/components/generic/resource-actions"
+import { Book, UUID } from "@dewey/client"
+import { queryClient } from "@dewey/client/query-client"
+import { DialogProps, openDialog } from "@dewey/components/dialogs"
+import { menuItem } from "@dewey/components/generic/resource-actions"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -13,11 +13,11 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@thoth/components/ui/alert-dialog"
-import { DropdownMenuItem } from "@thoth/components/ui/dropdown-menu"
-import { bookDownloads, useBookDownload } from "@thoth/downloads"
-import { isDetailedBook } from "@thoth/models/model-typeguards"
-import { queries } from "@thoth/queries/query-definitions"
+} from "@dewey/components/ui/alert-dialog"
+import { DropdownMenuItem } from "@dewey/components/ui/dropdown-menu"
+import { bookDownloads, useBookDownload } from "@dewey/downloads"
+import { isDetailedBook } from "@dewey/models/model-typeguards"
+import { queries } from "@dewey/queries/query-definitions"
 
 const fraction = (progress: number) => Math.min(1, Math.max(0, progress))
 export const percent = (progress: number) => Math.round(fraction(progress) * 100)

@@ -10,11 +10,11 @@ import { isDetailedSeries } from "@/models/model-typeguards"
 import { useAutoMatchSeries, useSeries } from "@/queries/resource-queries"
 import { pluralize } from "@/utils/utils.ts"
 import { FC } from "react"
-import { openDialog } from "@thoth/components/dialogs"
-import { EditButton } from "@thoth/components/generic/edit-button"
-import { PreviewGridSkeleton } from "@thoth/components/generic/preview-skeleton"
-import { ResourceActions } from "@thoth/components/generic/resource-actions"
-import { QueryError } from "@thoth/components/status-page.tsx"
+import { openDialog } from "@dewey/components/dialogs"
+import { EditButton } from "@dewey/components/generic/edit-button"
+import { PreviewGridSkeleton } from "@dewey/components/generic/preview-skeleton"
+import { ResourceActions } from "@dewey/components/generic/resource-actions"
+import { QueryError } from "@dewey/components/status-page.tsx"
 
 const loadSeriesEdit = () => import("./series-edit").then(module => module.SeriesEdit)
 

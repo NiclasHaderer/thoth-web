@@ -1,4 +1,4 @@
-import { Track } from "@thoth/client"
+import { Track } from "@dewey/client"
 
 export const trackStartMs = (tracks: Track[], index: number): number =>
   tracks.slice(0, index).reduce((sum, track) => sum + track.durationMs, 0)

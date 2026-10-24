@@ -1,0 +1,140 @@
+package io.dewey.server.repositories
+
+import io.dewey.openapi.ktor.errors.ErrorResponse
+import io.dewey.server.database.tables.AuthorBookTable
+import io.dewey.server.database.tables.AuthorTable
+import io.dewey.server.database.tables.BookTable
+import io.dewey.server.database.tables.LibraryEntityTable
+import io.dewey.server.database.tables.SeriesBookTable
+import io.dewey.server.database.tables.SeriesTable
+import io.dewey.server.database.tables.authorLinksWithBooks
+import io.dewey.server.database.tables.hide
+import io.dewey.server.database.tables.seriesLinksWithBooks
+import io.dewey.server.database.tables.unhide
+import org.jetbrains.exposed.v1.core.Column
+import org.jetbrains.exposed.v1.core.ColumnSet
+import org.jetbrains.exposed.v1.core.Op
+import org.jetbrains.exposed.v1.core.SortOrder
+import org.jetbrains.exposed.v1.core.Transaction
+import org.jetbrains.exposed.v1.core.and
+import org.jetbrains.exposed.v1.core.dao.id.EntityID
+import org.jetbrains.exposed.v1.core.eq
+import org.jetbrains.exposed.v1.core.inList
+import org.jetbrains.exposed.v1.core.isNull
+import org.jetbrains.exposed.v1.core.not
+import org.jetbrains.exposed.v1.core.notInSubQuery
+import org.jetbrains.exposed.v1.jdbc.select
+import java.time.Duration
+import java.time.Instant
+import java.util.UUID
+
+// How long a book/author/series should be kept around before being properly deleted
+val DEFER_DELETION_GRACE: Duration = Duration.ofHours(24)
+
+// Hidden books do not count: an author or series whose every book is on its way out hides them
+context(_: Transaction)
+fun visiblyLinked(
+    linksWithBooks: ColumnSet,
+    owner: Column<EntityID<UUID>>,
+) = linksWithBooks
+    .select(owner)
+    .where { BookTable.deferDeletionUntil.isNull() }
+
+context(_: Transaction)
+fun requireVisible(
+    owner: LibraryEntityTable,
+    thing: String,
+    id: UUID,
+) {
+    val hidden =
+        owner
+            .select(owner.id)
+            .where { owner.visible and (owner.id eq id) }
+            .empty()
+    if (hidden) throw ErrorResponse.notFound(thing, id)
+}
+
+// An orphan gets a deadline, which also hides it, anything with a book again is un-hidden. An existing
+// deadline is never pushed back: touching an orphan does not buy it another grace period.
+context(_: Transaction)
+fun stampDeferral(
+    table: LibraryEntityTable,
+    scope: Op<Boolean>,
+    orphaned: Op<Boolean>,
+    now: Instant,
+) {
+    table.hide(scope and orphaned, until = now.plus(DEFER_DELETION_GRACE))
+    table.unhide(scope and not(orphaned))
+}
+
+// For anything that changes which books hang off an author or series, instead of waiting for the next scan
+context(_: Transaction)
+fun refreshAuthorDeferral(authorIds: Collection<UUID>) =
+    stampDeferral(
+        table = AuthorTable,
+        scope = AuthorTable.id inList authorIds,
+        orphaned = AuthorTable.id notInSubQuery visiblyLinked(authorLinksWithBooks, AuthorBookTable.author),
+        now = Instant.now(),
+    )
+
+context(_: Transaction)
+fun refreshSeriesDeferral(seriesIds: Collection<UUID>) =
+    stampDeferral(
+        table = SeriesTable,
+        scope = SeriesTable.id inList seriesIds,
+        orphaned = SeriesTable.id notInSubQuery visiblyLinked(seriesLinksWithBooks, SeriesBookTable.series),
+        now = Instant.now(),
+    )
+
+fun noMatch(searchedFor: String): ErrorResponse =
+    ErrorResponse.missing("No metadata agent of the library had a match for '$searchedFor'")
+
+interface Repository<RAW, NORMAL, DETAILED, PARTIAL_API> {
+    val searchLimit: Int
+        get() = 30
+
+    fun raw(
+        id: UUID,
+        libraryId: UUID,
+    ): RAW
+
+    fun get(
+        userId: UUID,
+        id: UUID,
+        libraryId: UUID,
+        showInvisible: Boolean = false,
+    ): DETAILED
+
+    fun getAll(
+        userId: UUID,
+        libraryId: UUID,
+        order: SortOrder,
+        limit: Int = 20,
+        offset: Long = 0L,
+        showInvisible: Boolean = false,
+    ): List<NORMAL>
+
+    fun search(
+        userId: UUID,
+        query: String,
+        libraryId: UUID,
+    ): List<NORMAL>
+
+    fun modify(
+        userId: UUID,
+        id: UUID,
+        libraryId: UUID,
+        partial: PARTIAL_API,
+    ): NORMAL
+
+    fun autoMatch(
+        userId: UUID,
+        id: UUID,
+        libraryId: UUID,
+    ): NORMAL
+
+    fun total(
+        libraryId: UUID,
+        showInvisible: Boolean = false,
+    ): Long
+}

@@ -1,6 +1,6 @@
 import { PlusIcon, CheckIcon, XIcon, FolderIcon } from "lucide-react"
 import { FC, useState } from "react"
-import { InputError } from "@thoth/components/input/input-error"
+import { InputError } from "@dewey/components/input/input-error"
 import {
   Breadcrumb,
   BreadcrumbEllipsis,
@@ -8,11 +8,11 @@ import {
   BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
-} from "@thoth/components/ui/breadcrumb"
-import { Button } from "@thoth/components/ui/button"
-import { ButtonGroup } from "@thoth/components/ui/button-group"
-import { DropdownMenu, DropdownMenuItem, DropdownMenuTrigger } from "@thoth/components/ui/dropdown-menu"
-import { useFolders } from "@thoth/queries/system-queries"
+} from "@dewey/components/ui/breadcrumb"
+import { Button } from "@dewey/components/ui/button"
+import { ButtonGroup } from "@dewey/components/ui/button-group"
+import { DropdownMenu, DropdownMenuItem, DropdownMenuTrigger } from "@dewey/components/ui/dropdown-menu"
+import { useFolders } from "@dewey/queries/system-queries"
 
 export const FolderManager: FC<{
   onSelectFolder?: (path: string) => void

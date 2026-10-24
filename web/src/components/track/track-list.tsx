@@ -1,7 +1,7 @@
 import { FC, ReactNode, memo } from "react"
-import { UUID } from "@thoth/client"
-import { detailLabel } from "@thoth/components/detail/detail-layout"
-import { Skeleton } from "@thoth/components/ui/skeleton"
+import { UUID } from "@dewey/client"
+import { detailLabel } from "@dewey/components/detail/detail-layout"
+import { Skeleton } from "@dewey/components/ui/skeleton"
 import { Track } from "./track"
 
 const TITLE_WIDTHS = ["w-3/5", "w-4/5", "w-2/3", "w-1/2", "w-3/4"]

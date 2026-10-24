@@ -1,6 +1,6 @@
 import { useAnimationFrame, useMotionValue } from "motion/react"
 import { useEffect, useRef } from "react"
-import { Book } from "@thoth/client"
+import { Book } from "@dewey/client"
 import { audio } from "./active-audio-output"
 import { playback, RESTART_THRESHOLD } from "./playback-actions"
 import { PlaybackState, usePlayback } from "./playback-store"

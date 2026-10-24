@@ -1,16 +1,16 @@
 import { FC } from "react"
-import { UUID } from "@thoth/client"
-import { AuthorPreview } from "@thoth/components/author/author-preview.tsx"
-import { BookPreview } from "@thoth/components/book/book-preview.tsx"
-import { PreviewSkeleton } from "@thoth/components/generic/preview-skeleton"
-import { ScrollRow } from "@thoth/components/scroll-row"
-import { SeriesPreview } from "@thoth/components/series/series-preview.tsx"
+import { UUID } from "@dewey/client"
+import { AuthorPreview } from "@dewey/components/author/author-preview.tsx"
+import { BookPreview } from "@dewey/components/book/book-preview.tsx"
+import { PreviewSkeleton } from "@dewey/components/generic/preview-skeleton"
+import { ScrollRow } from "@dewey/components/scroll-row"
+import { SeriesPreview } from "@dewey/components/series/series-preview.tsx"
 import {
   useAuthorsPreview,
   useBooksPreview,
   useContinueListening,
   useSeriesPreview,
-} from "@thoth/queries/resource-queries"
+} from "@dewey/queries/resource-queries"
 
 const PREVIEW_COUNT = 20
 const PREVIEW_SPACING = "mx-3 align-top first:ml-0!"

@@ -1,6 +1,6 @@
 import { FC, ReactNode } from "react"
-import { isNetworkError } from "@thoth/client/api-error"
-import { detailLabel } from "@thoth/components/detail/detail-layout"
+import { isNetworkError } from "@dewey/client/api-error"
+import { detailLabel } from "@dewey/components/detail/detail-layout"
 
 export const PartialSection: FC<{
   title: string

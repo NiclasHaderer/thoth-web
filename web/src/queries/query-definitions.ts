@@ -1,6 +1,6 @@
 import { queryOptions } from "@tanstack/react-query"
-import webLicensesUrl from "@thoth/assets/third-party-licenses.json?url"
-import { Api, isNetworkError, Order, PaginatedResponse, ThirdPartyLicense, UUID } from "@thoth/client"
+import webLicensesUrl from "@dewey/assets/third-party-licenses.json?url"
+import { Api, isNetworkError, Order, PaginatedResponse, ThirdPartyLicense, UUID } from "@dewey/client"
 import { cachedLibrarySearch } from "./query-cache"
 
 export type Resource = "books" | "series" | "authors"

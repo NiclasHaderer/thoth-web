@@ -1,12 +1,12 @@
 import { SearchIcon } from "lucide-react"
 import { FC, useState } from "react"
-import { MetadataAuthor, UUID } from "@thoth/client"
-import { MetadataResults } from "@thoth/components/generic/metadata-results"
-import { LabeledInput } from "@thoth/components/input/labeled-input"
-import { LoadingCards } from "@thoth/components/loading-card"
-import { ResponsiveImage } from "@thoth/components/responsive-image"
-import { Button } from "@thoth/components/ui/button"
-import { useAuthorMetadataSearch } from "@thoth/queries/metadata-queries"
+import { MetadataAuthor, UUID } from "@dewey/client"
+import { MetadataResults } from "@dewey/components/generic/metadata-results"
+import { LabeledInput } from "@dewey/components/input/labeled-input"
+import { LoadingCards } from "@dewey/components/loading-card"
+import { ResponsiveImage } from "@dewey/components/responsive-image"
+import { Button } from "@dewey/components/ui/button"
+import { useAuthorMetadataSearch } from "@dewey/queries/metadata-queries"
 
 export const AuthorSearch: FC<{
   authorSearch?: string | null | undefined

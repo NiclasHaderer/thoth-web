@@ -2,9 +2,9 @@ import { cn } from "cn"
 import { motion } from "motion/react"
 import { FC } from "react"
 import { useLocation } from "wouter"
-import { UUID } from "@thoth/client"
-import { Link } from "@thoth/components/link.tsx"
-import { browseDestinations } from "@thoth/components/menu/library-nav"
+import { UUID } from "@dewey/client"
+import { Link } from "@dewey/components/link.tsx"
+import { browseDestinations } from "@dewey/components/menu/library-nav"
 
 const reveal = (chip: HTMLAnchorElement | null) =>
   chip?.scrollIntoView({ block: "nearest", inline: "nearest", behavior: "smooth" })

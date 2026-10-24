@@ -1,7 +1,7 @@
 import { cn } from "cn"
 import { ComponentProps, FC, KeyboardEvent, memo, ReactNode, RefObject, useEffect, useRef, useState } from "react"
-import { InputError } from "@thoth/components/input/input-error"
-import { InputGroup, InputGroupAddon, InputGroupInput } from "@thoth/components/ui/input-group"
+import { InputError } from "@dewey/components/input/input-error"
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@dewey/components/ui/input-group"
 
 export type LabeledInputProps = Omit<Omit<ComponentProps<"input">, "defaultValue">, "value"> & {
   label?: string | undefined

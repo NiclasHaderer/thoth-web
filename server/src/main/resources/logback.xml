@@ -9,7 +9,7 @@
     </root>
 
     <!-- Application -->
-    <logger name="io.thoth" level="DEBUG"/>
+    <logger name="io.dewey" level="DEBUG"/>
     <!-- Ktor -->
     <logger name="io.ktor" level="INFO"/>
     <logger name="io.netty" level="WARN"/>

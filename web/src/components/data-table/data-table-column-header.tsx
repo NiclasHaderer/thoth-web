@@ -2,8 +2,8 @@ import { Column } from "@tanstack/react-table"
 import { cn } from "cn"
 import { ArrowDownIcon, ArrowUpIcon, ChevronsUpDownIcon, EyeOffIcon } from "lucide-react"
 import { MenuTrigger } from "react-aria-components"
-import { Button } from "@thoth/components/ui/button"
-import { DropdownMenu, DropdownMenuItem, DropdownMenuSeparator } from "@thoth/components/ui/dropdown-menu"
+import { Button } from "@dewey/components/ui/button"
+import { DropdownMenu, DropdownMenuItem, DropdownMenuSeparator } from "@dewey/components/ui/dropdown-menu"
 
 interface DataTableColumnHeaderProps<TData, TValue> {
   column: Column<TData, TValue>

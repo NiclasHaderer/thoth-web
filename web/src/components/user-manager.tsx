@@ -1,12 +1,12 @@
 import { useMemo, useState } from "react"
 import { toast } from "sonner"
-import { useSession } from "@thoth/client"
-import { DataTable } from "@thoth/components/data-table/data-table"
-import { DataTableToolbar } from "@thoth/components/data-table/data-table-toolbar"
-import { UserRow, userColumns } from "@thoth/components/user-columns"
-import { UserDialog, UserFormValues } from "@thoth/components/user-dialog"
-import { useForm } from "@thoth/hooks/use-form.tsx"
-import { useDeleteUser, useUpdateUser, useUsers } from "@thoth/queries/user-queries"
+import { useSession } from "@dewey/client"
+import { DataTable } from "@dewey/components/data-table/data-table"
+import { DataTableToolbar } from "@dewey/components/data-table/data-table-toolbar"
+import { UserRow, userColumns } from "@dewey/components/user-columns"
+import { UserDialog, UserFormValues } from "@dewey/components/user-dialog"
+import { useForm } from "@dewey/hooks/use-form.tsx"
+import { useDeleteUser, useUpdateUser, useUsers } from "@dewey/queries/user-queries"
 
 export const UserManager = () => {
   const loggedInUserId = useSession(s => s.accessToken?.payload.sub)

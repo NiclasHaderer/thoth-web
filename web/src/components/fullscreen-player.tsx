@@ -3,21 +3,21 @@ import { ImageOffIcon } from "lucide-react"
 import { animate, motion, useMotionValue } from "motion/react"
 import { FC, Fragment, useEffect, useRef, useState } from "react"
 import { createPortal } from "react-dom"
-import { Link } from "@thoth/components/link.tsx"
-import { PlayerButton } from "@thoth/components/player-button"
+import { Link } from "@dewey/components/link.tsx"
+import { PlayerButton } from "@dewey/components/player-button"
 import {
   PlayPauseIcon,
   RotateCcwIcon,
   RotateCwIcon,
   SkipBackIcon,
   SkipForwardIcon,
-} from "@thoth/components/player-icons"
-import { PlaybackSpeedPicker, SleepTimerPicker } from "@thoth/components/player-pickers"
-import { ProgressBar } from "@thoth/components/progress-bar"
-import { Button } from "@thoth/components/ui/button"
-import { useCoverSrc } from "@thoth/downloads"
-import { useEvent } from "@thoth/hooks/use-event"
-import { FullscreenPlayerController, playerSpring } from "@thoth/hooks/use-fullscreen-player"
+} from "@dewey/components/player-icons"
+import { PlaybackSpeedPicker, SleepTimerPicker } from "@dewey/components/player-pickers"
+import { ProgressBar } from "@dewey/components/progress-bar"
+import { Button } from "@dewey/components/ui/button"
+import { useCoverSrc } from "@dewey/downloads"
+import { useEvent } from "@dewey/hooks/use-event"
+import { FullscreenPlayerController, playerSpring } from "@dewey/hooks/use-fullscreen-player"
 import {
   PlayingBook,
   SKIP_BACK,
@@ -27,7 +27,7 @@ import {
   useCanGoPrevious,
   usePlayback,
   useTrackProgress,
-} from "@thoth/playback"
+} from "@dewey/playback"
 import { ElapsedTime, TrackDuration } from "./playback-time"
 import { TrackList } from "./track/track-list"
 

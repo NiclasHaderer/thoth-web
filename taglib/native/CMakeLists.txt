@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(thoth_taglib CXX)
+project(dewey_taglib CXX)
 
 # TagLib sets these for its own subdirectory only, so repeat them here: tag_c is defined at this
 # level and needs the same C++ level, and the static libtag.a has to be PIC to link into a shared

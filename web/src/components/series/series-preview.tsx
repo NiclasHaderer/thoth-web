@@ -1,7 +1,7 @@
 import { forwardRef } from "react"
-import { Series } from "@thoth/client"
-import { GenericPreview } from "@thoth/components/generic/generic-preview.tsx"
-import { notNullIsh, unique } from "@thoth/utils/utils"
+import { Series } from "@dewey/client"
+import { GenericPreview } from "@dewey/components/generic/generic-preview.tsx"
+import { notNullIsh, unique } from "@dewey/utils/utils"
 
 interface SeriesPreviewProps extends Series {
   size?: "small" | "normal"

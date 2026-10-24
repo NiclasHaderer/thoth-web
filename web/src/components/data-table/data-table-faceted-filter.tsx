@@ -2,9 +2,9 @@ import { Column } from "@tanstack/react-table"
 import { PlusCircleIcon } from "lucide-react"
 import { ComponentType } from "react"
 import { MenuTrigger, Selection } from "react-aria-components"
-import { Badge } from "@thoth/components/ui/badge"
-import { Button } from "@thoth/components/ui/button"
-import { DropdownMenu, DropdownMenuItem } from "@thoth/components/ui/dropdown-menu"
+import { Badge } from "@dewey/components/ui/badge"
+import { Button } from "@dewey/components/ui/button"
+import { DropdownMenu, DropdownMenuItem } from "@dewey/components/ui/dropdown-menu"
 
 interface DataTableFacetedFilterProps<TData, TValue> {
   column?: Column<TData, TValue>

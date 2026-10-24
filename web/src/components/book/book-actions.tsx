@@ -1,19 +1,19 @@
 import { CircleCheckIcon, CirclePlayIcon, RotateCcwIcon } from "lucide-react"
 import { FC } from "react"
-import { Book } from "@thoth/client"
-import { BookDownloadItem } from "@thoth/components/book/book-download"
-import { openDialog } from "@thoth/components/dialogs"
+import { Book } from "@dewey/client"
+import { BookDownloadItem } from "@dewey/components/book/book-download"
+import { openDialog } from "@dewey/components/dialogs"
 import {
   ContextMenuTarget,
   menuItem,
   ResourceActions,
   ResourceContextMenu,
   ResourceMenuProps,
-} from "@thoth/components/generic/resource-actions"
-import { DropdownMenuItem } from "@thoth/components/ui/dropdown-menu"
-import { useCanPlay } from "@thoth/downloads"
-import { playback, usePlayback } from "@thoth/playback"
-import { useAutoMatchBook, useResetBookProgress, useSetBookFinished } from "@thoth/queries/resource-queries"
+} from "@dewey/components/generic/resource-actions"
+import { DropdownMenuItem } from "@dewey/components/ui/dropdown-menu"
+import { useCanPlay } from "@dewey/downloads"
+import { playback, usePlayback } from "@dewey/playback"
+import { useAutoMatchBook, useResetBookProgress, useSetBookFinished } from "@dewey/queries/resource-queries"
 
 export const useBookActions = (book: Book) => {
   const isCurrentBook = usePlayback(s => s.book?.id === book.id)

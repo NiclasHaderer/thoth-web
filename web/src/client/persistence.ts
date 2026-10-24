@@ -4,9 +4,9 @@ import type { StateStorage } from "zustand/middleware"
 import { PublicApi } from "./public-api"
 import { queryClient } from "./query-client"
 
-export const persistKey = (name: string) => `thoth.${name}`
+export const persistKey = (name: string) => `dewey.${name}`
 
-const idbStore = createStore("thoth", "offline")
+const idbStore = createStore("dewey", "offline")
 
 export const idbStorage = {
   getItem: (key: string) => get<string>(key, idbStore).then(value => value ?? null),

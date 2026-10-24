@@ -1,8 +1,8 @@
 import { useEffect } from "react"
-import { useSession } from "@thoth/client"
-import { User } from "@thoth/components/account/account"
-import { SettingsSection } from "@thoth/components/settings/settings-section"
-import { useCurrentUser } from "@thoth/queries/current-user-queries"
+import { useSession } from "@dewey/client"
+import { User } from "@dewey/components/account/account"
+import { SettingsSection } from "@dewey/components/settings/settings-section"
+import { useCurrentUser } from "@dewey/queries/current-user-queries"
 
 export const SettingsAccountOutlet = () => {
   const { data: user, refetch } = useCurrentUser()

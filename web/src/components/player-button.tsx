@@ -1,7 +1,7 @@
 import { cn } from "cn"
 import { FC, PropsWithChildren, useState } from "react"
-import { PlayerPressContext } from "@thoth/components/player-icons"
-import { Button } from "@thoth/components/ui/button"
+import { PlayerPressContext } from "@dewey/components/player-icons"
+import { Button } from "@dewey/components/ui/button"
 
 export const PlayerButton: FC<
   PropsWithChildren<{ label: string; className: string; onPress: () => void; isDisabled?: boolean }>

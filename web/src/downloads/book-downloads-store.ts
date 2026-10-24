@@ -1,7 +1,7 @@
 import { create } from "zustand"
 import { createJSONStorage, persist } from "zustand/middleware"
-import { BookDetailed, UUID } from "@thoth/client"
-import { idbStorage, persistKey } from "@thoth/client/persistence"
+import { BookDetailed, UUID } from "@dewey/client"
+import { idbStorage, persistKey } from "@dewey/client/persistence"
 import type { LocalUrls, StoredFiles } from "./offline-book-files"
 
 export type BookDownloadState = "downloading" | "ready" | "error"

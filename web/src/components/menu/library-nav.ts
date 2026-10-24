@@ -8,7 +8,7 @@ import {
   TagsIcon,
   UserIcon,
 } from "lucide-react"
-import { UUID } from "@thoth/client"
+import { UUID } from "@dewey/client"
 
 export type LibraryDestination = {
   href: string

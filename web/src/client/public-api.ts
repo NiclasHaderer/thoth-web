@@ -1,4 +1,4 @@
-import { ThothApiError } from "./api-error"
+import { DeweyApiError } from "./api-error"
 import { createApi } from "./generated/api-client"
 import { ApiResponse } from "./generated/client"
 
@@ -10,7 +10,7 @@ type RawCall = (...args: unknown[]) => Promise<ApiResponse<unknown>>
 
 export const unwrap = async <T>(response: Promise<ApiResponse<T>>): Promise<T> => {
   const result = await response
-  if (!result.success) throw new ThothApiError(result)
+  if (!result.success) throw new DeweyApiError(result)
   return result.body
 }
 

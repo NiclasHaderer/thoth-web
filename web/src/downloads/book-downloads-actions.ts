@@ -1,4 +1,4 @@
-import { BookDetailed, UUID } from "@thoth/client"
+import { BookDetailed, UUID } from "@dewey/client"
 import { BookDownload, BookDownloadsState, useBookDownloads } from "./book-downloads-store"
 import type { OfflineBookFiles } from "./offline-book-files"
 import { opfsOfflineBookFiles } from "./opfs-offline-book-files"

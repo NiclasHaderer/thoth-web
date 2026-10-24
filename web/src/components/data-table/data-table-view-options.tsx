@@ -1,13 +1,13 @@
 import { Table } from "@tanstack/react-table"
 import { Settings2Icon } from "lucide-react"
 import { Key, MenuTrigger, Selection } from "react-aria-components"
-import { Button } from "@thoth/components/ui/button"
+import { Button } from "@dewey/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-} from "@thoth/components/ui/dropdown-menu"
+} from "@dewey/components/ui/dropdown-menu"
 
 interface DataTableViewOptionsProps<TData> {
   table: Table<TData>

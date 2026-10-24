@@ -1,4 +1,4 @@
-import type { BookDetailed, UUID } from "@thoth/client"
+import type { BookDetailed, UUID } from "@dewey/client"
 
 export type LocalUrls = Record<UUID, string>
 

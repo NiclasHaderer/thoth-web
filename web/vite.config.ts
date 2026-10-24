@@ -8,7 +8,7 @@ import { buildRoutesPlugin } from "./build-routes.ts"
 export default defineConfig({
   resolve: {
     alias: {
-      "@thoth": path.resolve(import.meta.dirname, "src"),
+      "@dewey": path.resolve(import.meta.dirname, "src"),
       "@": path.resolve(import.meta.dirname, "src"),
     },
   },

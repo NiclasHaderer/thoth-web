@@ -1,5 +1,5 @@
 import { FC } from "react"
-import { useField, useFieldUpdater } from "@thoth/hooks/use-form"
+import { useField, useFieldUpdater } from "@dewey/hooks/use-form"
 import { LabeledInput, LabeledInputProps } from "./labeled-input"
 
 export const ManagedInput: FC<{ name: string } & LabeledInputProps> = ({ name, ...rest }) => {

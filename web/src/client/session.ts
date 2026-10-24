@@ -1,10 +1,10 @@
 import { FC, ReactNode, useEffect } from "react"
 import { create } from "zustand"
 import { createJSONStorage, persist } from "zustand/middleware"
-import { decodeJWT, Jwt } from "@thoth/utils/jwt"
+import { decodeJWT, Jwt } from "@dewey/utils/jwt"
 import { isNetworkError } from "./api-error"
 import { ApiError, ApiResponse, ApiSuccess } from "./generated/client"
-import { ThothLoginUser } from "./generated/models"
+import { DeweyLoginUser } from "./generated/models"
 import { persistKey } from "./persistence"
 import { PublicApi } from "./public-api"
 import { queryClient } from "./query-client"
@@ -33,13 +33,13 @@ const adopt = (accessToken: string): void => {
   useSession.setState({ loggedIn: true, accessTokenStr: accessToken, accessToken: decodeJWT(accessToken) }, true)
 }
 
-const login = async (userPw: ThothLoginUser): Promise<void> => {
+const login = async (userPw: DeweyLoginUser): Promise<void> => {
   const { accessToken } = await PublicApi.loginUser(userPw)
   queryClient.clear()
   adopt(accessToken)
 }
 
-const register = async (userPw: ThothLoginUser): Promise<void> => {
+const register = async (userPw: DeweyLoginUser): Promise<void> => {
   await PublicApi.registerUser(userPw)
   await login(userPw)
 }

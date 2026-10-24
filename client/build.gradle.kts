@@ -17,7 +17,7 @@ afterEvaluate {
     }
 }
 
-// The sources in io/thoth/client/gen are written by the server's generateClients task
+// The sources in io/dewey/client/gen are written by the server's generateClients task
 tasks.named("compileKotlin") {
     dependsOn(":server:generateClients")
 }

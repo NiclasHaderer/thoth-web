@@ -74,7 +74,7 @@ jobs:
       - name: Explain how to fix a breaking change
         if: failure() && steps.gate.outputs.fail_on == 'ERR'
         run: |
-          echo "::error file=server/src/main/kotlin/io/thoth/server/plugins/OpenApi.kt::This PR's API is not compatible with the base branch in at least one direction. Bump the version in info { version = ... }."
+          echo "::error file=server/src/main/kotlin/io/dewey/server/plugins/OpenApi.kt::This PR's API is not compatible with the base branch in at least one direction. Bump the version in info { version = ... }."
           exit 1
 
   build:

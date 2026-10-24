@@ -3,10 +3,10 @@ import { LoaderCircleIcon, MoreVerticalIcon, PencilIcon, WandSparklesIcon } from
 import { ComponentProps, FC, ReactNode } from "react"
 import { MenuTrigger, Pressable } from "react-aria-components"
 import { toast } from "sonner"
-import { UUID } from "@thoth/client"
-import { Button } from "@thoth/components/ui/button"
-import { ContextMenu, ContextMenuTrigger } from "@thoth/components/ui/context-menu"
-import { DropdownMenu, DropdownMenuItem } from "@thoth/components/ui/dropdown-menu"
+import { UUID } from "@dewey/client"
+import { Button } from "@dewey/components/ui/button"
+import { ContextMenu, ContextMenuTrigger } from "@dewey/components/ui/context-menu"
+import { DropdownMenu, DropdownMenuItem } from "@dewey/components/ui/dropdown-menu"
 
 export const menuItem = "gap-2.5 rounded-lg px-2.5 py-2 text-sm"
 

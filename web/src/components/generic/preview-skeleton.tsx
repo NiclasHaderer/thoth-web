@@ -1,8 +1,8 @@
 import { cn } from "cn"
 import { FC } from "react"
-import { RESPONSIVE_GRID } from "@thoth/components/responsive-grid"
-import { Skeleton } from "@thoth/components/ui/skeleton"
-import { getSizing } from "@thoth/utils/responsive-sizing"
+import { RESPONSIVE_GRID } from "@dewey/components/responsive-grid"
+import { Skeleton } from "@dewey/components/ui/skeleton"
+import { getSizing } from "@dewey/utils/responsive-sizing"
 
 export const PreviewSkeleton: FC<{
   round?: boolean

@@ -1,5 +1,5 @@
 import { FC } from "react"
-import { usePlayback } from "@thoth/playback"
+import { usePlayback } from "@dewey/playback"
 import { toReadableTime } from "./track/track-time-format"
 
 export const ElapsedTime: FC = () => {

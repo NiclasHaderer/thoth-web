@@ -1,8 +1,8 @@
 import { ReactNode, useCallback, useLayoutEffect, useState } from "react"
 import { GridStateSnapshot, ListRange, VirtuosoGrid } from "react-virtuoso"
 import { useLocation } from "wouter"
-import { useScrollSurface } from "@thoth/components/scroll-surface"
-import { readListScroll, writeListScroll } from "@thoth/state/list-scroll"
+import { useScrollSurface } from "@dewey/components/scroll-surface"
+import { readListScroll, writeListScroll } from "@dewey/state/list-scroll"
 
 const LOADING_CELLS = 12
 

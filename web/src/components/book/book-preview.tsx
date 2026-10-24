@@ -1,11 +1,11 @@
 import { forwardRef, Fragment } from "react"
-import { Book } from "@thoth/client"
-import { BookActionsMenu, BookContextMenu } from "@thoth/components/book/book-actions"
-import { DownloadBadge } from "@thoth/components/book/book-download"
-import { GenericPreview } from "@thoth/components/generic/generic-preview.tsx"
-import { Link } from "@thoth/components/link.tsx"
-import { useCanPlay } from "@thoth/downloads"
-import { playback, useBookProgress } from "@thoth/playback"
+import { Book } from "@dewey/client"
+import { BookActionsMenu, BookContextMenu } from "@dewey/components/book/book-actions"
+import { DownloadBadge } from "@dewey/components/book/book-download"
+import { GenericPreview } from "@dewey/components/generic/generic-preview.tsx"
+import { Link } from "@dewey/components/link.tsx"
+import { useCanPlay } from "@dewey/downloads"
+import { playback, useBookProgress } from "@dewey/playback"
 
 interface BookPreviewProps extends Book {
   size?: "small" | "normal"

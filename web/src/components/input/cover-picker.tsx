@@ -1,9 +1,9 @@
 import { ImageOffIcon } from "lucide-react"
 import { FC, useRef } from "react"
-import { ResponsiveImage } from "@thoth/components/responsive-image"
-import { Button } from "@thoth/components/ui/button"
-import { useCoverSrc } from "@thoth/downloads"
-import { toBase64 } from "@thoth/utils/utils"
+import { ResponsiveImage } from "@dewey/components/responsive-image"
+import { Button } from "@dewey/components/ui/button"
+import { useCoverSrc } from "@dewey/downloads"
+import { toBase64 } from "@dewey/utils/utils"
 
 export const CoverPicker: FC<{
   alt: string

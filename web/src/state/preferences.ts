@@ -1,6 +1,6 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
-import { persistKey } from "@thoth/client/persistence"
+import { persistKey } from "@dewey/client/persistence"
 
 interface Preferences {
   volume: number

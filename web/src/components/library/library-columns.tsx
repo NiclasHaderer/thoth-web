@@ -1,9 +1,9 @@
 import { ColumnDef } from "@tanstack/react-table"
 import { PencilIcon, Trash2Icon } from "lucide-react"
-import { Library } from "@thoth/client"
-import { DataTableColumnHeader } from "@thoth/components/data-table/data-table-column-header"
-import { DataTableRowActions } from "@thoth/components/data-table/data-table-row-actions"
-import { DropdownMenuItem } from "@thoth/components/ui/dropdown-menu"
+import { Library } from "@dewey/client"
+import { DataTableColumnHeader } from "@dewey/components/data-table/data-table-column-header"
+import { DataTableRowActions } from "@dewey/components/data-table/data-table-row-actions"
+import { DropdownMenuItem } from "@dewey/components/ui/dropdown-menu"
 
 interface LibraryColumnsOptions {
   onEdit: (library: Library) => void

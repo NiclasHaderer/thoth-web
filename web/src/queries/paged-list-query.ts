@@ -1,7 +1,7 @@
 import { useQueries } from "@tanstack/react-query"
 import { useState } from "react"
 import { ListRange } from "react-virtuoso"
-import { isNetworkError, Order, UUID } from "@thoth/client"
+import { isNetworkError, Order, UUID } from "@dewey/client"
 import { PagedQueries } from "./query-definitions"
 
 export const usePagedList = <T>(group: PagedQueries<T>, libraryId: UUID, order: Order) => {

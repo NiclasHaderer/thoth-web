@@ -1,8 +1,8 @@
 import { FC, PropsWithChildren } from "react"
-import { UUID } from "@thoth/client"
-import { LibraryMenu } from "@thoth/components/menu/library-menu"
-import { ScrollSurface } from "@thoth/components/scroll-surface"
-import { useBreakpoint } from "@thoth/hooks/use-media-query"
+import { UUID } from "@dewey/client"
+import { LibraryMenu } from "@dewey/components/menu/library-menu"
+import { ScrollSurface } from "@dewey/components/scroll-surface"
+import { useBreakpoint } from "@dewey/hooks/use-media-query"
 
 interface LibraryResourceViewProps extends PropsWithChildren {
   libraryId: UUID | undefined

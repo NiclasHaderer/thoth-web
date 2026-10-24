@@ -1,7 +1,7 @@
 import { cn } from "cn"
 import { FC, ReactNode } from "react"
-import { Logo } from "@thoth/components/icons/logo"
-import { Link } from "@thoth/components/link.tsx"
+import { Logo } from "@dewey/components/icons/logo"
+import { Link } from "@dewey/components/link.tsx"
 
 export const MobileTopBar: FC<{
   children?: ReactNode
@@ -13,7 +13,7 @@ export const MobileTopBar: FC<{
     {backdrop}
     {/* Fixed height, fitting the search input, so the logo stays put when switching tabs. */}
     <div className="relative flex h-12 items-center gap-3.5">
-      <Link href="/libraries" aria-label="Thoth home" className="shrink-0 outline-none md:hidden">
+      <Link href="/libraries" aria-label="Dewey home" className="shrink-0 outline-none md:hidden">
         <Logo className="h-8 w-auto" />
       </Link>
       {children}

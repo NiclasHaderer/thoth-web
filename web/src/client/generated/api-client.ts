@@ -2,7 +2,18 @@
 // noinspection JSUnusedGlobalSymbols,ES6UnusedImports
 // noinspection ES6UnusedImports
 // @ts-nocheck
-import { ApiCallData, ApiInterceptor, ApiResponse, _request, _createUrl, _mergeHeaders } from "./client"
+import {
+  ApiCallData,
+  ApiInterceptor,
+  ApiResponse,
+  ApiSocket,
+  ApiSocketData,
+  ApiSocketInterceptor,
+  _request,
+  _createUrl,
+  _mergeHeaders,
+  _socket,
+} from "./client"
 import type {
   ApiVersion,
   Author,
@@ -14,8 +25,21 @@ import type {
   BookDetailed,
   BookField,
   BookUpdate,
+  ChangeEvent,
+  ChangeEventBatch,
+  ChangeType,
+  ChangedEntity,
   Chapter,
   ChapterMark,
+  DeweyAccessToken,
+  DeweyChangePassword,
+  DeweyJWKs,
+  DeweyLoginUser,
+  DeweyModifyPermissions,
+  DeweyRegisterUser,
+  DeweyRenameUser,
+  DeweyUser,
+  DeweyUserWithPermissions,
   Empty,
   FileScanner,
   FileSystemItem,
@@ -56,15 +80,6 @@ import type {
   SetDismissed,
   SetFinished,
   ThirdPartyLicense,
-  ThothAccessToken,
-  ThothChangePassword,
-  ThothJWKs,
-  ThothLoginUser,
-  ThothModifyPermissions,
-  ThothRegisterUser,
-  ThothRenameUser,
-  ThothUser,
-  ThothUserWithPermissions,
   TitledId,
   Track,
   UUID,
@@ -83,16 +98,18 @@ export const createApi = (
       method: callData.method,
       headers: callData.headers,
       body: callData.bodySerializer(callData.body),
-    })
+    }),
+  defaultSocketInterceptors: ApiSocketInterceptor[] = [],
+  socketExecutor = (socketData: ApiSocketData) => new WebSocket(socketData.route)
 ) => {
   const defaultHeadersImpl = new Headers(defaultHeaders)
   return {
     apiVersion: "0.0.2",
     loginUser: (
-      body: ThothLoginUser,
+      body: DeweyLoginUser,
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
-    ): Promise<ApiResponse<ThothAccessToken>> => {
+    ): Promise<ApiResponse<DeweyAccessToken>> => {
       return _request(
         `/api/auth/login`,
         "POST",
@@ -117,10 +134,10 @@ export const createApi = (
       )
     },
     registerUser: (
-      body: ThothRegisterUser,
+      body: DeweyRegisterUser,
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
-    ): Promise<ApiResponse<ThothUser>> => {
+    ): Promise<ApiResponse<DeweyUser>> => {
       return _request(
         `/api/auth/register`,
         "POST",
@@ -132,7 +149,7 @@ export const createApi = (
         false
       )
     },
-    retrieveJwks: (headers: HeadersInit = {}, interceptors: ApiInterceptor[] = []): Promise<ApiResponse<ThothJWKs>> => {
+    retrieveJwks: (headers: HeadersInit = {}, interceptors: ApiInterceptor[] = []): Promise<ApiResponse<DeweyJWKs>> => {
       return _request(
         `/api/auth/jwks.json`,
         "GET",
@@ -146,10 +163,10 @@ export const createApi = (
     },
     updatePermissions: (
       { id }: { id: UUID },
-      body: ThothModifyPermissions<UpdateUserPermissions>,
+      body: DeweyModifyPermissions<UpdateUserPermissions>,
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
-    ): Promise<ApiResponse<ThothUser>> => {
+    ): Promise<ApiResponse<DeweyUser>> => {
       return _request(
         `/api/auth/user/${id}/permissions`,
         "PUT",
@@ -165,7 +182,7 @@ export const createApi = (
       { id }: { id: UUID },
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
-    ): Promise<ApiResponse<ThothUser>> => {
+    ): Promise<ApiResponse<DeweyUser>> => {
       return _request(
         `/api/auth/user/${id}`,
         "GET",
@@ -196,7 +213,7 @@ export const createApi = (
     getCurrentUser: (
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
-    ): Promise<ApiResponse<ThothUserWithPermissions<UserPermissions>>> => {
+    ): Promise<ApiResponse<DeweyUserWithPermissions<UserPermissions>>> => {
       return _request(
         `/api/auth/user/current`,
         "GET",
@@ -211,7 +228,7 @@ export const createApi = (
     listUsers: (
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
-    ): Promise<ApiResponse<Array<ThothUserWithPermissions<UserPermissions>>>> => {
+    ): Promise<ApiResponse<Array<DeweyUserWithPermissions<UserPermissions>>>> => {
       return _request(
         `/api/auth/user`,
         "GET",
@@ -225,10 +242,10 @@ export const createApi = (
     },
     updateUsername: (
       { id }: { id: UUID },
-      body: ThothRenameUser,
+      body: DeweyRenameUser,
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
-    ): Promise<ApiResponse<ThothUser>> => {
+    ): Promise<ApiResponse<DeweyUser>> => {
       return _request(
         `/api/auth/user/${id}/username`,
         "POST",
@@ -242,7 +259,7 @@ export const createApi = (
     },
     updatePassword: (
       { id }: { id: UUID },
-      body: ThothChangePassword,
+      body: DeweyChangePassword,
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
     ): Promise<ApiResponse<Empty>> => {
@@ -260,7 +277,7 @@ export const createApi = (
     refreshAccessToken: (
       headers: HeadersInit = {},
       interceptors: ApiInterceptor[] = []
-    ): Promise<ApiResponse<ThothAccessToken>> => {
+    ): Promise<ApiResponse<DeweyAccessToken>> => {
       return _request(
         `/api/auth/user/refresh`,
         "POST",
@@ -1080,6 +1097,9 @@ export const createApi = (
         executor,
         true
       )
+    },
+    listenToEvents: (interceptors: ApiSocketInterceptor[] = []): Promise<ApiSocket<never, ChangeEventBatch>> => {
+      return _socket(`/api/events`, [...defaultSocketInterceptors, ...interceptors], socketExecutor, true)
     },
   } as const
 }

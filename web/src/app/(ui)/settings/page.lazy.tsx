@@ -1,5 +1,5 @@
 import { Redirect } from "wouter"
-import { useCurrentUser } from "@thoth/queries/current-user-queries"
+import { useCurrentUser } from "@dewey/queries/current-user-queries"
 
 export const SettingsOutlet = () => {
   const { data: user } = useCurrentUser()

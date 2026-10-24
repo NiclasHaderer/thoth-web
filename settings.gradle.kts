@@ -15,7 +15,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "thoth-audiobook-server"
+rootProject.name = "dewey"
 
 include(
     "openapi",

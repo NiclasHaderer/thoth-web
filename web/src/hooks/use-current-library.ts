@@ -1,7 +1,7 @@
 import { useLocation } from "wouter"
-import { UUID } from "@thoth/client"
-import { useLibraries } from "@thoth/queries/library-queries"
-import { useLastLibrary } from "@thoth/state/last-library"
+import { UUID } from "@dewey/client"
+import { useLibraries } from "@dewey/queries/library-queries"
+import { useLastLibrary } from "@dewey/state/last-library"
 
 const LIBRARY_PATH = /^\/libraries\/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/
 

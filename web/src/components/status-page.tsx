@@ -1,8 +1,8 @@
 import { CloudOffIcon, LucideIcon, TriangleAlertIcon } from "lucide-react"
 import { FC, ReactNode } from "react"
-import { isNetworkError, isNotFoundError } from "@thoth/client/api-error"
-import { Link } from "@thoth/components/link.tsx"
-import { Button, buttonVariants } from "@thoth/components/ui/button"
+import { isNetworkError, isNotFoundError } from "@dewey/client/api-error"
+import { Link } from "@dewey/components/link.tsx"
+import { Button, buttonVariants } from "@dewey/components/ui/button"
 
 const StatusPage: FC<{ display: ReactNode; title: string; message: string; action?: ReactNode }> = ({
   display,

@@ -15,7 +15,7 @@ plugins {
 }
 
 subprojects {
-    group = "io.thoth"
+    group = "io.dewey"
     version = "0.0.1"
 
     apply<KtlintPlugin>()

@@ -1,5 +1,5 @@
 import { QueryClient } from "@tanstack/react-query"
-import { Book, LibrarySearchResult, PaginatedResponse, UUID } from "@thoth/client"
+import { Book, LibrarySearchResult, PaginatedResponse, UUID } from "@dewey/client"
 import { EntityQueries, Identifiable, queries } from "./query-definitions"
 
 export const invalidateLibraryContent = (queryClient: QueryClient, libraryId: UUID) =>

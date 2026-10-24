@@ -7,5 +7,5 @@
   "arrowParens": "avoid",
   "jsxSingleQuote": false,
   "plugins": ["@trivago/prettier-plugin-sort-imports", "prettier-plugin-tailwindcss"],
-  "importOrder": ["<THIRD_PARTY_MODULES>", "^@thoth/(.*)$", "^[./]"]
+  "importOrder": ["<THIRD_PARTY_MODULES>", "^@dewey/(.*)$", "^[./]"]
 }

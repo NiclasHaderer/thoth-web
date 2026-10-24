@@ -1,8 +1,8 @@
 import { CommandIcon, SearchIcon } from "lucide-react"
 import { FC, KeyboardEvent, ReactNode, useRef, useState } from "react"
-import { LabeledInput } from "@thoth/components/input/labeled-input"
-import { SearchResults } from "@thoth/components/menu/search-results"
-import { useLibrarySearch } from "@thoth/queries/library-search-query"
+import { LabeledInput } from "@dewey/components/input/labeled-input"
+import { SearchResults } from "@dewey/components/menu/search-results"
+import { useLibrarySearch } from "@dewey/queries/library-search-query"
 import { useEvent } from "../../hooks/use-event"
 import { useFocusTrap } from "../../hooks/use-focus-trap"
 

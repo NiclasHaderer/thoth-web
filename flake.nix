@@ -1,5 +1,5 @@
 {
-  description = "Development environment for thoth-audiobook-server";
+  description = "Development environment for dewey";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";

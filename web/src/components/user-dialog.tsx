@@ -1,14 +1,14 @@
 import { UUID } from "crypto"
 import { FolderCogIcon, LibraryIcon, UserIcon } from "lucide-react"
 import { FC, useMemo } from "react"
-import { ManagedInput } from "@thoth/components/input/managed-input"
-import { SelectLine } from "@thoth/components/input/select-line"
-import { TitledDialog } from "@thoth/components/titled-dialog"
-import { Button } from "@thoth/components/ui/button"
-import { DialogFooter } from "@thoth/components/ui/dialog"
-import { Tooltip, TooltipTrigger } from "@thoth/components/ui/tooltip"
-import { Form, FormContext } from "@thoth/hooks/use-form"
-import { useLibraries } from "@thoth/queries/library-queries"
+import { ManagedInput } from "@dewey/components/input/managed-input"
+import { SelectLine } from "@dewey/components/input/select-line"
+import { TitledDialog } from "@dewey/components/titled-dialog"
+import { Button } from "@dewey/components/ui/button"
+import { DialogFooter } from "@dewey/components/ui/dialog"
+import { Tooltip, TooltipTrigger } from "@dewey/components/ui/tooltip"
+import { Form, FormContext } from "@dewey/hooks/use-form"
+import { useLibraries } from "@dewey/queries/library-queries"
 
 export interface UserFormValues {
   id?: UUID

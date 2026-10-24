@@ -1,6 +1,6 @@
 import { ComponentProps, createContext, ElementType, ReactNode, useContext, useLayoutEffect, useState } from "react"
 import { useLocation } from "wouter"
-import { hasListScroll } from "@thoth/state/list-scroll"
+import { hasListScroll } from "@dewey/state/list-scroll"
 
 const CONTEXT = createContext<HTMLElement | null>(null)
 

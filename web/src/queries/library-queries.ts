@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { Api, PartialUpdateLibrary, UUID, UpdateLibrary } from "@thoth/client"
+import { Api, PartialUpdateLibrary, UUID, UpdateLibrary } from "@dewey/client"
 import { invalidateMembership } from "./query-cache"
 import { queries } from "./query-definitions"
 
